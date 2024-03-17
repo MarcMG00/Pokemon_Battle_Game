@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.text.Normalizer;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -16,11 +17,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Game {
-	private static final String SAMPLE_CSV_FILE = "./pokemonList.csv";
+	private static final String SAMPLE_CSV_ALL_POKEMON = "./data/pokemonList.csv";
+	private static final String SAMPLE_CSV_ALL_HABS = "./data/habsList.csv";
 	private ArrayList<Pokemon> pokemons;
+	private ArrayList<Habilidad> habilidades;
 	
 	public Game() {
 		this.pokemons = new ArrayList<Pokemon>();
+		this.habilidades = new ArrayList<Habilidad>();
 	}
 	
 	public ArrayList<Pokemon> getPokemons() {
@@ -30,56 +34,8 @@ public class Game {
 	public void setPokemons(ArrayList<Pokemon> pokemons) {
 		this.pokemons = pokemons;
 	}
-	
-//	public static void main(String[] args) {
-//		
-//		try {	
-//			// Total nb of Pokemon
-//			int nbPk = 809;
-//			// List of Pokemon
-//			ArrayList<Pokemon> pokemons = new ArrayList<Pokemon>();
-//			
-//			// We put all the Pokemon to the list
-//			for(int id = 1; id <= nbPk; id++) {
-//				// Each Pokemon change by id in the url
-//				String url = "https://www.pokexperto.net/index2.php?seccion=nds/nationaldex/stats&pk=" + id;
-//				// Gets the class "pkmain" we are interested (it is founded at position 28) for estadistics
-////				int classPkMain = 28;
-//				
-//				Document document = Jsoup.connect(url).get();
-////				Element pokemon = document.select(".pkmain").get(classPkMain);
-//				
-//				// Gets the class "pktitle" for the name
-//				Element pokemonName = document.selectFirst(".pktitle");
-//				String name = pokemonName.select(".mini").text();
-//				
-//				// Prints the content
-//				System.out.println("================Pkmain name================");
-//				System.out.println(name);
-//				
-//				// Counts number of class "pkmain"
-//				Elements ntmDivs = document.getElementsByClass("pkmain");
-//				int ntmAmount = ntmDivs.size();
-//				System.out.println(ntmAmount);
-//				
-//				// Gets only the first 6 estadistics elements on the table with class "right"
-////				List<Object> pokemonStats = pokemon.select(".right").stream().limit(6).collect(Collectors.toList());
-////				if(pokemonStats.size() < 6) {
-////					do {
-////						classPkMain += 1;
-////						pokemon = document.select(".pkmain").get(classPkMain);
-////						pokemonStats = pokemon.select(".right").stream().limit(6).collect(Collectors.toList());
-////					}
-////					while(pokemonStats.size() < 6);
-////				}
-//			}
-//			
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
 
-	public ArrayList<Pokemon> scrappingWebPokemon() {
+	public void scrappingWebPokemon() {
 		try {	
 			// Total nb of Pokemon
 			int nbPk = 809;
@@ -130,7 +86,7 @@ public class Game {
 				
 				Element pokemon = document.select(".pkmain").get(classPkMain);
 				
-				// Prints the content (to know the current pokemon treating)
+				// Prints the content (the current pokemon treating)
 				System.out.println("================Pkmain name================");
 				System.out.println(name + "-" + id);
 				
@@ -148,33 +104,48 @@ public class Game {
 										 Integer.parseInt(((Element) pokemonStats.get(5)).text())
 										 );
 				this.pokemons.add(pk);
-				
-//				for(Pokemon p : pokemons) {
-//					System.out.println(p.getIdPokemon() + " - " + 
-//									   p.getNombrePokemon() + " - " + 
-//									   p.getPs() + " - " + 
-//									   p.getAta() + " - " + 
-//									   p.getDef() + " - " + 
-//									   p.getVel() + " - " + 
-//									   p.getAtEsp() + " - " + 
-//									   p.getDefEsp());
-//				}
 			}
 		}
 		catch(IOException e) {
 			e.printStackTrace();
 		}
-			return this.pokemons;
 	}
 	
-	public static void writePokemonCSV(ArrayList<Pokemon> pokemons) {
+	public ArrayList<Habilidad> scrappingWebAllHabs() {
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_FILE));
+			String url = "https://www.wikidex.net/wiki/Lista_de_habilidades";
+			// Gets the url
+			Document document = Jsoup.connect(url).get();
+			// Selects the habilities table
+			Elements table = document.select(".tabpokemon");
+			// Selects all the "tr" in the table
+			Elements elementObjTr = table.first().children().select("tr");
+			
+			for(Element tr : elementObjTr) {
+				// We not consider the first "tr" cause it represents the titles (# represents the column name for habilities Id)
+				if(!tr.firstElementChild().text().equals("#")) {
+					// We get the 2 first "td" (representing the name and the description effect) - we remove all diacritics
+					Habilidad hab = new Habilidad(Integer.parseInt(tr.firstElementChild().text()),
+												  Normalizer.normalize(tr.select("td>a").get(1).text(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""),
+												  Normalizer.normalize(tr.select("td").get(2).text(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""));
+					this.habilidades.add(hab);
+				}
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+			return null;
+	}
+	
+	public static void writePokemonCSV(ArrayList<Pokemon> pokemonsList) {
+		try {
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_POKEMON));
 
 	        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
 	                .withHeader("PokemonId", "PokemonName", "PS", "Ata", "Def", "Vel", "AtEsp", "DefEsp"));
 	        
-	        for(Pokemon p : pokemons) {
+	        for(Pokemon p : pokemonsList) {
 	        	csvPrinter.printRecord(p.getIdPokemon(),
 	        						   p.getNombrePokemon(),
 	        						   p.getPs(),
@@ -191,11 +162,36 @@ public class Game {
 		}
 	}
 	
+	public static void writeHabilitiesCSV(ArrayList<Habilidad> habilidadesList) {
+		try {
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_HABS));
+
+	        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
+	                .withHeader("HabilityId", "HabilityName", "Effect"));
+	        
+	        for(Habilidad h : habilidadesList) {
+	        	csvPrinter.printRecord(h.getIdHab(),
+	        						   h.getNombreHab(),
+	        						   h.getDescripcionHab());
+	        }
+	        csvPrinter.flush();  
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void lancerCombat() {
 		// Instantiate all Pokemon (if CSV not already created)
-		this.pokemons = scrappingWebPokemon();
+		//scrappingWebPokemon();
 		
 		// Write all Pokemon to a CSV file
-		writePokemonCSV(this.pokemons);
+		//writePokemonCSV(this.pokemons);
+		
+		// Instantiate all the habilities (if CSV not already created)
+		//scrappingWebAllHabs() ;
+		
+		// Write all habilities to a CSV file
+		//writeHabilitiesCSV(this.habilidades);
 	}
 }
