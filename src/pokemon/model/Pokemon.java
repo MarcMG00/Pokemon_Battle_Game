@@ -1,5 +1,7 @@
 package pokemon.model;
 
+import java.util.ArrayList;
+
 public class Pokemon {
 	private int idPokemon;
 	private String nombrePokemon;
@@ -9,6 +11,8 @@ public class Pokemon {
 	private int vel;
 	private int atEsp;
 	private int defEsp;
+	private ArrayList<Habilidad> normalHabs;
+	private ArrayList<Habilidad> ocultedHabs;
 	
 	public Pokemon(int idPokemon, String nombrePokemon, int ps, int ata, int def, int vel, int atEsp, int defEsp) {
 		this.idPokemon = idPokemon;
@@ -19,6 +23,8 @@ public class Pokemon {
 		this.vel = vel;
 		this.atEsp = atEsp;
 		this.defEsp = defEsp;
+		normalHabs = new ArrayList<>();
+		ocultedHabs = new ArrayList<>();
 	}
 
 	public int getIdPokemon() {
@@ -83,6 +89,30 @@ public class Pokemon {
 
 	public void setDefEsp(int defEsp) {
 		this.defEsp = defEsp;
+	}
+
+	public ArrayList<Habilidad> getNormalHabs() {
+		return normalHabs;
+	}
+
+	public void setNormalHabs(ArrayList<Habilidad> normalHabs) {
+		this.normalHabs = normalHabs;
+	}
+
+	public ArrayList<Habilidad> getOcultedHabs() {
+		return ocultedHabs;
+	}
+
+	public void setOcultedHabs(ArrayList<Habilidad> ocultedHabs) {
+		this.ocultedHabs = ocultedHabs;
+	}
+	
+	public void addNormalHab(Habilidad nHab) {
+		this.normalHabs.add(nHab);
+	}
+	
+	public void addOcultedHab(Habilidad oHab) {
+		this.ocultedHabs.add(oHab);
 	}
 	
 }

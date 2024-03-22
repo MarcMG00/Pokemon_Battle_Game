@@ -61,7 +61,7 @@ public class Game {
 		this.habilidadPorPokemon = habilidadPorPokemon;
 	}
 
-	// Add to pokemon list all the pokemon from 1 to 809
+	// Add to Pokemon list all the Pokemon from 1 to 809
 	public void scrappingWebPokemon() {
 		try {	
 			// Total nb of Pokemon
@@ -114,8 +114,8 @@ public class Game {
 				Element pokemon = document.select(".pkmain").get(classPkMain);
 				
 				// Prints the content (the current pokemon treating)
-				System.out.println("================Pkmain name================");
-				System.out.println(name + "-" + id);
+//				System.out.println("================Pkmain name================");
+//				System.out.println(name + "-" + id);
 				
 				// Gets only the first 6 estadistics elements on the table with "right" class
 				List<Object> pokemonStats = pokemon.select(".right").stream().limit(6).collect(Collectors.toList());
@@ -200,9 +200,9 @@ public class Game {
 								// Oculted hability
 								Optional<Habilidad> hO;
 								
-								System.out.println("================Pkmain id================");
-								System.out.println(tPk.select("td").get(0).text());
-								System.out.println(tPk.select("td").size() + " columns");
+//								System.out.println("================Pkmain id================");
+//								System.out.println(tPk.select("td").get(0).text());
+//								System.out.println(tPk.select("td").size() + " columns");
 								
 								// Depending on the number of columns, there are more or less habilities (each hability is in a column)
 								int nbTd = tPk.select("td").size();
@@ -211,7 +211,11 @@ public class Game {
 									// There's only one hability, so we put it as normal hability
 									case 6:
 										// We remove all the digits from the hability and we search the hability in our list of habilities (we compare by name)
-										h = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(5).text().replaceAll("[0-9]","").toUpperCase(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""))).findFirst();
+										h = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(5).text()
+																																	   .replaceAll("[0-9]","")
+																																	   .toUpperCase(), Normalizer.Form.NFKD)
+																																	   .replaceAll("[^\\p{ASCII}]", "")))
+																																	   .findFirst();
 										// Habilities are optional, so we do a condition of nullability
 										if(h.isPresent()) {
 											// We put the hability in the normal list of habilities
@@ -222,14 +226,22 @@ public class Game {
 										habs.put("Habilidad", pokemonHabs);
 										break;
 									case 7:
-										h = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(5).text().replaceAll("[0-9]","").toUpperCase(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""))).findFirst();
+										h = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(5).text()
+																																	   .replaceAll("[0-9]","")
+																																	   .toUpperCase(), Normalizer.Form.NFKD)
+																																	   .replaceAll("[^\\p{ASCII}]", "")))
+																																	   .findFirst();
 										if(h.isPresent()) { 
 											h2 = new Habilidad(h.get().getIdHab(), h.get().getNombreHab(), h.get().getDescripcionHab());
 											pokemonHabs.add(h2);
 										}
 										habs.put("Habilidad", pokemonHabs);
 										
-										hO = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(6).text().replaceAll("[0-9]","").toUpperCase(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""))).findFirst();
+										hO = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(6).text()
+																																		.replaceAll("[0-9]","")
+																																		.toUpperCase(), Normalizer.Form.NFKD)
+																																		.replaceAll("[^\\p{ASCII}]", "")))
+																																		.findFirst();
 										if(hO.isPresent()) { 
 											h2 = new Habilidad(hO.get().getIdHab(), hO.get().getNombreHab(), hO.get().getDescripcionHab());
 											pokemonHabsOcultas.add(h2);
@@ -237,13 +249,21 @@ public class Game {
 										habs.put("Habilidad oculta", pokemonHabsOcultas);
 										break;
 									case 8:
-										h = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(5).text().replaceAll("[0-9]","").toUpperCase(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""))).findFirst();
+										h = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(5).text()
+																																	   .replaceAll("[0-9]","")
+																																	   .toUpperCase(), Normalizer.Form.NFKD)
+																																	   .replaceAll("[^\\p{ASCII}]", "")))
+																																	   .findFirst();
 										if(h.isPresent()) { 
 											h2 = new Habilidad(h.get().getIdHab(), h.get().getNombreHab(), h.get().getDescripcionHab());
 											pokemonHabs.add(h2);
 										}
 										
-										h = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(6).text().replaceAll("[0-9]","").toUpperCase(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""))).findFirst();
+										h = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(6).text()
+																																	   .replaceAll("[0-9]","")
+																																	   .toUpperCase(), Normalizer.Form.NFKD)
+																																	   .replaceAll("[^\\p{ASCII}]", "")))
+																																	   .findFirst();
 										if(h.isPresent()) { 
 											h2 = new Habilidad(h.get().getIdHab(), h.get().getNombreHab(), h.get().getDescripcionHab());
 											pokemonHabs.add(h2);
@@ -251,22 +271,38 @@ public class Game {
 										habs.put("Habilidad", pokemonHabs);
 										
 										// There's only (at the moment) one Pokemon that has 2 oculted habilities. We do a split (with "/", cause there are not 2 columns for each hability)
-										// For the first hability, we remove the last white space (replaceAll("\\s","") cause there are no spaces in the word) before the ("/")
+										// For the first hability, we remove the last white space (replaceAll("\\s","") cause there are not spaces in the word) before the ("/")
 										// For the second hability, we remove the first white space (trim()) after the ("/")
 										if(tPk.select("td").get(0).text().equals("744")) {
-											hO = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(7).text().split("/")[0].replaceAll("\\s","").replaceAll("[0-9]","").toUpperCase(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""))).findFirst();
+											hO = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(7).text()
+																																			.split("/")[0]
+																																			.replaceAll("\\s","")
+																																			.replaceAll("[0-9]","")
+																																			.toUpperCase(), Normalizer.Form.NFKD)
+																																			.replaceAll("[^\\p{ASCII}]", "")))
+																																			.findFirst();
 											if(hO.isPresent()) { 
 												h2 = new Habilidad(hO.get().getIdHab(), hO.get().getNombreHab(), hO.get().getDescripcionHab());
 												pokemonHabsOcultas.add(h2);
 											}
-											hO = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(7).text().split("/")[1].trim().replaceAll("[0-9]","").toUpperCase(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""))).findFirst();
+											hO = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(7).text()
+																																			.split("/")[1]
+																																			.trim()
+																																			.replaceAll("[0-9]","")
+																																			.toUpperCase(), Normalizer.Form.NFKD)
+																																			.replaceAll("[^\\p{ASCII}]", "")))
+																																			.findFirst();
 											if(hO.isPresent()) { 
 												h2 = new Habilidad(hO.get().getIdHab(), hO.get().getNombreHab(), hO.get().getDescripcionHab());
 												pokemonHabsOcultas.add(h2);
 											}
 										}
 										else {
-											hO = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(7).text().replaceAll("[0-9]","").toUpperCase(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""))).findFirst();
+											hO = this.habilidades.stream().filter(habil -> habil.getNombreHab().equals(Normalizer.normalize(tPk.select("td").get(7).text()
+																																			.replaceAll("[0-9]","")
+																																			.toUpperCase(), Normalizer.Form.NFKD)
+																																			.replaceAll("[^\\p{ASCII}]", "")))
+																																			.findFirst();
 											if(hO.isPresent()) { 
 												h2 = new Habilidad(hO.get().getIdHab(), hO.get().getNombreHab(), hO.get().getDescripcionHab());
 												pokemonHabsOcultas.add(h2);
@@ -292,7 +328,7 @@ public class Game {
 		return this.habilidadPorPokemon;
 	}
 	
-	// Write in a CSV all the pokemon from pokemon list
+	// Write in a CSV all the Pokemon from Pokemon list
 	public static void writePokemonCSV(ArrayList<Pokemon> pokemonsList) {
 		try {
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_POKEMON));
@@ -345,6 +381,7 @@ public class Game {
 	    try {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
+			// Skips first line
 			bufferedReader.readLine();
 			String ligne;
 			while ((ligne = bufferedReader.readLine()) != null) {
@@ -353,7 +390,8 @@ public class Game {
 					break;
 				}
 				else {
-					this.pokemons.add(new Pokemon(Integer.parseInt(pks[0]), pks[1], Integer.parseInt(pks[2]), Integer.parseInt(pks[3]), Integer.parseInt(pks[4]), Integer.parseInt(pks[5]), Integer.parseInt(pks[6]), Integer.parseInt(pks[7])));
+					Pokemon pika = new Pokemon(Integer.parseInt(pks[0]), pks[1], Integer.parseInt(pks[2]), Integer.parseInt(pks[3]), Integer.parseInt(pks[4]), Integer.parseInt(pks[5]), Integer.parseInt(pks[6]), Integer.parseInt(pks[7]));
+					this.pokemons.add(pika);
 				}
 			}
 		}
@@ -374,7 +412,7 @@ public class Game {
 		}
 	}
 	
-	// Reads habsList.csv file and adds to Pokemon list
+	// Reads habsList.csv file and adds to habilities list
 	public void readHabilities(String fileName) {
 		FileReader fileReader = null;
 	    BufferedReader bufferedReader = null;
@@ -382,6 +420,7 @@ public class Game {
 	    try {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
+			// Skips first line
 			bufferedReader.readLine();
 			String ligne;
 			while ((ligne = bufferedReader.readLine()) != null) {
@@ -421,6 +460,7 @@ public class Game {
 			
 			FileReader fileReader = new FileReader(SAMPLE_CSV_ALL_POKEMON);
 			BufferedReader br = new BufferedReader(fileReader);
+			// Skips first line
 			br.readLine();
 			StringBuilder sb = new StringBuilder();
 			String ligne;
@@ -442,7 +482,7 @@ public class Game {
 									sb.append("," + h.getIdHab());
 								}
 							}
-							// If there is 1 value1 in dico for normal habilities
+							// If there is 1 value in dico for normal habilities
 							else {
 								sb.append("," + entry.getValue().get("Habilidad").get(0).getIdHab() + ",");
 							}
@@ -458,8 +498,9 @@ public class Game {
 								sb.append("," + entry.getValue().get("Habilidad oculta").get(0).getIdHab() + ",");
 							}
 						}
+						// Prints the line in the nex CSV
 						csvPrinter.printRecord(ligne + sb);
-						System.out.println(ligne + sb);
+						// Restart the string for habilities
 						sb = new StringBuilder();
 					}
 				}
@@ -471,6 +512,86 @@ public class Game {
 		}
 	}
 	
+	// Reads pokemon.csv file and adds to Pokemon list
+	public void addHabsForEachPokemon(String fileName) {
+		FileReader fileReader = null;
+	    BufferedReader bufferedReader = null;
+	    
+	    try {
+			fileReader = new FileReader(fileName);
+			bufferedReader = new BufferedReader(fileReader);
+			// Skips first line
+			bufferedReader.readLine();
+			String ligne;
+			
+			while ((ligne = bufferedReader.readLine()) != null) {
+				Optional<Pokemon> pkOpt;
+				Pokemon pkFinal = new Pokemon(0,"",0,0,0,0,0,0);
+				String[] habs = ligne.split(",");
+				
+				// Gets the curent pokemon of the line form the pokemon list
+				pkOpt = this.pokemons.stream().filter(pk -> pk.getIdPokemon() == Integer.parseInt(habs[0])).findFirst();
+				if(pkOpt.isPresent()) { 
+					pkFinal = pkOpt.get();
+				}
+				
+				// Gest first hability (all Pokemon have already one hability)
+				if(!habs[8].isEmpty()) {
+					for(Habilidad h : this.habilidades) {
+						if(h.getIdHab() == Integer.parseInt(habs[8])) {
+							pkFinal.addNormalHab(h);
+						}
+					}
+				}
+				// Gets other hablities (if a Pokemon has more)
+				if(habs.length > 9) {
+					// Gets second hability
+					if(!habs[9].isEmpty()) {
+						for(Habilidad h : this.habilidades) {
+							if(h.getIdHab() == Integer.parseInt(habs[9])) {
+								pkFinal.addNormalHab(h);
+							}
+						}
+					}
+					// Gets oculted hability
+					if(!habs[10].isEmpty()) {
+						for(Habilidad h : this.habilidades) {
+							if(h.getIdHab() == Integer.parseInt(habs[10])) {
+								pkFinal.addOcultedHab(h);
+							}
+						}
+					}
+					// Gets second oculted hability (if a Pokemon has more)
+					if(habs.length == 12) {
+						if(!habs[11].isEmpty()) {
+							for(Habilidad h : this.habilidades) {
+								if(h.getIdHab() == Integer.parseInt(habs[11])) {
+									pkFinal.addOcultedHab(h);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	    catch (IOException e) {
+			System.out.println("Exception � la lecture du fichier : " + e.getMessage());
+		}
+	    finally {
+			try {
+				if (fileReader != null) {
+					fileReader.close();
+				}
+				if (bufferedReader != null) {
+					bufferedReader.close();
+				}
+			} catch (IOException e) {
+				System.out.println("Exception survenue � la fermeture du fichier : " + e.getMessage());
+			}
+		}
+	}
+	
+	// DEBUT DU JEU
 	public void lancerCombat() {
 		// Instantiate all Pokemon (if CSV not already created)
 		//scrappingWebPokemon();
@@ -488,10 +609,13 @@ public class Game {
 		readPokemon("data/pokemonList.csv");
 		readHabilities("data/habsList.csv");
 		
-		// Adds the habilities for diferent Pokemon
-		scrappingWebReadHabsFromPokemonAllTables();
+		// Adds the habilities for diferent Pokemon (on the general list)
+//		scrappingWebReadHabsFromPokemonAllTables();
 		
-		// Append habilities to pokemonList.csv
-		AppendHabilities();
+		// Append habilities to pokemonList.csv (pkemonList2.csv)
+//		AppendHabilities();
+		
+		// Adds habilities to pokemon (on the pokemon)
+		addHabsForEachPokemon("data/pokemonList2.csv");
 	}
 }
