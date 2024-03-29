@@ -13,6 +13,7 @@ public class Pokemon {
 	private int defEsp;
 	private ArrayList<Habilidad> normalHabs;
 	private ArrayList<Habilidad> ocultedHabs;
+	private ArrayList<PokemonType> types;
 	
 	public Pokemon(int idPokemon, String nombrePokemon, int ps, int ata, int def, int vel, int atEsp, int defEsp) {
 		this.idPokemon = idPokemon;
@@ -23,8 +24,9 @@ public class Pokemon {
 		this.vel = vel;
 		this.atEsp = atEsp;
 		this.defEsp = defEsp;
-		normalHabs = new ArrayList<>();
-		ocultedHabs = new ArrayList<>();
+		this.normalHabs = new ArrayList<>();
+		this.ocultedHabs = new ArrayList<>();
+		this.types = new ArrayList<>();
 	}
 
 	public int getIdPokemon() {
@@ -107,6 +109,14 @@ public class Pokemon {
 		this.ocultedHabs = ocultedHabs;
 	}
 	
+	public ArrayList<PokemonType> getTypes() {
+		return types;
+	}
+
+	public void setTypes(ArrayList<PokemonType> types) {
+		this.types = types;
+	}
+
 	public void addNormalHab(Habilidad nHab) {
 		this.normalHabs.add(nHab);
 	}
@@ -114,5 +124,10 @@ public class Pokemon {
 	public void addOcultedHab(Habilidad oHab) {
 		this.ocultedHabs.add(oHab);
 	}
+	
+	public void addType(PokemonType pt) {
+		this.types.add(pt);
+	}
+	
 	
 }
