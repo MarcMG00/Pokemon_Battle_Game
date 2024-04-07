@@ -14,6 +14,9 @@ public class Pokemon {
 	private ArrayList<Habilidad> normalHabs;
 	private ArrayList<Habilidad> ocultedHabs;
 	private ArrayList<PokemonType> types;
+	private ArrayList<Ataque> ataFisicos;
+	private ArrayList<Ataque> ataEspeciales;
+	private ArrayList<Ataque> ataEstado;
 	
 	public Pokemon(int idPokemon, String nombrePokemon, int ps, int ata, int def, int vel, int atEsp, int defEsp) {
 		this.idPokemon = idPokemon;
@@ -27,6 +30,9 @@ public class Pokemon {
 		this.normalHabs = new ArrayList<>();
 		this.ocultedHabs = new ArrayList<>();
 		this.types = new ArrayList<>();
+		this.ataFisicos = new ArrayList<>();
+		this.ataEspeciales = new ArrayList<>();
+		this.ataEstado = new ArrayList<>();
 	}
 
 	public int getIdPokemon() {
@@ -116,6 +122,30 @@ public class Pokemon {
 	public void setTypes(ArrayList<PokemonType> types) {
 		this.types = types;
 	}
+	
+	public ArrayList<Ataque> getAtaFisicos() {
+		return ataFisicos;
+	}
+
+	public void setAtaFisicos(ArrayList<Ataque> ataFisicos) {
+		this.ataFisicos = ataFisicos;
+	}
+
+	public ArrayList<Ataque> getAtaEspeciales() {
+		return ataEspeciales;
+	}
+
+	public void setAtaEspeciales(ArrayList<Ataque> ataEspeciales) {
+		this.ataEspeciales = ataEspeciales;
+	}
+
+	public ArrayList<Ataque> getAtaEstado() {
+		return ataEstado;
+	}
+
+	public void setAtaEstado(ArrayList<Ataque> ataEstado) {
+		this.ataEstado = ataEstado;
+	}
 
 	public void addNormalHab(Habilidad nHab) {
 		this.normalHabs.add(nHab);
@@ -129,5 +159,15 @@ public class Pokemon {
 		this.types.add(pt);
 	}
 	
+	public void addAtaFisicos(Ataque ataF) {
+		this.ataFisicos.add(ataF);
+	}
 	
+	public void addAtaEspeciales(Ataque ataE) {
+		this.ataEspeciales.add(ataE);
+	}
+	
+	public void addAtaEstado(Ataque ataO) {
+		this.ataEstado.add(ataO);
+	}
 }
