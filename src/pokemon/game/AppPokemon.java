@@ -7,7 +7,8 @@ public class AppPokemon {
 	public static void main(String[] args) {
 		
 		Game pokemonGame = new Game();
-		pokemonGame.lancerCombat();
+		pokemonGame.InitiateVars();
+		pokemonGame.PokemonChoice();
 
 	}
 }

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.text.Normalizer;
 
@@ -33,23 +34,30 @@ public class Game {
 	private static final String SAMPLE_CSV_ALL_ATTACS_FOREACH_POKEMON = "./data/attacsForeachPokemon.txt";
 	
 	private ArrayList<Pokemon> pokemons;
-	private HashMap<String, ArrayList<PokemonType>> typePorPokemon;
+	private HashMap<String, ArrayList<PokemonType>> tipoPkPorPokemon;
 	private ArrayList<Habilidad> habilidades;
 	private HashMap<String, HashMap<String, ArrayList<Habilidad>>> habilidadPorPokemon;
 	private ArrayList<PokemonType> types;
 	private HashMap<String, HashMap<String, ArrayList<PokemonType>>> efectoPorTipos;
 	private ArrayList<Ataque> ataques;
 	private HashMap<Integer, HashMap<String, ArrayList<Integer>>> ataquesPorPokemon;
+	private HashMap<String, ArrayList<Pokemon>> pokemonsPorTipo;
+	
+	private Player player;
+	private IAPlayer IA;
 	
 	public Game() {
 		this.pokemons = new ArrayList<>();
-		this.typePorPokemon = new HashMap<>();
+		this.tipoPkPorPokemon = new HashMap<>();
 		this.habilidades = new ArrayList<>();
 		this.habilidadPorPokemon = new HashMap<>();
 		this.types = new ArrayList<>();
 		this.efectoPorTipos = new HashMap<>();
 		this.ataques = new ArrayList<>();
 		this.ataquesPorPokemon = new HashMap<>();
+		this.player = new Player();
+		this.IA = new IAPlayer();
+		this.pokemonsPorTipo = new HashMap<>();
 	}
 	
 	public ArrayList<Pokemon> getPokemons() {
@@ -76,12 +84,12 @@ public class Game {
 		this.habilidadPorPokemon = habilidadPorPokemon;
 	}
 
-	public HashMap<String, ArrayList<PokemonType>> getTypePorPokemon() {
-		return typePorPokemon;
+	public HashMap<String, ArrayList<PokemonType>> getTipoPkPorPokemon() {
+		return tipoPkPorPokemon;
 	}
 
-	public void setTypePorPokemon(HashMap<String, ArrayList<PokemonType>> typePorPokemon) {
-		this.typePorPokemon = typePorPokemon;
+	public void setTipoPkPorPokemon(HashMap<String, ArrayList<PokemonType>> typePorPokemon) {
+		this.tipoPkPorPokemon = typePorPokemon;
 	}
 
 	public ArrayList<PokemonType> getTypes() {
@@ -114,6 +122,30 @@ public class Game {
 
 	public void setAtaquesPorPokemon(HashMap<Integer, HashMap<String, ArrayList<Integer>>> ataquesPorPokemon) {
 		this.ataquesPorPokemon = ataquesPorPokemon;
+	}
+	
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
+	public Player getIA() {
+		return IA;
+	}
+
+	public void setIA(IAPlayer iA) {
+		IA = iA;
+	}
+	
+	public HashMap<String, ArrayList<Pokemon>> getPokemonsPorTipo() {
+		return pokemonsPorTipo;
+	}
+
+	public void setPokemonsPorTipo(HashMap<String, ArrayList<Pokemon>> pokemonsPorTipo) {
+		this.pokemonsPorTipo = pokemonsPorTipo;
 	}
 
 	// ==================================== SCRAPPING WEB ====================================
@@ -242,11 +274,11 @@ public class Game {
 						// We don't want the mega evolutions (they have the same number as the last evolution of the Pokemon)
 						if(!this.habilidadPorPokemon.containsKey(tPk.select("td").get(0).text())) {
 							// Hash Map to put al the habilities for each Pokemon
-							HashMap <String, ArrayList<Habilidad>> habs = new HashMap <String, ArrayList <Habilidad>>();
+							HashMap <String, ArrayList<Habilidad>> habs = new HashMap <>();
 							// List of normal habilities for each pokemon
-							ArrayList<Habilidad> pokemonHabs = new ArrayList<Habilidad>();
+							ArrayList<Habilidad> pokemonHabs = new ArrayList<>();
 							// List of oculted habilities for each pokemon
-							ArrayList<Habilidad> pokemonHabsOcultas = new ArrayList<Habilidad>();
+							ArrayList<Habilidad> pokemonHabsOcultas = new ArrayList<>();
 							// First hability
 							Optional<Habilidad> h;
 							// Second hability
@@ -398,7 +430,7 @@ public class Game {
 				for(Element tPk : elementObjTr) {
 					// We don't take the first <tr> line (represents the name of the columns)
 					if(!tPk.firstElementChild().text().equals("Nº")) {
-						if(!this.typePorPokemon.containsKey(tPk.select("td").get(0).text())) {
+						if(!this.tipoPkPorPokemon.containsKey(tPk.select("td").get(0).text())) {
 							ArrayList<PokemonType> pokemonTypes = new ArrayList<>();
 							Optional<PokemonType> optPkT1;
 							Optional<PokemonType> optPkT2;
@@ -442,8 +474,8 @@ public class Game {
 							}
 								
 							// We put the dico in our principal var
-							if(!this.typePorPokemon.containsKey(tPk.select("td").get(0).text())) {
-								this.typePorPokemon.put(tPk.select("td").get(0).text(), pokemonTypes);
+							if(!this.tipoPkPorPokemon.containsKey(tPk.select("td").get(0).text())) {
+								this.tipoPkPorPokemon.put(tPk.select("td").get(0).text(), pokemonTypes);
 							}
 						}
 					}
@@ -453,7 +485,7 @@ public class Game {
 		catch(IOException e) {
 			e.printStackTrace();
 		}
-		return this.typePorPokemon;
+		return this.tipoPkPorPokemon;
 	}
 	
 	// Gets all the attacs
@@ -748,7 +780,7 @@ public class Game {
 			// We read each line of pokemonList.csv and put it to pokemonList2.csv
 			while ((ligne = br.readLine()) != null) {
 				String[] pks = ligne.split(",");
-				for(Map.Entry<String,ArrayList<PokemonType>> entry : typePorPokemon.entrySet()) {
+				for(Map.Entry<String,ArrayList<PokemonType>> entry : tipoPkPorPokemon.entrySet()) {
 					if(pks[0].equals(entry.getKey())) {
 						// If there is only one dico (one hability)
 						if(entry.getValue().size() == 1) {
@@ -1216,12 +1248,11 @@ public class Game {
 						}
 					}
 					tps.put("No tiene efecto", tpsEfc);
-					tpsEfc = new ArrayList<>();
 				}
 				
 				// We put the dico in our principal var
-				if(!this.efectoPorTipos.containsKey(ty[0])) {
-					this.efectoPorTipos.put(ty[0], tps);
+				if(!this.efectoPorTipos.containsKey(ty[1])) {
+					this.efectoPorTipos.put(ty[1], tps);
 				}
 				
 			}
@@ -1373,9 +1404,150 @@ public class Game {
 		}
 	}
 	
+	// ==================================== GAME METHODS ====================================
+	
+	public void printPokemon() {
+		for(Pokemon pk : this.pokemons) {
+			System.out.println(pk.getIdPokemon() + " - " + pk.getNombrePokemon());
+		}
+	}
+	
+	public void classPkPerType() {
+		ArrayList<Pokemon> aceroType = new ArrayList<>();
+		ArrayList<Pokemon> aguaType = new ArrayList<>();
+		ArrayList<Pokemon> fuegoType = new ArrayList<>();
+		ArrayList<Pokemon> bichoType = new ArrayList<>();
+		ArrayList<Pokemon> dragonType = new ArrayList<>();
+		ArrayList<Pokemon> electricoType = new ArrayList<>();
+		ArrayList<Pokemon> fantasmaType = new ArrayList<>();
+		ArrayList<Pokemon> hadaType = new ArrayList<>();
+		ArrayList<Pokemon> hieloType = new ArrayList<>();
+		ArrayList<Pokemon> luchaType = new ArrayList<>();
+		ArrayList<Pokemon> normalType = new ArrayList<>();
+		ArrayList<Pokemon> plantaType = new ArrayList<>();
+		ArrayList<Pokemon> psiquicoType = new ArrayList<>();
+		ArrayList<Pokemon> rocaType = new ArrayList<>();
+		ArrayList<Pokemon> siniestroType = new ArrayList<>();
+		ArrayList<Pokemon> tierraType = new ArrayList<>();
+		ArrayList<Pokemon> venenoType = new ArrayList<>();
+		ArrayList<Pokemon> voladorType = new ArrayList<>();
+		
+		Optional<PokemonType> pkTOpt;
+		
+		for(Pokemon pk : this.pokemons) {
+			for(PokemonType pt : pk.getTypes()) {
+				pkTOpt = this.types.stream().filter(t -> t.getIdPkTipo() == pt.getIdPkTipo()).findFirst();
+				if(pkTOpt.isPresent()) {
+					switch(pkTOpt.get().getIdPkTipo()) {
+						case 1:
+							aceroType.add(pk);
+							break;
+						case 2:
+							aguaType.add(pk);
+							break;
+						case 3:
+							bichoType.add(pk);
+							break;
+						case 4:
+							dragonType.add(pk);
+							break;
+						case 5:
+							electricoType.add(pk);
+							break;
+						case 6:
+							fantasmaType.add(pk);
+							break;
+						case 7:
+							fuegoType.add(pk);
+							break;
+						case 8:
+							hadaType.add(pk);
+							break;
+						case 9:
+							hieloType.add(pk);
+							break;
+						case 10:
+							luchaType.add(pk);
+							break;
+						case 11:
+							normalType.add(pk);
+							break;
+						case 12:
+							plantaType.add(pk);
+							break;
+						case 13:
+							psiquicoType.add(pk);
+							break;
+						case 14:
+							rocaType.add(pk);
+							break;
+						case 15:
+							siniestroType.add(pk);
+							break;
+						case 16:
+							tierraType.add(pk);
+							break;
+						case 17:
+							venenoType.add(pk);
+							break;
+						case 18:
+							voladorType.add(pk);
+							break;
+					}
+				}
+			}
+		}
+		
+		this.pokemonsPorTipo.put("ACERO", aceroType);
+		this.pokemonsPorTipo.put("AGUA", aguaType);
+		this.pokemonsPorTipo.put("BICHO", bichoType);
+		this.pokemonsPorTipo.put("DRAGON", dragonType);
+		this.pokemonsPorTipo.put("ELECTRICO", electricoType);
+		this.pokemonsPorTipo.put("FANTASMA", fantasmaType);
+		this.pokemonsPorTipo.put("FUEGO", fuegoType);
+		this.pokemonsPorTipo.put("HADA", hadaType);
+		this.pokemonsPorTipo.put("HIELO", hieloType);
+		this.pokemonsPorTipo.put("LUCHA", luchaType);
+		this.pokemonsPorTipo.put("NORMAL", normalType);
+		this.pokemonsPorTipo.put("PLANTA", plantaType);
+		this.pokemonsPorTipo.put("PSIQUICO", psiquicoType);
+		this.pokemonsPorTipo.put("ROCA", rocaType);
+		this.pokemonsPorTipo.put("SINIESTRO", siniestroType);
+		this.pokemonsPorTipo.put("TIERRA", tierraType);
+		this.pokemonsPorTipo.put("VENENO", venenoType);
+		this.pokemonsPorTipo.put("VOLADOR", voladorType);
+	}
+	
+	public String checkRegexToChoicePokemon() {
+		String strRegex = "\\b([0-9]";
+		
+		for(int i = 1; i <= 9; i++) {
+			strRegex += "|" + i + "[0-9]";
+		}
+		
+		for(int i = 10; i <= 70; i++) {
+			strRegex += "|" + i + "[0-9]";
+		}
+		strRegex += "|800|801|802|803|804|805|806|807)\\b,";
+		
+		strRegex = repeat(6, strRegex);
+		
+		strRegex = StringUtils.chop(strRegex);
+		
+		return strRegex;
+	}
+	
+	public static String repeat(int count, String with) {
+	    return new String(new char[count]).replace("\0", with);
+	}
+
+	public static String repeat(int count) {
+	    return repeat(count, " ");
+	}
+	
 	// ==================================== GAME ====================================
 
-	public void lancerCombat() {
+	public void InitiateVars() {
 		// Instantiate all Pokemon (if CSV not already created)
 		//scrappingWebPokemon();
 		
@@ -1431,6 +1603,71 @@ public class Game {
 		
 		// Adds the attacs foreach Pokemon
 		readAttacsForeachPokemon();
+		
+	}
+	
+	@SuppressWarnings("resource")
+	public void PokemonChoice() {
+		printPokemon();
+		System.out.println();
+		System.out.println("Escoge 6 Pokemon para el combate (todos están al nivel 100, con sus estadísticas a nivel máximo),\n"
+				+ "Puedes escoger el mismo Pokemon 6 veces seguidas.\n"
+				+ "Los ataques de cada Pokemon serán iniciados una vez escojas los Pokemon. Lo que quiere decir que cada Pokemon idéntico, puede tener ataques diferentes\n"
+				+ "Solo puedes escoger Pokemon entre el 1 y el 807. \n"
+				+ "Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número");
+		
+		System.out.println("Escoge los Pokemon :");
+		
+		Scanner sc = new Scanner(System.in);
+		String allPkPlayer = sc.next();
+		sc.useDelimiter(";|\r?\n|\r");
+		
+//		if(!allPkPlayer.matches("\\d+,\\d+,\\d+,\\d+,\\d+,\\d+")) {
+//			while(!allPkPlayer.matches("\\d+,\\d+,\\d+,\\d+,\\d+,\\d+")) {
+//				System.out.println("Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número");
+//				allPkPlayer = sc.next();
+//				sc.useDelimiter(";|\r?\n|\r");
+//				System.out.println(allPkPlayer.split(","));
+//			}
+//		}
+		
+		String s = checkRegexToChoicePokemon();
+		
+		if(!allPkPlayer.matches(s)) {
+			while(!allPkPlayer.matches(s)) {
+				System.out.println("Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número y los números deben estar entre 0 y 807");
+				allPkPlayer = sc.next();
+				sc.useDelimiter(";|\r?\n|\r");
+				System.out.println(allPkPlayer.split(","));
+			}
+		}
+
+		String[] pkByPkPlayer = allPkPlayer.split(",");
+		for(String PkID : pkByPkPlayer) {
+			Optional<Pokemon> pkOpt;
+			pkOpt = this.pokemons.stream().filter(pk -> pk.getIdPokemon() == Integer.parseInt(PkID)).findFirst();
+			if(pkOpt.isPresent()) { 
+				player.addPokemon(pkOpt.get());
+			}
+		}
+		
+//		for(Pokemon pkPlayer : player.getPokemons()) {
+//			System.out.println(pkPlayer.getNombrePokemon());
+//		}
+		
+		classPkPerType();
+		
+//		for(Map.Entry<String, ArrayList<Pokemon>> ef : this.pokemonsPorTipo.entrySet()) {
+//			System.out.println(ef.getKey());
+//			for(Pokemon p : ef.getValue()) {
+//				System.out.println(p.getNombrePokemon());
+//			}
+//			System.out.println();
+//		}
+		
+		this.IA.IAChoicePokemon(player.getPokemons(), this.pokemonsPorTipo, efectoPorTipos);
+		
+
 		
 	}
 }
