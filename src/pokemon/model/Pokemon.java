@@ -17,6 +17,8 @@ public class Pokemon {
 	private ArrayList<Ataque> ataFisicos;
 	private ArrayList<Ataque> ataEspeciales;
 	private ArrayList<Ataque> ataEstado;
+	private ArrayList<Ataque> cuatroAtaques;
+	
 	
 	public Pokemon(int idPokemon, String nombrePokemon, int ps, int ata, int def, int vel, int atEsp, int defEsp) {
 		this.idPokemon = idPokemon;
@@ -33,6 +35,7 @@ public class Pokemon {
 		this.ataFisicos = new ArrayList<>();
 		this.ataEspeciales = new ArrayList<>();
 		this.ataEstado = new ArrayList<>();
+		this.cuatroAtaques = new ArrayList<>();
 	}
 
 	public int getIdPokemon() {
@@ -147,27 +150,47 @@ public class Pokemon {
 		this.ataEstado = ataEstado;
 	}
 
+	public ArrayList<Ataque> getCuatroAtaques() {
+		return cuatroAtaques;
+	}
+
+	public void setCuatroAtaques(ArrayList<Ataque> cuatroAtaques) {
+		this.cuatroAtaques = cuatroAtaques;
+	}
+
+	// Adds habs to a Pokemon
 	public void addNormalHab(Habilidad nHab) {
 		this.normalHabs.add(nHab);
 	}
 	
+	// Adds oculted habs to a Pokemon
 	public void addOcultedHab(Habilidad oHab) {
 		this.ocultedHabs.add(oHab);
 	}
 	
+	// Adds types to a Pokemon
 	public void addType(PokemonType pt) {
 		this.types.add(pt);
 	}
 	
+	// Adds fisic attacs to a Pokemon
 	public void addAtaFisicos(Ataque ataF) {
 		this.ataFisicos.add(ataF);
 	}
 	
+	// Adds special attacs to a Pokemon
 	public void addAtaEspeciales(Ataque ataE) {
 		this.ataEspeciales.add(ataE);
 	}
 	
+	// Adds other attacs to a Pokemon
 	public void addAtaEstado(Ataque ataO) {
 		this.ataEstado.add(ataO);
 	}
+
+	// Adds the four final attacs to a Pokemon
+	public void addAtaques(Ataque ata) {
+		this.cuatroAtaques.add(ata);
+	}
+	
 }

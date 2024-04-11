@@ -1,10 +1,8 @@
 package pokemon.model;
 
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -25,6 +23,7 @@ public class IAPlayer extends Player {
 			if (pkPlayer.getTypes().size() == 2) {
 				randomNumberToGetPKTypefor2Types = (int) ((Math.random() * (pkPlayer.getTypes().size())));
 			} else {
+				// If there is only one type, takes first element
 				randomNumberToGetPKTypefor2Types = 0;
 			}
 
@@ -36,13 +35,6 @@ public class IAPlayer extends Player {
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 			for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> ef : efectoPorTiposFiltered.entrySet()) {
-
-				System.out.println(ef.getKey() + " le rebientan :");
-				// Gets the Pokemon types that "Le rebientan"
-				for (PokemonType entryV : ef.getValue().get("Le rebientan")) {
-					System.out.println(entryV.getIdPkTipo() + " - " + entryV.getNombreTipo());
-				}
-				System.out.println();
 
 				// Pick a random type from the types of "Le rebientan"
 				Random rand = new Random();
@@ -56,17 +48,17 @@ public class IAPlayer extends Player {
 				// Gets a random Pokemon from the list of pokemonsPorTipoFiltered
 				Pokemon pkRandom = pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase())
 						.get(rand.nextInt(pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase()).size()));
+				
 				// Adds the pokemon to th elist of IA
-				this.addPokemon(pkRandom);
-
-			}
-		}
-
-		// Prints the pokemons from the IA
-		for (Pokemon p : this.getPokemons()) {
-			System.out.println(p.getNombrePokemon() + " with types:");
-			for (PokemonType pt : p.getTypes()) {
-				System.out.println(pt.getIdPkTipo() + " - " + pt.getNombreTipo());
+				if(this.getPokemons().contains(pkRandom)) {
+					while(this.getPokemons().contains(pkRandom)) {
+						pkRandom = pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase())
+								.get(rand.nextInt(pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase()).size()));
+					}
+				}
+				else {
+					this.addPokemon(pkRandom);
+				}
 			}
 		}
 	}

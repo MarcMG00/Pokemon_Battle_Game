@@ -1406,12 +1406,14 @@ public class Game {
 	
 	// ==================================== GAME METHODS ====================================
 	
+	// Prints all the Pokemon
 	public void printPokemon() {
 		for(Pokemon pk : this.pokemons) {
 			System.out.println(pk.getIdPokemon() + " - " + pk.getNombrePokemon());
 		}
 	}
 	
+	// Order Pokemon by type
 	public void classPkPerType() {
 		ArrayList<Pokemon> aceroType = new ArrayList<>();
 		ArrayList<Pokemon> aguaType = new ArrayList<>();
@@ -1435,6 +1437,7 @@ public class Game {
 		Optional<PokemonType> pkTOpt;
 		
 		for(Pokemon pk : this.pokemons) {
+			// If 2 types, puts the Pokemon in the two diferent types
 			for(PokemonType pt : pk.getTypes()) {
 				pkTOpt = this.types.stream().filter(t -> t.getIdPkTipo() == pt.getIdPkTipo()).findFirst();
 				if(pkTOpt.isPresent()) {
@@ -1518,10 +1521,13 @@ public class Game {
 		this.pokemonsPorTipo.put("VOLADOR", voladorType);
 	}
 	
+	// Regex to match Pokemon player choices
 	public String checkRegexToChoicePokemon() {
-		String strRegex = "\\b([0-9]";
+		// Player can choice with format : d,d,d,d,d,d, but numbers are between 1 and 807
+		String strRegex = "\\b([1-9]";
 		
 		for(int i = 1; i <= 9; i++) {
+			// The "|" represents OR
 			strRegex += "|" + i + "[0-9]";
 		}
 		
@@ -1530,12 +1536,15 @@ public class Game {
 		}
 		strRegex += "|800|801|802|803|804|805|806|807)\\b,";
 		
+		// Repeat regex 6 times cause 6 Pokemon
 		strRegex = repeat(6, strRegex);
 		
+		// Remove last ","
 		strRegex = StringUtils.chop(strRegex);
 		
 		return strRegex;
 	}
+	
 	
 	public static String repeat(int count, String with) {
 	    return new String(new char[count]).replace("\0", with);
@@ -1604,6 +1613,8 @@ public class Game {
 		// Adds the attacs foreach Pokemon
 		readAttacsForeachPokemon();
 		
+		// Order Pokemon by type
+		classPkPerType();
 	}
 	
 	@SuppressWarnings("resource")
@@ -1614,6 +1625,7 @@ public class Game {
 				+ "Puedes escoger el mismo Pokemon 6 veces seguidas.\n"
 				+ "Los ataques de cada Pokemon serán iniciados una vez escojas los Pokemon. Lo que quiere decir que cada Pokemon idéntico, puede tener ataques diferentes\n"
 				+ "Solo puedes escoger Pokemon entre el 1 y el 807. \n"
+				+ "El orden que escojas, determinará el orden de pasage de tus Pokemon (a no ser que los canvies durante el combate) \n"
 				+ "Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número");
 		
 		System.out.println("Escoge los Pokemon :");
@@ -1622,20 +1634,11 @@ public class Game {
 		String allPkPlayer = sc.next();
 		sc.useDelimiter(";|\r?\n|\r");
 		
-//		if(!allPkPlayer.matches("\\d+,\\d+,\\d+,\\d+,\\d+,\\d+")) {
-//			while(!allPkPlayer.matches("\\d+,\\d+,\\d+,\\d+,\\d+,\\d+")) {
-//				System.out.println("Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número");
-//				allPkPlayer = sc.next();
-//				sc.useDelimiter(";|\r?\n|\r");
-//				System.out.println(allPkPlayer.split(","));
-//			}
-//		}
+		String matchFormatChoice = checkRegexToChoicePokemon();
 		
-		String s = checkRegexToChoicePokemon();
-		
-		if(!allPkPlayer.matches(s)) {
-			while(!allPkPlayer.matches(s)) {
-				System.out.println("Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número y los números deben estar entre 0 y 807");
+		if(!allPkPlayer.matches(matchFormatChoice)) {
+			while(!allPkPlayer.matches(matchFormatChoice)) {
+				System.out.println("Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número y los números deben estar entre 1 y 807");
 				allPkPlayer = sc.next();
 				sc.useDelimiter(";|\r?\n|\r");
 				System.out.println(allPkPlayer.split(","));
@@ -1651,23 +1654,9 @@ public class Game {
 			}
 		}
 		
-//		for(Pokemon pkPlayer : player.getPokemons()) {
-//			System.out.println(pkPlayer.getNombrePokemon());
-//		}
+		IA.IAChoicePokemon(player.getPokemons(), this.pokemonsPorTipo, efectoPorTipos);
 		
-		classPkPerType();
-		
-//		for(Map.Entry<String, ArrayList<Pokemon>> ef : this.pokemonsPorTipo.entrySet()) {
-//			System.out.println(ef.getKey());
-//			for(Pokemon p : ef.getValue()) {
-//				System.out.println(p.getNombrePokemon());
-//			}
-//			System.out.println();
-//		}
-		
-		this.IA.IAChoicePokemon(player.getPokemons(), this.pokemonsPorTipo, efectoPorTipos);
-		
-
-		
+		player.addAtacsForEackPokemon();
+		IA.addAtacsForEackPokemon();
 	}
 }
