@@ -7,6 +7,15 @@ public class PokemonType {
 	private float xdanoDebil;
 	private float xdanoMayor;
 	
+	public PokemonType() {
+		super();
+		this.idPkTipo = 0;
+		this.nombreTipo = "";
+		this.xdanoMenor = 0f;
+		this.xdanoMayor = 2f;
+		this.xdanoDebil = 1.5f;
+	}
+	
 	public PokemonType(int idPkTipo, String nombreTipo) {
 		super();
 		this.idPkTipo = idPkTipo;

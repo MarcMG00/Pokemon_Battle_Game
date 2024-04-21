@@ -18,7 +18,34 @@ public class Pokemon {
 	private ArrayList<Ataque> ataEspeciales;
 	private ArrayList<Ataque> ataEstado;
 	private ArrayList<Ataque> cuatroAtaques;
+	private Ataque nextMouvement;
+	private ArrayList<Ataque> ataquesRebientan;
+	private ArrayList<Ataque> ataquesNormales;
+	private ArrayList<Ataque> ataquesDebiles;
+	private ArrayList<Ataque> ataquesNoAfectan;
 	
+	public Pokemon() {
+		this.idPokemon = 0;
+		this.nombrePokemon = "";
+		this.ps = 0;
+		this.ata = 0;
+		this.def = 0;
+		this.vel = 0;
+		this.atEsp = 0;
+		this.defEsp = 0;
+		this.normalHabs = new ArrayList<>();
+		this.ocultedHabs = new ArrayList<>();
+		this.types = new ArrayList<>();
+		this.ataFisicos = new ArrayList<>();
+		this.ataEspeciales = new ArrayList<>();
+		this.ataEstado = new ArrayList<>();
+		this.cuatroAtaques = new ArrayList<>();
+		this.nextMouvement = new Ataque();
+		this.ataquesRebientan = new ArrayList<>();
+		this.ataquesNormales = new ArrayList<>();
+		this.ataquesDebiles = new ArrayList<>();
+		this.ataquesNoAfectan = new ArrayList<>();
+	}
 	
 	public Pokemon(int idPokemon, String nombrePokemon, int ps, int ata, int def, int vel, int atEsp, int defEsp) {
 		this.idPokemon = idPokemon;
@@ -36,6 +63,11 @@ public class Pokemon {
 		this.ataEspeciales = new ArrayList<>();
 		this.ataEstado = new ArrayList<>();
 		this.cuatroAtaques = new ArrayList<>();
+		this.nextMouvement = new Ataque();
+		this.ataquesRebientan = new ArrayList<>();
+		this.ataquesNormales = new ArrayList<>();
+		this.ataquesDebiles = new ArrayList<>();
+		this.ataquesNoAfectan = new ArrayList<>();
 	}
 
 	public int getIdPokemon() {
@@ -156,6 +188,46 @@ public class Pokemon {
 
 	public void setCuatroAtaques(ArrayList<Ataque> cuatroAtaques) {
 		this.cuatroAtaques = cuatroAtaques;
+	}
+
+	public Ataque getNextMouvement() {
+		return nextMouvement;
+	}
+
+	public void setNextMouvement(Ataque nextMouvement) {
+		this.nextMouvement = nextMouvement;
+	}
+
+	public ArrayList<Ataque> getAtaquesRebientan() {
+		return ataquesRebientan;
+	}
+
+	public void setAtaquesRebientan(ArrayList<Ataque> ataquesRebientan) {
+		this.ataquesRebientan = ataquesRebientan;
+	}
+
+	public ArrayList<Ataque> getAtaquesNormales() {
+		return ataquesNormales;
+	}
+
+	public void setAtaquesNormales(ArrayList<Ataque> ataquesNormales) {
+		this.ataquesNormales = ataquesNormales;
+	}
+
+	public ArrayList<Ataque> getAtaquesDebiles() {
+		return ataquesDebiles;
+	}
+
+	public void setAtaquesDebiles(ArrayList<Ataque> ataquesDebiles) {
+		this.ataquesDebiles = ataquesDebiles;
+	}
+
+	public ArrayList<Ataque> getAtaquesNoAfectan() {
+		return ataquesNoAfectan;
+	}
+
+	public void setAtaquesNoAfectan(ArrayList<Ataque> ataquesNoAfectan) {
+		this.ataquesNoAfectan = ataquesNoAfectan;
 	}
 
 	// Adds habs to a Pokemon

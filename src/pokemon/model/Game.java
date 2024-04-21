@@ -823,7 +823,7 @@ public class Game {
 	        						   a.getPp(),
 	        						   a.getPrecision(),
 	        						   a.getEfecto(),
-	        						   a.getBase().size() > 1 ? a.getBase().get(0) + ";" + a.getBase().get(1) : a.getBase().get(0));
+	        						   a.getBases().size() > 1 ? a.getBases().get(0) + ";" + a.getBases().get(1) : a.getBases().get(0));
 	        }
 	        csvPrinter.flush();  
 		}
@@ -851,11 +851,11 @@ public class Game {
 						 String.valueOf(a.getPrecision()) + "," +
 						 a.getEfecto() + ",");
 				 
-				 if(a.getBase().size() > 1) {
-					 writer.append(String.valueOf(a.getBase().get(0) + ";" + a.getBase().get(1)));
+				 if(a.getBases().size() > 1) {
+					 writer.append(String.valueOf(a.getBases().get(0) + ";" + a.getBases().get(1)));
 				 }
 				 else {
-					 writer.append(String.valueOf(a.getBase().get(0)));
+					 writer.append(String.valueOf(a.getBases().get(0)));
 				 }
 				 writer.newLine();
 			 }
@@ -924,6 +924,29 @@ public class Game {
 				}
 				else {
 					Pokemon pika = new Pokemon(Integer.parseInt(pks[0]), pks[1], Integer.parseInt(pks[2]), Integer.parseInt(pks[3]), Integer.parseInt(pks[4]), Integer.parseInt(pks[5]), Integer.parseInt(pks[6]), Integer.parseInt(pks[7]));
+
+					// Gets first hability (all Pokemon have at least one hability)
+					if(!pks[12].isEmpty()) {
+						for(PokemonType pt : this.types) {
+							if(pt.getIdPkTipo() == Integer.parseInt(pks[12])) {
+								pika.addType(pt);
+							}
+						}
+					}
+					// Gets the other type (if a Pokemon has 2 types)
+					if(pks.length == 14) {
+						// It detects a " " " at the end of the second type, so we remove it : we have 17" instead of 17
+//						pks[13] = pks[13].substring(0, pks[13].length() - 1);
+						// Gets second type
+						if(!pks[13].isEmpty()) {
+							for(PokemonType pt : this.types) {
+								if(pt.getIdPkTipo() == Integer.parseInt(pks[13])) {
+									pika.addType(pt);
+								}
+							}
+						}
+					}
+					
 					this.pokemons.add(pika);
 				}
 			}
@@ -1307,7 +1330,8 @@ public class Game {
 				else {
 					a.addBase(bs[0]);
 				}
-				
+				// Set the type of the attack to his Pokemon type instead of a string
+				a.transformStrTipoToPokemonType(this.types);
 				// Adds the attac to the general var
 				this.ataques.add(a);
 			}
@@ -1409,7 +1433,10 @@ public class Game {
 	// Prints all the Pokemon
 	public void printPokemon() {
 		for(Pokemon pk : this.pokemons) {
-			System.out.println(pk.getIdPokemon() + " - " + pk.getNombrePokemon());
+			System.out.println(pk.getIdPokemon() + " - " + pk.getNombrePokemon()+  " - " + pk.getTypes().size() +  " :");
+			pk.getTypes().forEach(tp -> {
+			    System.out.println(tp.getNombreTipo());
+			});
 		}
 	}
 	
@@ -1531,7 +1558,7 @@ public class Game {
 			strRegex += "|" + i + "[0-9]";
 		}
 		
-		for(int i = 10; i <= 70; i++) {
+		for(int i = 10; i <= 79; i++) {
 			strRegex += "|" + i + "[0-9]";
 		}
 		strRegex += "|800|801|802|803|804|805|806|807)\\b,";
@@ -1570,9 +1597,10 @@ public class Game {
 //		writeHabilitiesCSV(this.habilidades);
 		
 		// Initialise the diferent lists
-		readPokemon(SAMPLE_CSV_ALL_POKEMON);
-		readHabilities(SAMPLE_CSV_ALL_HABS);
 		readPkTypes(SAMPLE_CSV_ALL_TYPES);
+//		readPokemon(SAMPLE_CSV_ALL_POKEMON);
+		readPokemon(SAMPLE_CSV_ALL_POKEMON_TYPES);
+		readHabilities(SAMPLE_CSV_ALL_HABS);
 		readAttacs(SAMPLE_CSV_ALL_ATTACS);
 		
 		// Adds the habilities for diferent Pokemon (on the general list)
@@ -1594,7 +1622,9 @@ public class Game {
 //		AppendPokemonTypes();
 		
 		// Adds types to Pokemon (on the pokemon)
-		addTypesForEachPokemon(SAMPLE_CSV_ALL_POKEMON_TYPES);
+		//
+		//
+//		addTypesForEachPokemon(SAMPLE_CSV_ALL_POKEMON_TYPES);
 		
 		// All the attacs
 //		scrappingWebAttacs();
@@ -1621,30 +1651,35 @@ public class Game {
 	public void PokemonChoice() {
 		printPokemon();
 		System.out.println();
+		// Instructions/Description of the game
 		System.out.println("Escoge 6 Pokemon para el combate (todos están al nivel 100, con sus estadísticas a nivel máximo),\n"
-				+ "Puedes escoger el mismo Pokemon 6 veces seguidas.\n"
-				+ "Los ataques de cada Pokemon serán iniciados una vez escojas los Pokemon. Lo que quiere decir que cada Pokemon idéntico, puede tener ataques diferentes\n"
-				+ "Solo puedes escoger Pokemon entre el 1 y el 807. \n"
-				+ "El orden que escojas, determinará el orden de pasage de tus Pokemon (a no ser que los canvies durante el combate) \n"
-				+ "Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número");
+				+ "Puedes escoger el mismo Pokemon 6 veces seguidas. La máquina no podrá.\n"
+				+ "Los ataques de cada Pokemon serán iniciados aleatoriamente una vez escojas los Pokemon. Lo que quiere decir que cada Pokemon idéntico, puede tener ataques diferentes.\n"
+				+ "Solo puedes escoger Pokemon entre el 1 y el 807.\n"
+				+ "No importa el orden en que los escojas, solo determina el primer Pokemon que va a salir (el primero en escoger)\n"
+				+ "Ten en cuenta que por cada Pokemon que tú escojas, la máquina va a buscar el tipo que más le afecte a tu Pokemon\n"
+				+ "Teniendo en cuenta, que quizás a la máquina no le salgan ataques muy favorecidos, ni a ti tampoco jeje\n"
+				+ "Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número\n");
 		
-		System.out.println("Escoge los Pokemon :");
+		System.out.println("Escoge tus 6 Pokemon :");
 		
+		// Player choice
 		Scanner sc = new Scanner(System.in);
 		String allPkPlayer = sc.next();
 		sc.useDelimiter(";|\r?\n|\r");
 		
+		// Regex that match the Pokemon choices
 		String matchFormatChoice = checkRegexToChoicePokemon();
-		
 		if(!allPkPlayer.matches(matchFormatChoice)) {
 			while(!allPkPlayer.matches(matchFormatChoice)) {
-				System.out.println("Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número y los números deben estar entre 1 y 807");
+				System.out.println("Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número y los números deben estar entre el 1 y el 807");
 				allPkPlayer = sc.next();
 				sc.useDelimiter(";|\r?\n|\r");
 				System.out.println(allPkPlayer.split(","));
 			}
 		}
 
+		// Adds the Pokemon to player Pokemon list
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		for(String PkID : pkByPkPlayer) {
 			Optional<Pokemon> pkOpt;
@@ -1654,9 +1689,56 @@ public class Game {
 			}
 		}
 		
-		IA.IAChoicePokemon(player.getPokemons(), this.pokemonsPorTipo, efectoPorTipos);
+		// Machine choice Pokemon
+		IA.IAChoicePokemon(player.getPokemons(), this.pokemonsPorTipo, this.efectoPorTipos);
 		
+		// Add attacks to eah Pokemon list
 		player.addAtacsForEackPokemon();
 		IA.addAtacsForEackPokemon();
+		
+		// Sets first Pokemon choose for the combat
+		player.setPkCombatting(player.getPokemons().get(0));
+		IA.setPkCombatting(IA.getPokemons().get(0));
+		
+		player.setPkFacing(IA.getPkCombatting());
+		IA.setPkFacing(player.getPkCombatting());
+		
+		System.out.println("Player");
+		for(Pokemon p : player.getPokemons()) {
+			System.out.println(p.getNombrePokemon() + ":");
+			System.out.println();
+			for(PokemonType pt : p.getTypes()) {
+				System.out.println(pt.getNombreTipo());
+			}
+			for(Ataque a : p.getCuatroAtaques()) {
+				System.out.println(a.getNombreAta() + " - " + a.getStrTipoToPkType().getNombreTipo());
+			}
+			System.out.println();
+		}
+		System.out.println();
+		
+		System.out.println("IA");
+		for(Pokemon p : IA.getPokemons()) {
+			System.out.println(p.getNombrePokemon() + ":");
+			System.out.println();
+			for(PokemonType pt : p.getTypes()) {
+				System.out.println(pt.getNombreTipo());
+			}
+			for(Ataque a : p.getCuatroAtaques()) {
+				System.out.println(a.getNombreAta() + " - " + a.getStrTipoToPkType().getNombreTipo());
+			}
+			System.out.println();
+		}
+		
+		System.out.println("Tipo ataques primer Pk IA");
+		for(Ataque a : IA.getPkCombatting().getCuatroAtaques()) {
+			System.out.println(a.getStrTipoToPkType().getNombreTipo());
+		}
+		
+		IA.orderAttacksFromDammageLevelPokemonIA(player.getPkCombatting(), this.pokemonsPorTipo, this.efectoPorTipos);
+		IA.prepareBestAttack();
+
+		System.out.println("Next attack from machine :");
+		System.out.println(IA.getPkCombatting().getNextMouvement().getNombreAta() + " - " + IA.getPkCombatting().getNextMouvement().getStrTipoToPkType().getNombreTipo());
 	}
 }

@@ -11,6 +11,20 @@ public class Ataque {
 	private int pp;
 	private int precision;
 	private String efecto;
+	private PokemonType strTipoToPkType;
+	
+	public Ataque() {
+		super();
+		this.idAta = 0;
+		this.nombreAta = "";
+		this.tipo = "";
+		this.bases = new ArrayList<>();
+		this.poder = 0;
+		this.pp = 0;
+		this.precision = 0;
+		this.efecto = "";
+		this.strTipoToPkType = new PokemonType();
+	}
 	
 	public Ataque(int idAta, String nombreAta, String tipo, int poder, int pp, int precision, String efecto) {
 		super();
@@ -22,6 +36,7 @@ public class Ataque {
 		this.pp = pp;
 		this.precision = precision;
 		this.efecto = efecto;
+		this.strTipoToPkType = new PokemonType();
 	}
 	
 	public int getIdAta() {
@@ -42,10 +57,10 @@ public class Ataque {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-	public ArrayList<String> getBase() {
+	public ArrayList<String> getBases() {
 		return bases;
 	}
-	public void setBase(ArrayList<String> bases) {
+	public void setBases(ArrayList<String> bases) {
 		this.bases = bases;
 	}
 	public int getPoder() {
@@ -72,9 +87,20 @@ public class Ataque {
 	public void setEfecto(String efecto) {
 		this.efecto = efecto;
 	}
-	
+	public PokemonType getStrTipoToPkType() {
+		return strTipoToPkType;
+	}
+	public void setStrTipoToPkType(PokemonType strTipoToPkType) {
+		this.strTipoToPkType = strTipoToPkType;
+	}
+
+	// Add type of base to an Attack
 	public void addBase(String bs) {
 		this.bases.add(bs);
 	}
 	
+	// Set the type of the attack to his Pokemon type instead of a string
+	public void transformStrTipoToPokemonType(ArrayList<PokemonType> types) {
+		this.setStrTipoToPkType(types.stream().filter(pk -> pk.getNombreTipo().equals(this.getTipo())).findFirst().get());
+	}	
 }

@@ -12,6 +12,7 @@ public class IAPlayer extends Player {
 		super();
 	}
 
+	// Choice Pokemon comparing Pokemon list from the player
 	public void IAChoicePokemon(ArrayList<Pokemon> playerPokemons, HashMap<String, ArrayList<Pokemon>> pokemonsPorTipo,
 			HashMap<String, HashMap<String, ArrayList<PokemonType>>> efectoPorTipos) {
 
@@ -31,7 +32,7 @@ public class IAPlayer extends Player {
 			Map<String, HashMap<String, ArrayList<PokemonType>>> efectoPorTiposFiltered = efectoPorTipos.entrySet()
 					.stream()
 					.filter(ef -> ef.getKey().toUpperCase()
-							.equals(pkPlayer.getTypes().get(randomNumberToGetPKTypefor2Types).getNombreTipo()))
+							.equals(pkPlayer.getTypes().get(randomNumberToGetPKTypefor2Types).getNombreTipo().toUpperCase()))
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 			for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> ef : efectoPorTiposFiltered.entrySet()) {
@@ -48,19 +49,18 @@ public class IAPlayer extends Player {
 				// Gets a random Pokemon from the list of pokemonsPorTipoFiltered
 				Pokemon pkRandom = pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase())
 						.get(rand.nextInt(pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase()).size()));
-				
-				// Adds the pokemon to th elist of IA
-				if(this.getPokemons().contains(pkRandom)) {
-					while(this.getPokemons().contains(pkRandom)) {
-						pkRandom = pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase())
-								.get(rand.nextInt(pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase()).size()));
+
+				// Adds the pokemon to the list of IA, but cannot have the same Pokemon twice a time
+				if (this.getPokemons().contains(pkRandom)) {
+					while (this.getPokemons().contains(pkRandom)) {
+						pkRandom = pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase()).get(rand
+								.nextInt(pokemonsPorTipoFiltered.get(pkTRandom.getNombreTipo().toUpperCase()).size()));
 					}
-				}
-				else {
+				} else {
 					this.addPokemon(pkRandom);
 				}
 			}
 		}
+		this.setPkCombatting(this.getPokemons().get(0));
 	}
-	
 }
