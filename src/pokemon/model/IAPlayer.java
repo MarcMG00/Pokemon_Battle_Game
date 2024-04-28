@@ -61,6 +61,5 @@ public class IAPlayer extends Player {
 				}
 			}
 		}
-		this.setPkCombatting(this.getPokemons().get(0));
 	}
 }

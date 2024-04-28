@@ -23,6 +23,7 @@ public class Pokemon {
 	private ArrayList<Ataque> ataquesNormales;
 	private ArrayList<Ataque> ataquesDebiles;
 	private ArrayList<Ataque> ataquesNoAfectan;
+	private ArrayList<Integer> cuatroAtaquesIds;
 	
 	public Pokemon() {
 		this.idPokemon = 0;
@@ -45,6 +46,7 @@ public class Pokemon {
 		this.ataquesNormales = new ArrayList<>();
 		this.ataquesDebiles = new ArrayList<>();
 		this.ataquesNoAfectan = new ArrayList<>();
+		this.cuatroAtaquesIds = new ArrayList<>();
 	}
 	
 	public Pokemon(int idPokemon, String nombrePokemon, int ps, int ata, int def, int vel, int atEsp, int defEsp) {
@@ -68,6 +70,7 @@ public class Pokemon {
 		this.ataquesNormales = new ArrayList<>();
 		this.ataquesDebiles = new ArrayList<>();
 		this.ataquesNoAfectan = new ArrayList<>();
+		this.cuatroAtaquesIds = new ArrayList<>();
 	}
 
 	public int getIdPokemon() {
@@ -229,6 +232,13 @@ public class Pokemon {
 	public void setAtaquesNoAfectan(ArrayList<Ataque> ataquesNoAfectan) {
 		this.ataquesNoAfectan = ataquesNoAfectan;
 	}
+	public ArrayList<Integer> getCuatroAtaquesIds() {
+		return cuatroAtaquesIds;
+	}
+
+	public void setCuatroAtaquesIds(ArrayList<Integer> cuatroAtaquesIds) {
+		this.cuatroAtaquesIds = cuatroAtaquesIds;
+	}
 
 	// Adds habs to a Pokemon
 	public void addNormalHab(Habilidad nHab) {
@@ -263,6 +273,11 @@ public class Pokemon {
 	// Adds the four final attacs to a Pokemon
 	public void addAtaques(Ataque ata) {
 		this.cuatroAtaques.add(ata);
+	}
+	
+	// Adds the four final attacs Ids to a Pokemon
+	public void addAtaquesIds(Integer ataId) {
+		this.cuatroAtaquesIds.add(ataId);
 	}
 	
 }

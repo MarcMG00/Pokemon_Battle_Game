@@ -1583,6 +1583,7 @@ public class Game {
 	
 	// ==================================== GAME ====================================
 
+	// Intialize all vars from files
 	public void InitiateVars() {
 		// Instantiate all Pokemon (if CSV not already created)
 		//scrappingWebPokemon();
@@ -1659,7 +1660,8 @@ public class Game {
 				+ "No importa el orden en que los escojas, solo determina el primer Pokemon que va a salir (el primero en escoger)\n"
 				+ "Ten en cuenta que por cada Pokemon que tú escojas, la máquina va a buscar el tipo que más le afecte a tu Pokemon\n"
 				+ "Teniendo en cuenta, que quizás a la máquina no le salgan ataques muy favorecidos, ni a ti tampoco jeje\n"
-				+ "Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número\n");
+				+ "Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número\n"
+				+ "Algunos números no estan disponibles así que asegúrate de mirar bien la lista presentada");
 		
 		System.out.println("Escoge tus 6 Pokemon :");
 		
@@ -1687,6 +1689,10 @@ public class Game {
 			if(pkOpt.isPresent()) { 
 				player.addPokemon(pkOpt.get());
 			}
+			else {
+				System.out.println("El número marcado no está en la lista : " + PkID);
+				System.out.println("Tendrás que volver a escoger tus Pokemon");
+			}
 		}
 		
 		// Machine choice Pokemon
@@ -1697,6 +1703,7 @@ public class Game {
 		IA.addAtacsForEackPokemon();
 		
 		// Sets first Pokemon choose for the combat
+		// Needs to be done during the methods ?
 		player.setPkCombatting(player.getPokemons().get(0));
 		IA.setPkCombatting(IA.getPokemons().get(0));
 		
@@ -1735,10 +1742,74 @@ public class Game {
 			System.out.println(a.getStrTipoToPkType().getNombreTipo());
 		}
 		
-		IA.orderAttacksFromDammageLevelPokemonIA(player.getPkCombatting(), this.pokemonsPorTipo, this.efectoPorTipos);
-		IA.prepareBestAttack();
+		IA.orderAttacksFromDammageLevelPokemon(this.pokemonsPorTipo, this.efectoPorTipos);
+		player.orderAttacksFromDammageLevelPokemon(this.pokemonsPorTipo, this.efectoPorTipos);
+		
+		IA.prepareBestAttack(false, null);
 
 		System.out.println("Next attack from machine :");
 		System.out.println(IA.getPkCombatting().getNextMouvement().getNombreAta() + " - " + IA.getPkCombatting().getNextMouvement().getStrTipoToPkType().getNombreTipo());
+	}
+	
+	// Main battle (start battle)
+	@SuppressWarnings("resource")
+	public void startBattle() {
+		
+		Scanner sc = new Scanner(System.in);
+		// Battle ends when a player doesn't have Pokemon
+		while(IA.getPokemons().size() > 1 && player.getPokemons().size() > 1) {
+			
+			// Player choice (change Pk or attack)
+			System.out.println("Quieres atacar (1) o cambiar de Pokemon (2) :");
+			int escogerOpt = sc.nextInt();
+			sc.useDelimiter(";|\r?\n|\r");
+			
+			// Attack
+			if(escogerOpt == 1) {
+				System.out.println("Escoge un ataque :");
+				player.printAttacksFromPokemonCombating();
+				int ataqueId = sc.nextInt();
+				sc.useDelimiter(";|\r?\n|\r");
+				
+				// Chose an attack that the Pokemon has
+				if(!player.getPkCombatting().getCuatroAtaquesIds().contains(ataqueId)) {
+					while(!player.getPkCombatting().getCuatroAtaquesIds().contains(ataqueId)) {
+						System.out.println("Escoge un ataque que tenga el Pokemon");
+						ataqueId = sc.nextInt();
+						sc.useDelimiter(";|\r?\n|\r");
+					}
+				}
+				
+				// Attack needs to be final or static, that's why we take the initial var into a new one
+				int ataqueIdR = ataqueId;
+				// Sets next mouvement to pk of player
+				player.prepareBestAttack(true, ataqueIdR);
+				
+				float dmgP = player.applieDamage();
+				System.out.println("Daño del jugador : " + dmgP);
+				float dmgM = IA.applieDamage();
+				System.out.println("Daño de la máquina : " + dmgM);
+				
+			}
+			// Change Pokemon
+			else {
+				player.printPokemonInfo();
+				System.out.println("Escoge uno de tus Pokemon : ");
+				int pokemonId = sc.nextInt();
+				sc.useDelimiter(";|\r?\n|\r");
+				
+				Optional<Pokemon> pkOpt;
+				pkOpt = player.getPokemons().stream().filter(pk -> pk.getIdPokemon() == pokemonId).findFirst();
+				if(pkOpt.isPresent()) { 
+					player.addPokemon(pkOpt.get());
+					player.setPkCombatting(pkOpt.get());
+				}
+				else {
+					System.out.println("No has escogido un Pokemon que te corresponde, seguirás un turno más con el mismo Pokemon");
+				}
+				
+				IA.applieDamage();
+			}
+		}
 	}
 }

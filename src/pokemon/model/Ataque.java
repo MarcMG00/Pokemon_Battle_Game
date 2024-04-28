@@ -12,6 +12,8 @@ public class Ataque {
 	private int precision;
 	private String efecto;
 	private PokemonType strTipoToPkType;
+	private float efectividadContraPkAdversario;
+	private float bonificacion;
 	
 	public Ataque() {
 		super();
@@ -24,6 +26,8 @@ public class Ataque {
 		this.precision = 0;
 		this.efecto = "";
 		this.strTipoToPkType = new PokemonType();
+		this.efectividadContraPkAdversario = 0;
+		this.bonificacion = 0;
 	}
 	
 	public Ataque(int idAta, String nombreAta, String tipo, int poder, int pp, int precision, String efecto) {
@@ -37,6 +41,8 @@ public class Ataque {
 		this.precision = precision;
 		this.efecto = efecto;
 		this.strTipoToPkType = new PokemonType();
+		this.efectividadContraPkAdversario = 0;
+		this.bonificacion = 0;
 	}
 	
 	public int getIdAta() {
@@ -92,6 +98,18 @@ public class Ataque {
 	}
 	public void setStrTipoToPkType(PokemonType strTipoToPkType) {
 		this.strTipoToPkType = strTipoToPkType;
+	}
+	public float getEfectividadContraPkAdversario() {
+		return efectividadContraPkAdversario;
+	}
+	public void setEfectividadContraPkAdversario(float efectividadContraPkAdversario) {
+		this.efectividadContraPkAdversario = efectividadContraPkAdversario;
+	}
+	public float getBonificacion() {
+		return bonificacion;
+	}
+	public void setBonificacion(float bonificacion) {
+		this.bonificacion = bonificacion;
 	}
 
 	// Add type of base to an Attack
