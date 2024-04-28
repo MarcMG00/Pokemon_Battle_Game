@@ -24,6 +24,8 @@ public class Pokemon {
 	private ArrayList<Ataque> ataquesDebiles;
 	private ArrayList<Ataque> ataquesNoAfectan;
 	private ArrayList<Integer> cuatroAtaquesIds;
+	private int puntosPrecision;
+	private int puntosEvasion;
 	
 	public Pokemon() {
 		this.idPokemon = 0;
@@ -47,6 +49,8 @@ public class Pokemon {
 		this.ataquesDebiles = new ArrayList<>();
 		this.ataquesNoAfectan = new ArrayList<>();
 		this.cuatroAtaquesIds = new ArrayList<>();
+		this.puntosPrecision = 1;
+		this.puntosEvasion = 1;
 	}
 	
 	public Pokemon(int idPokemon, String nombrePokemon, int ps, int ata, int def, int vel, int atEsp, int defEsp) {
@@ -71,6 +75,8 @@ public class Pokemon {
 		this.ataquesDebiles = new ArrayList<>();
 		this.ataquesNoAfectan = new ArrayList<>();
 		this.cuatroAtaquesIds = new ArrayList<>();
+		this.puntosPrecision = 1;
+		this.puntosEvasion = 1;
 	}
 
 	public int getIdPokemon() {
@@ -232,12 +238,29 @@ public class Pokemon {
 	public void setAtaquesNoAfectan(ArrayList<Ataque> ataquesNoAfectan) {
 		this.ataquesNoAfectan = ataquesNoAfectan;
 	}
+	
 	public ArrayList<Integer> getCuatroAtaquesIds() {
 		return cuatroAtaquesIds;
 	}
 
 	public void setCuatroAtaquesIds(ArrayList<Integer> cuatroAtaquesIds) {
 		this.cuatroAtaquesIds = cuatroAtaquesIds;
+	}
+	
+	public int getPuntosPrecision() {
+		return puntosPrecision;
+	}
+
+	public void setPuntosPrecision(int puntosPrecision) {
+		this.puntosPrecision = puntosPrecision;
+	}
+
+	public int getPuntosEvasion() {
+		return puntosEvasion;
+	}
+
+	public void setPuntosEvasion(int puntosEvasion) {
+		this.puntosEvasion = puntosEvasion;
 	}
 
 	// Adds habs to a Pokemon
