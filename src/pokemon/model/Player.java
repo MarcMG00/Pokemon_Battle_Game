@@ -330,9 +330,6 @@ public class Player {
 								nextAtaque.get().setEfectividadContraPkAdversario(1.5f);
 								nextAtaque.get().setBonificacion(1f);
 							}
-							else {
-								// it means that is in "otros", so doesn't have effectivity and bonification
-							}
 						}
 						else {
 							nextAtaque.get().setEfectividadContraPkAdversario(2);
@@ -369,9 +366,6 @@ public class Player {
 								nextAtaque.get().setEfectividadContraPkAdversario(1.5f);
 								nextAtaque.get().setBonificacion(1);
 							}
-							else {
-								// it means that is in "otros", so doesn't have effectivity and bonification
-							}
 						}
 						else {
 							nextAtaque.get().setEfectividadContraPkAdversario(1.5f);
@@ -406,9 +400,6 @@ public class Player {
 								nextAtaque.get().setEfectividadContraPkAdversario(1);
 								nextAtaque.get().setBonificacion(1);
 							}
-							else {
-								// it means that is in "otros", so doesn't have effectivity and bonification
-							}
 						}
 						else {
 							nextAtaque.get().setEfectividadContraPkAdversario(1);
@@ -438,9 +429,6 @@ public class Player {
 						if(!nextAtaque.get().getBases().contains("otros") && this.getPkCombatting().getAtaquesDebiles().contains(nextAtaque.get())) {
 							nextAtaque.get().setEfectividadContraPkAdversario(0.5f);
 							nextAtaque.get().setBonificacion(1);
-						}
-						else {
-							// it means that is in "otros", so doesn't have effectivity and bonification
 						}
 					}
 					else {
@@ -493,6 +481,7 @@ public class Player {
 		}
 	}
 	
+	// Applie dammage
 	public float applieDamage() {
 		PkVPk battleVS = new PkVPk(this.getPkCombatting(), this.getPkFacing());
 		return battleVS.doDammage();

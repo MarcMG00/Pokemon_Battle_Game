@@ -1771,7 +1771,7 @@ public class Game {
 				int ataqueId = sc.nextInt();
 				sc.useDelimiter(";|\r?\n|\r");
 				
-				// Chose an attack that the Pokemon has
+				// Chose an attack from the Pokemon
 				if(!player.getPkCombatting().getCuatroAtaquesIds().contains(ataqueId)) {
 					while(!player.getPkCombatting().getCuatroAtaquesIds().contains(ataqueId)) {
 						System.out.println("Escoge un ataque que tenga el Pokemon");
@@ -1785,11 +1785,18 @@ public class Game {
 				// Sets next mouvement to pk of player
 				player.prepareBestAttack(true, ataqueIdR);
 				
-				float dmgP = player.applieDamage();
-				System.out.println("Daño del jugador : " + dmgP);
-				float dmgM = IA.applieDamage();
-				System.out.println("Daño de la máquina : " + dmgM);
-				
+				if(player.getPkCombatting().getVel() > IA.getPkCombatting().getVel()) {
+					float dmgP = player.applieDamage();
+					System.out.println("Daño del jugador : " + dmgP);
+					float dmgM = IA.applieDamage();
+					System.out.println("Daño de la máquina : " + dmgM);
+				}
+				else {
+					float dmgM = IA.applieDamage();
+					System.out.println("Daño de la máquina : " + dmgM);
+					float dmgP = player.applieDamage();
+					System.out.println("Daño del jugador : " + dmgP);
+				}
 			}
 			// Change Pokemon
 			else {
