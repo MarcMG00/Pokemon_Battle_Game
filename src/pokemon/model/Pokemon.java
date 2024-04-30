@@ -49,8 +49,8 @@ public class Pokemon {
 		this.ataquesDebiles = new ArrayList<>();
 		this.ataquesNoAfectan = new ArrayList<>();
 		this.cuatroAtaquesIds = new ArrayList<>();
-		this.puntosPrecision = 1;
-		this.puntosEvasion = 1;
+		this.puntosPrecision = 0;
+		this.puntosEvasion = 0;
 	}
 	
 	public Pokemon(int idPokemon, String nombrePokemon, int ps, int ata, int def, int vel, int atEsp, int defEsp) {
@@ -75,8 +75,8 @@ public class Pokemon {
 		this.ataquesDebiles = new ArrayList<>();
 		this.ataquesNoAfectan = new ArrayList<>();
 		this.cuatroAtaquesIds = new ArrayList<>();
-		this.puntosPrecision = 1;
-		this.puntosEvasion = 1;
+		this.puntosPrecision = 0;
+		this.puntosEvasion = 0;
 	}
 
 	public int getIdPokemon() {

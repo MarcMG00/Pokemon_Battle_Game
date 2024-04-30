@@ -806,7 +806,7 @@ public class Game {
 		}
 	}
 	
-	// Writes in a CSV all the attacs from attacs list
+	// Writes in a CSV all the attacks from attacks list
 	@SuppressWarnings("resource")
 	public void writeAttacsCSV() {
 		try {
@@ -832,7 +832,7 @@ public class Game {
 		}
 	}
 	
-	// Writes in a CSV all the attacs from attacs list
+	// Writes in a CSV all the attacks from attacks list
 	@SuppressWarnings("resource")
 	public void writeAttacsCSV2() {
 		try {
@@ -866,7 +866,7 @@ public class Game {
 		}
 	}
 	
-	// Writes in a CSV all the attacs foreach Pokemon
+	// Writes in a CSV all the attacks foreach Pokemon
 	@SuppressWarnings("resource")
 	public void writeAttacsForeachPokemon() {
 		try {
@@ -1572,7 +1572,7 @@ public class Game {
 		return strRegex;
 	}
 	
-	
+	// Repeats sequence of the string
 	public static String repeat(int count, String with) {
 	    return new String(new char[count]).replace("\0", with);
 	}
