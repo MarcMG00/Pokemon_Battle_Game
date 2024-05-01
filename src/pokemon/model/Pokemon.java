@@ -26,6 +26,8 @@ public class Pokemon {
 	private ArrayList<Integer> cuatroAtaquesIds;
 	private int puntosPrecision;
 	private int puntosEvasion;
+	private Estado estadoPersistente;
+	private ArrayList<Estado> estadosEfimeros;
 	
 	public Pokemon() {
 		this.idPokemon = 0;
@@ -51,6 +53,8 @@ public class Pokemon {
 		this.cuatroAtaquesIds = new ArrayList<>();
 		this.puntosPrecision = 0;
 		this.puntosEvasion = 0;
+		this.estadoPersistente = new Estado();
+		this.estadosEfimeros = new ArrayList<>();
 	}
 	
 	public Pokemon(int idPokemon, String nombrePokemon, int ps, int ata, int def, int vel, int atEsp, int defEsp) {
@@ -77,6 +81,8 @@ public class Pokemon {
 		this.cuatroAtaquesIds = new ArrayList<>();
 		this.puntosPrecision = 0;
 		this.puntosEvasion = 0;
+		this.estadoPersistente = new Estado();
+		this.estadosEfimeros = new ArrayList<>();
 	}
 
 	public int getIdPokemon() {
@@ -263,42 +269,58 @@ public class Pokemon {
 		this.puntosEvasion = puntosEvasion;
 	}
 
-	// Adds habs to a Pokemon
+	public Estado getEstadoPersistente() {
+		return estadoPersistente;
+	}
+
+	public void setEstadoPersistente(Estado estadoPersistente) {
+		this.estadoPersistente = estadoPersistente;
+	}
+
+	public ArrayList<Estado> getEstadosEfimeros() {
+		return estadosEfimeros;
+	}
+
+	public void setEstadosEfimeros(ArrayList<Estado> estadosEfimeros) {
+		this.estadosEfimeros = estadosEfimeros;
+	}
+
+	// Adds habs to Pokemon
 	public void addNormalHab(Habilidad nHab) {
 		this.normalHabs.add(nHab);
 	}
 	
-	// Adds oculted habs to a Pokemon
+	// Adds oculted habs to Pokemon
 	public void addOcultedHab(Habilidad oHab) {
 		this.ocultedHabs.add(oHab);
 	}
 	
-	// Adds types to a Pokemon
+	// Adds types to Pokemon
 	public void addType(PokemonType pt) {
 		this.types.add(pt);
 	}
 	
-	// Adds fisic attacs to a Pokemon
+	// Adds fisic attacs to Pokemon
 	public void addAtaFisicos(Ataque ataF) {
 		this.ataFisicos.add(ataF);
 	}
 	
-	// Adds special attacs to a Pokemon
+	// Adds special attacs to Pokemon
 	public void addAtaEspeciales(Ataque ataE) {
 		this.ataEspeciales.add(ataE);
 	}
 	
-	// Adds other attacs to a Pokemon
+	// Adds other attacs to Pokemon
 	public void addAtaEstado(Ataque ataO) {
 		this.ataEstado.add(ataO);
 	}
 
-	// Adds the four final attacs to a Pokemon
+	// Adds the four final attacs to Pokemon
 	public void addAtaques(Ataque ata) {
 		this.cuatroAtaques.add(ata);
 	}
 	
-	// Adds the four final attacs Ids to a Pokemon
+	// Adds the four final attacs Ids to Pokemon
 	public void addAtaquesIds(Integer ataId) {
 		this.cuatroAtaquesIds.add(ataId);
 	}
