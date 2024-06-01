@@ -313,7 +313,7 @@ public class Player {
 		int randomNumber = 0;
 		if(!isNormalPlayer) {
 			randomNumber = (int) (Math.random() * (100) + 1);
-			System.out.println(randomNumber);
+//			System.out.println(randomNumber);
 		}
 
 		// Allows to chose an attack if doesn't meet the conditions before

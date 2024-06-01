@@ -752,7 +752,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Vuelo (continue to verify)
+		// Vuelo (continue to verify - both using)
 		case 19:
 			if (!this.getPkCombatting().isChargingAttackForNextRound()) {
 				// This attack requires to charge first time for one round
