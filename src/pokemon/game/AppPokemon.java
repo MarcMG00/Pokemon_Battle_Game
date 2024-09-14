@@ -8,7 +8,9 @@ public class AppPokemon {
 		
 		Game pokemonGame = new Game();
 		pokemonGame.InitiateVars();
-		pokemonGame.PokemonChoice();
+//		pokemonGame.PokemonChoice();
+//		pokemonGame.startBattle();
+		pokemonGame.doTest();
 		pokemonGame.startBattle();
 	}
 }

@@ -59,7 +59,7 @@ public class Player {
 		this.pkFacing = pkFacing;
 	}
 
-	// Adds 4 attacs to a Pokemon (1 other, 2 fisics, 1 special)
+	// Adds 4 attacks to a Pokemon (1 other, 2 physics, 1 special)
 	public void addAtacsForEackPokemon() {
 		for (Pokemon pk : this.pokemons) {
 			System.out.println(pk.getNombrePokemon());
@@ -82,6 +82,20 @@ public class Player {
 			System.out.println("fin PK");
 		}
 	}
+	
+//	public void addSpecificAttacksForTests() {
+//		for (Pokemon pk : this.getPokemons()) {
+//			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 7).findFirst().get());
+//			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 9).findFirst().get());
+//			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 19).findFirst().get());
+//			
+//
+//			// Adds the Ids of attacks chosed in a list
+//			for (Ataque ataChosed : pk.getCuatroAtaques()) {
+//				pk.addAtaquesIds(ataChosed.getIdAta());
+//			}
+//		}
+//	}
 
 	// Puts in a Map the number of times that appears the elements in the list
 	@SuppressWarnings("unused")
@@ -299,7 +313,7 @@ public class Player {
 		int randomNumber = 0;
 		if(!isNormalPlayer) {
 			randomNumber = (int) (Math.random() * (100) + 1);
-			System.out.println(randomNumber);
+//			System.out.println(randomNumber);
 		}
 
 		// Allows to chose an attack if doesn't meet the conditions before
@@ -312,8 +326,9 @@ public class Player {
 				for (PokemonType pkT : this.getPkCombatting().getTypes()) {
 					Optional<Ataque> nextAtaque = Optional.of(new Ataque());
 					if (isNormalPlayer) {
+						// Takes only the best attack that is matching the same type as the Pokemon
 						nextAtaque = this.getPkCombatting().getAtaquesRebientan().stream()
-								.filter(a -> a.getIdAta() == (int) ataqueIdPkPlayer).findFirst();
+								.filter(a -> a.getIdAta() == (int) ataqueIdPkPlayer && a.getStrTipoToPkType() == pkT).findFirst();
 					} else {
 						nextAtaque = this.getPkCombatting().getAtaquesRebientan().stream()
 								.filter(a -> a.getStrTipoToPkType() == pkT && !a.getBases().contains("otros"))
@@ -336,7 +351,7 @@ public class Player {
 							nextAtaque.get().setBonificacion(1.5f);
 						}
 						this.getPkCombatting().setNextMouvement(nextAtaque.get());
-						System.out.println(nextAtaque.get().getNombreAta() + "-rebienta i mismo tipo "
+						System.out.println(nextAtaque.get().getNombreAta() + "-rebienta y mismo tipo "
 								+ nextAtaque.get().getBases());
 						isAttackChoosed = true;
 						break;
@@ -348,6 +363,7 @@ public class Player {
 				if (!this.getPkCombatting().getAtaquesRebientan().isEmpty()) {
 					Optional<Ataque> nextAtaque = Optional.of(new Ataque());
 					if (isNormalPlayer) {
+						// Takes the best attack in the list
 						nextAtaque = this.getPkCombatting().getAtaquesRebientan().stream()
 								.filter(a -> a.getIdAta() == (int) ataqueIdPkPlayer).findFirst();
 					}
@@ -372,7 +388,7 @@ public class Player {
 							nextAtaque.get().setBonificacion(1);
 						}
 						this.getPkCombatting().setNextMouvement(nextAtaque.get());
-						System.out.println(nextAtaque.get().getNombreAta() + "-rebienta i tipo diferente "
+						System.out.println(nextAtaque.get().getNombreAta() + "-rebienta y tipo diferente "
 								+ nextAtaque.get().getBases());
 						isAttackChoosed = true;
 					}
@@ -461,9 +477,9 @@ public class Player {
 
 	// Prints the attacks of current Pokemon
 	public void printAttacksFromPokemonCombating() {
-		for (Ataque currentAttacks : this.getPkCombatting().getCuatroAtaques()) {
-			System.out.println(currentAttacks.getIdAta() + " - " + currentAttacks.getNombreAta() + " - "
-					+ currentAttacks.getTipo());
+		for (Ataque currentAttack : this.getPkCombatting().getCuatroAtaques()) {
+			System.out.println(currentAttack.getIdAta() + " - " + currentAttack.getNombreAta() + " - "
+					+ currentAttack.getTipo());
 		}
 	}
 
@@ -482,8 +498,8 @@ public class Player {
 	}
 	
 	// Applie dammage
-	public float applieDamage() {
+	public void applyDamage(boolean useAttackChargedNow) {
 		PkVPk battleVS = new PkVPk(this.getPkCombatting(), this.getPkFacing());
-		return battleVS.doDammage();
+		battleVS.getProbabilityOfAttackingAndAttack(useAttackChargedNow);
 	}
 }
