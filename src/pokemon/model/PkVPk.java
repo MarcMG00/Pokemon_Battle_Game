@@ -286,14 +286,14 @@ public class PkVPk {
 								.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 						// Pokemon facing AVOIDED the attack
 						System.out.println(this.getPkCombatting().getNombrePokemon() + " usó "
-								+ this.getPkCombatting().getNextMouvement().getNombreAta() + " (verificació)");
+								+ this.getPkCombatting().getNextMouvement().getNombreAta() + " (verificació 1)");
 						System.out.println(this.getPkFacing().getNombrePokemon()
 								+ " evitó el ataque (vuelo - con movimiento que lo counteree)");
 					}
 				}
 			}
 			// Pk facing avoid the attack cause is not using an attack that can hurt while
-			// Pokemon facinf is flying
+			// Pokemon facing is flying
 			else if ((this.getPkFacing().getNextMouvement().getIdAta() == 19
 					&& this.getPkFacing().isChargingAttackForNextRound())
 					&& !(this.getPkCombatting().getNextMouvement().getIdAta() == 16
@@ -302,12 +302,13 @@ public class PkVPk {
 							|| this.getPkCombatting().getNextMouvement().getIdAta() == 239
 							|| this.getPkCombatting().getNextMouvement().getIdAta() == 327
 							|| this.getPkCombatting().getNextMouvement().getIdAta() == 479
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 542)) {
+							|| this.getPkCombatting().getNextMouvement().getIdAta() == 542)
+					&& this.getPkCombatting().getNextMouvement().getIdAta() != 19) {
 				// Reduces the PP of the movement
 				this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 				// Pokemon facing avoided the attack (because pk facing is flying)
 				System.out.println(this.getPkCombatting().getNombrePokemon() + " usó "
-						+ this.getPkCombatting().getNextMouvement().getNombreAta());
+						+ this.getPkCombatting().getNextMouvement().getNombreAta() + " (verificació 2)");
 				System.out.println(this.getPkFacing().getNombrePokemon()
 						+ " evitó el ataque (vuelo - sin movimiento que lo counteree)");
 			}
@@ -752,7 +753,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Vuelo (continue to verify - both using)
+		// Vuelo
 		case 19:
 			if (!this.getPkCombatting().isChargingAttackForNextRound()) {
 				// This attack requires to charge first time for one round
@@ -760,11 +761,16 @@ public class PkVPk {
 				System.out.println(this.getPkCombatting().getNombrePokemon() + " voló muy alto");
 				this.getPkCombatting().setChargingAttackForNextRound(true);
 
-				if (!alreadyCheckedAttack) {
+				if (this.getPkFacing().getNextMouvement().getIdAta() == 19
+						&& !this.getPkFacing().isChargingAttackForNextRound()) {
+					this.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				}
+
+				if (!alreadyCheckedAttack && this.getPkFacing().getNextMouvement().getIdAta() != 19) {
 					this.getPkFacing().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 					// Pokemon facing AVOIDED the attack
 					System.out.println(this.getPkFacing().getNombrePokemon() + " usó "
-							+ this.getPkFacing().getNextMouvement().getNombreAta());
+							+ this.getPkFacing().getNextMouvement().getNombreAta() + " 1");
 					System.out.println(this.getPkCombatting().getNombrePokemon()
 							+ " evitó el ataque (vuelo - Pokemon atacante falló después del check)");
 				}
@@ -772,7 +778,21 @@ public class PkVPk {
 			} else {
 				if (!(this.getPkFacing().getNextMouvement().getIdAta() == 19
 						&& this.getPkFacing().isChargingAttackForNextRound())) {
-					System.out.println(this.getPkCombatting().getNombrePokemon() + " usó Vuelo");
+					if (this.getPkFacing().getNextMouvement().getIdAta() == 19
+							&& this.getPkFacing().isChargingAttackForNextRound()) {
+						System.out.println(this.getPkFacing().getNombrePokemon() + " usó "
+								+ this.getPkFacing().getNextMouvement().getNombreAta() + "FF");
+						System.out.println(this.getPkCombatting().getNombrePokemon() + " evitó el ataque (normal 5)");
+						this.getPkFacing().getNextMouvement().setPp(this.getPkFacing().getNextMouvement().getPp() - 1);
+
+						System.out.println(this.getPkCombatting().getNombrePokemon() + " usó Vuelo 2.1");
+					} else {
+						System.out.println(this.getPkCombatting().getNombrePokemon() + " usó Vuelo 2.2");
+						if(!this.getPkFacing().isFirstInUsingTheSameAttack()) {
+							this.getPkCombatting()
+							.setFirstInUsingTheSameAttack(!this.getPkCombatting().isFirstInUsingTheSameAttack());
+						}
+					}
 					dmg = doDammage();
 					isCritic = getCriticity();
 					if (isCritic) {
@@ -785,7 +805,19 @@ public class PkVPk {
 							.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 				} else {
 					// AVOID attack cause Pokemon facing is flying
-					System.out.println(this.getPkFacing().getNombrePokemon() + " evitó el ataque (normal)");
+					if (this.getPkCombatting().isChargingAttackForNextRound()
+							&& !this.getPkFacing().isChargingAttackForNextRound()) {
+						System.out.println(this.getPkFacing().getNombrePokemon() + " evitó el ataque (normal)");
+					} else if (this.getPkFacing().getNextMouvement().getIdAta() == 19
+							&& this.getPkFacing().isChargingAttackForNextRound()
+							&& this.getPkCombatting().isFirstInUsingTheSameAttack()) {
+						System.out.println(this.getPkCombatting().getNombrePokemon() + " usó vuelo 4");
+						System.out.println(this.getPkFacing().getNombrePokemon() + " evitó el ataque (normal 4)");
+					} else {
+						System.out.println(this.getPkCombatting().getNombrePokemon() + " usó vuelo 3");
+						System.out.println(this.getPkFacing().getNombrePokemon() + " evitó el ataque (normal 3)");
+					}
+
 					// Pokemon is no more charging an attack
 					this.getPkCombatting().setChargingAttackForNextRound(false);
 					this.getPkCombatting().getNextMouvement()

@@ -39,6 +39,7 @@ public class Pokemon {
 	public boolean isChargingAttackForNextRound;
 	public boolean isPuedeAtacar;
 	public boolean alreadyUsedVuelo;
+	public boolean firstInUsingTheSameAttack;
 
 	public Pokemon() {
 		this.idPokemon = 0;
@@ -75,6 +76,7 @@ public class Pokemon {
 		this.isChargingAttackForNextRound = false;
 		this.isPuedeAtacar = true;
 		this.alreadyUsedVuelo = false;
+		this.firstInUsingTheSameAttack = false;
 	}
 
 	public Pokemon(int idPokemon, String nombrePokemon, float ps, float ata, float def, float vel, float atEsp,
@@ -113,6 +115,7 @@ public class Pokemon {
 		this.isChargingAttackForNextRound = false;
 		this.isPuedeAtacar = true;
 		this.alreadyUsedVuelo = false;
+		this.firstInUsingTheSameAttack = false;
 	}
 
 	public int getIdPokemon() {
@@ -385,6 +388,14 @@ public class Pokemon {
 
 	public void setAlreadyUsedVuelo(boolean alreadyUsedVuelo) {
 		this.alreadyUsedVuelo = alreadyUsedVuelo;
+	}
+
+	public boolean isFirstInUsingTheSameAttack() {
+		return firstInUsingTheSameAttack;
+	}
+
+	public void setFirstInUsingTheSameAttack(boolean firstInUsingTheSameAttack) {
+		this.firstInUsingTheSameAttack = firstInUsingTheSameAttack;
 	}
 
 	// Adds habs to Pokemon

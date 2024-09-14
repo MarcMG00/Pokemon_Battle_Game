@@ -1814,34 +1814,67 @@ public class Game {
 				playerCheckedBurned = checkAndApplyBurnedEffect(player, playerCheckedBurned);
 				IACheckedBurned = checkAndApplyBurnedEffect(IA, IACheckedBurned);
 
-				if ((player.getPkCombatting().isChargingAttackForNextRound
+				if ((player.getPkCombatting().isChargingAttackForNextRound()
 						&& !player.getPkCombatting().isAlreadyUsedVuelo())
-						|| (IA.getPkCombatting().isChargingAttackForNextRound
+						|| (IA.getPkCombatting().isChargingAttackForNextRound()
 								&& !IA.getPkCombatting().isAlreadyUsedVuelo())) {
-					if (player.getPkCombatting().isChargingAttackForNextRound
+
+					if (player.getPkCombatting().isChargingAttackForNextRound()
 							&& !player.getPkCombatting().isAlreadyUsedVuelo()
-							&& !(IA.getPkCombatting().isChargingAttackForNextRound
+							&& !(IA.getPkCombatting().isChargingAttackForNextRound()
 									&& !IA.getPkCombatting().isAlreadyUsedVuelo())) {
+
 						executeChargedAttack(player, true);
 						System.out.println("first--------executeChargedAttack");
 
-					} else if (IA.getPkCombatting().isChargingAttackForNextRound
+					} else if (IA.getPkCombatting().isChargingAttackForNextRound()
 							&& !IA.getPkCombatting().isAlreadyUsedVuelo()
-							&& !(player.getPkCombatting().isChargingAttackForNextRound
+							&& !(player.getPkCombatting().isChargingAttackForNextRound()
 									&& !player.getPkCombatting().isAlreadyUsedVuelo())) {
+
 						executeChargedAttack(IA, true);
-						executeNormalAttack(ataqueId, true);
+						executeNormalAttack(ataqueId, true, false);
 						System.out.println("second--------executeChargedAttack");
+
+					} else if ((player.getPkCombatting().isChargingAttackForNextRound()
+							&& !player.getPkCombatting().isAlreadyUsedVuelo())
+							&& (IA.getPkCombatting().isChargingAttackForNextRound()
+									&& !IA.getPkCombatting().isAlreadyUsedVuelo())
+
+							|| (player.getPkCombatting().isChargingAttackForNextRound()
+									&& player.getPkCombatting().isAlreadyUsedVuelo())
+									&& (IA.getPkCombatting().isChargingAttackForNextRound()
+											&& IA.getPkCombatting().isAlreadyUsedVuelo())) {
+
+						if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
+								&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+							System.out.println("same attack  = true");
+						}
+//						if() {
+//							
+//						}
+//						else {
+							executeNormalAttack(ataqueId, false, true);
+//						}
+						System.out.println("third--------executeChargedAttack");
 					}
 				} else if ((player.getPkCombatting().getNextMouvement().getIdAta() == 19
 						&& player.getPkCombatting().isAlreadyUsedVuelo())
 						|| (IA.getPkCombatting().getNextMouvement().getIdAta() == 19
 								&& IA.getPkCombatting().isAlreadyUsedVuelo())) {
+
 					executeFlightAttack();
-					System.out.println("third--------executeFLightAttack");
+					System.out.println("fourth--------executeFLightAttack");
+
 				} else {
-					executeNormalAttack(ataqueId, false);
-					System.out.println("fourth--------executeNormalAttack");
+					if ((player.getPkCombatting().getNextMouvement().getIdAta() == 19
+							|| IA.getPkCombatting().getNextMouvement().getIdAta() == 19) && (player.getPkCombatting().isFirstInUsingTheSameAttack() || IA.getPkCombatting().isFirstInUsingTheSameAttack())) {
+						executeNormalAttack(ataqueId, false, true);
+						System.out.println("fifth--------executeNormalAttack");
+					}
+					executeNormalAttack(ataqueId, false, false);
+					System.out.println("six--------executeNormalAttack");
+
 				}
 			} else {
 				changePokemon(sc);
@@ -1899,28 +1932,36 @@ public class Game {
 		if (IA.getPkCombatting().isPuedeAtacar()) {
 			IA.applyDamage(false);
 			IA.getPkCombatting().restartParametersEffect();
-			System.out.println("executeFlight IA");
+//			IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
+			System.out.println("executeFlightAttack IA");
 		}
 		if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() != EstadosEnum.DEBILITADO) {
-			if (player.getPkCombatting().isChargingAttackForNextRound) {
+			if (player.getPkCombatting().isChargingAttackForNextRound()) {
 				player.getPkCombatting().checkEffectsEstadoPersistente(false);
 			}
 			if (player.getPkCombatting().isPuedeAtacar()) {
 				player.applyDamage(false);
+//				player.getPkCombatting().setFirstInUsingTheSameAttack(true);
 			}
-			System.out.println("executeFlight Player");
+			System.out.println("executeFlightAttack Player");
 		}
 	}
 
-	private void executeNormalAttack(int ataqueId, boolean onlyPlayerAttacks) {
-		if (onlyPlayerAttacks) {
+	private void executeNormalAttack(int ataqueId, boolean onlyPlayerAttacks, boolean sameAttack) {
+		if (sameAttack) {
 			player.prepareBestAttack(true, ataqueId);
 			handleStateEffects();
-			handleAttackSequence(true);
+			handleAttackSequence(false, true);
 		} else {
-			player.prepareBestAttack(true, ataqueId);
-			handleStateEffects();
-			handleAttackSequence(false);
+			if (onlyPlayerAttacks) {
+				player.prepareBestAttack(true, ataqueId);
+				handleStateEffects();
+				handleAttackSequence(true, false);
+			} else {
+				player.prepareBestAttack(true, ataqueId);
+				handleStateEffects();
+				handleAttackSequence(false, false);
+			}
 		}
 	}
 
@@ -1929,18 +1970,35 @@ public class Game {
 		checkAndApplyEffect(IA, EstadosEnum.PARALIZADO, false);
 	}
 
-	private void handleAttackSequence(boolean onlyPlayerAttacks) {
+	private void handleAttackSequence(boolean onlyPlayerAttacks, boolean sameAttack) {
 		if (onlyPlayerAttacks) {
 			handlePlayerRetaliation();
 		} else {
-			if (playerCanAttackFirst()) {
-				player.applyDamage(false);
-				handleIARetaliation();
-			} else if (IACanAttackFirst()) {
-				IA.applyDamage(false);
-				handlePlayerRetaliation();
-			} else {
+			if (sameAttack) {
 				handleSimultaneousAttack();
+				if (playerCanAttackFirst()) {
+					player.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				} else {
+					IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				}
+			} else {
+				if (playerCanAttackFirst()) {
+					player.applyDamage(false);
+					handleIARetaliation();
+//					if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
+//							&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+//						player.getPkCombatting().setFirstInUsingTheSameAttack(true);
+//					}
+				} else if (IACanAttackFirst()) {
+					IA.applyDamage(false);
+					handlePlayerRetaliation();
+//					if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
+//							&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+//						IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
+//					}
+				} else {
+					handleSimultaneousAttack();
+				}
 			}
 		}
 
@@ -1984,17 +2042,54 @@ public class Game {
 		}
 	}
 
+	// Check here conditions of flying...
 	private void handleSimultaneousAttack() {
-		if (player.getPkCombatting().getVel() > IA.getPkCombatting().getVel()) {
-			player.applyDamage(false);
-			handleIARetaliation();
-		} else if (player.getPkCombatting().getVel() < IA.getPkCombatting().getVel()) {
+		if (IA.getPkCombatting().isFirstInUsingTheSameAttack()
+				&& player.getPkCombatting().getNextMouvement().getIdAta() == 19
+				&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
 			IA.applyDamage(false);
 			handlePlayerRetaliation();
-		} else {
+			IA.getPkCombatting().setFirstInUsingTheSameAttack(false);
+		} else if (player.getPkCombatting().isFirstInUsingTheSameAttack()
+				&& player.getPkCombatting().getNextMouvement().getIdAta() == 19
+				&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
 			player.applyDamage(false);
 			handleIARetaliation();
+			player.getPkCombatting().setFirstInUsingTheSameAttack(false);
+		} else {
+			if (player.getPkCombatting().getVel() > IA.getPkCombatting().getVel()) {
+				player.applyDamage(false);
+				handleIARetaliation();
+				if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
+						&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+					IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				} else {
+					player.getPkCombatting().setFirstInUsingTheSameAttack(false);
+					IA.getPkCombatting().setFirstInUsingTheSameAttack(false);
+				}
+			} else if (player.getPkCombatting().getVel() < IA.getPkCombatting().getVel()) {
+				IA.applyDamage(false);
+				handlePlayerRetaliation();
+				if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
+						&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+					player.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				} else {
+					player.getPkCombatting().setFirstInUsingTheSameAttack(false);
+					IA.getPkCombatting().setFirstInUsingTheSameAttack(false);
+				}
+			} else {
+				player.applyDamage(false);
+				handleIARetaliation();
+				if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
+						&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+//					IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				} else {
+					player.getPkCombatting().setFirstInUsingTheSameAttack(false);
+					IA.getPkCombatting().setFirstInUsingTheSameAttack(false);
+				}
+			}
 		}
+
 	}
 
 	private void resetBurnedEffect() {
@@ -2421,7 +2516,8 @@ public class Game {
 //		}
 //	}
 
-	// Tests for attacks (466 Electivire)
+	// Tests for attacks (466 Electivire, 398 Staraptor)
+
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "6,6,6";
