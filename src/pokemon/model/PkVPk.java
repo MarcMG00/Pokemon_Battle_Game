@@ -5,7 +5,7 @@ import pokemon.enums.StatusConditions;
 public class PkVPk {
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
-	private float efectividad;
+	private float effectiveness;
 	private int variacion;
 	private float finalDamage;
 	private float bonificacion;
@@ -13,7 +13,7 @@ public class PkVPk {
 	public PkVPk(Pokemon pkAttacking, Pokemon pkFacing) {
 		this.pkCombatting = pkAttacking;
 		this.pkFacing = pkFacing;
-		this.efectividad = 0;
+		this.effectiveness = 0;
 		this.variacion = 0;
 		this.finalDamage = 0;
 		this.bonificacion = 0;
@@ -35,12 +35,12 @@ public class PkVPk {
 		this.pkFacing = pkFacing;
 	}
 
-	public float getEfectividad() {
-		return efectividad;
+	public float getEffectiveness() {
+		return effectiveness;
 	}
 
-	public void setEfectividad(float efectividad) {
-		this.efectividad = efectividad;
+	public void setEffectiveness(float effectiveness) {
+		this.effectiveness = effectiveness;
 	}
 
 	public int getVariacion() {
