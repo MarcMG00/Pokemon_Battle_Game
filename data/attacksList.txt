@@ -1,0 +1,902 @@
+AttacId,AttacName,Tipo,Poder,PP,Precision,Efecto,Base
+1,Destructor,NORMAL,40,35,100,Ninguno.,fisico
+2,Golpe Kárate,LUCHA,50,25,100,Alta probabilidad de Golpe Crítico.,fisico
+3,Doble Bofetón,NORMAL,15,10,85,Golpea de 2 a 5 veces seguidas.,fisico
+4,Puño Cometa,NORMAL,18,15,85,Golpea de 2 a 5 veces seguidas.,fisico
+5,Megapuño,NORMAL,80,20,85,Ninguno.,fisico
+6,Día de Pago,NORMAL,40,20,100,Recolecta dinero tras batallas contra Pokémon salvajes o entrenadores del juego.,fisico
+7,Puño Fuego,FUEGO,75,15,100,10% de quemar al rival.,fisico
+8,Puño Hielo,HIELO,75,15,100,10% de congelar al rival.,fisico
+9,Puño Trueno,ELECTRICO,75,15,100,10% de paralizar al rival.,fisico
+10,Arañazo,NORMAL,40,35,100,Ninguno.,fisico
+11,Agarre,NORMAL,55,30,100,Ninguno.,fisico
+12,Guillotina,NORMAL,1,5,30,Puede debilitar al Pokémon rival de un solo golpe.,fisico
+13,Viento Cortante,NORMAL,80,10,100,Debe cargarse el primer turno para golpear en el segundo. Alta probabilidad de Golpe Crítico.,especial
+14,Danza Espada,NORMAL,0,20,0,Aumenta dos niveles el Ataque al usuario.,otros
+15,Corte,NORMAL,50,30,95,Ninguno.,fisico
+16,Tornado,VOLADOR,40,35,100,Golpea a Pokémon en mitad de un Vuelo Bote o Caída Libre con el doble de poder base.,especial
+17,Ataque Ala,VOLADOR,60,35,100,Ninguno.,fisico
+18,Remolino,NORMAL,0,20,0,El Pokémon rival es intercambiado por otro al azar del entrenador rival. Si es salvaje huirá.,otros
+19,Vuelo,VOLADOR,90,15,95,Precisa un turno de preparación en el cielo en que sólo puede ser golpeado por Tornado Remolino Trueno Ciclón Gancho Alto Antiaéreo y Vendaval.,fisico
+20,Atadura,NORMAL,15,20,85,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,fisico
+21,Atizar,NORMAL,80,20,75,Ninguno.,fisico
+22,Látigo Cepa,PLANTA,45,25,100,Ninguno.,fisico
+23,Pisotón,NORMAL,65,20,100,30% de hacer retroceder al rival. Golpea a Pokémon que han usado Reducción con el doble de poder base e ignorando su Evasión.,fisico
+24,Doble Patada,LUCHA,30,30,100,Golpea 2 veces seguidas.,fisico
+25,Megapatada,NORMAL,120,5,75,Ninguno.,fisico
+26,Patada Salto,LUCHA,100,10,95,Si el ataque falla el usuario recibe un daño equivalente al 50% de su PS máximo.,fisico
+27,Patada Giro,LUCHA,60,15,85,30% de hacer retroceder al rival.,fisico
+28,Ataque Arena,TIERRA,0,15,100,Baja un nivel la Precisión al rival.,otros
+29,Golpe Cabeza,NORMAL,70,15,100,30% de hacer retroceder al rival.,fisico
+30,Cornada,NORMAL,65,25,100,Ninguno.,fisico
+31,Ataque Furia,NORMAL,15,20,85,Golpea de 2 a 5 veces seguidas.,fisico
+32,Perforador,NORMAL,1,5,30,Puede debilitar al Pokémon rival de un solo golpe.,fisico
+33,Placaje,NORMAL,40,35,100,Ninguno.,fisico
+34,Golpe Cuerpo,NORMAL,85,15,100,30% de paralizar al rival.,fisico
+35,Constricción,NORMAL,15,20,90,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,fisico
+36,Derribo,NORMAL,90,20,85,Provoca un daño de retroceso del 25% del daño provocado al Pokémon rival.,fisico
+37,Saña,NORMAL,120,10,100,El usuario golpea con este ataque durante 2 ó 3 turnos sin poder ser intercambiado tras lo cual pasa a estar confundido.,fisico
+38,Doble Filo,NORMAL,120,15,100,Provoca un daño de retroceso al usuario equivalente al 33% del daño provocado al rival.,fisico
+39,Látigo,NORMAL,0,30,100,Baja un nivel la Defensa al rival.,otros
+40,Picotazo Veneno,VENENO,15,35,100,30% de envenenar al rival.,fisico
+41,Doble Ataque,BICHO,25,20,100,20% de envenenar al rival. Golpea 2 veces seguidas.,fisico
+42,Pin Misil,BICHO,25,20,95,Golpea de 2 a 5 veces seguidas.,fisico
+43,Malicioso,NORMAL,0,30,100,Baja un nivel la Defensa al rival.,otros
+44,Mordisco,SINIESTRO,60,25,100,30% de hacer retroceder al rival.,fisico
+45,Gruñido,NORMAL,0,40,100,Baja un nivel el Ataque al rival.,otros
+46,Rugido,NORMAL,0,20,0,El Pokémon rival es intercambiado por otro al azar del entrenador rival. Si es salvaje huirá.,otros
+47,Canto,NORMAL,0,15,55,Provoca Sueño.,otros
+48,Supersónico,NORMAL,0,20,55,Provoca Confusión.,otros
+49,Bomba Sónica,NORMAL,1,20,90,Causa un daño de 20 PS al Pokémon rival.,especial
+50,Anulación,NORMAL,0,20,100,El Pokémon rival no puede usar el último movimiento que ha usado de 4 a 7 turnos.,otros
+51,Ácido,VENENO,40,30,100,10% de reducir un nivel la Defensa Especial al rival.,especial
+52,Ascuas,FUEGO,40,25,100,10% de quemar al rival.,especial
+53,Lanzallamas,FUEGO,90,15,100,10% de quemar al rival.,especial
+54,Neblina,HIELO,0,30,0,Impide las reducciones de stats por parte de los movimientos del rival o tu compañero durante 5 turnos.,otros
+55,Pistola Agua,AGUA,40,25,100,Ninguno.,especial
+56,Hidrobomba,AGUA,110,5,80,Ninguno.,especial
+57,Surf,AGUA,90,15,100,El poder base se duplica si el rival está bajo el agua preparando un Buceo.,especial
+58,Rayo Hielo,HIELO,90,10,100,10% de congelar al rival.,especial
+59,Ventisca,HIELO,110,5,70,10% de congelar al rival. En Granizo no falla.,especial
+60,Psicorrayo,PSIQUICO,65,20,100,10% de confundir al rival.,especial
+61,Rayo Burbuja,AGUA,65,20,100,10% de reducir un nivel la Velocidad al rival.,especial
+62,Rayo Aurora,HIELO,65,20,100,10% de reducir un nivel el Ataque al rival.,especial
+63,Hiperrayo,NORMAL,150,5,90,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,especial
+64,Picotazo,VOLADOR,35,35,100,Ninguno.,fisico
+65,Pico Taladro,VOLADOR,80,20,100,Ninguno.,fisico
+66,Sumisión,LUCHA,80,20,80,Provoca un daño de retroceso del 25% del daño provocado al Pokémon rival.,fisico
+67,Patada Baja,LUCHA,1,20,100,Este movimiento tiene un poder base variable entre 20 y 120 en función del peso del Pokémon rival.,fisico
+68,Contraataque,LUCHA,1,20,100,Si el usuario es golpeado por un ataque físico el mismo turno en que usa este movimiento le devolverá al atacante el doble del daño recibido.,fisico
+69,Sísmico,LUCHA,1,20,100,Causa un daño equivalente al nivel del usuario.,fisico
+70,Fuerza,NORMAL,80,15,100,Ninguno.,fisico
+71,Absorber,PLANTA,20,25,100,El usuario recupera PS equivalente a la mitad del daño causado.,especial
+72,Megaagotar,PLANTA,40,15,100,El usuario recupera PS equivalente a la mitad del daño causado.,especial
+73,Drenadoras,PLANTA,0,10,90,Hace perder al rival un 12.5% de su PS cada turno y lo transfiere a nuestro Pokémon. Inefectivo contra Pokémon de tipo Planta.,otros
+74,Desarrollo,NORMAL,0,20,0,Aumenta un nivel el Ataque y el Ataque Especial al usuario. En Día Soleado el aumento es de dos niveles.,otros
+75,Hoja Afilada,PLANTA,55,25,95,Alta probabilidad de Golpe Crítico.,fisico
+76,Rayo Solar,PLANTA,120,10,100,Precisa un turno de carga salvo en Día Soleado. En Llovizna Granizo y Tormenta de Arena su poder base es la mitad.,especial
+77,Polvo Veneno,VENENO,0,35,75,Provoca Envenenamiento.,otros
+78,Paralizador,PLANTA,0,30,75,Provoca Parálisis.,otros
+79,Somnífero,PLANTA,0,15,75,Provoca Sueño.,otros
+80,Danza Pétalo,PLANTA,120,10,100,El usuario golpea con este ataque durante 2 ó 3 turnos sin poder ser intercambiado tras lo cual pasa a estar confundido.,especial
+81,Disparo Demora,BICHO,0,40,95,Baja un nivel la Velocidad al rival.,otros
+82,Furia Dragón,DRAGON,1,10,100,Causa un daño de 40 PS al Pokémon rival.,especial
+83,Giro Fuego,FUEGO,35,15,85,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,especial
+84,Impactrueno,ELECTRICO,40,30,100,10% de paralizar al rival.,especial
+85,Rayo,ELECTRICO,90,15,100,10% de paralizar al rival.,especial
+86,Onda Trueno,ELECTRICO,0,20,90,Provoca Parálisis.,otros
+87,Trueno,ELECTRICO,110,10,70,30% de paralizar al rival. Golpea a Pokémon en mitad de un Vuelo Bote o Caída Libre. En Llovizna no falla. En Día Soleado tiene 50% de precisión.,especial
+88,Lanzarrocas,ROCA,50,15,90,Ninguno.,fisico
+89,Terremoto,TIERRA,100,10,100,El daño es doble si golpea a un Pokémon en mitad de una excavación.,fisico
+90,Fisura,TIERRA,1,5,30,Puede debilitar al Pokémon rival de un solo golpe.,fisico
+91,Excavar,TIERRA,80,10,100,Precisa un turno de preparación bajo tierra en que sólo puede ser golpeado por Terremoto y Magnitud con el doble de poder base.,fisico
+92,Tóxico,VENENO,0,10,90,Provoca Intoxicación.,otros
+93,Confusión,PSIQUICO,50,25,100,10% de confundir al rival.,especial
+94,Psíquico,PSIQUICO,90,10,100,10% de reducir un nivel la Defensa Especial al rival.,especial
+95,Hipnosis,PSIQUICO,0,20,60,Provoca Sueño.,otros
+96,Meditación,PSIQUICO,0,40,0,Aumenta un nivel el Ataque al usuario.,otros
+97,Agilidad,PSIQUICO,0,30,0,Aumenta dos niveles la Velocidad al usuario.,otros
+98,Ataque Rápido,NORMAL,40,30,100,Golpea primero.,fisico
+99,Furia,NORMAL,20,20,100,Aumenta un nivel el Ataque al usuario si éste es golpeado entre que usa este movimiento y el siguiente.,fisico
+100,Teletransporte,PSIQUICO,0,20,0,Termina la batalla contra Pokémon salvajes no tiene efecto en batalla contra entrenadores.,otros
+101,Tinieblas,FANTASMA,1,15,100,Causa un daño equivalente al nivel del usuario.,especial
+102,Mimético,NORMAL,0,10,0,Este movimiento se ve sustituido por el último ataque utilizado por el Pokémon rival (con 5 PP) por el resto de la batalla o hasta su intercambio.,otros
+103,Chirrido,NORMAL,0,40,85,Baja dos niveles la Defensa al rival.,otros
+104,Doble Equipo,NORMAL,0,15,0,Aumenta un nivel la Evasión al usuario.,otros
+105,Recuperación,NORMAL,0,5,0,El usuario recupera el 50% de su PS máximo.,otros
+106,Fortaleza,NORMAL,0,30,0,Aumenta un nivel la Defensa al usuario.,otros
+107,Reducción,NORMAL,0,10,0,Aumenta dos niveles la Evasión. El Pokémon recibe el doble de daño de Pisotón y Rodillo de Púas que no ven reducida su precisión.,otros
+108,Pantalla de Humo,NORMAL,0,20,100,Baja un nivel la Precisión al rival.,otros
+109,Rayo Confuso,FANTASMA,0,10,100,Provoca Confusión.,otros
+110,Refugio,AGUA,0,40,0,Aumenta un nivel la Defensa al usuario.,otros
+111,Rizo Defensa,NORMAL,0,40,0,Aumenta un nivel la Defensa al usuario. Duplica el poder base de Desenrollar y Bola Hielo.,otros
+112,Barrera,PSIQUICO,0,20,0,Aumenta dos niveles la Defensa al usuario.,otros
+113,Pantalla de Luz,PSIQUICO,0,30,0,Reduce el daño provocado a tu Pokémon por ataques especiales del rival en un 50% (33% en 2vs2) durante 5 turnos.,otros
+114,Niebla,HIELO,0,30,0,Elimina todos los modificadores de stats de todos los Pokémon.,otros
+115,Reflejo,PSIQUICO,0,20,0,Reduce el daño provocado a tu Pokémon por ataques físicos del rival en un 50% (33% en 2vs2) durante 5 turnos.,otros
+116,Foco Energía,NORMAL,0,30,0,Aumenta la probabilidad de que el Pokémon haga Golpe Crítico.,otros
+117,Venganza,NORMAL,1,10,0,Aguanta todos los golpes de su rival durante 2 turnos para luego causarle un daño en PS equivalente al doble del recibido por él.,fisico
+118,Metrónomo,NORMAL,0,10,0,Usa un movimiento al azar.,otros
+119,Espejo,VOLADOR,0,20,0,Usa el último movimiento que ha utilizado el Pokémon rival.,otros
+120,Autodestrucción,NORMAL,200,5,100,El usuario cae debilitado tras usar este movimiento. El movimiento fallará si su objetivo desaparece.,fisico
+121,Bomba Huevo,NORMAL,100,10,75,Ninguno.,fisico
+122,Lengüetazo,FANTASMA,30,30,100,30% de paralizar al rival.,fisico
+123,Polución,VENENO,30,20,70,40% de envenenar al rival.,especial
+124,Residuos,VENENO,65,20,100,30% de envenenar al rival.,especial
+125,Hueso Palo,TIERRA,65,20,85,10% de hacer retroceder al rival.,fisico
+126,Llamarada,FUEGO,110,5,85,10% de quemar al rival.,especial
+127,Cascada,AGUA,80,15,100,20% de hacer retroceder al rival.,fisico
+128,Tenaza,AGUA,35,10,85,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,fisico
+129,Meteoros,NORMAL,60,20,0,Siempre golpea.,especial
+130,Cabezazo,NORMAL,130,10,100,100% de aumentar un nivel la Defensa al usuario el primer turno. Golpea en el segundo turno.,fisico
+131,Clavo Cañón,NORMAL,20,15,100,Golpea de 2 a 5 veces seguidas.,fisico
+132,Restricción,NORMAL,10,35,100,10% de reducir un nivel la Velocidad al rival.,fisico
+133,Amnesia,PSIQUICO,0,20,0,Aumenta dos niveles la Defensa Especial al usuario.,otros
+134,Kinético,PSIQUICO,0,15,80,Baja un nivel la Precisión al rival.,otros
+135,Ovocuración,NORMAL,0,5,0,El usuario recupera el 50% de su PS máximo.,otros
+136,Pat. Salto Alta,LUCHA,130,10,90,Si el ataque falla el usuario recibe un daño equivalente al 50% de su PS máximo.,fisico
+137,Deslumbrar,NORMAL,0,30,100,Provoca Parálisis.,otros
+138,Comesueños,PSIQUICO,100,15,100,Restaura PS equivalente a la mitad del daño hecho al rival. Surte efectos sólo si el objetivo está dormido.,especial
+139,Gas Venenoso,VENENO,0,40,90,Provoca Envenenamiento.,otros
+140,Bombardeo,NORMAL,15,20,85,Golpea de 2 a 5 veces seguidas.,fisico
+141,Chupavidas,BICHO,80,10,100,El usuario recupera PS equivalente a la mitad del daño causado.,fisico
+142,Beso Amoroso,NORMAL,0,10,75,Provoca Sueño.,otros
+143,Ataque Aéreo,VOLADOR,140,5,90,30% de hacer retroceder al rival. Se prepara el primer turno para atacar en el segundo.,fisico
+144,Transformación,NORMAL,0,10,0,El usuario pasa a ser una copia casi idéntica del Pokémon objetivo incluyendo stats (salvo PS) apariencia movimientos (con 5 PP) y habilidades.,otros
+145,Burbuja,AGUA,40,30,100,10% de reducir un nivel la Velocidad al rival.,especial
+146,Puño Mareo,NORMAL,70,10,100,20% de confundir al rival.,fisico
+147,Espora,PLANTA,0,15,100,Provoca Sueño.,otros
+148,Destello,NORMAL,0,20,100,Baja un nivel la Precisión al rival.,otros
+149,Psicoonda,PSIQUICO,1,15,100,Causa un daño equivalente a 0.5 a 1.5 veces el nivel del usuario.,especial
+150,Salpicadura,NORMAL,0,40,0,No hace nada.,otros
+151,Armadura Ácida,VENENO,0,20,0,Aumenta dos niveles la Defensa al usuario.,otros
+152,Martillazo,AGUA,100,10,90,Alta probabilidad de Golpe Crítico.,fisico
+153,Explosión,NORMAL,250,5,100,El usuario cae debilitado tras usar este movimiento. El movimiento fallará si su objetivo desaparece.,fisico
+154,Golpes Furia,NORMAL,18,15,80,Golpea de 2 a 5 veces seguidas.,fisico
+155,Huesomerang,TIERRA,50,10,90,Golpea 2 veces seguidas.,fisico
+156,Descanso,PSIQUICO,0,5,0,Duerme al usuario por 2 turnos y recupera todo su PS.,otros
+157,Avalancha,ROCA,75,10,90,30% de hacer retroceder al rival.,fisico
+158,Hipercolmillo,NORMAL,80,15,90,10% de hacer retroceder al rival.,fisico
+159,Afilar,NORMAL,0,30,0,Aumenta un nivel el Ataque al usuario.,otros
+160,Conversión,NORMAL,0,30,0,El tipo Pokémon del usuario cambia al tipo de uno de sus movimientos al azar (Poder Oculto y Meteorobola cuentan como de tipo Normal).,otros
+161,Triataque,NORMAL,80,10,100,20% de quemar congelar o paralizar al rival.,especial
+162,Superdiente,NORMAL,1,10,90,Causa un daño equivalente a la mitad del PS que le queda al Pokémon rival.,fisico
+163,Cuchillada,NORMAL,70,20,100,Alta probabilidad de Golpe Crítico.,fisico
+164,Sustituto,NORMAL,0,10,0,Crea un Sustituto con el 25% del PS máximo del usuario.,otros
+165,Forcejeo,NORMAL,50,1,0,Puede ser usado ilimitadas veces por cualquier Pokémon que haya agotado los PP de todos sus movimientos o no los pueda usar. Causa daño de retroceso del 25% del PS máx.,fisico
+166,Esquema,NORMAL,0,1,0,Copia el último movimiento intentado por el rival de manera permanente de manera que ocupará la posición de este movimiento incluso tras terminar la batalla.,otros
+167,Triple Patada,LUCHA,10,10,90,Golpea 3 veces el mismo turno con 10 20 y 30 de poder base respectivamente. Si algún golpe falla el resto no se ejecutan.,fisico
+168,Ladrón,SINIESTRO,60,25,100,Toma el objeto del rival si no tiene nada equipado incluso aunque el rival caiga debilitado a consecuencia del ataque.,fisico
+169,Telaraña,BICHO,0,10,0,Impide al rival ser intercambiado salvo usando Relevo Ida y Vuelta Voltiocambio o Última Palabra o si tiene Muda Concha o Botón Escape.,otros
+170,Telépata,NORMAL,0,5,0,El siguiente movimiento que utilice el Pokémon no fallará.,otros
+171,Pesadilla,FANTASMA,0,15,100,Causa un 25% de daño al Pokémon rival cada turno mientras permanezca dormido.,otros
+172,Rueda Fuego,FUEGO,60,25,100,10% de quemar al rival. Puede ser utilizado incluso cuando el Pokémon está congelado curando automáticamente la congelación.,fisico
+173,Ronquido,NORMAL,50,15,100,30% de hacer retroceder al rival. Sólo puede ser utilizado cuando el Pokémon está dormido.,especial
+174,Maldición,FANTASMA,0,10,0,Aumenta un nivel el Ataque y la Defensa y reduce un nivel la Velocidad al usuario. Usado por un Fantasma pierde 50% de PS máx. y el rival pierde un 25% de PS cada turno.,otros
+175,Azote,NORMAL,1,15,100,El poder base de este movimiento es mayor cuanto menor el PS restante del usuario.,fisico
+176,Conversión2,NORMAL,0,30,0,El tipo del usuario cambia a un tipo al azar de entre los que son resistentes o inmunes al tipo del último movimiento utilizado por el rival.,otros
+177,Aerochorro,VOLADOR,100,5,95,Alta probabilidad de Golpe Crítico.,especial
+178,Esporagodón,PLANTA,0,40,100,Baja dos niveles la Velocidad al rival.,otros
+179,Inversión,LUCHA,1,15,100,El poder base de este movimiento es mayor cuanto menor el PS restante del usuario.,fisico
+180,Rencor,FANTASMA,0,10,100,El último movimiento utilizado por el rival verá reducidos sus PP en 4.,otros
+181,Nieve Polvo,HIELO,40,25,100,10% de congelar al rival.,especial
+182,Protección,NORMAL,0,10,0,Evita todo daño directo y efectos de movimientos del rival. Su precisión se reduce con cada uso consecutivo.,otros
+183,Ultrapuño,LUCHA,40,30,100,Golpea primero.,fisico
+184,Cara Susto,NORMAL,0,10,100,Baja dos niveles la Velocidad al rival.,otros
+185,Finta,SINIESTRO,60,20,0,Siempre golpea.,fisico
+186,Beso Dulce,HADA,0,10,75,Provoca Confusión.,otros
+187,Tambor,NORMAL,0,10,0,Aumenta seis niveles el Ataque al usuario que pierde la mitad de su PS máximo. Si el usuario tiene 50% de PS o menos el movimiento falla.,otros
+188,Bomba Lodo,VENENO,90,10,100,30% de envenenar al rival.,especial
+189,Bofetón Lodo,TIERRA,20,10,100,100% de reducir un nivel la Precisión al rival.,especial
+190,Pulpocañón,AGUA,65,10,85,50% de reducir un nivel la Precisión al rival.,especial
+191,Púas,TIERRA,0,20,0,El Pokémon que salga a luchar recibirá un daño equivalente al 12.5% de PS (16.66% con 2 filas 25% con 3 filas). No afecta a Pokémon voladores o levitadores.,otros
+192,Electrocañón,ELECTRICO,120,5,50,100% de paralizar al rival.,especial
+193,Profecía,NORMAL,0,40,0,Hasta el intercambio o derrota del rival su Evasión y tu Precisión no pueden ser modificados. Si el rival es de tipo Fantasma no es inmune a ataques de tipo Normal o Lucha.,otros
+194,Mismo Destino,FANTASMA,0,5,0,Si el usuario cae debilitado por un ataque del rival antes de usar otro ataque el Pokémon rival cae también debilitado.,otros
+195,Canto Mortal,NORMAL,0,5,0,Todos los Pokémon en batalla al producirse este ataque caerán debilitados al cabo de tres turnos salvo que sean intercambiados (sin Relevo).,otros
+196,Viento Hielo,HIELO,55,15,95,100% de reducir un nivel la Velocidad al rival.,especial
+197,Detección,LUCHA,0,5,0,Evita todo daño directo y efectos de movimientos del rival. Su precisión se reduce con cada uso consecutivo.,otros
+198,Ataque Óseo,TIERRA,25,10,90,Golpea de 2 a 5 veces seguidas.,fisico
+199,Fijar Blanco,NORMAL,0,5,0,El siguiente movimiento que utilice el Pokémon no fallará.,otros
+200,Enfado,DRAGON,120,10,100,El usuario golpea con este ataque durante 2 ó 3 turnos sin poder ser intercambiado tras lo cual pasa a estar confundido.,fisico
+201,Tormenta Arena,ROCA,0,10,0,Provoca Tormenta de Arena.,otros
+202,Gigadrenado,PLANTA,75,10,100,El usuario recupera PS equivalente a la mitad del daño causado.,especial
+203,Aguante,NORMAL,0,10,0,El usuario resiste con vida todo ataque con al menos 1 PS. Su precisión se reduce con cada uso consecutivo.,otros
+204,Encanto,HADA,0,20,100,Baja dos niveles el Ataque al rival.,otros
+205,Rodar,ROCA,30,20,90,El usuario debe usar este movimiento por hasta 5 turnos (mientras no falle). Por cada turno que use el ataque su poder base se dobla.,fisico
+206,Falsotortazo,NORMAL,40,40,100,Deja al rival con al menos 1 PS.,fisico
+207,Contoneo,NORMAL,0,15,85,Provoca Confusión. Aumenta dos niveles el Ataque al rival.,otros
+208,Batido,NORMAL,0,5,0,El usuario recupera el 50% de su PS máximo.,otros
+209,Chispa,ELECTRICO,65,20,100,30% de paralizar al rival.,fisico
+210,Corte Furia,BICHO,40,20,95,Por cada turno que el ataque sea usado y acierte su poder base se dobla pero sólo durante 4 turnos. Puedes usar otros movimientos entre medias sin perder el bonus.,fisico
+211,Ala de Acero,ACERO,70,25,90,10% de aumentar un nivel la Defensa al usuario.,fisico
+212,Mal de Ojo,NORMAL,0,5,0,Impide al rival ser intercambiado salvo usando Relevo Ida y Vuelta Voltiocambio o Última Palabra o si tiene Muda Concha o Botón Escape.,otros
+213,Atracción,NORMAL,0,15,100,Provoca una atracción al rival del género contrario.,otros
+214,Sonámbulo,NORMAL,0,10,0,El usuario utiliza uno de sus movimientos al azar mientras está dormido.,otros
+215,Cascabel Cura,NORMAL,0,5,0,Cura cualquier problema de estado de cualquier miembro de tu equipo.,otros
+216,Retribución,NORMAL,1,20,100,Su poder base depende de la Felicidad del Pokémon entre 0 y 102.,fisico
+217,Presente,NORMAL,1,15,90,25% de recuperar 80 PS al usuario 25% de golpear con 40 de poder 25% de golpear con 80 de poder 25% de golpear con 120 de poder.,fisico
+218,Frustración,NORMAL,1,20,100,Su poder base depende de la Infelicidad del Pokémon entre 0 y 102.,fisico
+219,Velo Sagrado,NORMAL,0,25,0,Previene cambios de estado permanentes Púas Tóxicas y confusión por 5 turnos al usuario y sus compañeros.,otros
+220,Divide Dolor,NORMAL,0,20,0,Suma los PS actuales del usuario y del rival y luego los reparte por igual entre los dos.,otros
+221,Fuego Sagrado,FUEGO,100,5,95,50% de quemar al rival. Puede ser utilizado incluso cuando el Pokémon está congelado curando automáticamente la congelación.,fisico
+222,Magnitud,TIERRA,1,30,100,Este movimiento tiene un poder base variable entre 10 y 150. El daño es doble si golpea a un Pokémon en mitad de una excavación.,fisico
+223,Puño Dinámico,LUCHA,100,5,50,100% de confundir al rival.,fisico
+224,Megacuerno,BICHO,120,10,85,Ninguno.,fisico
+225,Dragoaliento,DRAGON,60,20,100,30% de paralizar al rival.,especial
+226,Relevo,NORMAL,0,40,0,El Pokémon usuario es intercambiado por otro Pokémon del equipo a elegir conservando ciertos modificadores y estados.,otros
+227,Otra Vez,NORMAL,0,5,100,El Pokémon objetivo queda obligado a usar el último movimiento que haya usado durante 3 turnos.,otros
+228,Persecución,SINIESTRO,40,20,100,Este movimiento puede golpear al Pokémon del rival aun cuando éste va a ser intercambiado ese turno duplicando su poder base en el golpe.,fisico
+229,Giro Rápido,NORMAL,50,40,100,Aumenta un nivel la Velocidad al usuario. Elimina los efectos de Púas Púas Tóxicas Trampa Rocas Drenadoras y pseudo-trampas.,fisico
+230,Dulce Aroma,NORMAL,0,20,100,Baja un nivel la Evasión al rival.,otros
+231,Cola Férrea,ACERO,100,15,75,30% de reducir un nivel la Defensa al rival.,fisico
+232,Garra Metal,ACERO,50,35,95,10% de aumentar un nivel el Ataque al usuario.,fisico
+233,Llave Vital,LUCHA,70,10,0,Siempre golpea. Golpea último.,fisico
+234,Sol Matinal,NORMAL,0,5,0,El usuario recupera 66.6% PS en Día Soleado 50% PS si no hay clima y 25% en Llovizna Granizo o Tormenta de Arena.,otros
+235,Síntesis,PLANTA,0,5,0,El usuario recupera 66.6% PS en Día Soleado 50% PS si no hay clima y 25% en Llovizna Granizo o Tormenta de Arena.,otros
+236,Luz Lunar,HADA,0,5,0,El usuario recupera 66.6% PS en Día Soleado 50% PS si no hay clima y 25% en Llovizna Granizo o Tormenta de Arena.,otros
+237,Poder Oculto,NORMAL,60,15,100,Este movimiento tiene un tipo variable y un poder base variable entre 30 y 70 dependiendo de los IV?s del usuario.,especial
+238,Tajo Cruzado,LUCHA,100,5,80,Alta probabilidad de Golpe Crítico.,fisico
+239,Ciclón,DRAGON,40,20,100,20% de hacer retroceder al rival. Golpea a Pokémon en mitad de un Vuelo Bote o Caída Libre con el doble de poder base.,especial
+240,Danza Lluvia,AGUA,0,5,0,Provoca Llovizna.,otros
+241,Día Soleado,FUEGO,0,5,0,Provoca Día Soleado.,otros
+242,Triturar,SINIESTRO,80,15,100,20% de reducir un nivel la Defensa al rival.,fisico
+243,Manto Espejo,PSIQUICO,1,20,100,Si el usuario es golpeado por un ataque especial el mismo turno en que usa este movimiento le devolverá al atacante el doble del daño recibido.,especial
+244,Autosugestión,NORMAL,0,10,0,Copia los modificadores de stats del Pokémon rival.,otros
+245,Veloc. Extrema,NORMAL,80,5,100,Golpea primero.,fisico
+246,Poder Pasado,ROCA,60,5,100,10% de aumentar un nivel el Ataque la Defensa la Velocidad el Ataque Especial y la Defensa Especial al usuario.,especial
+247,Bola Sombra,FANTASMA,80,15,100,20% de reducir un nivel la Defensa Especial al rival.,especial
+248,Premonición,PSIQUICO,120,10,100,Este ataque golpeará al objetivo al final del segundo turno tras su uso. Mientras se pueden usar otros ataques y tanto el usuario como el rival pueden ser intercambiados.,especial
+249,Golpe Roca,LUCHA,40,15,100,50% de reducir un nivel la Defensa al rival.,fisico
+250,Torbellino,AGUA,35,15,85,El rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 6.25% del PS cada turno. El poder base se duplica si el rival preparando un Buceo.,especial
+251,Paliza,SINIESTRO,1,10,100,Cada Pokémon del equipo que esté sano (sin estado) hará un ataque de poder base variable en función de su stat base de Ataque. El daño se calcula también con su Ataque.,fisico
+252,Sorpresa,NORMAL,40,10,100,100% de hacer retroceder al rival. Golpea primero. Sólo puede ser utilizado con éxito el primer turno de ataque del usuario tras ser intercambiado.,fisico
+253,Alboroto,NORMAL,90,10,100,Golpea 3 turnos seguidos causando un Alboroto que impide que los Pokémon se duerman y despierta a los Pokémon dormidos.,especial
+254,Reserva,NORMAL,0,20,0,El usuario suma un contador de Reserva (máx. 3). Aumentan un nivel la Defensa y Defensa Especial del usuario. Pueden ser pasados mediante Relevo y usados con Escupir y Tragar.,otros
+255,Escupir,NORMAL,1,10,100,Cada contador de Reserva que tenga el usuario (máx. 3) suma 100 a su poder base. Resetea los contadores y con ello la mejora en defensas.,especial
+256,Tragar,NORMAL,0,10,0,El usuario recupera PS según sus contadores de Reserva: 25% PS con uno 50% PS con dos 100% PS con tres. Resetea los contadores y con ello la mejora en defensas.,otros
+257,Onda Ígnea,FUEGO,95,10,90,10% de quemar al rival.,especial
+258,Granizo,HIELO,0,10,0,Provoca Granizo.,otros
+259,Tormento,SINIESTRO,0,15,100,El rival no puede usar el mismo ataque dos veces seguidas.,otros
+260,Camelo,SINIESTRO,0,15,100,Provoca Confusión. Aumenta un nivel el Ataque Especial al rival.,otros
+261,Fuego Fatuo,FUEGO,0,15,85,Provoca Quemadura. Activa la habilidad Absorbe Fuego.,otros
+262,Legado,SINIESTRO,0,10,100,El usuario se debilita. Baja dos niveles el Ataque y el Ataque Especial del rival.,otros
+263,Imagen,NORMAL,70,20,100,El poder base se duplica si el usuario está Quemado Paralizado o Envenenado.,fisico
+264,Puño Certero,LUCHA,150,20,100,Ataca último si no es golpeado.,fisico
+265,Estímulo,NORMAL,70,10,100,El poder base se duplica si golpea a un Pokémon paralizado curándole la parálisis.,fisico
+266,Señuelo,NORMAL,0,20,0,En batallas múltiples los ataques que usen los Pokémon rivales ese turno golpearán al usuario ignorando la elección de su entrenador. No afecta a los ataques varios objetivos.,otros
+267,Adaptación,NORMAL,0,20,0,Este movimiento se convierte en otro movimiento según el terreno en que tenga lugar la batalla.,otros
+268,Carga,ELECTRICO,0,20,0,El movimiento de tipo Eléctrico que el usuario use el siguiente turno verá su poder base duplicado. Aumenta un nivel la Defensa Especial al usuario.,otros
+269,Mofa,SINIESTRO,0,20,100,El rival no puede utilizar movimientos que no causen daño durante los próximos 3 turnos.,otros
+270,Refuerzo,NORMAL,0,20,0,En batallas múltiples el ataque que use su compañero ese turno verá aumentado su poder base en un 50%.,otros
+271,Truco,PSIQUICO,0,10,100,El usuario y el rival intercambian sus objetos durante el resto de la batalla. No funciona contra Pokémon con la habilidad Viscosidad.,otros
+272,Imitación,PSIQUICO,0,10,0,El usuario adquiere la habilidad del rival mientras permanezca en batalla (salvo Superguarda o Multitipo).,otros
+273,Deseo,NORMAL,0,10,0,Recupera PS al Pokémon que se encuentre activo el siguiente turno sea el usuario u otro por la mitad del PS máximo del usuario.,otros
+274,Ayuda,NORMAL,0,20,0,Usa un movimiento al azar de entre los que conocen el resto de miembros de tu equipo que no están en batalla.,otros
+275,Arraigo,PLANTA,0,20,0,El usuario recupera un 6.25% de su PS máximo al final de cada turno pero no puede ser intercambiado. Anula la inmunidad a Tierra de voladores y levitadores.,otros
+276,Fuerza Bruta,LUCHA,120,5,100,Baja un nivel el Ataque y la Defensa al usuario.,fisico
+277,Capa Mágica,PSIQUICO,0,15,0,Refleja al Pokémon rival los efectos de movimientos que no causan daño (modificador estado alterado confusión atracción trampa drenadoras abatidoras bilis).,otros
+278,Reciclaje,NORMAL,0,10,0,El usuario recupera el objeto equipado que haya consumido o perdido por Picadura Lanzamiento Don Natural o Picoteo.,otros
+279,Desquite,LUCHA,60,10,100,El poder base se duplica si el usuario es golpeado antes de usar este movimiento en el mismo turno.,fisico
+280,Demolición,LUCHA,75,15,100,Destruye Pantalla de Luz Reflejo y Velo Aurora incluso si falla.,fisico
+281,Bostezo,NORMAL,0,10,0,Provoca un bostezo en el rival que caerá dormido el siguiente turno salvo que sea intercambiado.,otros
+282,Desarme,SINIESTRO,65,20,100,El rival pierde el objeto que pudiera tener equipado durante el resto de la batalla salvo que tenga Viscosidad o Multitipo.,fisico
+283,Esfuerzo,NORMAL,1,5,100,Causa daño equivalente a la diferencia entre el PS actual del rival y del usuario. No aplica resistencias pero no afecta a Fantasma.,fisico
+284,Estallido,FUEGO,150,5,100,El poder de este movimiento será mayor cuanto mayor el PS del usuario. El daño será: 150 x ( PS actual / PS total ).,especial
+285,Intercambio,PSIQUICO,0,10,0,El usuario intercambia la habilidad con el rival (salvo Superguarda y Multitipo).,otros
+286,Sellar,PSIQUICO,0,10,0,Mientras el usuario permanezca en batalla los rivales no pueden usar movimientos que también conozca el usuario (incluso si los aprende en batalla).,otros
+287,Alivio,NORMAL,0,20,0,Cura al usuario de su Quemadura Parálisis o Envenenamiento.,otros
+288,Rabia,FANTASMA,0,5,0,Si el rival debilita al usuario con su siguiente movimiento los PP de ese movimiento se reducirán a cero.,otros
+289,Robo,SINIESTRO,0,10,0,Roba el efecto secundario de los movimientos de apoyo que fuera a utilizar el rival ese turno y lo utiliza en beneficio del usuario.,otros
+290,Daño Secreto,NORMAL,70,20,100,30% de que ocurra cierto efecto según el terreno de la batalla.,fisico
+291,Buceo,AGUA,80,10,100,Precisa un turno de preparación bajo el agua en que sólo puede ser golpeado por Surf y Torbellino con el doble de poder base.,fisico
+292,Empujón,LUCHA,15,20,100,Golpea de 2 a 5 veces seguidas.,fisico
+293,Camuflaje,NORMAL,0,20,0,Cambia el tipo del Pokémon en función del terreno de batalla.,otros
+294,Luminicola,BICHO,0,20,0,Aumenta tres niveles el Ataque Especial al usuario.,otros
+295,Resplandor,PSIQUICO,95,5,100,50% de reducir un nivel la Defensa Especial al rival.,especial
+296,Bola Neblina,PSIQUICO,95,5,100,50% de reducir un nivel el Ataque Especial al rival.,especial
+297,Danza Pluma,VOLADOR,0,15,100,Baja dos niveles el Ataque al rival.,otros
+298,Danza Caos,NORMAL,0,20,100,Provoca Confusión al resto de Pokémon en batalla.,otros
+299,Patada Ígnea,FUEGO,85,10,90,10% de quemar al rival. Alta probabilidad de Golpe Crítico.,fisico
+300,Chapoteo Lodo,TIERRA,0,15,0,Todos los ataques tipo Eléctrico hacen la mitad de daño hasta que el usuario sea intercambiado.,otros
+301,Bola Hielo,HIELO,30,20,90,El usuario debe usar este movimiento por hasta 5 turnos (mientras no falle). Por cada turno que use el ataque su poder base se dobla.,fisico
+302,Brazo Pincho,PLANTA,60,15,100,30% de hacer retroceder al rival.,fisico
+303,Relajo,NORMAL,0,5,0,El usuario recupera el 50% de su PS máximo.,otros
+304,Vozarrón,NORMAL,90,10,100,Ninguno.,especial
+305,Colmillo Veneno,VENENO,50,15,100,50% de intoxicar al rival.,fisico
+306,Garra Brutal,NORMAL,75,10,95,50% de reducir un nivel la Defensa al rival.,fisico
+307,Anillo Ígneo,FUEGO,150,5,90,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,especial
+308,Hidrocañón,AGUA,150,5,90,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,especial
+309,Puño Meteoro,ACERO,90,10,90,20% de aumentar un nivel el Ataque al usuario.,fisico
+310,Impresionar,FANTASMA,30,15,100,30% de hacer retroceder al rival.,fisico
+311,Meteorobola,NORMAL,50,10,100,Su tipo será Agua en Llovizna Fuego en Día Soleado Hielo en Granizo o Roca en Tormenta de Arena. El clima duplica su poder base.,especial
+312,Aromaterapia,PLANTA,0,5,0,Cura cualquier problema de estado de cualquier miembro de tu equipo.,otros
+313,Llanto Falso,SINIESTRO,0,20,100,Baja dos niveles la Defensa Especial al rival.,otros
+314,Aire Afilado,VOLADOR,60,25,95,Alta probabilidad de Golpe Crítico.,especial
+315,Sofoco,FUEGO,130,5,90,100% de reducir dos niveles el Ataque Especial al usuario.,especial
+316,Rastreo,NORMAL,0,40,0,Hasta el intercambio o derrota del rival su Evasión y tu Precisión no pueden ser modificados. Si el rival es de tipo Fantasma no es inmune a ataques de tipo Normal o Lucha.,otros
+317,Tumba Rocas,ROCA,60,15,95,100% de reducir un nivel la Velocidad al rival.,fisico
+318,Viento Plata,BICHO,60,5,100,10% de aumentar un nivel el Ataque la Defensa la Velocidad el Ataque Especial y la Defensa Especial al usuario.,especial
+319,Eco Metálico,ACERO,0,40,85,Baja dos niveles la Defensa Especial al rival.,otros
+320,Silbato,PLANTA,0,15,55,Provoca Sueño.,otros
+321,Cosquillas,NORMAL,0,20,100,Baja un nivel el Ataque y la Defensa al rival.,otros
+322,Masa Cósmica,PSIQUICO,0,20,0,Aumenta un nivel la Defensa y la Defensa Especial al usuario.,otros
+323,Salpicar,AGUA,150,5,100,El poder de este movimiento será mayor cuanto mayor el PS del usuario. El daño será: 150 x ( PS actual / PS total ).,especial
+324,Rayo Señal,BICHO,75,15,100,10% de confundir al rival.,especial
+325,Puño Sombra,FANTASMA,60,20,0,Siempre golpea.,fisico
+326,Paranormal,PSIQUICO,80,20,100,10% de hacer retroceder al rival.,especial
+327,Gancho Alto,LUCHA,85,15,90,Golpea a Pokémon en mitad de un Vuelo Bote o Caída Libre.,fisico
+328,Bucle Arena,TIERRA,35,15,85,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,fisico
+329,Frío Polar,HIELO,1,5,30,Puede debilitar al Pokémon rival de un solo golpe.,especial
+330,Agua Lodosa,AGUA,90,10,85,30% de reducir un nivel la Precisión al rival.,especial
+331,Semilladora,PLANTA,25,30,100,Golpea de 2 a 5 veces seguidas.,fisico
+332,Golpe Aéreo,VOLADOR,60,20,0,Siempre golpea.,fisico
+333,Carámbano,HIELO,25,30,100,Golpea de 2 a 5 veces seguidas.,fisico
+334,Defensa Férrea,ACERO,0,15,0,Aumenta dos niveles la Defensa al usuario.,otros
+335,Bloqueo,NORMAL,0,5,0,Impide al rival ser intercambiado salvo usando Relevo Ida y Vuelta Voltiocambio o Última Palabra o si tiene Muda Concha o Botón Escape.,otros
+336,Aullido,NORMAL,0,40,0,Aumenta un nivel el Ataque al usuario y sus aliados.,otros
+337,Garra Dragón,DRAGON,80,15,100,Ninguno.,fisico
+338,Planta Feroz,PLANTA,150,5,90,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,especial
+339,Corpulencia,LUCHA,0,20,0,Aumenta un nivel el Ataque y la Defensa al usuario.,otros
+340,Bote,VOLADOR,85,5,85,30% de paralizar al rival. Precisa un turno de preparación en el cielo en que sólo puede ser golpeado por Tornado Remolino Trueno Ciclón Gancho Alto Antiaéreo y Vendaval.,fisico
+341,Disparo Lodo,TIERRA,55,15,95,100% de reducir un nivel la Velocidad al rival.,especial
+342,Cola Veneno,VENENO,50,25,100,10% de envenenar al rival. Alta probabilidad de Golpe Crítico.,fisico
+343,Antojo,NORMAL,60,25,100,Toma el objeto del rival si no tiene nada equipado incluso aunque el rival caiga debilitado a consecuencia del ataque.,fisico
+344,Placaje Eléc,ELECTRICO,120,15,100,10% de paralizar al rival. Provoca un daño de retroceso del 33% del daño provocado al Pokémon rival.,fisico
+345,Hoja Mágica,PLANTA,60,20,0,Siempre golpea.,especial
+346,Hidrochorro,AGUA,0,15,0,Todos los ataques tipo Fuego hacen un tercio de daño durante 5 turnos.,otros
+347,Paz Mental,PSIQUICO,0,20,0,Aumenta un nivel el Ataque Especial y la Defensa Especial al usuario.,otros
+348,Hoja Aguda,PLANTA,90,15,100,Alta probabilidad de Golpe Crítico.,fisico
+349,Danza Dragón,DRAGON,0,20,0,Aumenta un nivel el Ataque y la Velocidad al usuario.,otros
+350,Pedrada,ROCA,25,10,90,Golpea de 2 a 5 veces seguidas.,fisico
+351,Onda Voltio,ELECTRICO,60,20,0,Siempre golpea.,especial
+352,Hidropulso,AGUA,60,20,100,20% de confundir al rival.,especial
+353,Deseo Oculto,ACERO,140,5,100,Este ataque golpeará al objetivo al final del segundo turno tras su uso. Mientras se pueden usar otros ataques y tanto el usuario como el rival pueden ser intercambiados.,especial
+354,Psicoataque,PSIQUICO,140,5,90,100% de reducir dos niveles el Ataque Especial al usuario.,especial
+355,Respiro,VOLADOR,0,5,0,El usuario recupera el 50% de su PS máximo. En ese mismo turno perderá su tipo Volador (si lo tiene) con lo que ello afecta a sus inmunidades debilidades y resistencias.,otros
+356,Gravedad,PSIQUICO,0,5,0,Por 5 turnos se anula la inmunidad de Levitación voladores y Levitón al tipo Tierra Trampa Arena Púas Tóxicas y Púas. La Evasión de todos los Pokémon baja dos niveles.,otros
+357,Gran Ojo,PSIQUICO,0,40,0,Mientras el usuario siga en batalla se ignoran los modificadores de Evasión del rival y de Precisión del usuario. Anula la inmunidad del tipo Siniestro frente al tipo Psíquico.,otros
+358,Espabila,LUCHA,70,10,100,El poder base se duplica si golpea a un Pokémon dormido curándole el sueño.,fisico
+359,Machada,LUCHA,100,10,90,Baja un nivel la Velocidad al usuario.,fisico
+360,Giro Bola,ACERO,1,5,100,El poder es mayor cuanto más lento el usuario frente al rival. El daño será: 1 + (Vel.Rival / Vel.Usuario) x 25 (incluye modificadores de Velocidad máx. 150).,fisico
+361,Deseo Cura,PSIQUICO,0,10,0,El usuario cae debilitado y el siguiente Pokémon recupera todo su PS y se ve curado de cambios de estado.,otros
+362,Salmuera,AGUA,65,10,100,El poder base se duplica si el rival tiene menos de la mitad de su PS máximo.,especial
+363,Don Natural,NORMAL,1,15,100,El tipo y poder del ataque dependen de la Baya equipada que se consume con el uso. El poder puede ser 60 70 ú 80. La Baya se puede recuperar con Reciclaje.,fisico
+364,Amago,NORMAL,30,10,100,Golpea aunque el rival use Protección Detección Vastaguardia o Anticipo ese turno los cuales se ven anulados.,fisico
+365,Picoteo,VOLADOR,60,20,100,Si el rival lleva una Baya equipada el usuario se la coge y la usa en ese instante. Kouba se activa y reduce el daño de este ataque. La Baya se puede recuperar con Reciclaje.,fisico
+366,Viento Afín,VOLADOR,0,15,0,Se duplica la Velocidad del equipo del usuario por 4 turnos incluyendo el turno en que se usa este movimiento.,otros
+367,Acupresión,NORMAL,0,30,0,Aumenta dos niveles un stat al azar del usuario (Ataque Defensa Ataque Especial Defensa Especial Velocidad Precisión y Evasión).,otros
+368,Represión Metal,ACERO,1,10,100,Causa un daño equivalente al 150% del daño causado por el ataque del rival ese turno. Debe ser utilizado después del ataque del rival.,fisico
+369,Ida y Vuelta,BICHO,70,20,100,El Pokémon debe ser intercambiado tras usar este ataque. Permite escapar de trampas y pseudo-trampas.,fisico
+370,A Bocajarro,LUCHA,120,5,100,Baja un nivel la Defensa y la Defensa Especial al usuario.,fisico
+371,Vendetta,SINIESTRO,50,10,100,Su poder base se duplica si el rival ya se ha movido ese turno.,fisico
+372,Buena Baza,SINIESTRO,60,10,100,Su poder base se duplica si el rival ya ha recibido daño ese turno (retroceso Púas Trampa Rocas Vidasfera).,fisico
+373,Embargo,SINIESTRO,0,15,100,Impide al Pokémon rival usar su objeto equipado así como al jugador rival usar objetos en él durante 5 turnos.,otros
+374,Lanzamiento,SINIESTRO,1,10,100,Lanza el objeto equipado al rival. El efecto y daño causado depende del objeto lanzado. El objeto se puede recuperar con Reciclaje.,fisico
+375,Psicocambio,PSIQUICO,0,10,100,El usuario se ve curado de su estado alterado y se lo traspasa al rival.,otros
+376,As Oculto,NORMAL,1,5,0,Nunca falla. Su poder depende de cuántos PP le resten: Con 5+ PP será de 40. Con 4 PP será de 50. Con 3 PP será de 60. Con 2 PP será de 80. Con 1 PP será de 200.,especial
+377,Anticura,PSIQUICO,0,15,100,El rival no puede recuperar PS en 5 turnos salvo mediante Divide Dolor u objetos.,otros
+378,Estrujón,NORMAL,1,5,100,El poder del movimiento es mayor cuanto más PS le quede al rival. El poder base será: 1 + (PS Actual Rival / PS Máximo Rival) x 120 (máx. 121).,especial
+379,Truco Fuerza,PSIQUICO,0,10,0,El usuario intercambia sus stats de Ataque y de Defensa entre sí pero no sus modificadores.,otros
+380,Bilis,VENENO,0,10,100,Cancela el efecto de la habilidad del rival mientras no sea intercambiado.,otros
+381,Conjuro,NORMAL,0,30,0,El equipo del usuario no recibe Golpes Críticos por 5 turnos.,otros
+382,Yo Primero,NORMAL,0,20,0,Siempre que el usuario sea el primero en moverse y que el rival haya elegido un ataque de daño directo el usuario copia el ataque del rival y le golpea con su poder al 150%.,otros
+383,Copión,NORMAL,0,20,0,Usa el último movimiento usado en batalla sea de un rival compañero o propio (salvo a sí mismo).,otros
+384,Cambiafuerza,PSIQUICO,0,10,0,El usuario intercambia los modificadores de Ataque y Ataque Especial con el rival.,otros
+385,Cambiadefensa,PSIQUICO,0,10,0,El usuario intercambia los modificadores de Defensa y Defensa Especial con el rival.,otros
+386,Castigo,SINIESTRO,1,5,100,El poder base aumenta cuando el rival tiene modificadores positivos de stats (incluye Precisión y Evasión). El mínimo es 60 añadiendo 20 por modificador y hasta 200.,fisico
+387,Última Baza,NORMAL,140,5,100,Falla mientras el usuario no haya usado el resto de sus movimientos desde que salió a la batalla (último intercambio) y exige que al menos conozca otro movimiento.,fisico
+388,Abatidoras,PLANTA,0,10,100,Cambia la habilidad del rival a Insomnio hasta que sea intercambiado salvo que fuera Ausente o Multitipo.,otros
+389,Golpe Bajo,SINIESTRO,70,5,100,Golpea primero pero falla si el rival no va a usar un movimiento de daño directo. Falla también si el rival golpea antes.,fisico
+390,Púas Tóxicas,VENENO,0,20,0,Sitúa púas en el campo enemigo. Salvo a inmunes al veneno voladores y levitadores envenenan o intoxican a todo Pokémon rival que entre al campo según haya 1 ó 2 filas.,otros
+391,Cambiaalmas,PSIQUICO,0,10,0,El usuario intercambia los modificadores de todos los stats con el rival.,otros
+392,Acua Aro,AGUA,0,20,0,El usuario recupera un 6.25% de PS cada turno hasta que cae debilitado o es intercambiado (salvo Relevo).,otros
+393,Levitón,ELECTRICO,0,10,0,El usuario es inmune a los ataques de tipo Tierra durante 5 turnos.,otros
+394,Envite Ígneo,FUEGO,120,15,100,10% de quemar al rival. Provoca un daño de retroceso del 33% del daño provocado al Pokémon rival.,fisico
+395,Palmeo,LUCHA,60,10,100,30% de paralizar al rival.,fisico
+396,Esfera Aural,LUCHA,80,20,0,Siempre golpea.,especial
+397,Pulimento,ROCA,0,20,0,Aumenta dos niveles la Velocidad al usuario.,otros
+398,Puya Nociva,VENENO,80,20,100,30% de envenenar al rival.,fisico
+399,Pulso Umbrío,SINIESTRO,80,15,100,20% de hacer retroceder al rival.,especial
+400,Tajo Umbrío,SINIESTRO,70,15,100,Alta probabilidad de Golpe Crítico.,fisico
+401,Acua Cola,AGUA,90,10,90,Ninguno.,fisico
+402,Bomba Germen,PLANTA,80,15,100,Ninguno.,fisico
+403,Tajo Aéreo,VOLADOR,75,15,95,30% de hacer retroceder al rival.,especial
+404,Tijera X,BICHO,80,15,100,Ninguno.,fisico
+405,Zumbido,BICHO,90,10,100,10% de reducir un nivel la Defensa Especial al rival.,especial
+406,Pulso Dragón,DRAGON,85,10,100,Ninguno.,especial
+407,Carga Dragón,DRAGON,100,10,75,20% de hacer retroceder al rival. Golpea a Pokémon que han usado Reducción con el doble de poder base e ignorando su Evasión.,fisico
+408,Joya de Luz,ROCA,80,20,100,Ninguno.,especial
+409,Puño Drenaje,LUCHA,75,10,100,El usuario recupera PS equivalente a la mitad del daño causado.,fisico
+410,Onda Vacío,LUCHA,40,30,100,Golpea primero.,especial
+411,Onda Certera,LUCHA,120,5,70,10% de reducir un nivel la Defensa Especial al rival.,especial
+412,Energibola,PLANTA,90,10,100,10% de reducir un nivel la Defensa Especial al rival.,especial
+413,Pájaro Osado,VOLADOR,120,15,100,Provoca un daño de retroceso al usuario equivalente al 33% del daño provocado al rival.,fisico
+414,Tierra Viva,TIERRA,90,10,100,10% de reducir un nivel la Defensa Especial al rival.,especial
+415,Trapicheo,SINIESTRO,0,10,100,El usuario y el rival intercambian sus objetos durante el resto de la batalla. No funciona contra Pokémon con la habilidad Viscosidad.,otros
+416,Giga Impacto,NORMAL,150,5,90,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,fisico
+417,Maquinación,SINIESTRO,0,20,0,Aumenta dos niveles el Ataque Especial al usuario.,otros
+418,Puño Bala,ACERO,40,30,100,Golpea primero.,fisico
+419,Alud,HIELO,60,10,100,El poder base se duplica si el usuario es golpeado antes de usar este movimiento en el mismo turno.,fisico
+420,Esquirla Helada,HIELO,40,30,100,Golpea primero.,fisico
+421,Garra Umbría,FANTASMA,70,15,100,Alta probabilidad de Golpe Crítico.,fisico
+422,Colmillo Rayo,ELECTRICO,65,15,95,10% de paralizar al rival y 10% de hacer retroceder al rival. Ambos efectos son independientes y pueden ocurrir a la vez.,fisico
+423,Colmillo Hielo,HIELO,65,15,95,10% de congelar al rival y 10% de hacer retroceder al rival. Ambos efectos son independientes y pueden ocurrir a la vez.,fisico
+424,Colmillo Ígneo,FUEGO,65,15,95,10% de quemar al rival y 10% de hacer retroceder al rival. Ambos efectos son independientes y pueden ocurrir a la vez.,fisico
+425,Sombra Vil,FANTASMA,40,30,100,Golpea primero.,fisico
+426,Bomba Fango,TIERRA,65,10,85,30% de reducir un nivel la Precisión al rival.,especial
+427,Psicocorte,PSIQUICO,70,20,100,Alta probabilidad de Golpe Crítico.,fisico
+428,Cabezazo Zen,PSIQUICO,80,15,90,20% de hacer retroceder al rival.,fisico
+429,Disparo Espejo,ACERO,65,10,85,30% de reducir un nivel la Precisión al rival.,especial
+430,Foco Resplandor,ACERO,80,10,100,10% de reducir un nivel la Defensa Especial al rival.,especial
+431,Treparrocas,NORMAL,90,20,85,20% de confundir al rival.,fisico
+432,Despejar,VOLADOR,0,15,0,Reduce un nivel la Evasión al rival. Elimina Reflejo Pantalla de Luz Velo Sagrado Neblina Púas Púas Tóxicas Trampa Rocas Campo de Hierba Campo de Niebla Campo Eléctrico y Campo Psíquico en el campo del Pokémon objetivo (compañero o rival).,otros
+433,Espacio Raro,PSIQUICO,0,5,0,Por 5 turnos los Pokémon más lentos golpearán antes que los más rápidos. Sin efecto en movimientos de distinta prioridad Rezagado G. Rápida Cola Plúmbea o Inc. Lento.,otros
+434,Cometa Draco,DRAGON,130,5,90,100% de reducir dos niveles el Ataque Especial al usuario.,especial
+435,Chispazo,ELECTRICO,80,15,100,30% de paralizar al rival.,especial
+436,Humareda,FUEGO,80,15,100,30% de quemar al rival.,especial
+437,Lluevehojas,PLANTA,130,5,90,100% de reducir dos niveles el Ataque Especial al usuario.,especial
+438,Latigazo,PLANTA,120,10,85,Ninguno.,fisico
+439,Romperrocas,ROCA,150,5,90,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,fisico
+440,Veneno X,VENENO,70,20,100,10% de envenenar al rival. Alta probabilidad de Golpe Crítico.,fisico
+441,Lanzamugre,VENENO,120,5,80,30% de envenenar al rival.,fisico
+442,Cabeza de Hierro,ACERO,80,15,100,30% de hacer retroceder al rival.,fisico
+443,Bomba Imán,ACERO,60,20,0,Siempre golpea.,fisico
+444,Roca Afilada,ROCA,100,5,80,Alta probabilidad de Golpe Crítico.,fisico
+445,Seducción,NORMAL,0,20,100,Si el rival es del género opuesto baja dos niveles su Ataque Especial.,otros
+446,Trampa Rocas,ROCA,0,20,0,El Pokémon que salga a luchar recibirá un daño equivalente al 12.5% de PS que aumenta o disminuye según resistencias y debilidades al tipo Roca (3.125% a 50%).,otros
+447,Hierba Lazo,PLANTA,1,20,100,Este movimiento tiene un poder base variable entre 20 y 120 en función del peso del Pokémon rival.,especial
+448,Cháchara,VOLADOR,65,20,100,100% de confundir al rival. Sólo puede usarlo un Chatot.,especial
+449,Sentencia,NORMAL,100,10,100,El tipo del ataque depende de la Tabla equipada.,especial
+450,Picadura,BICHO,60,20,100,Si el rival lleva una Baya equipada el usuario se la coge y la usa en ese instante. Kouba se activa y reduce el daño de este ataque. La Baya se puede recuperar con Reciclaje.,fisico
+451,Rayo Carga,ELECTRICO,50,10,90,70% de aumentar un nivel el Ataque Especial al usuario.,especial
+452,Mazazo,PLANTA,120,15,100,Provoca un daño de retroceso al usuario equivalente al 33% del daño provocado al rival.,fisico
+453,Acua Jet,AGUA,40,20,100,Golpea primero.,fisico
+454,Al Ataque,BICHO,90,15,100,Alta probabilidad de Golpe Crítico.,fisico
+455,A Defender,BICHO,0,10,0,Aumenta un nivel la Defensa y la Defensa Especial al usuario.,otros
+456,Auxilio,BICHO,0,10,0,El usuario recupera el 50% de su PS máximo.,otros
+457,Testarazo,ROCA,150,5,80,Provoca un daño de retroceso del 50% del daño provocado al Pokémon rival.,fisico
+458,Doble Golpe,NORMAL,35,10,90,Golpea 2 veces seguidas.,fisico
+459,Distorsión,DRAGON,150,5,90,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,especial
+460,Corte Vacío,DRAGON,100,5,95,Alta probabilidad de Golpe Crítico.,especial
+461,Danza Lunar,PSIQUICO,0,10,0,El usuario cae debilitado. El Pokémon que salga a la batalla en su lugar ve recuperados sus PS PP y estado alterado.,otros
+462,Agarrón,NORMAL,1,5,100,El poder del movimiento es mayor cuanto más PS le quede al rival. El poder base será: 1 + (PS Actual Rival / PS Máximo Rival) x 120 (máx. 121).,fisico
+463,Lluvia Ígnea,FUEGO,100,5,75,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,especial
+464,Brecha Negra,SINIESTRO,0,10,50,Provoca Sueño.,otros
+465,Fulgor Semilla,PLANTA,120,5,85,40% de reducir dos niveles la Defensa Especial al rival.,especial
+466,Viento Aciago,FANTASMA,60,5,100,10% de aumentar un nivel el Ataque la Defensa la Velocidad el Ataque Especial y la Defensa Especial al usuario.,especial
+467,Golpe Umbrío,FANTASMA,120,5,100,Precisa un turno de preparación en las tinieblas en que es totalmente inmune. Su golpe no es evitado por Protección o Detección.,fisico
+468,Afilagarras,SINIESTRO,0,15,0,Aumenta un nivel el Ataque y la Precisión al usuario.,otros
+469,Vasta Guardia,ROCA,0,10,0,Evita todo daño directo y efectos de movimientos del rival de objetivo múltiple tanto al usuario como a sus compañeros. Su precisión se reduce con cada uso consecutivo.,otros
+470,Isoguardia,PSIQUICO,0,10,0,Suma los stats de Defensa y Defensa Especial del usuario con los del Pokémon objetivo otorgando la mitad a cada uno.,otros
+471,Isofuerza,PSIQUICO,0,10,0,Suma los stats de Ataque y Ataque Especial del usuario con los del Pokémon objetivo otorgando la mitad a cada uno.,otros
+472,Zona Extraña,PSIQUICO,0,10,0,Por 5 turnos los stats de Defensa y Defensa Especial de todos los Pokémon se intercambian entre sí.,otros
+473,Psicocarga,PSIQUICO,80,10,100,Causa daño en base al Ataque Especial del usuario y la Defensa del Pokémon objetivo.,especial
+474,Carga Tóxica,VENENO,65,10,100,Si el Pokémon objetivo está envenenado su poder base se dobla.,especial
+475,Aligerar,ACERO,0,15,0,Aumenta dos niveles la Velocidad al usuario. Su peso queda reducido en 100 kg.,otros
+476,Polvo Ira,BICHO,0,20,0,En batallas 2vs2 los ataques que usen los Pokémon rivales ese turno golpearán al usuario ignorando la elección de su entrenador. No afecta a los ataques con más de un objetivo.,otros
+477,Telequinesis,PSIQUICO,0,15,0,Hace levitar al Pokémon objetivo y reduce su Evasión durante 3 turnos. Falla si Gravedad está activado.,otros
+478,Zona Mágica,PSIQUICO,0,10,0,Por 5 turnos los objetos equipados por los Pokémon no surten efecto.,otros
+479,Antiaéreo,ROCA,50,15,100,Golpea a Pokémon en mitad de un Vuelo Bote o Caída Libre. Los Pokémon voladores o con Levitación pierden su inmunidad a Tierra.,fisico
+480,Llave Corsé,LUCHA,60,10,100,Siempre provoca un Golpe Crítico salvo que una habilidad o efecto lo impida.,fisico
+481,Pirotecnia,FUEGO,70,15,100,Los Pokémon cercanos al Pokémon objetivo pierden un 6.25% de su PS máximo.,especial
+482,Onda Tóxica,VENENO,95,10,100,10% de envenenar al rival.,especial
+483,Danza Aleteo,BICHO,0,20,0,Aumenta un nivel el Ataque Especial la Defensa Especial y la Velocidad al usuario.,otros
+484,Cuerpo Pesado,ACERO,1,10,100,Este movimiento tiene un poder base variable en función del peso del usuario y del Pokémon rival.,fisico
+485,Sincrorruido,PSIQUICO,120,15,100,Golpea a todos los Pokémon que compartan un tipo con el usuario.,especial
+486,Bola Voltio,ELECTRICO,1,10,100,El poder base de este movimiento es mayor cuanto más rápido el usuario frente al rival y varía entre 60 y 150.,especial
+487,Empapar,AGUA,0,20,100,Cambia el tipo del Pokémon objetivo por el tipo Agua.,otros
+488,Nitrocarga,FUEGO,50,20,100,Aumenta un nivel la Velocidad al usuario.,fisico
+489,Enrosque,VENENO,0,20,0,Aumenta un nivel el Ataque la Defensa y la Precisión al usuario.,otros
+490,Puntapié,LUCHA,65,20,100,Baja un nivel la Velocidad al rival.,fisico
+491,Bomba Ácida,VENENO,40,20,100,Baja dos niveles la Defensa Especial al rival.,especial
+492,Juego Sucio,SINIESTRO,95,15,100,Golpea al rival utilizando su propio stat de Ataque.,fisico
+493,Onda Simple,NORMAL,0,15,100,Cambia la habilidad del rival a Simple hasta que sea intercambiado.,otros
+494,Danza Amiga,NORMAL,0,15,100,El rival obtiene la habilidad del usuario hasta que sea intercambiado.,otros
+495,Cede Paso,NORMAL,0,15,0,Siempre que el Pokémon objetivo haya elegido un ataque sin daño directo el usuario le obliga a ejecutarlo después de él.,otros
+496,Canon,NORMAL,60,15,100,El poder base del movimiento se dobla si un compañero ya lo ha usado en el mismo turno.,especial
+497,Eco Voz,NORMAL,40,15,100,El poder base del movimiento aumenta si es usado de manera consecutiva. Cada uso adicional incrementa en 40 el poder base máximo 200.,especial
+498,Guardia Baja,NORMAL,70,20,100,Ignora los modificadores de stats del Pokémon objetivo.,fisico
+499,Niebla Clara,VENENO,50,15,0,Elimina todos los modificadores de stats del Pokémon objetivo.,especial
+500,Poder Reserva,PSIQUICO,20,10,100,El poder base del movimiento aumenta cuantos más modificadores positivos de stats tiene el usuario.,especial
+501,Anticipo,LUCHA,0,15,0,Evita todo daño directo y efectos de movimientos del rival de alta prioridad tanto al usuario como a sus compañeros. Su precisión se reduce con cada uso consecutivo.,otros
+502,Cambio de Banda,PSIQUICO,0,15,0,El usuario intercambia su posición con la de un Pokémon aliado.,otros
+503,Escaldar,AGUA,80,15,100,30% de quemar al rival.,especial
+504,Rompecoraza,NORMAL,0,15,0,Aumenta dos niveles el Ataque el Ataque Especial y la Velocidad del usuario pero reduce un nivel su Defensa y Defensa Especial.,otros
+505,Pulso Cura,PSIQUICO,0,10,0,El Pokémon objetivo recupera el 50% de su PS máximo.,otros
+506,Infortunio,FANTASMA,65,10,100,Si el Pokémon objetivo sufre un cambio de estado su poder base se dobla.,especial
+507,Caída Libre,VOLADOR,60,10,100,Precisa un turno de preparación en el cielo en el que se lleva al Pokémon rival por los aires. En el segundo turno lo suelta causando daño.,fisico
+508,Cambio de Marcha,ACERO,0,10,0,Aumenta dos niveles la Velocidad del usuario y un nivel su Ataque.,otros
+509,Llave Giro,LUCHA,60,10,90,Provoca el intercambio del Pokémon objetivo por el siguiente de su equipo en orden. Termina las batallas contra Pokémon salvajes.,fisico
+510,Calcinación,FUEGO,60,15,100,Quema la Baya del Pokémon objetivo y la hace inservible.,especial
+511,Último Lugar,SINIESTRO,0,15,100,El Pokémon objetivo atacará último en el turno en que reciba este ataque.,otros
+512,Acróbata,VOLADOR,55,15,100,El poder base se duplica si el usuario no lleva equipado objeto.,fisico
+513,Clonatipo,NORMAL,0,15,0,El tipo Pokémon del usuario cambia al tipo del Pokémon objetivo.,otros
+514,Represalia,NORMAL,70,5,100,Si un compañero ha caído debilitado el turno anterior su poder base se dobla.,fisico
+515,Sacrificio,LUCHA,1,5,100,El usuario cae debilitado. Provoca daño al Pokémon objetivo equivalente al PS restante del usuario.,especial
+516,Ofrenda,NORMAL,0,15,0,El usuario traspasa su objeto al Pokémon objetivo siempre que éste no tenga ninguno.,otros
+517,Infierno,FUEGO,100,5,50,100% de quemar al rival.,especial
+518,Voto Agua,AGUA,80,10,100,Se combina con Voto Fuego y con Voto Planta.,especial
+519,Voto Fuego,FUEGO,80,10,100,Se combina con Voto Agua y con Voto Planta.,especial
+520,Voto Planta,PLANTA,80,10,100,Se combina con Voto Agua y con Voto Fuego.,especial
+521,Voltiocambio,ELECTRICO,70,20,100,El Pokémon debe ser intercambiado tras usar este ataque. Permite escapar de trampas y pseudo-trampas.,especial
+522,Estoicismo,BICHO,50,20,100,100% de reducir un nivel el Ataque Especial al rival.,especial
+523,Terratemblor,TIERRA,60,20,100,100% de reducir un nivel la Velocidad al rival.,fisico
+524,Vaho Gélido,HIELO,60,10,90,Siempre provoca un Golpe Crítico salvo que una habilidad o efecto lo impida.,especial
+525,Cola Dragón,DRAGON,60,10,90,Provoca el intercambio del Pokémon objetivo por el siguiente de su equipo en orden. Termina las batallas contra Pokémon salvajes.,fisico
+526,Avivar,NORMAL,0,30,0,Aumenta un nivel el Ataque y el Ataque Especial del usuario.,otros
+527,Electrotela,ELECTRICO,55,15,95,Baja un nivel la Velocidad al rival.,especial
+528,Voltio Cruel,ELECTRICO,90,15,100,Provoca un daño de retroceso del 25% del daño provocado al Pokémon rival.,fisico
+529,Taladradora,TIERRA,80,10,95,Alta probabilidad de Golpe Crítico.,fisico
+530,Golpe Bis,DRAGON,40,15,90,Golpea 2 veces seguidas.,fisico
+531,Arrumaco,PSIQUICO,60,25,100,30% de hacer retroceder al rival.,fisico
+532,Asta Drenaje,PLANTA,75,10,100,El usuario recupera PS equivalente a la mitad del daño causado.,fisico
+533,Espada Santa,LUCHA,90,15,100,Ignora los modificadores de stats del Pokémon objetivo.,fisico
+534,Concha Filo,AGUA,75,10,95,50% de reducir un nivel la Defensa al rival.,fisico
+535,Golpe Calor,FUEGO,1,10,100,Este movimiento tiene un poder base variable en función del peso del usuario y del Pokémon rival.,fisico
+536,Ciclón de Hojas,PLANTA,65,10,90,50% de reducir un nivel la Precisión al rival.,especial
+537,Rodillo de Púas,BICHO,65,20,100,30% de hacer retroceder al rival. Golpea a Pokémon que han usado Reducción con el doble de poder base e ignorando su Evasión.,fisico
+538,Rizo Algodón,PLANTA,0,10,0,Aumenta tres niveles la Defensa del usuario.,otros
+539,Pulso Noche,SINIESTRO,85,10,95,40% de reducir un nivel la Precisión al rival.,especial
+540,Onda Mental,PSIQUICO,100,10,100,Causa daño en base al Ataque Especial del usuario y la Defensa del Pokémon objetivo.,especial
+541,Plumerazo,NORMAL,25,10,85,Golpea de 2 a 5 veces seguidas.,fisico
+542,Vendaval,VOLADOR,110,10,70,30% de confundir al rival. Golpea a Pokémon en mitad de un Vuelo Bote o Caída Libre. En Llovizna no falla. En Día Soleado tiene 50% de precisión.,especial
+543,Ariete,NORMAL,120,15,100,Provoca un daño de retroceso del 25% del daño provocado al Pokémon rival.,fisico
+544,Rueda Doble,ACERO,50,15,85,Golpea 2 veces seguidas.,fisico
+545,Bomba Ígnea,FUEGO,100,5,100,30% de quemar al rival.,especial
+546,Tecno Shock,NORMAL,120,5,100,El tipo del ataque depende de la ROM equipada.,especial
+547,Canto Arcaico,NORMAL,75,10,100,10% de dormir al rival.,especial
+548,Sable Místico,LUCHA,85,10,100,Causa daño en base al Ataque Especial del usuario y la Defensa del Pokémon objetivo.,especial
+549,Mundo Gélido,HIELO,65,10,95,Baja un nivel la Velocidad al rival.,especial
+550,Ataque Fulgor,ELECTRICO,130,5,85,20% de paralizar al rival.,fisico
+551,Llama Azul,FUEGO,130,5,85,20% de quemar al rival.,especial
+552,Danza Llama,FUEGO,80,10,100,50% de aumentar un nivel el Ataque Especial al usuario.,especial
+553,Rayo Gélido,HIELO,140,5,90,30% de paralizar al rival. Se prepara el primer turno para atacar en el segundo.,fisico
+554,Llama Gélida,HIELO,140,5,90,30% de quemar al rival. Se prepara el primer turno para atacar en el segundo.,especial
+555,Alarido,SINIESTRO,55,15,95,100% de reducir un nivel el Ataque Especial al rival.,especial
+556,Chuzos,HIELO,85,10,90,30% de hacer retroceder al rival.,fisico
+557,V de Fuego,FUEGO,180,5,95,Baja un nivel la Defensa la Defensa Especial y la Velocidad al usuario.,fisico
+558,Llama Fusión,FUEGO,100,5,100,El poder base de este movimiento se duplica si otro Pokémon utiliza Rayo Fusión o Ataque Fulgor inmediatamente antes en el mismo turno.,especial
+559,Rayo Fusión,ELECTRICO,100,5,100,El poder base de este movimiento se duplica si otro Pokémon utiliza Llama Fusión o Llama Azul inmediatamente antes en el mismo turno.,fisico
+560,Plancha Voladora,LUCHA,100,10,95,Este ataque cuenta con las efectividades combinadas de los tipos Lucha y Volador.,fisico
+561,Escudo Tatami,LUCHA,0,10,0,Evita todo daño directo y efectos de movimientos del rival para él y sus aliados. No evita movimientos de estado. Sólo puede ser utilizado el primer turno del usuario tras ser intercambiado.,otros
+562,Eructo,VENENO,120,10,90,El usuario debe haber consumido una Baya para usar este ataque de lo contrario fallará.,especial
+563,Fertilizante,TIERRA,0,10,0,Aumenta un nivel el Ataque y el Ataque Especial a todos los Pokémon de tipo Planta en combate.,otros
+564,Red Viscosa,BICHO,0,20,0,El Pokémon que salga a luchar verá reducida su Velocidad en un nivel. No afecta a Pokémon voladores o levitadores.,otros
+565,Aguijón Letal,BICHO,50,25,100,Aumenta dos niveles el Ataque al usuario cuando este ataque debilita a un Pokémon rival.,fisico
+566,Golpe Fantasma,FANTASMA,90,10,100,Precisa un turno de preparación en las tinieblas en que es totalmente inmune. Su golpe no es evitado por Protección o Detección.,fisico
+567,Halloween,FANTASMA,0,20,100,El Pokémon objetivo adquiere el tipo Fantasma conservando sus anteriores tipos.,otros
+568,Rugido de Guerra,NORMAL,0,30,100,Baja un nivel el Ataque y el Ataque Especial al rival.,otros
+569,Cortina Plasma,ELECTRICO,0,25,0,Los movimientos de tipo Normal pasan a ser de tipo Eléctrico.,otros
+570,Carga Parábola,ELECTRICO,65,20,100,El usuario recupera PS equivalente a la mitad del daño causado.,especial
+571,Condena Silvana,PLANTA,0,20,100,El Pokémon objetivo adquiere el tipo Planta conservando sus anteriores tipos.,otros
+572,Tormenta Floral,PLANTA,90,15,100,Ninguno.,fisico
+573,Liofilización,HIELO,70,20,100,10% de congelar al rival. Es muy efectivo contra Pokémon de tipo Agua.,especial
+574,Voz Cautivadora,HADA,40,15,0,Siempre golpea.,especial
+575,Última Palabra,SINIESTRO,0,20,100,Baja un nivel el Ataque y el Ataque Especial al rival. El Pokémon debe ser intercambiado tras usar este ataque. Permite escapar de trampas y pseudo-trampas.,otros
+576,Reversión,SINIESTRO,0,20,0,Invierte las alteraciones de estadísticas del Pokémon objetivo de manera que los aumentos se vuelven reducciones y viceversa.,otros
+577,Beso Drenaje,HADA,50,20,100,El usuario recupera PS equivalente al 75% del daño causado.,especial
+578,Truco Defensa,HADA,0,10,0,Evita todo efecto de movimientos del rival para él y sus aliados. Su precisión se reduce con cada uso consecutivo. No evita movimientos de daño directo.,otros
+579,Defensa Floral,HADA,0,10,0,Aumenta un nivel la Defensa a todos los Pokémon de tipo Planta en combate.,otros
+580,Campo de Hierba,PLANTA,0,10,0,Crea un campo de hierba durante 5 turnos. Los Pokémon en el suelo recuperan un 6.25% de su PS máximo al final de cada turno y el poder de los ataques de tipo Planta aumenta un 50%.,otros
+581,Campo de Niebla,HADA,0,10,0,Crea un campo de niebla durante 5 turnos. Los Pokémon en el suelo no pueden ver alterado su estado y reciben la mitad de daño de ataques de tipo Dragón.,otros
+582,Electrificación,ELECTRICO,0,20,0,Si el Pokémon objetivo aún no ha realizado su movimiento en el mismo turno dicho movimiento se vuelve de tipo Eléctrico.,otros
+583,Carantoña,HADA,90,10,90,10% de reducir un nivel el Ataque al rival.,fisico
+584,Viento Feérico,HADA,40,30,100,Ninguno.,especial
+585,Fuerza Lunar,HADA,95,15,100,30% de reducir un nivel el Ataque Especial al rival.,especial
+586,Estruendo,NORMAL,140,10,100,Ninguno.,especial
+587,Cerrojo Feérico,HADA,0,10,0,Impide al rival ser intercambiado en el siguiente turno salvo usando Relevo Ida y Vuelta Voltiocambio o Última Palabra o si tiene Muda Concha o Botón Escape.,otros
+588,Escudo Real,ACERO,0,10,0,Evita todo daño directo de movimientos del rival. Su precisión se reduce con cada uso consecutivo. Reduce un nivel el Ataque del Pokémon que intente tocarlo.,otros
+589,Camaradería,NORMAL,0,20,0,Baja un nivel el Ataque al rival. Golpea aunque el rival use Protección Detección o Barrera Espinosa ese turno los cuales se ven anulados.,otros
+590,Confidencia,NORMAL,0,20,0,Baja un nivel el Ataque Especial al rival. Golpea aunque el rival use Protección Detección o Barrera Espinosa ese turno los cuales se ven anulados.,otros
+591,Torm. Diamantes,ROCA,100,5,95,50% de aumentar dos niveles la Defensa al usuario.,fisico
+592,Chorro de Vapor,AGUA,110,5,95,30% de quemar al rival.,especial
+593,Paso Dimensional,PSIQUICO,80,5,0,Golpea aunque el rival use Protección Detección Vastaguardia o Anticipo ese turno.,especial
+594,Shuriken de Agua,AGUA,15,20,100,Golpea de 2 a 5 veces seguidas. Golpea primero.,especial
+595,Llama Embrujada,FUEGO,75,10,100,100% de reducir un nivel el Ataque Especial al rival.,especial
+596,Barrera Espinosa,PLANTA,0,10,0,Evita todo daño directo y efectos de movimientos del rival. Su precisión se reduce con cada uso consecutivo. Provoca daño de un 12.5% del PS máximo del Pokémon que intente tocarlo.,otros
+597,Niebla Aromática,HADA,0,20,0,Aumenta un nivel la Defensa Especial al usuario y sus aliados.,otros
+598,Onda Anómala,ELECTRICO,0,15,100,Baja dos niveles el Ataque Especial al rival.,otros
+599,Trampa Venenosa,VENENO,0,20,100,Baja un nivel el Ataque el Ataque Especial y la Velocidad al rival si está envenenado o intoxicado.,otros
+600,Polvo Explosivo,BICHO,0,20,100,Provoca que el rival se haga daño a sí mismo si usa un ataque de tipo Fuego ese mismo turno.,otros
+601,Geocontrol,HADA,0,10,0,Se prepara en el primer turno para aumentar dos niveles su Ataque Especial su Defensa Especial y su Velocidad en el segundo.,otros
+602,Aura Magnética,ELECTRICO,0,20,0,Aumenta un nivel la Defensa y la Defensa Especial al usuario y sus aliados con la habilidad Más o Menos.,otros
+603,Paga Extra,NORMAL,0,30,100,Duplica el dinero ganado tras batallas contra entrenadores del juego.,otros
+604,Campo Eléctrico,ELECTRICO,0,10,0,Crea un campo eléctrico durante 5 turnos. Los Pokémon en el suelo no pueden ser dormidos.,otros
+605,Brillo Mágico,HADA,80,10,100,Ninguno.,especial
+606,Celebración,NORMAL,0,40,0,No hace nada.,otros
+607,Manos Juntas,NORMAL,0,40,0,El Pokémon baila con su aliado en un combate múltiple.,otros
+608,Ojitos Tiernos,HADA,0,30,100,Baja un nivel el Ataque al rival. Golpea primero.,otros
+609,Moflete Estático,ELECTRICO,20,20,100,100% de paralizar al rival.,fisico
+610,Clemencia,NORMAL,40,40,100,Deja al rival con al menos 1 PS.,fisico
+611,Acoso,BICHO,20,20,100,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,especial
+612,Puño Incremento,LUCHA,40,30,100,Aumenta un nivel el Ataque al usuario cada vez que golpea a un Pokémon rival.,fisico
+613,Ala Mortífera,VOLADOR,80,10,100,El usuario recupera PS equivalente al 75% del daño causado.,especial
+614,Mil Flechas,TIERRA,90,10,100,Golpea a Pokémon en mitad de un Vuelo Bote o Caída Libre. Los Pokémon voladores o con Levitación pierden su inmunidad a Tierra.,fisico
+615,Mil Temblores,TIERRA,90,10,100,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,fisico
+616,Fuerza Telúrica,TIERRA,90,10,100,Ninguno.,fisico
+617,Luz Aniquiladora,HADA,140,5,90,Provoca un daño de retroceso del 50% del daño provocado al Pokémon rival.,especial
+618,Pulso Primigenio,AGUA,110,10,85,Ninguno.,especial
+619,Filo del Abismo,TIERRA,120,10,85,Ninguno.,fisico
+620,Ascenso Draco,VOLADOR,120,5,100,Baja un nivel la Defensa y la Defensa Especial al usuario.,fisico
+621,Cerco Dimensión,SINIESTRO,100,5,0,Golpea aunque el rival use Protección Detección Vastaguardia o Anticipo ese turno. Baja un nivel la Defensa al usuario.,fisico
+622,Carrera Arrolladora,NORMAL,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+624,Ráfaga Demoledora,LUCHA,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+626,Picado Supersónico,VOLADOR,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+628,Diluvio Corrosivo,VENENO,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+630,Barrena Telúrica,TIERRA,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+632,Aplastamiento Gigalítico,ROCA,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+634,Guadaña Sedosa,BICHO,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+636,Presa Espectral,FANTASMA,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+638,Hélice Trepanadora,ACERO,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+640,Hecatombe Pírica,FUEGO,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+642,Hidrovórtice Abisal,AGUA,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+644,Megatón Floral,PLANTA,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+646,Gigavoltio Destructor,ELECTRICO,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+648,Disruptor Psíquico,PSIQUICO,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+650,Crioaliento Despiadado,HIELO,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+652,Dracoaliento Devastador,DRAGON,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+654,Agujero Negro Aniquilador,SINIESTRO,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+656,Arrumaco Sideral,HADA,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por un Pokémon con el Cristal Z correspondiente. Su potencia depende del movimiento original.,fisico;especial
+658,Pikavoltio Letal,ELECTRICO,210,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Pikachu con Pikastal Z equipado.,fisico
+659,Recogearena,TIERRA,0,5,0,El usuario recupera 66.6% PS en Tormenta de Arena y 50% PS si no hay clima o en Día Soleado Llovizna o Granizo.,otros
+660,Escaramuza,BICHO,90,10,100,Golpea primero. Sólo puede ser utilizado con éxito el primer turno de ataque del usuario tras ser intercambiado.,fisico
+661,Búnker,VENENO,0,10,0,Evita todo daño directo y efectos de movimientos del rival. Su precisión se reduce con cada uso consecutivo. Provoca Envenenamiento si un Pokémon hace contacto.,otros
+662,Puntada Sombría,FANTASMA,80,10,100,Impide al rival ser intercambiado salvo usando Relevo Ida y Vuelta Voltiocambio o Última Palabra o si tiene Muda Concha o Botón Escape.,fisico
+663,Lariat Oscuro,SINIESTRO,85,10,100,Ignora los modificadores de stats del Pokémon objetivo.,fisico
+664,Aria Burbuja,AGUA,90,10,100,Si el Pokémon rival se encuentra Quemado este ataque le cura la Quemadura al rival.,especial
+665,Martillo Hielo,HIELO,100,10,90,Baja un nivel la Velocidad al usuario.,fisico
+666,Cura Floral,HADA,0,10,0,El Pokémon objetivo recupera 66.6% PS en Campo de Hierba y 50% PS si no hay campo o en Campo Eléctrico Campo Psíquico o Campo de Niebla.,otros
+667,Fuerza Equina,TIERRA,95,10,95,Ninguno.,fisico
+668,Absorbefuerza,PLANTA,0,10,100,100% de reducir un nivel el Ataque al rival. El usuario recupera PS equivalente al Ataque del Pokémon objetivo antes de dicha reducción.,otros
+669,Cuchilla Solar,PLANTA,125,10,100,Precisa un turno de carga salvo en Día Soleado. En Llovizna Granizo y Tormenta de Arena su poder base es la mitad.,fisico
+670,Follaje,PLANTA,40,40,100,Ninguno.,fisico
+671,Foco,NORMAL,0,15,0,En batallas múltiples los ataques que usen los otros Pokémon ese turno golpearán al Pokémon objetivo ignorando la elección de su entrenador. No afecta a los ataques varios objetivos.,otros
+672,Hilo Venenoso,VENENO,0,20,100,100% de reducir un nivel la Velocidad al rival. Provoca Envenenamiento.,otros
+673,Aguzar,NORMAL,0,30,0,Garantiza que el ataque que realice el usuario el siguiente turno sea Golpe Crítico.,otros
+674,Piñón Auxiliar,ACERO,0,20,0,Aumenta un nivel el Ataque y el Ataque Especial al usuario y sus aliados con la habilidad Más o Menos.,otros
+675,Golpe Mordaza,SINIESTRO,80,15,100,El Pokémon rival no puede usar movimientos de sonido durante 2 turnos.,fisico
+676,Bola de Polen,BICHO,90,15,100,Si el Pokémon objetivo es un aliado este movimiento recupera el 50% de su PS máximo en lugar de hacerle daño.,especial
+677,Anclaje,ACERO,80,20,100,Impide al rival ser intercambiado salvo usando Relevo Ida y Vuelta Voltiocambio o Última Palabra o si tiene Muda Concha o Botón Escape.,fisico
+678,Campo Psíquico,PSIQUICO,0,10,0,Crea un campo psíquico durante 5 turnos. Los Pokémon en el suelo no pueden ser afectados por movimientos con prioridad.,otros
+679,Plancha,BICHO,80,15,100,100% de reducir un nivel el Ataque al rival.,fisico
+680,Látigo Ígneo,FUEGO,80,15,100,100% de reducir un nivel la Defensa al rival.,fisico
+681,Chulería,SINIESTRO,20,10,100,El poder base del movimiento aumenta cuantos más modificadores positivos de stats tiene el usuario.,fisico
+682,Llama Final,FUEGO,130,5,100,El usuario perderá su tipo Fuego (si lo tiene) con lo que ello afecta a sus inmunidades debilidades y resistencias.,especial
+683,Cambiavelocidad,PSIQUICO,0,10,0,El usuario intercambia su estadística de Velocidad con el rival.,otros
+684,Cuerno Certero,ACERO,70,10,0,Siempre golpea.,fisico
+685,Purificación,VENENO,0,20,0,Cura cualquier problema de estado del Pokémon objetivo. Si lo hace el usuario recupera el 50% de su PS máximo.,otros
+686,Danza Despertar,NORMAL,90,15,100,El tipo del ataque depende del primer tipo del usuario.,especial
+687,Núcleo Castigo,DRAGON,100,10,100,Si el Pokémon rival ya ha usado un movimiento este turno cancela el efecto de su habilidad mientras no sea intercambiado.,especial
+688,Patada Tropical,PLANTA,70,15,100,100% de reducir un nivel el Ataque al rival.,fisico
+689,Mandato,PSIQUICO,0,15,0,El Pokémon objetivo ejecuta inmediatamente el último movimiento que haya usado en combate.,otros
+690,Pico Cañón,VOLADOR,100,15,100,Ataca último y provoca Quemadura a todo Pokémon que lo golpee mientras se carga.,fisico
+691,Fragor Escamas,DRAGON,110,5,100,100% de reducir un nivel la Defensa al usuario.,especial
+692,Martillo Dragón,DRAGON,90,15,100,Ninguno.,fisico
+693,Giro Vil,SINIESTRO,60,20,100,Golpea a todos los Pokémon adyacentes al usuario haciendo contacto en todos ellos.,fisico
+694,Velo Aurora,HIELO,0,20,0,Reduce el daño provocado a tu Pokémon por ataques físicos y especiales del rival en un 50% (33% en 2vs2) durante 5 turnos. Sólo se puede usar durante Granizo.,otros
+695,Aluvión de Flechas Sombrías,FANTASMA,180,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Decidueye con Dueyestal Z equipado.,fisico
+696,Hiperplancha Oscura,SINIESTRO,180,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Incineroar con Incinostal Z equipado.,fisico
+697,Sinfonía de la Diva Marina,AGUA,195,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Primarina con Primastal Z equipado.,especial
+698,Cólera del Guardián,HADA,1,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Tapu Koko Tapu Lele Tapu Fini o Tapu Bulu con Tapistal Z equipado. Causa un daño equivalente al 75% del PS que le queda al Pokémon rival.,especial
+699,Constelación Robaalmas,FANTASMA,195,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Marshadow con Marshastal Z equipado.,fisico
+700,Surfeo Galvánico,ELECTRICO,175,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Raichu de Alola con Alo-Raistal Z equipado. 100% de paralizar al rival.,especial
+701,Arrojo Intempestivo,NORMAL,210,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Snorlax con Snorlastal Z equipado.,fisico
+702,Novena Potencia,NORMAL,0,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Eevee con Eeveestal Z equipado. Aumenta dos niveles el Ataque la Defensa el Ataque Especial la Defensa Especial y la Velocidad al usuario.,otros
+703,Supernova Original,PSIQUICO,185,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Mew con Mewstal Z equipado. Crea un Campo Psíquico durante 5 turnos.,especial
+704,Coraza Trampa,FUEGO,150,5,100,Ataca último solamente si ha recibido un ataque físico del Pokémon rival durante el mismo turno.,especial
+705,Cañón Floral,HADA,130,5,90,100% de reducir dos niveles el Ataque Especial al usuario.,especial
+706,Psicocolmillo,PSIQUICO,85,10,100,Destruye Pantalla de Luz Reflejo y Velo Aurora incluso si falla.,fisico
+707,Pataleta,TIERRA,75,10,100,El poder base se duplica si el usuario falló el último movimiento usado.,fisico
+708,Hueso Sombrío,FANTASMA,85,10,100,20% de reducir un nivel la Defensa al rival.,fisico
+709,Roca Veloz,ROCA,40,20,100,Golpea primero.,fisico
+710,Hidroariete,AGUA,85,10,100,20% de reducir un nivel la Defensa al rival.,fisico
+711,Láser Prisma,PSIQUICO,160,10,100,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,especial
+712,Robasombra,FANTASMA,90,10,100,El usuario obtiene los modificadores positivos de todos los stats del rival antes de atacarle.,fisico
+713,Meteoimpacto,ACERO,100,5,100,Ignora las habilidades de los Pokémon en juego.,fisico
+714,Rayo Umbrío,FANTASMA,100,5,100,Ignora las habilidades de los Pokémon en juego.,especial
+715,Ojos Llorosos,NORMAL,0,20,0,Baja un nivel el Ataque y el Ataque Especial al rival.,otros
+716,Electropunzada,ELECTRICO,80,10,100,30% de hacer retroceder al rival.,fisico
+717,Furia Natural,HADA,1,10,90,Causa un daño equivalente a la mitad del PS que le queda al Pokémon rival.,especial
+718,Multiataque,NORMAL,120,10,100,El tipo del ataque depende de la Memoria equipada.,fisico
+719,Gigarrayo Fulminante,ELECTRICO,195,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Pikachu con gorra con Ash-Pikastal Z equipado. Alta probabilidad de Golpe Crítico.,especial
+720,Cabeza Sorpresa,FUEGO,150,5,100,El usuario recibe un daño equivalente al 50% de su PS máximo.,especial
+721,Puños Plasma,ELECTRICO,100,15,100,Los movimientos de tipo Normal pasan a ser de tipo Eléctrico.,fisico
+722,Géiser Fotónico,PSIQUICO,100,5,100,El daño de este ataque se calcula con el stat de Ataque o de Ataque Especial en función de cuál sea más alto.,especial
+723,Fotodestrucción Apocalíptica,PSIQUICO,200,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Necrozma con Ultranecrostal Z equipado. El daño de este ataque se calcula con el stat de Ataque o de Ataque Especial en función de cuál sea más alto.,especial
+724,Embestida Solar,ACERO,200,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Solgaleo con Solgaleostal Z equipado. Ignora las habilidades de los Pokémon en juego.,fisico
+725,Deflagración Lunar,FANTASMA,200,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Lunala con Lunalastal Z equipado. Ignora las habilidades de los Pokémon en juego.,especial
+726,Somanta Amistosa,HADA,190,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Mimikyu con Mimikyustal Z equipado.,fisico
+727,Tempestad Rocosa,ROCA,190,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Lycanroc con Lycanrostal Z equipado. Anula los efectos del campo que haya en el terreno de combate.,fisico
+728,Estruendo Implacable,DRAGON,185,1,0,Movimiento Z que sólo puede ser usado una vez por combate. Sólo puede ser utilizado por Kommo-o con Kommostal Z equipado. Aumenta un nivel el Ataque la Defensa la Velocidad el Ataque Especial y la Defensa Especial al usuario.,especial
+729,Pikaturbo,ELECTRICO,50,15,100,Golpea primero. Siempre provoca un Golpe Crítico salvo que una habilidad o efecto lo impida.,fisico
+730,Salpikasurf,AGUA,90,15,100,30% de paralizar al rival.,especial
+731,Pikapicado,VOLADOR,90,15,95,30% de hacer retroceder al rival.,fisico
+732,Pikatormenta,ELECTRICO,1,20,0,Su poder base depende de la Felicidad del Pokémon entre 0 y 102.,especial
+733,Vapodrenaje,AGUA,90,15,100,El usuario recupera PS equivalente a la mitad del daño causado.,especial
+734,Joltioparálisis,ELECTRICO,90,15,100,100% de paralizar al rival.,especial
+735,Flarembestida,FUEGO,90,15,100,100% de quemar al rival.,fisico
+736,Espeaura,PSIQUICO,90,15,100,Reduce el daño provocado a tu Pokémon por ataques especiales del rival en un 50% (33% en 2vs2) durante 5 turnos.,especial
+737,Umbreozona,SINIESTRO,90,15,100,Reduce el daño provocado a tu Pokémon por ataques físicos del rival en un 50% (33% en 2vs2) durante 5 turnos.,especial
+738,Leafitobombas,PLANTA,90,15,100,100% de poner Drenadoras al rival.,fisico
+739,Glaceoprisma,HIELO,90,15,100,Elimina todos los modificadores de stats de todos los Pokémon.,especial
+740,Sylveotornado,HADA,90,15,100,Cura cualquier problema de estado de cualquier miembro de tu equipo.,especial
+741,Eevimpacto,NORMAL,1,20,0,Su poder base depende de la Felicidad del Pokémon entre 0 y 102.,fisico
+742,Ferropuño Doble,ACERO,60,5,100,30% de hacer retroceder al rival. Golpea 2 veces seguidas.,fisico
+743,Maxibarrera,NORMAL,0,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Evita todo daño directo y efectos de movimientos del rival. Su precisión se reduce con cada uso consecutivo.,otros
+744,Cañón Dinamax,DRAGON,100,5,100,El daño se duplica si el objetivo está en Forma Dinamax.,especial
+745,Disparo Certero,AGUA,80,15,100,Ignora los efectos de movimientos y habilidades que atraen ataques golpeando siempre al Pokémon objetivo.,especial
+746,Presa Maxilar,SINIESTRO,80,10,100,Impide al usuario y al rival ser intercambiados hasta que alguno de los dos caiga debilitado.,fisico
+747,Atiborramiento,NORMAL,0,10,0,Aumenta dos niveles la Defensa al usuario. El usuario se come la Baya que tenga equipada.,otros
+748,Bastión Final,LUCHA,0,5,0,Aumenta un nivel el Ataque la Defensa la Velocidad el Ataque Especial y la Defensa Especial al usuario. El usuario no puede ser intercambiado ni huir del combate.,otros
+749,Alquitranazo,ROCA,0,15,100,Baja un nivel la Velocidad al rival. El Pokémon objetivo pasa a ser débil a los ataques de tipo Fuego.,otros
+750,Polvo Mágico,PSIQUICO,0,20,100,Cambia el tipo del Pokémon objetivo por el tipo Psíquico.,otros
+751,Dracoflechas,DRAGON,50,10,100,Golpea 2 veces seguidas. Si hay dos objetivos golpea 1 vez a cada uno de ellos.,fisico
+752,Hora del Té,NORMAL,0,10,0,Todos los Pokémon en combate se comen su Baya equipada.,otros
+753,Octopresa,LUCHA,0,15,100,Impide al rival ser intercambiado. Baja un nivel la Defensa y la Defensa Especial al rival cada turno.,otros
+754,Electropico,ELECTRICO,85,10,100,El poder base se duplica si el usuario ataca antes que el Pokémon objetivo.,fisico
+755,Branquibocado,AGUA,85,10,100,El poder base se duplica si el usuario ataca antes que el Pokémon objetivo.,fisico
+756,Cambio de Cancha,NORMAL,0,10,100,Los efectos activos en el campo de cada bando cambian de lado.,otros
+757,Maxignición,FUEGO,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Provoca Día Soleado durante 5 turnos.,fisico;especial
+758,Maxinsecto,BICHO,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Baja un nivel el Ataque Especial del rival.,fisico;especial
+759,Maxitormenta,ELECTRICO,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Crea un campo eléctrico durante 5 turnos.,fisico;especial
+760,Maxiataque,NORMAL,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Baja un nivel la Velocidad del rival.,fisico;especial
+761,Maxipuño,LUCHA,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Aumenta un nivel el Ataque del usuario y sus aliados.,fisico;especial
+762,Maxiespectro,FANTASMA,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Baja un nivel la Defensa del rival.,fisico;especial
+763,Maxihelada,HIELO,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Provoca Granizo durante 5 turnos.,fisico;especial
+764,Maxiácido,VENENO,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Aumenta un nivel el Ataque Especial del usuario y sus aliados.,fisico;especial
+765,Maxichorro,AGUA,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Provoca Llovizna durante 5 turnos.,fisico;especial
+766,Maxiciclón,VOLADOR,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Aumenta un nivel la Velocidad del usuario y sus aliados.,fisico;especial
+767,Maxiestela,HADA,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Crea un campo de niebla durante 5 turnos.,fisico;especial
+768,Maxidraco,DRAGON,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Baja un nivel el Ataque del rival.,fisico;especial
+769,Maxionda,PSIQUICO,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Crea un campo psíquico durante 5 turnos.,fisico;especial
+770,Maxilito,ROCA,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Provoca Tormenta de Arena durante 5 turnos.,fisico;especial
+771,Maxitemblor,TIERRA,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Aumenta un nivel la Defensa Especial del usuario y sus aliados.,fisico;especial
+772,Maxisombra,SINIESTRO,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Baja un nivel la Defensa Especial del rival.,fisico;especial
+773,Maxiflora,PLANTA,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Crea un campo de hierba durante 5 turnos.,fisico;especial
+774,Maximetal,ACERO,1,10,0,Movimiento Dinamax que sólo pueden usar Pokémon en Forma Dinamax. Su potencia depende del movimiento original. Aumenta un nivel la Defensa del usuario y sus aliados.,fisico;especial
+775,Estruendo Escama,DRAGON,0,5,0,Aumenta un nivel el Ataque la Defensa la Velocidad el Ataque Especial y la Defensa Especial al usuario que pierde un 33% de su PS máximo.,otros
+776,Plancha Corporal,LUCHA,80,10,100,Causa daño en base a la Defensa del usuario y la Defensa del Pokémon objetivo.,fisico
+777,Decoración,HADA,0,15,0,Aumenta dos niveles el Ataque y el Ataque Especial del Pokémon objetivo.,otros
+778,Batería Asalto,PLANTA,80,10,100,Baja un nivel la Velocidad al rival.,fisico
+779,Cepo,PLANTA,35,15,100,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,fisico
+780,Balón Ígneo,FUEGO,120,5,90,10% de quemar al rival.,fisico
+781,Tajo Supremo,ACERO,100,5,100,El daño se duplica si el objetivo está en Forma Dinamax.,fisico
+782,Embate Supremo,ACERO,100,5,100,El daño se duplica si el objetivo está en Forma Dinamax.,fisico
+783,Rueda Aural,ELECTRICO,110,10,100,Aumenta un nivel la Velocidad al usuario. El tipo del movimiento depende de la Forma de Morpeko. Con la Forma Saciada es de tipo Eléctrico mientras que con la Forma Voraz es de tipo Siniestro.,fisico
+784,Vasto Impacto,DRAGON,60,15,100,100% de reducir un nivel el Ataque al rival.,fisico
+785,Punzada Rama,PLANTA,40,40,100,Ninguno.,fisico
+786,Amplificador,ELECTRICO,80,10,100,Golpea con sonido a todos los Pokémon rivales en combates dobles.,especial
+787,Ácido Málico,PLANTA,80,10,100,Baja un nivel la Defensa Especial al rival.,especial
+788,Fuerza G,PLANTA,80,10,100,Baja un nivel la Defensa al rival.,fisico
+789,Choque Anímico,HADA,75,15,100,Baja un nivel el Ataque Especial al rival.,fisico
+790,Cautivapor,HADA,90,10,95,20% de confundir al rival.,especial
+791,Gota Vital,AGUA,0,10,0,El usuario y su aliado recuperan un 6.25% de PS cada turno hasta que cae debilitado o es intercambiado.,otros
+792,Obstrucción,SINIESTRO,0,10,100,Evita todo daño directo de movimientos del rival. Su precisión se reduce con cada uso consecutivo. Reduce dos niveles la Defensa del Pokémon que intente tocarlo.,otros
+793,Irreverencia,SINIESTRO,80,10,0,Nunca falla.,fisico
+794,Asalto Estelar,LUCHA,150,5,100,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,fisico
+795,Rayo Infinito,DRAGON,160,5,90,Impide al usuario usar un movimiento o ser intercambiado en el siguiente turno.,especial
+796,Metaláser,ACERO,140,5,95,El usuario recibe un daño equivalente al 50% de su PS máximo.,especial
+797,Vasta Fuerza,PSIQUICO,80,10,100,Golpea a todos los Pokémon rivales en combates dobles con un 50% más de poder base si hay un campo psíquico.,especial
+798,Allanador Férreo,ACERO,130,5,100,Elimina el campo activo en combate. El movimiento falla si no hay un campo activo.,fisico
+799,Ráfaga Escamas,DRAGON,25,20,90,Golpea de 2 a 5 veces seguidas. Aumenta un nivel la Velocidad al usuario pero reduce un nivel su Defensa.,fisico
+800,Rayo Meteórico,ROCA,120,10,90,Precisa un turno de carga en el que aumenta un nivel el Ataque Especial al usuario.,especial
+801,Moluscañón,VENENO,90,10,100,20% de envenenar al rival. El daño de este ataque se calcula con el stat de Ataque o de Ataque Especial en función de cuál vaya a hacer más daño.,especial
+802,Bruma Explosiva,HADA,100,5,100,El usuario cae debilitado tras usar este movimiento. El movimiento fallará si su objetivo desaparece. El poder base aumenta un 50% si hay un campo de niebla.,especial
+803,Fitoimpulso,PLANTA,55,20,100,Golpea primero si hay un campo de hierba.,fisico
+804,Alto Voltaje,ELECTRICO,70,20,100,El poder base se duplica si hay un campo eléctrico.,especial
+805,Pulso de Campo,NORMAL,50,10,100,El tipo del ataque depende del campo activo. El poder base se duplica si hay un campo activo.,especial
+806,Golpe Rastrero,BICHO,70,10,90,Baja un nivel el Ataque Especial al rival.,fisico
+807,Envidia Ardiente,FUEGO,70,5,100,Provoca Quemadura al Pokémon objetivo si ha aumentado sus stats en el mismo turno.,especial
+808,Desahogo,SINIESTRO,75,5,100,El poder base se duplica si el usuario ha visto reducidos sus stats en el mismo turno.,fisico
+809,Poltergeist,FANTASMA,110,5,90,El movimiento falla automáticamente si el Pokémon objetivo no tiene un objeto equipado.,fisico
+810,Gas Corrosivo,VENENO,0,40,100,Elimina el objeto equipado del Pokémon objetivo.,otros
+811,Motivación,LUCHA,0,10,0,Aumenta un nivel el Ataque y la Defensa a sus aliados.,otros
+812,Viraje,AGUA,60,20,100,El Pokémon debe ser intercambiado tras usar este ataque. Permite escapar de trampas y pseudo-trampas.,fisico
+813,Triple Axel,HIELO,20,10,90,Golpea 3 veces seguidas. El poder base de cada golpe aumenta cada vez (20 40 y 60).,fisico
+814,Ala Bis,VOLADOR,40,10,90,Golpea 2 veces seguidas.,fisico
+815,Arenas Ardientes,TIERRA,70,10,100,30% de quemar al rival.,especial
+816,Cura Selvática,PLANTA,0,10,0,El usuario y sus aliados recuperan el 25% de su PS máximo y curan sus problemas de estado.,otros
+817,Golpe Oscuro,SINIESTRO,75,5,100,Siempre provoca un Golpe Crítico salvo que una habilidad o efecto lo impida.,fisico
+818,Azote Torrencial,AGUA,25,5,100,Golpea 3 veces seguidas. Siempre provoca un Golpe Crítico salvo que una habilidad o efecto lo impida.,fisico
+819,Electrojaula,ELECTRICO,80,15,90,El Pokémon rival permanece atrapado de 4 a 5 turnos recibiendo un daño del 12.5% del PS cada turno.,especial
+820,Dracoenergía,DRAGON,150,5,100,El poder de este movimiento será mayor cuanto mayor el PS del usuario. El daño será: 150 x ( PS actual / PS total ).,especial
+821,Mirada Heladora,PSIQUICO,90,10,100,10% de congelar al rival.,especial
+822,Furia Candente,SINIESTRO,90,10,100,20% de hacer retroceder al rival.,especial
+823,Patada Relámpago,LUCHA,90,10,100,Baja un nivel la Defensa al rival.,fisico
+824,Lanza Glacial,HIELO,120,5,100,Ninguno.,fisico
+825,Orbes Espectro,FANTASMA,120,5,100,Ninguno.,especial
+826,Conjuro Funesto,PSIQUICO,80,5,100,El último movimiento utilizado por el rival verá reducidos sus PP en 3.,especial
+827,Garra Nociva,VENENO,80,15,100,50% de envenenar paralizar o dormir al rival.,fisico
+828,Asalto Barrera,PSIQUICO,70,10,90,Aumenta un nivel la Defensa al usuario.,fisico
+829,Cambiapoder,NORMAL,0,10,0,El usuario intercambia sus stats de Ataque y Defensa entre sí (pero no los modificadores).,otros
+830,Hachazo Pétreo,ROCA,65,15,90,El Pokémon que salga a luchar recibirá un daño equivalente al 12.5% de PS que aumenta o disminuye según resistencias y debilidades al tipo Roca (3.125% a 50%).,fisico
+831,Ciclón Primavera,HADA,100,10,80,30% de reducir un nivel el Ataque al rival.,especial
+832,Poder Místico,PSIQUICO,70,10,90,Aumenta un nivel el Ataque Especial al usuario.,especial
+833,Erupción de Ira,FUEGO,120,10,100,El usuario golpea con este ataque durante 2 ó 3 turnos sin poder ser intercambiado tras lo cual pasa a estar confundido.,fisico
+834,Envite Acuático,AGUA,120,10,100,Provoca un daño de retroceso del 33% del daño provocado al Pokémon rival.,fisico
+835,Clorofiláser,PLANTA,150,5,95,El usuario recibe un daño equivalente al 50% de su PS máximo.,especial
+836,Viento Carámbano,HIELO,100,10,85,30% de hacer retroceder al rival.,fisico
+837,Danza Triunfal,LUCHA,0,10,0,Aumenta un nivel el Ataque la Defensa y la Velocidad al usuario.,otros
+838,Arremetida,TIERRA,120,5,100,Baja un nivel la Defensa y la Defensa Especial al usuario.,fisico
+839,Mil Púas Tóxicas,VENENO,60,10,100,50% de envenenar al rival. El poder base se duplica si el Pokémon objetivo está Envenenado.,fisico
+840,Ala Aural,PSIQUICO,80,10,100,Alta probabilidad de Golpe Crítico. Aumenta un nivel la Velocidad al usuario.,especial
+841,Rencor Reprimido,FANTASMA,75,10,100,Baja un nivel el Ataque al rival.,especial
+842,Retracción,ACERO,0,10,0,Aumenta dos niveles la Defensa al usuario.,otros
+843,Triple Flecha,LUCHA,90,10,100,30% de hacer retroceder al rival y 50% de reducir un nivel la Defensa al rival. Alta probabilidad de Golpe Crítico.,fisico
+844,Marcha Espectral,FANTASMA,60,15,100,30% de quemar al rival. El poder base se duplica si el Pokémon objetivo está Quemado.,especial
+845,Tajo Metralla,SINIESTRO,65,15,90,El Pokémon que salga a luchar recibirá un daño equivalente al 12.5% de PS (16.66% con 2 filas 25% con 3 filas). No afecta a Pokémon voladores o levitadores.,fisico
+846,Vendaval Gélido,VOLADOR,100,10,80,30% de reducir un nivel la Velocidad al rival. En Llovizna no falla.,especial
+847,Electormenta,ELECTRICO,100,10,80,20% de paralizar al rival. En Llovizna no falla.,especial
+848,Simún de Arena,TIERRA,100,10,80,20% de quemar al rival. En Llovizna no falla.,especial
+849,Plegaria Lunar,PSIQUICO,0,5,0,El usuario y sus aliados recuperan el 25% de su PS máximo y curan sus problemas de estado.,otros
+850,Bálsamo Osado,PSIQUICO,0,10,0,Aumenta un nivel el Ataque Especial y la Defensa Especial al usuario y cura sus problemas de estado.,otros
+851,Teraexplosión,NORMAL,80,10,100,Adopta el tipo del teratipo de un Pokémon Teracristal. Compara los valores de Ataque y Ataque Especial del usuario para causar daño con el más alto de los dos.,especial
+852,Telatrampa,BICHO,0,10,0,Evita todo daño directo y efectos de movimientos del rival. Su precisión se reduce con cada uso consecutivo. Reduce un nivel la Velocidad del Pokémon que intente tocarlo.,otros
+853,Patada Hacha,LUCHA,120,10,90,30% de confundir al rival. Si el ataque falla el usuario recibe un daño equivalente al 50% de su PS máximo.,fisico
+854,Homenaje Póstumo,FANTASMA,50,10,100,El poder base de este movimiento es mayor cuantos más Pokémon aliados hayan caído en combate aumentando en 50 por cada Pokémon aliado derrotado.,fisico
+855,Fotocolisión,PSIQUICO,80,10,100,Baja dos niveles la Defensa Especial al rival.,especial
+856,Oído Cocina,DRAGON,80,10,100,Si el usuario tiene un Tatsugiri en su boca aumenta un nivel su Ataque (Tatsugiri Forma Curvada) Defensa (Tatsugiri Forma Recta) o Velocidad (Tatsugiri Forma Lánguida).,fisico
+857,Puño Jet,AGUA,60,15,100,Golpea primero.,fisico
+858,Extracto Picante,PLANTA,0,15,0,Aumenta dos niveles el Ataque y baja dos niveles la Defensa al rival.,otros
+859,Quemarrueda,ACERO,100,5,100,Baja dos niveles la Velocidad al usuario.,fisico
+860,Proliferación,NORMAL,20,10,90,Golpea de 1 a 10 veces seguidas.,fisico
+861,Pirueta Helada,HIELO,80,15,100,Elimina los efectos de Campo de Hierba Campo Eléctrico Campo Psíquico y Campo de Niebla.,fisico
+862,Asalto Espadón,DRAGON,120,5,100,Los ataques del rival causan el doble de daño y no pueden fallar durante el siguiente turno.,fisico
+863,Plegaria Vital,NORMAL,0,1,0,Revive a un Pokémon aliado y recupera el 50% de su PS máximo.,otros
+864,Salazón,ROCA,40,15,100,El Pokémon rival recibe un daño del 12.5% del PS cada turno (un 25% si es de tipo Agua o Acero).,fisico
+865,Triple Inmersión,AGUA,30,10,95,Golpea 3 veces seguidas.,fisico
+866,Giro Mortífero,VENENO,30,15,100,100% de envenenar al rival. Elimina los efectos de Púas Púas Tóxicas Trampa Rocas Drenadoras y pseudo-trampas.,fisico
+867,Decalcomanía,NORMAL,0,10,100,El usuario y sus aliados obtienen la habilidad del objetivo hasta que sean intercambiados.,otros
+868,Deslome,NORMAL,0,10,0,Aumenta dos niveles el Ataque el Ataque Especial y la Velocidad al usuario. El usuario recibe un daño equivalente al 50% de su PS máximo.,otros
+869,Genufendiente,SINIESTRO,85,10,0,Siempre golpea.,fisico
+870,Truco Floral,PLANTA,70,10,0,Siempre golpea. Siempre provoca un Golpe Crítico salvo que una habilidad o efecto lo impida.,fisico
+871,Canto Ardiente,FUEGO,80,10,100,Aumenta un nivel el Ataque Especial al usuario.,especial
+872,Danza Acuática,AGUA,80,10,100,Aumenta un nivel la Velocidad al usuario.,fisico
+873,Furia Taurina,NORMAL,90,10,100,Destruye Pantalla de Luz Reflejo y Velo Aurora incluso si falla. Su tipo es Lucha Fuego o Agua si el usuario es de Variedad Combatiente Variedad Ardiente o Variedad Acuática respectivamente.,fisico
+874,Fiebre Dorada,ACERO,120,5,100,Baja un nivel el Ataque Especial al usuario. Recolecta dinero tras batallas contra Pokémon salvajes o entrenadores del juego.,especial
+875,Psicohojas,PSIQUICO,80,15,100,Causa un 50% más de daño si hay un campo eléctrico.,fisico
+876,Hidrovapor,AGUA,80,15,100,Causa un 50% más de daño si hace Día Soleado en lugar ver reducido su daño.,especial
+877,Calamidad,SINIESTRO,1,10,90,Causa un daño equivalente a la mitad del PS que le queda al Pokémon rival.,especial
+878,Nitrochoque,LUCHA,100,5,100,Causa un 30% más de daño si es muy eficaz contra el objetivo.,fisico
+879,Electroderrape,ELECTRICO,100,5,100,Causa un 30% más de daño si es muy eficaz contra el objetivo.,especial
+880,Autotomía,NORMAL,0,10,0,Crea un Sustituto con el 50% del PS máximo del usuario. El Pokémon debe ser intercambiado tras usar este ataque. Permite escapar de trampas y pseudo-trampas.,otros
+881,Fría Acogida,HIELO,0,10,0,Provoca Nevada. El Pokémon debe ser intercambiado tras usar este ataque. Permite escapar de trampas y pseudo-trampas.,otros
+882,Limpieza General,NORMAL,0,10,0,Aumenta un nivel el Ataque y la Velocidad al usuario. Elimina los efectos de Púas Púas Tóxicas Trampa Rocas Drenadoras y pseudo-trampas.,otros
+883,Paisaje Nevado,HIELO,0,10,0,Provoca Nevada.,otros
+884,Brinco,BICHO,50,20,100,Baja un nivel la Velocidad al rival.,fisico
+885,Abrecaminos,PLANTA,50,20,100,Aumenta un nivel la Velocidad al usuario.,fisico
+886,Agua Fría,AGUA,50,20,100,Baja un nivel el Ataque al rival.,especial
+887,Hipertaladro,NORMAL,100,5,100,Golpea aunque el rival use Protección Detección Vastaguardia o Anticipo ese turno los cuales se ven anulados.,fisico
+888,Láser Doble,PSIQUICO,40,10,100,Golpea 2 veces seguidas.,especial
+889,Puño Furia,FANTASMA,50,10,100,El poder base de este movimiento es mayor cuantos más golpes haya recibido el Pokémon durante el combate aumentando en 50 por cada golpe. Los golpes por confusión y los golpes múltiples también cuentan.,fisico
+890,Cañón Armadura,FUEGO,120,5,100,Baja un nivel la Defensa y la Defensa Especial al usuario.,especial
+891,Espada Lamento,FUEGO,90,10,100,El usuario recupera PS equivalente a la mitad del daño causado.,fisico
+892,Electropalmas,ELECTRICO,120,5,100,El usuario pierde su tipo Eléctrico (si lo tiene) con lo que ello afecta a sus inmunidades debilidades y resistencias.,fisico
+893,Martillo Colosal,ACERO,160,5,100,El usuario no puede usar este ataque dos veces seguidas.,fisico
+894,Resarcimiento,SINIESTRO,1,10,100,Causa un daño equivalente al 150% del daño causado por el ataque del rival ese turno. Debe ser utilizado después del ataque del rival.,fisico
+895,Tajo Acuático,AGUA,70,20,100,Alta probabilidad de Golpe Crítico.,fisico
+896,Pirochoque,FUEGO,80,10,100,30% de quemar al rival. Solo lo puede usar el Autostar Schedar.,fisico
+897,Ominochoque,SINIESTRO,80,10,100,10% de dormir al rival. Solo lo puede usar el Autostar Segin.,fisico
+898,Ponzochoque,VENENO,100,10,100,30% de envenenar al rival. Solo lo puede usar el Autostar Tsih.,fisico
+899,Pugnachoque,LUCHA,100,10,100,30% de paralizar al rival. Solo lo puede usar el Autostar Caph.,fisico
+900,Feerichoque,HADA,100,10,100,30% de confundir al rival. Solo lo puede usar el Autostar Ruchbah.,fisico
+901,Luna Roja,NORMAL,140,5,100,El usuario no puede usar este ataque dos veces seguidas.,especial
+902,Cañón Batidor,PLANTA,80,15,90,10% de quemar al rival. El usuario recupera PS equivalente a la mitad del daño causado.,especial
+903,Bomba Caramelo,PLANTA,60,10,85,Carameliza al Pokémon objetivo reduciendo un nivel su Velocidad progresivamente durante 3 turnos.,especial
+904,Garrote Liana,PLANTA,100,10,100,Alta probabilidad de Golpe Crítico. El tipo del movimiento varía según la máscara equipada si el usuario es Ogerpon.,fisico
+906,Electrorrayo,ELECTRICO,130,10,100,Precisa un turno de carga en el que aumenta un nivel el Ataque Especial al usuario salvo en Llovizna.,especial
+907,Teraclúster,NORMAL,120,5,100,Golpea a todos los Pokémon rivales en combates dobles si el usuario es Terapagos en Forma Astral.,especial
+908,Láser Veleidoso,DRAGON,80,5,100,El poder base se duplica en un 30% de los casos.,especial
+909,Llama Protectora,FUEGO,0,10,0,Evita todo daño directo y efectos de movimientos del rival. Su precisión se reduce con cada uso consecutivo. Provoca Quemadura al Pokémon que intente tocarlo.,otros
+910,Relámpago Súbito,ELECTRICO,70,5,100,Golpea primero pero falla si el rival no va a usar un movimiento de daño directo. Falla también si el rival golpea antes.,especial
+911,Filo Potente,ROCA,95,5,100,Golpea aunque el rival use Protección Detección Vastaguardia o Anticipo ese turno los cuales se ven anulados.,fisico
+912,Tajo Taquión,ACERO,50,10,0,Nunca falla. Golpea 2 veces seguidas.,especial
+913,Prensa Metálica,ACERO,1,10,100,El poder del movimiento es mayor cuanto más PS le quede al rival. El poder base será: (PS Actual Rival / PS Máximo Rival) x 100 (máx. 100).,fisico
+914,Bramido Dragón,DRAGON,0,15,0,Aumenta la probabilidad de que el Pokémon aliado haga Golpe Crítico (en mayor medida si es de tipo Dragón).,otros
+915,Canto Encantador,HADA,80,10,100,Provoca Confusión al Pokémon objetivo si ha aumentado sus stats en el mismo turno.,especial
+916,Cólera Ardiente,FUEGO,75,10,100,El poder base se duplica si el usuario falló el último movimiento usado.,fisico
+917,Plancha Voltaica,ELECTRICO,100,15,95,Si el ataque falla el usuario recibe un daño equivalente al 50% de su PS máximo.,fisico
+918,Psicorruido,PSIQUICO,75,10,100,El rival no puede recuperar PS en 2 turnos salvo mediante Divide Dolor.,especial
+919,Palma Rauda,LUCHA,65,15,100,Golpea primero pero falla si el rival no va a usar un movimiento de alta prioridad. Falla también si el rival golpea antes.,fisico
+920,Cadena Virulenta,VENENO,100,5,100,50% de intoxicar al rival.,especial

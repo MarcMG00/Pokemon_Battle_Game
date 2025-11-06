@@ -1,0 +1,312 @@
+HabilityId,HabilityName,Effect
+-1,Cacofonia,Evita ataques de sonido.
+1,Hedor,Puede amedrentar a un Pokemon al atacarlo debido al mal olor que emana.
+2,Llovizna,Hace que llueva al entrar en combate.
+3,Impulso,Aumenta su velocidad en cada turno.
+4,Armadura batalla,La robusta coraza que lo protege bloquea los golpes criticos.
+5,Robustez,El Pokemon no puede debilitarse de un solo golpe cuando tiene los PS al maximo. Tambien evita los movimientos fulminantes.
+6,Humedad,'Aumenta la humedad del entorno y evita que se puedan utilizar movimientos explosivos, tales como autodestruccion.'
+7,Flexibilidad,Evita ser paralizado gracias a la flexibilidad de su cuerpo.
+8,Velo arena,Aumenta su evasion durante las tormentas de arena.
+9,Electricidad estatica,La electricidad estatica que lo envuelve puede paralizar al Pokemon que lo ataque con un movimiento de contacto.
+10,Absorbe electricidad,'Si lo alcanza un movimiento de tipo electrico, recupera PS en vez de sufrir dano.'
+11,Absorbe agua,'Si lo alcanza un movimiento de tipo agua, recupera PS en vez de sufrir dano.'
+12,Despiste,'Su indiferencia evita que sea provocado, caiga presa del enamoramiento o sufra los efectos de intimidacion.'
+13,Aclimatacion,Anula todos los efectos del tiempo atmosferico.
+14,Ojo compuesto,Aumenta la precision de sus movimientos.
+15,Insomnio,Su resistencia al sueno le impide quedarse dormido.
+16,Cambio color,Adopta el tipo del ultimo movimiento del que es blanco.
+17,Inmunidad,Su sistema inmunitario evita el envenenamiento.
+18,Absorbe fuego,'Si lo alcanza algun movimiento de tipo fuego, potencia sus propios movimientos de dicho tipo.'
+19,Polvo escudo,El polvo de escamas que lo envuelve lo protege de los efectos secundarios de los ataques recibidos.
+20,Ritmo propio,'Como le gusta hacer las cosas a su manera, no le afecta la confusion ni sufre los efectos de intimidacion.'
+21,Ventosas,'Sus ventosas se aferran al suelo, con lo cual anula movimientos y objetos que fuercen el cambio de Pokemon.'
+22,Intimidacion,'Al entrar en combate, amilana al rival de tal manera que reduce su ataque.'
+23,Sombra trampa,Pisa la sombra del rival para impedir que huya o lo cambien por otro.
+24,Piel tosca,Hiere con su piel aspera al Pokemon que lo ataque con un movimiento de contacto.
+25,Superguarda,'Gracias a un poder misterioso, solo le hacen dano los movimientos supereficaces.'
+26,Levitacion,Su capacidad de flotar sobre el suelo le proporciona inmunidad frente a los movimientos de tipo tierra.
+27,Efecto espora,'Puede dormir, envenenar o paralizar al Pokemon que lo ataque con un movimiento de contacto.'
+28,Sincronia,'Contagia el envenenamiento, las quemaduras o la paralisis al Pokemon que le cause ese estado.'
+29,Cuerpo puro,Evita que se reduzcan sus caracteristicas a causa de movimientos o habilidades de otros Pokemon.
+30,Cura natural,Sus problemas de estado desaparecen cuando se retira del combate.
+31,Pararrayos,'Atrae y neutraliza los movimientos de tipo electrico, que ademas le aumentan el ataque especial.'
+32,Dicha,Aumenta la probabilidad de que los movimientos causen efectos secundarios.
+33,Nado rapido,Aumenta su velocidad cuando llueve.
+34,Clorofila,Aumenta su velocidad cuando hace sol.
+35,Iluminacion,'Al iluminar el entorno, evita que su precision se reduzca.'
+36,Calco,Copia la habilidad del rival al entrar en combate.
+37,Potencia,Duplica la potencia de sus ataques fisicos.
+38,Punto toxico,Puede envenenar al Pokemon que lo ataque con un movimiento de contacto.
+39,Fuerza mental,'Gracias a su profunda concentracion, no se amedrenta ante los ataques de otros Pokemon ni sufre los efectos de intimidacion.'
+40,Escudo magma,'Gracias al magma candente que lo envuelve, no puede ser congelado.'
+41,Velo agua,Evita las quemaduras gracias a la capa de agua que lo envuelve.
+42,Iman,Su magnetismo atrae a los Pokemon de tipo acero y les impide huir o ser cambiados por otros.
+43,Insonorizar,Su aislamiento acustico lo protege de movimientos que usan sonido.
+44,Cura lluvia,Recupera PS de forma gradual cuando llueve.
+45,Chorro arena,Crea una tormenta de arena al entrar en combate.
+46,Presion,Presiona al rival de tal manera que este consume mas PP al usar sus movimientos.
+47,Sebo,'Gracias a la gruesa capa de grasa que lo protege, reduce a la mitad el dano que recibe de ataques de tipo fuego o hielo.'
+48,Madrugar,'Si se duerme, tardara la mitad de tiempo en despertarse.'
+49,Cuerpo llama,Puede quemar al Pokemon que lo ataque con un movimiento de contacto.
+50,Fuga,Puede escapar de cualquier Pokemon salvaje.
+51,Vista lince,Su aguda vista evita que su precision se reduzca.
+52,Corte fuerte,Evita que otros Pokemon le reduzcan el ataque.
+53,Recogida,'Puede recoger objetos que otros Pokemon hayan usado, o bien aquellos que encuentre en plena aventura.'
+54,Pereza,'Al ejecutar un movimiento, descansara en el turno siguiente.'
+55,Entusiasmo,'Aumenta su ataque, pero reduce su precision.'
+56,Gran encanto,Puede causar enamoramiento al Pokemon que lo ataque con un movimiento de contacto.
+57,Mas,Aumenta su ataque especial si un Pokemon aliado tiene la habilidad mas o la habilidad menos.
+58,Menos,Aumenta su ataque especial si un Pokemon aliado tiene la habilidad mas o la habilidad menos.
+59,Prediccion,'Cambia a tipo agua, fuego o hielo en funcion del tiempo atmosferico.'
+60,Viscosidad,'Los objetos se quedan pegados a su cuerpo, por lo que no pueden robarselos.'
+61,Mudar,Puede curar sus problemas de estado al mudar la piel.
+62,Agallas,'Si sufre un problema de estado, se arma de valor y aumenta su ataque.'
+63,Escama especial,'Si sufre un problema de estado, sus escamas especiales reaccionan y aumenta su defensa.'
+64,Viscosecrecion,Exuda una secrecion viscosa y toxica de intenso hedor que hiere a quienes intentan drenarle PS.
+65,Espesura,Potencia sus movimientos de tipo planta cuando le quedan pocos PS.
+66,Mar llamas,Potencia sus movimientos de tipo fuego cuando le quedan pocos PS.
+67,Torrente,Potencia sus movimientos de tipo agua cuando le quedan pocos PS.
+68,Enjambre,Potencia sus movimientos de tipo bicho cuando le quedan pocos PS.
+69,Cabeza roca,No pierde PS al usar movimientos que tambien hieren al usuario.
+70,Sequia,El tiempo pasa a ser soleado al entrar en combate.
+71,Trampa arena,Evita que el rival huya o sea cambiado por otro.
+72,Espiritu vital,Su determinacion le impide quedarse dormido.
+73,Humo blanco,El humo blanco que lo protege evita que otros Pokemon le reduzcan las caracteristicas.
+74,Energia pura,Duplica la potencia de sus ataques fisicos gracias al yoga.
+75,Caparazon,La robusta coraza que lo protege bloquea los golpes criticos.
+76,Esclusa de aire,Neutraliza todos los efectos del tiempo atmosferico.
+77,Tumbos,Aumenta su evasion si esta confuso.
+78,Electromotor,'Si le alcanza un movimiento de tipo electrico, aumenta su velocidad en vez de sufrir dano.'
+79,Rivalidad,'Si el objetivo es del mismo sexo, su competitividad le lleva a infligir mas dano. Si es del sexo contrario, en cambio, el dano sera menor.'
+80,Impasible,'Cada vez que se amedrenta, aumenta su velocidad debido a su voluntad inquebrantable.'
+81,Manto niveo,Aumenta su evasion cuando nieva.
+82,Gula,'Cuando sus PS se ven reducidos a la mitad, engulle la baya que normalmente solo se comeria cuando le quedasen pocos PS.'
+83,Irascible,'Si recibe un golpe critico, monta en colera y su ataque aumenta al maximo.'
+84,Liviano,Aumenta su velocidad si usa o pierde el objeto que lleva.
+85,Ignifugo,'Su cuerpo, resistente al calor, reduce a la mitad el dano recibido por movimientos de tipo fuego.'
+86,Simple,Duplica los cambios en las caracteristicas.
+87,Piel seca,'Pierde PS si hace sol y los recupera si llueve o recibe un movimiento de tipo agua. Los movimientos de tipo fuego, por su parte, le hacen mas dano de lo normal.'
+88,Descarga,Compara la defensa y la defensa especial del rival para ver cual es inferior y aumenta su propio ataque o ataque especial segun sea lo mas eficaz.
+89,Puno ferreo,Aumenta la potencia de los movimientos con los punos.
+90,Antidoto,'Si resulta envenenado, recupera PS en vez de perderlos.'
+91,Adaptable,Potencia aun mas los movimientos cuyo tipo coincida con el suyo.
+92,Encadenado,Ejecuta siempre los movimientos de ataque multiple con el numero maximo de golpes.
+93,Hidratacion,Cura los problemas de estado si esta lloviendo.
+94,Poder solar,'Si hace sol, aumenta su ataque especial, pero pierde PS en cada turno.'
+95,Pies rapidos,Aumenta su velocidad si sufre problemas de estado.
+96,Normalidad,Hace que todos sus movimientos se vuelvan de tipo normal y aumenta ligeramente su potencia.
+97,Francotirador,Potencia los golpes criticos que asesta aun mas de lo normal.
+98,Muro magico,Solo recibe dano de ataques.
+99,Indefenso,'Al quedar ambos expuestos, tanto sus movimientos como los del Pokemon que lo ataque acertaran siempre.'
+100,Rezagado,Ejecuta su movimiento tras todos los demas.
+101,Experto,Aumenta la potencia de sus movimientos debiles.
+102,Defensa hoja,Evita los problemas de estado si hace sol.
+103,Zoquete,No puede usar objetos equipados.
+104,Rompemoldes,Sus movimientos no se ven afectados por la habilidad del objetivo.
+105,Afortunado,Su buena suerte aumenta la probabilidad de asestar golpes criticos.
+106,Detonacion,Dana al Pokemon que le ha dado el golpe de gracia con un movimiento de contacto.
+107,Anticipacion,Preve los movimientos peligrosos del rival.
+108,Alerta,Revela uno de los movimientos del rival al entrar en combate.
+109,Ignorante,Pasa por alto los cambios en las caracteristicas de un Pokemon al atacarlo o recibir dano.
+110,Cromolente,'Potencia los movimientos que no son muy eficaces, que infligen ahora un dano normal.'
+111,Filtro,Mitiga el dano que le infligen los movimientos supereficaces.
+112,Inicio lento,Reduce a la mitad su ataque y su velocidad durante cinco turnos.
+113,Intrepido,'Alcanza a Pokemon de tipo fantasma con movimientos de tipo normal o lucha. Ademas, no sufre los efectos de intimidacion.'
+114,Colector,'Atrae y neutraliza los movimientos de tipo agua, que ademas le aumentan el ataque especial.'
+115,Gelido,Recupera PS de forma gradual cuando nieva.
+116,Roca solida,Mitiga el dano que le infligen los movimientos supereficaces.
+117,Nevada,Invoca una nevada al entrar en combate.
+118,Recogemiel,Puede que encuentre miel una vez concluido el combate.
+119,Cacheo,Puede ver el objeto que lleva el rival al entrar en combate.
+120,Audaz,Potencia los movimientos que tambien danan al usuario.
+121,Multitipo,Cambia su tipo al de la tabla que lleve.
+122,Don floral,'Si hace sol, aumenta su ataque y su defensa especial, asi como los de sus aliados.'
+123,Mal sueno,Inflige dano a cualquier rival que este dormido.
+124,Hurto,Roba el objeto del Pokemon que lo ataque con un movimiento de contacto.
+125,Potencia bruta,'Aumenta la potencia de sus movimientos en detrimento de los efectos secundarios, que se ven anulados.'
+126,Respondon,Invierte los cambios en las caracteristicas: bajan cuando les toca subir y suben cuando les toca bajar.
+127,Nerviosismo,Pone nervioso al rival y le impide usar bayas.
+128,Competitivo,Aumenta mucho su ataque cuando el rival le reduce cualquiera de sus caracteristicas.
+129,Flaqueza,'Cuando sus PS se ven reducidos a la mitad, se cansa tanto que su ataque y su ataque especial tambien se ven reducidos a la mitad.'
+130,Cuerpo maldito,Puede anular el movimiento usado en su contra.
+131,Alma cura,A veces cura los problemas de estado de un aliado.
+132,Compiescolta,Reduce el dano que sufren los aliados.
+133,Armadura fragil,'Al recibir dano de un ataque fisico, se reduce defensa, pero aumenta mucho su velocidad.'
+134,Metal pesado,Duplica su peso.
+135,Metal liviano,Reduce a la mitad su peso.
+136,Multiescamas,Reduce el dano que sufre si sus PS estan al maximo.
+137,Impetu toxico,Aumenta la potencia de sus ataques fisicos cuando esta envenenado.
+138,Impetu ardiente,Aumenta la potencia de sus ataques especiales cuando sufre quemaduras.
+139,Cosecha,Puede reutilizar varias veces una misma baya.
+140,Telepatia,Elude los ataques de los aliados durante el combate.
+141,Veleta,'Aumenta mucho una caracteristica en cada turno, pero reduce otra.'
+142,Funda,No recibe dano de las tormentas de arena ni sufre los efectos causados por polvos o esporas.
+143,Toque toxico,Puede envenenar al Pokemon al que ataque con un movimiento de contacto.
+144,Regeneracion,Recupera unos pocos PS cuando se retira del combate.
+145,Sacapecho,Impide que otros Pokemon le reduzcan la defensa.
+146,Impetu arena,Aumenta su velocidad durante las tormentas de arena.
+147,Piel milagro,Presenta una mayor resistencia ante los movimientos de estado.
+148,Calculo final,Aumenta la potencia de su movimiento si es el ultimo en atacar.
+149,Ilusion,Adopta el aspecto del ultimo Pokemon del equipo al entrar en combate para desconcertar al rival.
+150,Impostor,Se transforma en el Pokemon que tiene enfrente.
+151,Allanamiento,Ataca sorteando las barreras o el sustituto del objetivo.
+152,Momia,Contagia la habilidad momia al Pokemon que lo ataque con un movimiento de contacto.
+153,Autoestima,'Al debilitar a un objetivo, su confianza se refuerza de tal manera que aumenta su ataque.'
+154,Justiciero,'Si le alcanza un movimiento de tipo siniestro, aumenta el ataque debido a su integridad.'
+155,Cobardia,'Si lo alcanza un ataque de tipo siniestro, bicho o fantasma, o si sufre los efectos de intimidacion, el miedo hace que aumente su velocidad.'
+156,Espejo magico,Puede devolver los movimientos de estado sin verse afectado por ellos.
+157,Herbivoro,'Si lo alcanza un movimiento de tipo planta, aumenta su ataque en vez de sufrir dano.'
+158,Bromista,Sus movimientos de estado tienen prioridad alta.
+159,Poder arena,'Potencia los movimientos de tipo tierra, acero y roca durante las tormentas de arena.'
+160,Punta acero,Inflige dano con sus puas de acero al Pokemon que lo ataque con un movimiento de contacto.
+161,Modo Daruma,Cambia de forma si sus PS se ven reducidos a la mitad o menos.
+162,Tinovictoria,Aumenta su precision y la de sus aliados.
+163,Turbollama,Sus movimientos no se ven afectados por la habilidad del objetivo.
+164,Terravoltaje,Sus movimientos no se ven afectados por la habilidad del objetivo.
+165,Velo aroma,Se protege a si mismo y a sus aliados de efectos que impiden usar movimientos.
+166,Velo flor,Evita que los Pokemon de tipo planta aliados sufran problemas de estado o que les reduzcan sus caracteristicas.
+167,Carrillo,Recupera PS al comer cualquier baya.
+168,Mutatipo,'Al entrar en combate, cambia su tipo al del primer movimiento que va a usar.'
+169,Pelaje recio,Reduce a la mitad el dano que recibe de ataques fisicos.
+170,Prestidigitador,Roba el objeto del Pokemon al que alcance con un movimiento.
+171,Antibalas,No le afectan las bombas ni algunos proyectiles.
+172,Tenacidad,Aumenta mucho su ataque especial cuando el rival le reduce cualquiera de sus caracteristicas.
+173,Mandibula fuerte,Su robusta mandibula le confiere una mordedura mucho mas potente.
+174,Piel helada,Convierte los movimientos de tipo normal en tipo hielo y aumenta ligeramente su potencia.
+175,Velo dulce,No cae dormido y evita tambien que sus aliados se duerman.
+176,Cambio tactico,'Adopta la forma filo al lanzar un ataque, o bien la forma escudo si usa el movimiento escudo real.'
+177,Alas vendaval,Da prioridad a los movimientos de tipo volador si sus PS estan al maximo.
+178,Megadisparador,Aumenta la potencia de algunos movimientos de pulsos y auras.
+179,Manto frondoso,Aumenta su defensa si hay un campo de hierba en el terreno de combate.
+180,Simbiosis,Pasa su objeto a un aliado cuando este use el suyo.
+181,Garra dura,Aumenta la potencia de los movimientos de contacto.
+182,Piel feerica,Convierte los movimientos de tipo normal en tipo hada y aumenta ligeramente su potencia.
+183,Baba,Reduce la velocidad del Pokemon que lo ataque con un movimiento de contacto.
+184,Piel celeste,Convierte los movimientos de tipo normal en tipo volador y aumenta ligeramente su potencia.
+185,Amor filial,Une fuerzas con su cria y ataca dos veces.
+186,Aura oscura,Aumenta la potencia de los movimientos de tipo siniestro de todos los Pokemon.
+187,Aura feerica,Aumenta la potencia de los movimientos de tipo hada de todos los Pokemon.
+188,Rompeaura,'Invierte los efectos de las habilidades de auras, por lo que reduce la potencia de ciertos movimientos en vez de aumentarla.'
+189,Mar del albor,Altera el clima para anular los ataques de tipo fuego.
+190,Tierra del ocaso,Altera el clima para anular los ataques de tipo agua.
+191,Rafaga delta,Altera el clima para anular las vulnerabilidades del tipo volador.
+192,Firmeza,Aumenta su defensa al recibir un ataque.
+193,Huida,Se asusta y abandona el terreno de combate cuando sus PS se ven reducidos a la mitad.
+194,Retirada,Abandona el terreno de combate cuando sus PS se ven reducidos a la mitad para evitar males mayores.
+195,Hidrorrefuerzo,Aumenta mucho la defensa si le alcanza un movimiento de tipo agua.
+196,Ensanamiento,Hace que sus movimientos asesten siempre un golpe critico si el objetivo esta envenenado.
+197,Escudo limitado,Rompe su coraza cuando sus PS se ven reducidos a la mitad y adopta una forma ofensiva.
+198,Vigilante,'Si el objetivo de su ataque es sustituido por otro, duplica el dano que infligira.'
+199,Pompa,Reduce el dano que le provocan los movimientos de tipo fuego y es inmune a las quemaduras.
+200,Acero templado,Potencia los movimientos de tipo acero.
+201,Colera,Aumenta su ataque especial si sus PS se ven reducidos a la mitad debido a algun ataque.
+202,Quitanieves,Aumenta su velocidad cuando nieva.
+203,Remoto,Puede usar cualquier movimiento sin entrar en contacto con su objetivo.
+204,Voz fluida,Hace que todos sus movimientos que usan sonido pasen a ser de tipo agua.
+205,Primer auxilio,Da prioridad a los movimientos que restauran PS.
+206,Piel electrica,Convierte los movimientos de tipo normal en tipo electrico y aumenta ligeramente su potencia.
+207,Cola surf,Duplica su velocidad si hay un campo electrico en el terreno de combate.
+208,Banco,'Forma bancos con sus congeneres cuando tiene muchos PS, lo cual le otorga mas fuerza. Cuando le quedan pocos PS, el banco se dispersa.'
+209,Disfraz,Puede eludir un ataque valiendose de la tela que le cubre el cuerpo una vez por combate.
+210,Fuerte afecto,'Al derrotar a un Pokemon, los vinculos con su Entrenador se refuerzan y aumentan su ataque, su ataque especial y su velocidad.'
+211,Agrupamiento,'Cuando sus PS se ven reducidos a la mitad, las celulas se reagrupan y adopta su forma completa.'
+212,Corrosion,Puede envenenar incluso a Pokemon de tipo acero o veneno.
+213,Letargo perenne,No despierta jamas de su profundo letargo e incluso ataca dormido.
+214,Regia presencia,Intimida al rival y le impide usar movimientos con prioridad contra el y sus aliados.
+215,Reves,'Al caer debilitado, inflige al atacante un dano equivalente a los PS que le quedaran antes de recibir el golpe de gracia.'
+216,Pareja de baile,Puede copiar inmediatamente cualquier movimiento de baile que haya usado otro Pokemon presente en el combate.
+217,Bateria,Potencia los ataques especiales de los aliados.
+218,Peluche,'Reduce a la mitad el dano recibido por los movimientos de contacto, pero duplica el que le infligen los de tipo fuego.'
+219,Cuerpo vivido,Desconcierta al rival y le impide usar movimientos con prioridad contra el y sus aliados.
+220,Coranima,Aumenta su ataque especial cada vez que un Pokemon cae debilitado.
+221,Rizos rebeldes,Reduce la velocidad del Pokemon que lo ataque con un movimiento de contacto.
+222,Receptor,Adquiere la habilidad de un aliado debilitado.
+223,Reaccion quimica,Reacciona copiando la habilidad de un aliado debilitado.
+224,Ultraimpulso,'Al derrotar a un Pokemon, aumenta su caracteristica mas fuerte.'
+225,Sistema alfa,Cambia su tipo segun el disco que lleve instalado.
+226,Electrogenesis,Crea un campo electrico al entrar en combate.
+227,Psicogenesis,Crea un campo psiquico al entrar en combate.
+228,Nebulogenesis,Crea un campo de niebla al entrar en combate.
+229,Herbogenesis,Crea un campo de hierba al entrar en combate.
+230,Guardia metalica,Evita que se reduzcan sus caracteristicas a causa de movimientos o habilidades de otros Pokemon.
+231,Guardia espectro,Reduce el dano que sufre si sus PS estan al maximo.
+232,Armadura prisma,Mitiga el dano que le infligen los movimientos supereficaces.
+233,Fuerza cerebral,Potencia los ataques supereficaces.
+234,Espada indomita,Aumenta su ataque al entrar en combate por primera vez.
+235,Escudo recio,Aumenta su defensa al entrar en combate por primera vez.
+236,Libero,'Al entrar en combate, cambia su tipo al del primer movimiento que va a usar.'
+237,Recogebolas,'Si no lleva equipado ningun objeto, recupera la Poke Ball del primer intento de captura fallido.'
+238,Pelusa,'Al ser alcanzado por un ataque, suelta una pelusa de algodon que reduce la velocidad de todos los demas Pokemon.'
+239,Helice caudal,Ignora los efectos de las habilidades o los movimientos que permiten a un Pokemon centrar la atencion sobre si.
+240,Coraza reflejo,Refleja los efectos que reducen las caracteristicas.
+241,Tragamisil,'Tras usar surf o buceo, emerge con una presa en la boca. Al recibir dano, ataca escupiendola.'
+242,Acerrimo,Ignora los efectos de las habilidades o los movimientos que permiten a un Pokemon centrar la atencion sobre si.
+243,Combustible,'Si le alcanza un movimiento de tipo fuego o tipo agua, aumenta muchisimo su velocidad.'
+244,Punk rock,Potencia los movimientos que usan sonido y reduce a la mitad el dano que le infligen dichos movimientos.
+245,Expulsarena,Provoca una tormenta de arena al recibir un ataque.
+246,Escama de hielo,Las gelidas escamas que protegen su cuerpo reducen a la mitad el dano que le infligen los ataques especiales.
+247,Maduracion,'Hace madurar las bayas, por lo que duplica sus efectos.'
+248,Cara de hielo,'Absorbe el dano de un ataque fisico con el hielo de la cabeza, tras lo cual cambia de forma. El hielo se regenerara la proxima vez que nieve.'
+249,Fuente energia,Potencia los movimientos de los Pokemon adyacentes.
+250,Mimetismo,Cambia su tipo segun el campo que haya en el terreno de combate.
+251,Antibarrera,'Anula los efectos de pantalla de luz, reflejo y velo aurora tanto de rivales como de aliados al entrar en combate.'
+252,Alma acerada,Potencia los movimientos de tipo acero del Pokemon y sus aliados.
+253,Cuerpo mortal,'Si lo alcanza un movimiento de contacto, se debilitara al cabo de 3 turnos, asi como el atacante, a menos que abandonen el terreno de combate.'
+254,Alma errante,'Si lo alcanza un movimiento de contacto, intercambia su habilidad con la del atacante.'
+255,Monotema,'Aumenta su ataque, pero solo puede usar el primer movimiento escogido.'
+256,Gas reactivo,Anula los efectos de las habilidades de los demas Pokemon presentes mientras este en el terreno de combate.
+257,Velo pastel,Se protege a si mismo y a sus aliados del envenenamiento.
+258,Mutapetito,Alterna entre su forma saciada y forma voraz al final de cada turno.
+259,Mano rapida,'A veces, puede atacar el primero.'
+260,Puno invisible,'Si usa un movimiento de contacto, puede infligir dano al objetivo aunque este se proteja.'
+261,Medicina extrana,'Al entrar en combate, rezuma una substancia medicinal por la caracola que revierte los cambios en las caracteristicas de los aliados.'
+262,Transistor,Potencia los movimientos de tipo electrico.
+263,Mandibula dragon,Potencia los movimientos de tipo dragon.
+264,Relincho blanco,'Al derrotar a un objetivo, emite un relincho gelido y aumenta su ataque.'
+265,Relincho negro,'Al derrotar a un objetivo, emite un relincho aterrador y aumenta su ataque especial.'
+266,Unidad ecuestre,El Pokemon tiene dos habilidades: relincho blanco de Glastrier y nerviosismo de Calyrex.
+267,Unidad ecuestre,El Pokemon tiene dos habilidades: relincho negro de Spectrier y nerviosismo de Calyrex.
+268,Olor persistente,Contagia la habilidad olor persistente al Pokemon que lo ataque con un movimiento de contacto.
+269,Disemillar,Crea un campo de hierba al recibir un ataque.
+270,Termoconversion,'Evita las quemaduras y, si lo alcanza un movimiento de tipo fuego, aumenta su ataque.'
+271,Coraza ira,'Cuando un ataque reduce sus PS a la mitad, un arrebato de colera reduce su defensa y su defensa especial, pero aumenta su ataque, su ataque especial y su velocidad.'
+272,Sal purificadora,Su sal pura lo protege de los problemas de estado y reduce a la mitad el dano que recibe de ataques de tipo fantasma.
+273,Cuerpo horneado,'Si lo alcanza un movimiento de tipo fuego, aumenta mucho su defensa en vez de sufrir dano.'
+274,Surcavientos,'Si sopla un viento afin o lo alcanza un movimiento que usa viento, aumenta su ataque. Tampoco recibe dano de este ultimo.'
+275,Perro guardian,Aumenta su ataque si sufre los efectos de intimidacion. Tambien anula movimientos y objetos que fuercen el cambio de Pokemon.
+276,Transportarrocas,Potencia los movimientos de tipo roca.
+277,Energia eolica,'Su cuerpo se carga de electricidad si lo alcanza un movimiento que usa viento, lo que potencia su siguiente movimiento de tipo electrico.'
+278,Cambio heroico,Adopta la forma heroica cuando se retira del combate.
+279,Comandar,'Si al entrar en combate coincide con un Dondozo aliado, se cuela en el interior de su boca para tomar el control.'
+280,Dinamo,'Su cuerpo se carga de electricidad al recibir dano, lo que potencia su siguiente movimiento de tipo electrico.'
+281,Paleosintesis,'Si hace sol o lleva un tanque de energia potenciadora, aumenta su caracteristica mas alta.'
+282,Carga cuark,'Si hay un campo electrico en el terreno de combate o lleva un tanque de energia potenciadora, aumenta su caracteristica mas alta.'
+283,Cuerpo aureo,Su robusto cuerpo de oro inoxidable lo hace inmune frente a movimientos de estado de otros Pokemon.
+284,Caldero debacle,Reduce el ataque especial de todos los demas Pokemon con el poder de su caldero maldito.
+285,Espada debacle,Reduce la defensa de todos los demas Pokemon con el poder de su espada maldita.
+286,Tablilla debacle,Reduce el ataque de todos los demas Pokemon con el poder de sus tablillas malditas.
+287,Abalorio debacle,Reduce la defensa especial de todos los demas Pokemon con el poder de sus abalorios malditos.
+288,Latido oricalco,'El tiempo pasa a ser soleado cuando entra en combate. Si hace mucho sol, su ataque aumenta gracias a su pulso primigenio.'
+289,Motor hadronico,'Crea un campo electrico al entrar en combate. Si hay un campo electrico, su ataque especial aumenta gracias a su motor futurista.'
+290,Oportunista,'Copia las mejoras en las caracteristicas del rival, aprovechandose de la situacion.'
+291,Rumia,'Cuando ingiere una baya, la regurgita al final del siguiente turno y se la come por segunda vez.'
+292,Cortante,Aumenta la potencia de los movimientos cortantes.
+293,General supremo,'Al entrar en combate, su ataque y su ataque especial aumentan un poco por cada miembro del equipo que haya sido derrotado hasta el momento.'
+294,Unisono,'Al entrar en combate, copia los cambios en las caracteristicas de su aliado.'
+295,Capa toxica,'Al recibir dano de un ataque fisico, lanza una trampa de puas toxicas a los pies del rival.'
+296,Cola armadura,La extrana cola que le envuelve la cabeza impide al rival usar movimientos con prioridad contra el y sus aliados.
+297,Geofagia,'Si lo alcanza un movimiento de tipo tierra, recupera PS en vez de sufrir dano.'
+298,Poder fungico,'El Pokemon siempre actua con lentitud cuando usa movimientos de estado, pero estos no se ven afectados por la habilidad del objetivo.'
+299,Hospitalidad,'Al entrar en combate, restaura algunos PS de su aliado como muestra de hospitalidad.'
+300,Ojo mental,Alcanza a Pokemon de tipo fantasma con movimientos de tipo normal o lucha. Su precision no se puede reducir e ignora los cambios en la evasion del objetivo.
+301,Evocarrecuerdos,'Al evocar viejos recuerdos, el Pokemon hace brillar la mascara turquesa y aumenta su velocidad.'
+302,Evocarrecuerdos,'Al evocar viejos recuerdos, el Pokemon hace brillar la mascara horno y aumenta su ataque.'
+303,Evocarrecuerdos,'Al evocar viejos recuerdos, el Pokemon hace brillar la mascara fuente y aumenta su defensa especial.'
+304,Evocarrecuerdos,'Al evocar viejos recuerdos, el Pokemon hace brillar la mascara cimiento y aumenta su defensa.'
+305,Cadena toxica,'Gracias al poder de su cadena impregnada de toxinas, puede envenenar gravemente al Pokemon al que ataque.'
+306,Nectar dulce,'Al entrar en combate por primera vez, esparce un aroma dulzon a nectar que reduce la evasion del rival.'
+307,Teracambio,'Al entrar en combate, adopta la Forma Teracristal tras absorber la energia de su alrededor.'
+308,Teracaparazon,'Su caparazon encierra energia de todos los tipos. Gracias a ello, si sus PS estan al maximo, el movimiento que lo alcance no sera muy eficaz.'
+309,Teraformacion 0,'Cuando Terapagos adopta la Forma Astral, anula todos los efectos del tiempo atmosferico y de los campos que haya en el terreno gracias a su poder oculto.'
+310,Titere toxico,Los rivales que Pecharunt envenene con sus movimientos tambien sufriran confusion.

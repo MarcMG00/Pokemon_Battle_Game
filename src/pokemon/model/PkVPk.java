@@ -1,6 +1,6 @@
 package pokemon.model;
 
-import pokemon.enums.EstadosEnum;
+import pokemon.enums.StatusConditions;
 
 public class PkVPk {
 	private Pokemon pkCombatting;
@@ -67,8 +67,7 @@ public class PkVPk {
 		this.bonificacion = bonificacion;
 	}
 
-	// Knows the evasion or accuracy for the pokemon selected (1 is for accuracy, 2
-	// is for evasion)
+	// Knows the evasion or accuracy for the pokemon selected (1 is for accuracy, 2 is for evasion)
 	public float getEvasionOrAccuracy(Pokemon pk, int t) {
 
 		int evAcu = 0;
@@ -76,10 +75,10 @@ public class PkVPk {
 
 		switch (t) {
 		case 1:
-			evAcu = pk.getPuntosPrecision();
+			evAcu = pk.getPrecisionPoints();
 			break;
 		case 2:
-			evAcu = pk.getPuntosEvasion();
+			evAcu = pk.getEvasionPoints();
 			break;
 		}
 
@@ -152,7 +151,7 @@ public class PkVPk {
 //					this.getPkCombatting().getNextMouvement()
 //							.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 //					// Pokemon facing AVOIDED the attack
-//					System.out.println(this.getPkFacing().getNombrePokemon() + " evitÛ el ataque");
+//					System.out.println(this.getPkFacing().getNombrePokemon() + " evitÔøΩ el ataque");
 //				}
 //			}
 //		} else {
@@ -185,14 +184,14 @@ public class PkVPk {
 //						this.getPkCombatting().getNextMouvement()
 //								.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 //						// Pokemon facing AVOIDED the attack
-//						System.out.println(this.getPkFacing().getNombrePokemon() + " evitÛ el ataque");
+//						System.out.println(this.getPkFacing().getNombrePokemon() + " evitÔøΩ el ataque");
 //					}
 //				}
 //			} else {
 //				// Reduces the PP of the movement
 //				this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 //				// Pokemon facing avoided the attack (because pk facing is flying)
-//				System.out.println(this.getPkFacing().getNombrePokemon() + " evitÛ el ataque");
+//				System.out.println(this.getPkFacing().getNombrePokemon() + " evitÔøΩ el ataque");
 //			}
 //		}
 //	}
@@ -201,196 +200,256 @@ public class PkVPk {
 	public void getProbabilityOfAttackingAndAttack(boolean useAttackChargedNow) {
 
 		// Apply the attack charged
-		if (useAttackChargedNow && !this.getPkCombatting().isAlreadyUsedVuelo()) {
+		if (useAttackChargedNow && !this.getPkCombatting().getAlreadyUsedFly()) {
+			
 			// gets accuracy/evasion
-			float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100)
-					* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+			float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100) * (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+			
 			// Get the attack effect (cause 100% is the max)
 			if (a >= 1) {
+				
 				getAttackEffect(true);
+				
 			} else {
+				
 				int randomEfectivity = 0;
+				
 				randomEfectivity = (int) (Math.random() * 100);
 
 				if (randomEfectivity / 100 <= a) {
+					
 					// Get the attack effect
 					getAttackEffect(true);
+					
 				} else {
+					
 					// Reduces the PP of the movement
-					this.getPkCombatting().getNextMouvement()
-							.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+					this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+					
 					// Pokemon facing AVOIDED the attack
-					System.out.println(this.getPkFacing().getNombrePokemon()
-							+ " evitÛ el ataque (vuelo - Pokemon atacante fallÛ 1)");
+					System.out.println(this.getPkFacing().getName() + " evit√≥ el ataque (vuelo - Pokemon atacante fall√≥ 1)");
+					
 				}
 			}
-			// Cannot attack first for next run (has to wait after the Pokemon facing
-			// attacks)
-			this.getPkCombatting().setAlreadyUsedVuelo(true);
-			this.getPkCombatting().setChargingAttackForNextRound(false);
-		} else if (!useAttackChargedNow && this.getPkCombatting().isAlreadyUsedVuelo()) {
+			
+			// Cannot attack first for next run (has to wait after the Pokemon facing attacks)
+			this.getPkCombatting().setAlreadyUsedFly(true);
+			
+			this.getPkCombatting().setIsChargingAttackForNextRound(false);
+			
+		} else if (!useAttackChargedNow && this.getPkCombatting().getAlreadyUsedFly()) {
+			
 			// gets accuracy/evasion
-			float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100)
-					* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+			float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100) * (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+			
 			// Get the attack effect (cause 100% is the max)
 			if (a >= 1) {
+				
 				getAttackEffect(false);
+				
 			} else {
+				
 				int randomEfectivity = 0;
+				
 				randomEfectivity = (int) (Math.random() * 100);
 
 				if (randomEfectivity / 100 <= a) {
+					
 					// Get the attack effect
 					getAttackEffect(false);
+					
 				} else {
+					
 					// Reduces the PP of the movement
-					this.getPkCombatting().getNextMouvement()
-							.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+					this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+					
 					// Pokemon facing AVOIDED the attack
-					System.out.println(this.getPkFacing().getNombrePokemon()
-							+ " evitÛ el ataque (vuelo - Pokemon atacante fallÛ 2)");
+					System.out.println(this.getPkFacing().getName() + " evit√≥ el ataque (vuelo - Pokemon atacante fall√≥ 2)");
+					
 				}
 			}
-			// Cannot attack first for next run (has to wait after the Pokemon facing
-			// attacks)
-			this.getPkCombatting().setAlreadyUsedVuelo(false);
-			this.getPkCombatting().setChargingAttackForNextRound(true);
+			
+			// Cannot attack first for next run (has to wait after the Pokemon facing attacks)
+			this.getPkCombatting().setAlreadyUsedFly(false);
+			
+			this.getPkCombatting().setIsChargingAttackForNextRound(true);
+			
 		} else {
+			
 			// Verify if a Pokemon can attack if Pokemon facing is doing strange attacks
-			if ((this.getPkFacing().getNextMouvement().getIdAta() == 19
-					&& this.getPkFacing().isChargingAttackForNextRound())
-					&& (this.getPkCombatting().getNextMouvement().getIdAta() == 16
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 18
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 87
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 239
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 327
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 479
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 542)) {
+			if ((this.getPkFacing().getNextMouvement().getId() == 19
+					&& this.getPkFacing().getIsChargingAttackForNextRound())
+					&& (this.getPkCombatting().getNextMouvement().getId() == 16
+							|| this.getPkCombatting().getNextMouvement().getId() == 18
+							|| this.getPkCombatting().getNextMouvement().getId() == 87
+							|| this.getPkCombatting().getNextMouvement().getId() == 239
+							|| this.getPkCombatting().getNextMouvement().getId() == 327
+							|| this.getPkCombatting().getNextMouvement().getId() == 479
+							|| this.getPkCombatting().getNextMouvement().getId() == 542)) {
 
 				// gets accuracy/evasion
-				float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100)
-						* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+				float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100) * (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+				
 				// Get the attack effect (cause 100% is the max)
 				if (a >= 1) {
+					
 					getAttackEffect(true);
+					
 				} else {
+					
 					int randomEfectivity = 0;
+					
 					randomEfectivity = (int) (Math.random() * 100);
 
 					if (randomEfectivity / 100 <= a) {
+						
 						// Get the attack effect
 						getAttackEffect(true);
+						
 					} else {
+						
 						// Reduces the PP of the movement
-						this.getPkCombatting().getNextMouvement()
-								.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+						this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+						
 						// Pokemon facing AVOIDED the attack
-						System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ "
-								+ this.getPkCombatting().getNextMouvement().getNombreAta() + " (verificaciÛ 1)");
-						System.out.println(this.getPkFacing().getNombrePokemon()
-								+ " evitÛ el ataque (vuelo - con movimiento que lo counteree)");
+						System.out.println(this.getPkCombatting().getName() + " us√≥ " + this.getPkCombatting().getNextMouvement().getName() + " (verificaci√≥n 1)");
+						
+						System.out.println(this.getPkFacing().getName() + " evit√≥ el ataque (vuelo - con movimiento que lo counteree)");
+						
 					}
 				}
 			}
+			
 			// Pk facing avoid the attack cause is not using an attack that can hurt while
 			// Pokemon facing is flying
-			else if ((this.getPkFacing().getNextMouvement().getIdAta() == 19
-					&& this.getPkFacing().isChargingAttackForNextRound())
-					&& !(this.getPkCombatting().getNextMouvement().getIdAta() == 16
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 18
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 87
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 239
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 327
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 479
-							|| this.getPkCombatting().getNextMouvement().getIdAta() == 542)
-					&& this.getPkCombatting().getNextMouvement().getIdAta() != 19) {
+			else if ((this.getPkFacing().getNextMouvement().getId() == 19
+					&& this.getPkFacing().getIsChargingAttackForNextRound())
+					&& !(this.getPkCombatting().getNextMouvement().getId() == 16
+							|| this.getPkCombatting().getNextMouvement().getId() == 18
+							|| this.getPkCombatting().getNextMouvement().getId() == 87
+							|| this.getPkCombatting().getNextMouvement().getId() == 239
+							|| this.getPkCombatting().getNextMouvement().getId() == 327
+							|| this.getPkCombatting().getNextMouvement().getId() == 479
+							|| this.getPkCombatting().getNextMouvement().getId() == 542)
+					&& this.getPkCombatting().getNextMouvement().getId() != 19) {
+				
 				// Reduces the PP of the movement
 				this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+				
 				// Pokemon facing avoided the attack (because pk facing is flying)
-				System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ "
-						+ this.getPkCombatting().getNextMouvement().getNombreAta() + " (verificaciÛ 2)");
-				System.out.println(this.getPkFacing().getNombrePokemon()
-						+ " evitÛ el ataque (vuelo - sin movimiento que lo counteree)");
+				System.out.println(this.getPkCombatting().getName() + " us√≥ " + this.getPkCombatting().getNextMouvement().getName() + " (verificaci√≥n 2)");
+				
+				System.out.println(this.getPkFacing().getName() + " evit√≥ el ataque (vuelo - sin movimiento que lo counteree)");
+				
 			}
+			
 			// Prepare attack for flying
-			else if (this.getPkCombatting().getNextMouvement().getIdAta() == 19
-					&& !this.getPkCombatting().isChargingAttackForNextRound()) {
+			else if (this.getPkCombatting().getNextMouvement().getId() == 19 && !this.getPkCombatting().getIsChargingAttackForNextRound()) {
+				
 				getAttackEffect(true);
+				
 			}
+			
 			// Normally enters to attack when Pokemon combatting is flying
-			else if (this.getPkCombatting().getNextMouvement().getIdAta() == 19
-					&& this.getPkCombatting().isChargingAttackForNextRound()) {
+			else if (this.getPkCombatting().getNextMouvement().getId() == 19 && this.getPkCombatting().getIsChargingAttackForNextRound()) {
+				
 				// gets accuracy/evasion
-				float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100)
-						* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+				float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100) * (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
 
 				// Get the attack effect (cause 100% is the max)
 				if (a >= 1) {
+					
 					getAttackEffect(true);
-					// See the accuracy of the attack
-				} else {
+					
+				}
+				
+				// See the accuracy of the attack
+				else {
+					
 					int randomEfectivity = 0;
 					randomEfectivity = (int) (Math.random() * 100);
 
 					if (randomEfectivity / 100 <= a) {
+						
 						// Get the attack effect
 						this.getAttackEffect(true);
+						
 					} else {
+						
 						// Reduces the PP of the movement
-						this.getPkCombatting().getNextMouvement()
-								.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+						this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+						
 						// Pokemon facing AVOIDED the attack
-						System.out.println(this.getPkFacing().getNombrePokemon() + " evitÛ el ataque");
+						System.out.println(this.getPkFacing().getName() + " evitÔøΩ el ataque");
+						
 					}
 				}
 			}
-			// Do attacks if Pokemon facing is not doing strange attacks that Pokemon
-			// combatting cannot attack
-			else if (!(this.getPkFacing().getNextMouvement().getIdAta() == 19
-					&& this.getPkFacing().isChargingAttackForNextRound())) {
+			
+			// Do attacks if Pokemon facing is not doing strange attacks that Pokemon combating cannot attack
+			else if (!(this.getPkFacing().getNextMouvement().getId() == 19 && this.getPkFacing().getIsChargingAttackForNextRound())) {
+				
 				// gets accuracy/evasion
-				float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100)
-						* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+				float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100) * (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
 
 				// Get the attack effect (cause 100% is the max)
 				if (a >= 1) {
+					
 					getAttackEffect(true);
-					// See the accuracy of the attack
-				} else {
+					
+				}
+				
+				// See the accuracy of the attack
+				else {
+					
 					int randomEfectivity = 0;
+					
 					randomEfectivity = (int) (Math.random() * 100);
 
 					if (randomEfectivity / 100 <= a) {
+						
 						// Get the attack effect
 						this.getAttackEffect(true);
+						
 					} else {
+						
 						// Reduces the PP of the movement
-						this.getPkCombatting().getNextMouvement()
-								.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+						this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+						
 						// Pokemon facing AVOIDED the attack
-						System.out.println(this.getPkFacing().getNombrePokemon() + " evitÛ el ataque");
+						System.out.println(this.getPkFacing().getName() + " evit√≥ el ataque");
+						
 					}
 				}
 			} else {
+				
 				// gets accuracy/evasion
-				float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100)
-						* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+				float a = (this.getPkCombatting().getNextMouvement().getPrecision() / 100) * (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+				
 				// Get the attack effect (cause 100% is the max)
 				if (a >= 1) {
+					
 					getAttackEffect(true);
+					
 				} else {
+					
 					int randomEfectivity = 0;
+					
 					randomEfectivity = (int) (Math.random() * 100);
 
 					if (randomEfectivity / 100 <= a) {
+						
 						// Get the attack effect
 						getAttackEffect(true);
+						
 					} else {
+						
 						// Reduces the PP of the movement
-						this.getPkCombatting().getNextMouvement()
-								.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+						this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+						
 						// Pokemon facing AVOIDED the attack
-						System.out.println(this.getPkFacing().getNombrePokemon() + " evitÛ el ataque");
+						System.out.println(this.getPkFacing().getName() + " evit√≥ el ataque");
+						
 					}
 				}
 			}
@@ -401,13 +460,15 @@ public class PkVPk {
 	public boolean getCriticity() {
 		boolean isCritic = false;
 
-		int randomCritico;
-		randomCritico = (int) (Math.random() * 100);
+		int randomCritic = (int) (Math.random() * 100);
 
 		// 10/100 of probabilities to have a critic attack
-		if (randomCritico <= 10) {
+		if (randomCritic <= 10) {
+			
 			isCritic = true;
+			
 		}
+		
 		return isCritic;
 	}
 
@@ -417,173 +478,259 @@ public class PkVPk {
 		float dmg = 0;
 		boolean isCritic;
 		int nbTimesAttack;
-		int nbTurnosEstado;
-		int porcientoCaerEnEstado;
+		int nbTurnsHoldingStatus;
+		int probabilityGettingStatus;
 		int highProbabilityCritic;
 		int setBaseDmgFromBegining;
 
-		switch (this.getPkCombatting().getNextMouvement().getIdAta()) {
+		switch (this.getPkCombatting().getNextMouvement().getId()) {
 		// Destructor (tested)
 		case 1:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ AraÒazo");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Destructor");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// Golpe k·rate (tested)
+		// Golpe k√°rate (tested)
 		case 2:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Golpe k·rate");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Golpe k√°rate");
+			
 			dmg = doDammage();
+			
 			highProbabilityCritic = (int) (Math.random() * 100);
 
 			// 10/100 of probabilities to have a critic attack
 			if (highProbabilityCritic <= 40) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// Doble bofetÛn (tested)
+		// Doble bofet√≥n (tested)
 		case 3:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Doble bofetÛn");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Doble bofet√≥n");
+			
 			dmg = doDammage();
+			
 			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
-			System.out.println(" n∫ de veces : " + nbTimesAttack);
+			
+			System.out.println(" n¬∫ de veces : " + nbTimesAttack);
+			
 			dmg = dmg * nbTimesAttack;
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// PuÒo cometa (tested)
+		// Pu√±o cometa (tested)
 		case 4:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ PuÒo coÒeta");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Pu√±o cometa");
+			
 			dmg = doDammage();
+			
 			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
-			System.out.println(" n∫ de veces : " + nbTimesAttack);
+			
+			System.out.println(" n¬∫ de veces : " + nbTimesAttack);
+			
 			dmg = dmg * nbTimesAttack;
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// MegapuÒo (tested)
+		// Megapu√±o (tested)
 		case 5:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ MegapuÒo");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Megapu√±o");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// DÌa de pago (tested)
+		// D√≠a de pago (tested)
 		case 6:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ DÌa de pago");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ D√≠a de pago");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// PuÒo fuego (tested)
+		// Pu√±o fuego (tested)
 		case 7:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ PuÒo fuego");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Pu√±o fuego");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
-			porcientoCaerEnEstado = (int) (Math.random() * 100);
-			System.out.println("proba de quemar : " + porcientoCaerEnEstado);
-			if (porcientoCaerEnEstado <= 10) {
-				// Check if the Pokemon facing isn't without any estado
-				if (this.getPkFacing().getEstadoPersistente().getEstadoEnum() == EstadosEnum.SIN_ESTADO) {
-					nbTurnosEstado = (int) ((Math.random() * (5 - 2)) + 2);
-					Estado quemado = new Estado(EstadosEnum.QUEMADO, nbTurnosEstado);
-					this.getPkFacing().setEstadoPersistente(quemado);
-					System.out.println(
-							this.getPkFacing().getNombrePokemon() + " fue quemado por " + nbTurnosEstado + " turnos");
+			
+			probabilityGettingStatus = (int) (Math.random() * 100);
+			
+			System.out.println("proba de quemar : " + probabilityGettingStatus);
+			
+			if (probabilityGettingStatus <= 10) {
+				
+				// Check if the Pokemon facing isn't without any status
+				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+					
+					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					
+					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
+					
+					this.getPkFacing().setStatusCondition(burned);
+					
+					System.out.println(this.getPkFacing().getName() + " fue quemado por " + nbTurnsHoldingStatus + " turnos");
+					
 				}
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// PuÒo hielo
+		// Pu√±o hielo
 		case 8:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ PuÒo hielo");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Pu√±o hielo");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
 
-			// Ice pokemon cannot be frozen
-			if (this.pkFacing.getTypes().stream().filter(t -> t.getIdPkTipo() == 9).findAny().get() == null) {
-				porcientoCaerEnEstado = (int) (Math.random() * 100);
-				System.out.println("proba de congelar : " + porcientoCaerEnEstado);
+			// Ice Pokemon cannot be frozen
+			if (this.pkFacing.getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+				
+				probabilityGettingStatus = (int) (Math.random() * 100);
+				
+				System.out.println("proba de congelar : " + probabilityGettingStatus);
+				
 				// 10% of probabilities to be frozen
-				if (porcientoCaerEnEstado <= 10) {
-					if (this.getPkFacing().getEstadoPersistente().getEstadoEnum() == EstadosEnum.SIN_ESTADO) {
-						nbTurnosEstado = (int) ((Math.random() * (5 - 2)) + 2);
-						Estado congelado = new Estado(EstadosEnum.CONGELADO, nbTurnosEstado);
-						this.getPkFacing().setEstadoPersistente(congelado);
-						System.out.println(this.getPkCombatting().getNombrePokemon() + " fue congelado por "
-								+ nbTurnosEstado + " turnos");
+				if (probabilityGettingStatus <= 10) {
+					
+					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+						
+						nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+						
+						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
+						
+						this.getPkFacing().setStatusCondition(frozen);
+						
+						System.out.println(this.getPkCombatting().getName() + " fue congelado por " + nbTurnsHoldingStatus + " turnos");
 					}
 				}
 			}
@@ -591,337 +738,481 @@ public class PkVPk {
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// PuÒo trueno (tested)
+		// Pu√±o trueno (tested)
 		case 9:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ PuÒo trueno");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Pu√±o trueno");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
 
-			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has
-			// not a Estado
-			if (this.getPkFacing().getEstadoPersistente().getEstadoEnum() == EstadosEnum.SIN_ESTADO
-					&& !(this.getPkFacing().getEstadoPersistente().getEstadoEnum() == EstadosEnum.PARALIZADO)) {
-				porcientoCaerEnEstado = (int) (Math.random() * 100);
-				System.out.println("proba de paralizar : " + porcientoCaerEnEstado);
-				if (porcientoCaerEnEstado <= 10) {
-					nbTurnosEstado = (int) ((Math.random() * (5 - 2)) + 2);
-					Estado paralizado = new Estado(EstadosEnum.PARALIZADO, nbTurnosEstado);
-					this.getPkFacing().setEstadoPersistente(paralizado);
-					System.out.println(this.getPkFacing().getNombrePokemon() + " fue paralizado por " + nbTurnosEstado
-							+ " turnos");
+			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has not a Status
+			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
+					&& !(this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED)) {
+				
+				probabilityGettingStatus = (int) (Math.random() * 100);
+				
+				System.out.println("proba de paralizar : " + probabilityGettingStatus);
+				
+				if (probabilityGettingStatus <= 10) {
+					
+					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					
+					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
+					
+					this.getPkFacing().setStatusCondition(paralyzed);
+					
+					System.out.println(this.getPkFacing().getName() + " fue paralizado por " + nbTurnsHoldingStatus + " turnos");
+					
 				}
 			}
 
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// AraÒazo (tested)
+		// Ara√±azo (tested)
 		case 10:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ AraÒazo");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Ara√±azo");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
 		// Agarre (tested)
 		case 11:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Agarre");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Agarre");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
 		// Guillotina
 		case 12:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Guillotina");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Guillotina");
 			break;
 
 		// Viento cortante
 		case 13:
-			if (!this.getPkCombatting().isChargingAttackForNextRound()) {
+			if (!this.getPkCombatting().getIsChargingAttackForNextRound()) {
+				
 				// This attack requires to charge first time for one round
-				System.out.println(this.getPkCombatting().getNombrePokemon() + " se prepara para Viento cortante");
-				this.getPkCombatting().setChargingAttackForNextRound(true);
+				System.out.println(this.getPkCombatting().getName() + " se prepara para Viento cortante");
+				
+				this.getPkCombatting().setIsChargingAttackForNextRound(true);
+				
 			} else {
-				System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Viento cortante");
+				
+				System.out.println(this.getPkCombatting().getName() + " us√≥ Viento cortante");
+				
 				dmg = doDammage();
+				
 				highProbabilityCritic = (int) (Math.random() * 100);
 
 				// 10/100 of probabilities to have a critic attack
 				if (highProbabilityCritic <= 40) {
+					
 					dmg = dmg * 2;
-					System.out.println("Fue un golpe crÌtico");
+					System.out.println("Fue un golpe cr√≠tico");
+					
 				}
+				
 				// Pokemon is no more charging an attack
-				this.getPkCombatting().setChargingAttackForNextRound(false);
+				this.getPkCombatting().setIsChargingAttackForNextRound(false);
+				
 				this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
 		// Corte (tested)
 		case 15:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Corte");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Corte");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
 		// Tornado (tested)
 		case 16:
 			// Gets the power from the beginning (to avoid variations after attacking)
-			setBaseDmgFromBegining = this.getPkCombatting().getNextMouvement().getPoder();
-			this.getPkCombatting().getNextMouvement()
-					.setPoder(this.getPkCombatting().getNextMouvement().getPoder() * 2);
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Tornado");
+			setBaseDmgFromBegining = this.getPkCombatting().getNextMouvement().getPower();
+			
+			this.getPkCombatting().getNextMouvement().setPower(this.getPkCombatting().getNextMouvement().getPower() * 2);
+			
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Tornado");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
 
 			// Puts again the same power base as the beginning
-			this.getPkCombatting().getNextMouvement().setPoder(setBaseDmgFromBegining);
+			this.getPkCombatting().getNextMouvement().setPower(setBaseDmgFromBegining);
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
 		// Ataque ala (tested)
 		case 17:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Ataque ala");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Ataque ala");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
 		// Vuelo
 		case 19:
-			if (!this.getPkCombatting().isChargingAttackForNextRound()) {
+			if (!this.getPkCombatting().getIsChargingAttackForNextRound()) {
+				
 				// This attack requires to charge first time for one round
-				// POSAR frase
-				System.out.println(this.getPkCombatting().getNombrePokemon() + " volÛ muy alto");
-				this.getPkCombatting().setChargingAttackForNextRound(true);
+				System.out.println(this.getPkCombatting().getName() + " vol√≥ muy alto");
+				
+				this.getPkCombatting().setIsChargingAttackForNextRound(true);
 
-				if (this.getPkFacing().getNextMouvement().getIdAta() == 19
-						&& !this.getPkFacing().isChargingAttackForNextRound()) {
-					this.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				if (this.getPkFacing().getNextMouvement().getId() == 19 && !this.getPkFacing().getIsChargingAttackForNextRound()) {
+					
+					this.getPkCombatting().setIsFirstInUsingTheSameAttack(true);
 				}
 
-				if (!alreadyCheckedAttack && this.getPkFacing().getNextMouvement().getIdAta() != 19) {
+				// Reduces de PP of the pokemon facing if he is not using vuelo
+				if (!alreadyCheckedAttack && this.getPkFacing().getNextMouvement().getId() != 19) {
+					
 					this.getPkFacing().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+					
 					// Pokemon facing AVOIDED the attack
-					System.out.println(this.getPkFacing().getNombrePokemon() + " usÛ "
-							+ this.getPkFacing().getNextMouvement().getNombreAta() + " 1");
-					System.out.println(this.getPkCombatting().getNombrePokemon()
-							+ " evitÛ el ataque (vuelo - Pokemon atacante fallÛ despuÈs del check)");
+					System.out.println(this.getPkFacing().getName() + " us√≥ " + this.getPkFacing().getNextMouvement().getName() + " (verificaci√≥n 1)");
+					
+					System.out.println(this.getPkCombatting().getName() + " evit√≥ el ataque (vuelo - Pokemon atacante fall√≥ despu√≥s del check)");
+					
 				}
 
 			} else {
-				if (!(this.getPkFacing().getNextMouvement().getIdAta() == 19
-						&& this.getPkFacing().isChargingAttackForNextRound())) {
-					if (this.getPkFacing().getNextMouvement().getIdAta() == 19
-							&& this.getPkFacing().isChargingAttackForNextRound()) {
-						System.out.println(this.getPkFacing().getNombrePokemon() + " usÛ "
-								+ this.getPkFacing().getNextMouvement().getNombreAta() + "FF");
-						System.out.println(this.getPkCombatting().getNombrePokemon() + " evitÛ el ataque (normal 5)");
+				
+				if (!(this.getPkFacing().getNextMouvement().getId() == 19 && this.getPkFacing().getIsChargingAttackForNextRound())) {
+					
+					if (this.getPkFacing().getNextMouvement().getId() == 19 && this.getPkFacing().getIsChargingAttackForNextRound()) {
+						
+						System.out.println(this.getPkFacing().getName() + " us√≥ " + this.getPkFacing().getNextMouvement().getName() + "FF");
+						
+						System.out.println(this.getPkCombatting().getName() + " evit√≥ el ataque (normal 5)");
+						
 						this.getPkFacing().getNextMouvement().setPp(this.getPkFacing().getNextMouvement().getPp() - 1);
 
-						System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Vuelo 2.1");
+						System.out.println(this.getPkCombatting().getName() + " us√≥ Vuelo 2.1");
+						
 					} else {
-						System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Vuelo 2.2");
-						if(!this.getPkFacing().isFirstInUsingTheSameAttack()) {
-							this.getPkCombatting()
-							.setFirstInUsingTheSameAttack(!this.getPkCombatting().isFirstInUsingTheSameAttack());
+						
+						System.out.println(this.getPkCombatting().getName() + " us√≥ Vuelo 2.2");
+						
+						if(!this.getPkFacing().getIsFirstInUsingTheSameAttack()) {
+							
+							this.getPkCombatting().setIsFirstInUsingTheSameAttack(!this.getPkCombatting().getIsFirstInUsingTheSameAttack());
+							
 						}
 					}
+					
 					dmg = doDammage();
+					
 					isCritic = getCriticity();
+					
 					if (isCritic) {
+						
 						dmg = dmg * 2;
-						System.out.println("Fue un golpe crÌtico");
+						System.out.println("Fue un golpe cr√≠tico");
+						
 					}
+					
 					// Pokemon is no more charging an attack
-					this.getPkCombatting().setChargingAttackForNextRound(false);
-					this.getPkCombatting().getNextMouvement()
-							.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+					this.getPkCombatting().setIsChargingAttackForNextRound(false);
+					
+					this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+					
 				} else {
+					
 					// AVOID attack cause Pokemon facing is flying
-					if (this.getPkCombatting().isChargingAttackForNextRound()
-							&& !this.getPkFacing().isChargingAttackForNextRound()) {
-						System.out.println(this.getPkFacing().getNombrePokemon() + " evitÛ el ataque (normal)");
-					} else if (this.getPkFacing().getNextMouvement().getIdAta() == 19
-							&& this.getPkFacing().isChargingAttackForNextRound()
-							&& this.getPkCombatting().isFirstInUsingTheSameAttack()) {
-						System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ vuelo 4");
-						System.out.println(this.getPkFacing().getNombrePokemon() + " evitÛ el ataque (normal 4)");
+					if (this.getPkCombatting().getIsChargingAttackForNextRound() && !this.getPkFacing().getIsChargingAttackForNextRound()) {
+						
+						System.out.println(this.getPkFacing().getName() + " evit√≥ el ataque (normal)");
+						
+					} else if (this.getPkFacing().getNextMouvement().getId() == 19
+							&& this.getPkFacing().getIsChargingAttackForNextRound()
+							&& this.getPkCombatting().getIsFirstInUsingTheSameAttack()) {
+						
+						System.out.println(this.getPkCombatting().getName() + " us√≥ vuelo 4");
+						
+						System.out.println(this.getPkFacing().getName() + " evit√≥ el ataque (normal 4)");
+						
 					} else {
-						System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ vuelo 3");
-						System.out.println(this.getPkFacing().getNombrePokemon() + " evitÛ el ataque (normal 3)");
+						
+						System.out.println(this.getPkCombatting().getName() + " us√≥ vuelo 3");
+						
+						System.out.println(this.getPkFacing().getName() + " evit√≥ el ataque (normal 3)");
+						
 					}
 
 					// Pokemon is no more charging an attack
-					this.getPkCombatting().setChargingAttackForNextRound(false);
-					this.getPkCombatting().getNextMouvement()
-							.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+					this.getPkCombatting().setIsChargingAttackForNextRound(false);
+					
+					this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+					
 				}
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
 		// Atadura
 		case 20:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Atadura");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Atadura");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
 			// Check if the Pokemon facing doesn't have the estado Atrapado
-			if ((this.getPkFacing().getEstadosEfimeros().stream().filter(e -> e.getEstadoEnum() == EstadosEnum.ATRAPADO)
-					.findAny().get()) != null) {
-				nbTurnosEstado = (int) ((Math.random() * (5 - 4)) + 4);
-				System.out.println(this.getPkCombatting().getNombrePokemon() + " quedÛ atrapado");
-				Estado atrapdo = new Estado(EstadosEnum.ATRAPADO, nbTurnosEstado);
-				this.getPkFacing().addEstadoEfimero(atrapdo);
+			if ((this.getPkFacing().getEphemeralStates().stream().filter(e -> e.getStatusCondition() == StatusConditions.TRAPPED).findAny().get()) != null) {
+				
+				nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 4)) + 4);
+				
+				System.out.println(this.getPkCombatting().getName() + " qued√≥ atrapado");
+				
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
+				
+				this.getPkFacing().addEstadoEfimero(trapped);
+				
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
 		// Atizar (tested)
 		case 21:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ Atizar");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Atizar");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// L·tigo cepa (tested)
+		// L√°tigo cepa (tested)
 		case 22:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ L·tigo cepa");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ L√°tigo cepa");
+			
 			dmg = doDammage();
+			
 			isCritic = getCriticity();
+			
 			if (isCritic) {
+				
 				dmg = dmg * 2;
-				System.out.println("Fue un golpe crÌtico");
+				System.out.println("Fue un golpe cr√≠tico");
+				
 			}
+			
 			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
 			if (this.getPkFacing().getPs() <= 0) {
-				this.getPkFacing().setEstadoPersistente(new Estado(EstadosEnum.DEBILITADO));
+				
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				
 			}
 			break;
 
-		// PisotÛn
+		// Pisot√≥n
 		case 23:
-			System.out.println(this.getPkCombatting().getNombrePokemon() + " usÛ PisotÛn");
+			System.out.println(this.getPkCombatting().getName() + " us√≥ Pisot√≥n");
 			break;
 		}
 
 		return dmg;
 	}
 
-	// Damage
+	// Apply damage
 	public float doDammage() {
-		int randomVariacion;
-		randomVariacion = (int) ((Math.random() * (100 - 85)) + 85);
-		boolean isAtaEspecial = this.getPkCombatting().getNextMouvement().getBases().contains("especial");
+		
+		// There is a random variation when attacking (the total damage is not the same every time)
+		int randomVariation;
+		
+		randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
+		
+		boolean isSpecialAttack = this.getPkCombatting().getNextMouvement().getBases().contains("especial");
+		
 		float dmg = 0;
 
-		if (isAtaEspecial) {
+		if (isSpecialAttack) {
+			
 			// Apply special damage
-			dmg = 0.01f * this.getPkCombatting().getNextMouvement().getBonificacion()
-					* this.getPkCombatting().getNextMouvement().getEfectividadContraPkAdversario() * randomVariacion
-					* (((0.2f * 100 + 1) * this.getPkCombatting().getAtEsp()
-							* this.getPkCombatting().getNextMouvement().getPoder())
-							/ (25 * this.getPkFacing().getDefEsp()) + 2);
-			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getNombrePokemon() + ") : " + dmg);
+			dmg = 0.01f * this.getPkCombatting().getNextMouvement().getBonus()
+					* this.getPkCombatting().getNextMouvement().getEffectivenessAgainstPkFacing() * randomVariation
+					* (((0.2f * 100 + 1) * this.getPkCombatting().getSpecialAttack()
+							* this.getPkCombatting().getNextMouvement().getPower())
+							/ (25 * this.getPkFacing().getSpecialDefense()) + 2);
+			
+			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + ") : " + dmg);
 //			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-			// Apply normal damage
+			
+		// Apply normal damage
 		} else {
-			dmg = 0.01f * this.getPkCombatting().getNextMouvement().getBonificacion()
-					* this.getPkCombatting().getNextMouvement().getEfectividadContraPkAdversario() * randomVariacion
-					* (((0.2f * 100 + 1) * this.getPkCombatting().getAta()
-							* this.getPkCombatting().getNextMouvement().getPoder()) / (25 * this.getPkFacing().getDef())
+			
+			dmg = 0.01f * this.getPkCombatting().getNextMouvement().getBonus()
+					* this.getPkCombatting().getNextMouvement().getEffectivenessAgainstPkFacing() * randomVariation
+					* (((0.2f * 100 + 1) * this.getPkCombatting().getAttack()
+							* this.getPkCombatting().getNextMouvement().getPower()) / (25 * this.getPkFacing().getDef())
 							+ 2);
-			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getNombrePokemon() + ") : " + dmg);
+			
+			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + ") : " + dmg);
 //			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 		}
 

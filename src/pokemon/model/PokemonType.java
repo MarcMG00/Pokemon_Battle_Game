@@ -1,68 +1,68 @@
 package pokemon.model;
 
 public class PokemonType {
-	private int idPkTipo;
-	private String nombreTipo;
-	private float xdanoMenor;
-	private float xdanoDebil;
-	private float xdanoMayor;
+	private int id;
+	private String name;
+	private float xLowDamage;
+	private float xNormalDamage;
+	private float xHighDamage;
 	
 	public PokemonType() {
 		super();
-		this.idPkTipo = 0;
-		this.nombreTipo = "";
-		this.xdanoMenor = 0f;
-		this.xdanoMayor = 2f;
-		this.xdanoDebil = 1.5f;
+		this.id = 0;
+		this.name = "";
+		this.xLowDamage = 0f;
+		this.xHighDamage = 2f;
+		this.xNormalDamage = 1.5f;
 	}
 	
-	public PokemonType(int idPkTipo, String nombreTipo) {
+	public PokemonType(int id, String name) {
 		super();
-		this.idPkTipo = idPkTipo;
-		this.nombreTipo = nombreTipo;
-		this.xdanoMenor = 0f;
-		this.xdanoMayor = 2f;
-		this.xdanoDebil = 1.5f;
+		this.id = id;
+		this.name = name;
+		this.xLowDamage = 0f;
+		this.xHighDamage = 2f;
+		this.xNormalDamage = 1.5f;
 	}
 
-	public int getIdPkTipo() {
-		return idPkTipo;
+	public int getId() {
+		return id;
 	}
 
-	public void setIdPkTipo(int idPkTipo) {
-		this.idPkTipo = idPkTipo;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public String getNombreTipo() {
-		return nombreTipo;
+	public String getName() {
+		return name;
 	}
 
-	public void setNombreTipo(String nombreTipo) {
-		this.nombreTipo = nombreTipo;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public float getXdanoMenor() {
-		return xdanoMenor;
+	public float getXLowDamage() {
+		return xLowDamage;
 	}
 
-	public void setXdanoMenor(float xdanoMenor) {
-		this.xdanoMenor = xdanoMenor;
+	public void setXLowDamage(float xLowDamage) {
+		this.xLowDamage = xLowDamage;
 	}
 
-	public float getXdanoMayor() {
-		return xdanoMayor;
+	public float getXHighDamage() {
+		return xHighDamage;
 	}
 
-	public void setXdanoMayor(float xdanoMayor) {
-		this.xdanoMayor = xdanoMayor;
+	public void setXHighDamage(float xHighDamage) {
+		this.xHighDamage = xHighDamage;
 	}
 
-	public float getXdanoDebil() {
-		return xdanoDebil;
+	public float getXNormalDamage() {
+		return xNormalDamage;
 	}
 
-	public void setXdanoDebil(float xdanoDebil) {
-		this.xdanoDebil = xdanoDebil;
+	public void setXNormalDamage(float xNormalDamage) {
+		this.xNormalDamage = xNormalDamage;
 	}
 	
 	

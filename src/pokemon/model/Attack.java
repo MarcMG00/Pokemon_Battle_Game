@@ -1,0 +1,124 @@
+package pokemon.model;
+
+import java.util.ArrayList;
+
+public class Attack {
+	private int id;
+	private String name;
+	private String type;
+	private ArrayList<String> bases;
+	private int power;
+	private int pp;
+	private int precision;
+	private String effect;
+	private PokemonType strTypeToPkType;
+	private float effectivenessAgainstPkFacing;
+	private float bonus;
+	
+	public Attack() {
+		super();
+		this.id = 0;
+		this.name = "";
+		this.type = "";
+		this.bases = new ArrayList<>();
+		this.power = 0;
+		this.pp = 0;
+		this.precision = 0;
+		this.effect = "";
+		this.strTypeToPkType = new PokemonType();
+		this.effectivenessAgainstPkFacing = 0;
+		this.bonus = 0;
+	}
+	
+	public Attack(int id, String name, String type, int power, int pp, int precision, String effect) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.type = type;
+		this.bases = new ArrayList<>();
+		this.power = power;
+		this.pp = pp;
+		this.precision = precision;
+		this.effect = effect;
+		this.strTypeToPkType = new PokemonType();
+		this.effectivenessAgainstPkFacing = 0;
+		this.bonus = 0;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public ArrayList<String> getBases() {
+		return bases;
+	}
+	public void setBases(ArrayList<String> bases) {
+		this.bases = bases;
+	}
+	public int getPower() {
+		return power;
+	}
+	public void setPower(int power) {
+		this.power = power;
+	}
+	public int getPp() {
+		return pp;
+	}
+	public void setPp(int pp) {
+		this.pp = pp;
+	}
+	public int getPrecision() {
+		return precision;
+	}
+	public void setPrecision(int precision) {
+		this.precision = precision;
+	}
+	public String getEffect() {
+		return effect;
+	}
+	public void setEffect(String effect) {
+		this.effect = effect;
+	}
+	public PokemonType getStrTypeToPkType() {
+		return strTypeToPkType;
+	}
+	public void setStrTypeToPkType(PokemonType strTypeToPkType) {
+		this.strTypeToPkType = strTypeToPkType;
+	}
+	public float getEffectivenessAgainstPkFacing() {
+		return effectivenessAgainstPkFacing;
+	}
+	public void setEffectivenessAgainstPkFacing(float effectivenessAgainstPkFacing) {
+		this.effectivenessAgainstPkFacing = effectivenessAgainstPkFacing;
+	}
+	public float getBonus() {
+		return bonus;
+	}
+	public void setBonus(float bonus) {
+		this.bonus = bonus;
+	}
+
+	// Add type of base to an Attack
+	public void addBase(String base) {
+		this.bases.add(base);
+	}
+	
+	// Set the type of the attack to his Pokemon type instead of a string
+	public void transformStrTypeToPokemonType(ArrayList<PokemonType> types) {
+		this.setStrTypeToPkType(types.stream().filter(pk -> pk.getName().equals(this.getType())).findFirst().get());
+	}	
+}

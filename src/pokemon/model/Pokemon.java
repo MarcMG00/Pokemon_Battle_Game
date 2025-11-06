@@ -2,136 +2,179 @@ package pokemon.model;
 
 import java.util.ArrayList;
 
-import pokemon.enums.EstadosEnum;
+import pokemon.enums.StatusConditions;
+
 
 public class Pokemon {
-	private int idPokemon;
-	private String nombrePokemon;
+	private int id;
+	private String name;
 	private float initialPs;
-	private float initialAta;
+	private float initialAttack;
 	private float initialDef;
-	private float initialVel;
-	private float initialAtEsp;
-	private float initialDefEsp;
+	private float initialSpeed;
+	private float initialSpecialAttack;
+	private float initialSpecialDefense;
 	private float ps;
-	private float ata;
+	private float attack;
 	private float def;
-	private float vel;
-	private float atEsp;
-	private float defEsp;
-	private ArrayList<Habilidad> normalHabs;
-	private ArrayList<Habilidad> ocultedHabs;
+	private float speed;
+	private float specialAttack;
+	private float specialDefense;
+	private ArrayList<Ability> normalAbilities;
+	private ArrayList<Ability> hiddenAbilities;
 	private ArrayList<PokemonType> types;
-	private ArrayList<Ataque> ataFisicos;
-	private ArrayList<Ataque> ataEspeciales;
-	private ArrayList<Ataque> ataEstado;
-	private ArrayList<Ataque> cuatroAtaques;
-	private Ataque nextMouvement;
-	private ArrayList<Ataque> ataquesRebientan;
-	private ArrayList<Ataque> ataquesNormales;
-	private ArrayList<Ataque> ataquesDebiles;
-	private ArrayList<Ataque> ataquesNoAfectan;
-	private ArrayList<Integer> cuatroAtaquesIds;
-	private int puntosPrecision;
-	private int puntosEvasion;
-	private Estado estadoPersistente;
-	private ArrayList<Estado> estadosEfimeros;
+	private ArrayList<Attack> physicalAttacks;
+	private ArrayList<Attack> specialAttacks;
+	private ArrayList<Attack> otherAttacks;
+	private ArrayList<Attack> fourPrincipalAttacks;
+	private Attack nextMouvement;
+	private ArrayList<Attack> lotDamageAttacks;
+	private ArrayList<Attack> normalAttacks;
+	private ArrayList<Attack> lowAttacks;
+	private ArrayList<Attack> notEffectAttacks;
+	private ArrayList<Integer> fourIdAttacks;
+	private int precisionPoints;
+	private int evasionPoints;
+	private State statusCondition;
+	private ArrayList<State> ephemeralStates;
 	public boolean isChargingAttackForNextRound;
-	public boolean isPuedeAtacar;
-	public boolean alreadyUsedVuelo;
-	public boolean firstInUsingTheSameAttack;
+	public boolean canAttack;
+	public boolean alreadyUsedFly;
+	public boolean isFirstInUsingTheSameAttack;
 
 	public Pokemon() {
-		this.idPokemon = 0;
-		this.nombrePokemon = "";
+		this.id = 0;
+		this.name = "";
 		this.ps = 0;
-		this.ata = 0;
+		this.attack = 0;
 		this.def = 0;
-		this.vel = 0;
-		this.atEsp = 0;
-		this.defEsp = 0;
+		this.speed = 0;
+		this.specialAttack = 0;
+		this.specialDefense = 0;
 		this.initialPs = 0;
-		this.initialAta = 0;
+		this.initialAttack = 0;
 		this.initialDef = 0;
-		this.initialVel = 0;
-		this.initialAtEsp = 0;
-		this.initialDefEsp = 0;
-		this.normalHabs = new ArrayList<>();
-		this.ocultedHabs = new ArrayList<>();
+		this.initialSpeed = 0;
+		this.initialSpecialAttack = 0;
+		this.initialSpecialDefense = 0;
+		this.normalAbilities = new ArrayList<>();
+		this.hiddenAbilities = new ArrayList<>();
 		this.types = new ArrayList<>();
-		this.ataFisicos = new ArrayList<>();
-		this.ataEspeciales = new ArrayList<>();
-		this.ataEstado = new ArrayList<>();
-		this.cuatroAtaques = new ArrayList<>();
-		this.nextMouvement = new Ataque();
-		this.ataquesRebientan = new ArrayList<>();
-		this.ataquesNormales = new ArrayList<>();
-		this.ataquesDebiles = new ArrayList<>();
-		this.ataquesNoAfectan = new ArrayList<>();
-		this.cuatroAtaquesIds = new ArrayList<>();
-		this.puntosPrecision = 0;
-		this.puntosEvasion = 0;
-		this.estadoPersistente = new Estado();
-		this.estadosEfimeros = new ArrayList<>();
+		this.physicalAttacks = new ArrayList<>();
+		this.specialAttacks = new ArrayList<>();
+		this.otherAttacks = new ArrayList<>();
+		this.fourPrincipalAttacks = new ArrayList<>();
+		this.nextMouvement = new Attack();
+		this.lotDamageAttacks = new ArrayList<>();
+		this.normalAttacks = new ArrayList<>();
+		this.lowAttacks = new ArrayList<>();
+		this.notEffectAttacks = new ArrayList<>();
+		this.fourIdAttacks = new ArrayList<>();
+		this.precisionPoints = 0;
+		this.evasionPoints = 0;
+		this.statusCondition = new State();
+		this.ephemeralStates = new ArrayList<>();
 		this.isChargingAttackForNextRound = false;
-		this.isPuedeAtacar = true;
-		this.alreadyUsedVuelo = false;
-		this.firstInUsingTheSameAttack = false;
+		this.canAttack = true;
+		this.alreadyUsedFly = false;
+		this.isFirstInUsingTheSameAttack = false;
 	}
 
-	public Pokemon(int idPokemon, String nombrePokemon, float ps, float ata, float def, float vel, float atEsp,
-			float defEsp) {
-		this.idPokemon = idPokemon;
-		this.nombrePokemon = nombrePokemon;
+	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack, float specialDefense) {
+		this.id = id;
+		this.name = name;
 		this.ps = ps;
-		this.ata = ata;
+		this.attack = attack;
 		this.def = def;
-		this.vel = vel;
-		this.atEsp = atEsp;
-		this.defEsp = defEsp;
+		this.speed = speed;
+		this.specialAttack = specialAttack;
+		this.specialDefense = specialDefense;
 		this.initialPs = ps;
-		this.initialAta = ata;
+		this.initialAttack = speed;
 		this.initialDef = def;
-		this.initialVel = vel;
-		this.initialAtEsp = atEsp;
-		this.initialDefEsp = defEsp;
-		this.normalHabs = new ArrayList<>();
-		this.ocultedHabs = new ArrayList<>();
+		this.initialSpeed = speed;
+		this.initialSpecialAttack = specialAttack;
+		this.initialSpecialDefense = specialDefense;
+		this.normalAbilities = new ArrayList<>();
+		this.hiddenAbilities = new ArrayList<>();
 		this.types = new ArrayList<>();
-		this.ataFisicos = new ArrayList<>();
-		this.ataEspeciales = new ArrayList<>();
-		this.ataEstado = new ArrayList<>();
-		this.cuatroAtaques = new ArrayList<>();
-		this.nextMouvement = new Ataque();
-		this.ataquesRebientan = new ArrayList<>();
-		this.ataquesNormales = new ArrayList<>();
-		this.ataquesDebiles = new ArrayList<>();
-		this.ataquesNoAfectan = new ArrayList<>();
-		this.cuatroAtaquesIds = new ArrayList<>();
-		this.puntosPrecision = 0;
-		this.puntosEvasion = 0;
-		this.estadoPersistente = new Estado();
-		this.estadosEfimeros = new ArrayList<>();
+		this.physicalAttacks = new ArrayList<>();
+		this.specialAttacks = new ArrayList<>();
+		this.otherAttacks = new ArrayList<>();
+		this.fourPrincipalAttacks = new ArrayList<>();
+		this.nextMouvement = new Attack();
+		this.lotDamageAttacks = new ArrayList<>();
+		this.normalAttacks = new ArrayList<>();
+		this.lowAttacks = new ArrayList<>();
+		this.notEffectAttacks = new ArrayList<>();
+		this.fourIdAttacks = new ArrayList<>();
+		this.precisionPoints = 0;
+		this.evasionPoints = 0;
+		this.statusCondition = new State();
+		this.ephemeralStates = new ArrayList<>();
 		this.isChargingAttackForNextRound = false;
-		this.isPuedeAtacar = true;
-		this.alreadyUsedVuelo = false;
-		this.firstInUsingTheSameAttack = false;
+		this.canAttack = true;
+		this.alreadyUsedFly = false;
+		this.isFirstInUsingTheSameAttack = false;
+	}
+	
+	// Constructor to set same Pokemon in a different memory space (otherwise, some duplications for the same objects)
+	public Pokemon(Pokemon pokemon) {
+		this.id = pokemon.id;
+		this.name = pokemon.name;
+		this.ps = pokemon.ps;
+		this.attack = pokemon.attack;
+		this.def = pokemon.def;
+		this.speed = pokemon.speed;
+		this.specialAttack = pokemon.specialAttack;
+		this.specialDefense = pokemon.specialDefense;
+		this.initialPs = ps;
+		this.initialAttack = attack;
+		this.initialDef = def;
+		this.initialSpeed = speed;
+		this.initialSpecialAttack = specialAttack;
+		this.initialSpecialDefense = specialDefense;
+		this.normalAbilities = pokemon.normalAbilities;
+		this.hiddenAbilities = pokemon.hiddenAbilities;
+		this.types = pokemon.types;
+		
+	    this.physicalAttacks = new ArrayList<>(pokemon.physicalAttacks);
+	    this.specialAttacks = new ArrayList<>(pokemon.specialAttacks);
+	    this.otherAttacks = new ArrayList<>(pokemon.otherAttacks);
+	    this.fourPrincipalAttacks = new ArrayList<>(); // starts empty
+	    this.fourIdAttacks = new ArrayList<>();
+
+	    this.nextMouvement = pokemon.nextMouvement;
+	    this.lotDamageAttacks = new ArrayList<>(pokemon.lotDamageAttacks);
+	    this.normalAttacks = new ArrayList<>(pokemon.normalAttacks);
+	    this.lowAttacks = new ArrayList<>(pokemon.lowAttacks);
+	    this.notEffectAttacks = new ArrayList<>(pokemon.notEffectAttacks);
+
+	    this.precisionPoints = 0;
+	    this.evasionPoints = 0;
+	    this.statusCondition = pokemon.statusCondition;
+	    this.ephemeralStates = new ArrayList<>(pokemon.ephemeralStates);
+
+	    this.isChargingAttackForNextRound = pokemon.isChargingAttackForNextRound;
+	    this.canAttack = pokemon.canAttack;
+	    this.alreadyUsedFly = pokemon.alreadyUsedFly;
+	    this.isFirstInUsingTheSameAttack = pokemon.isFirstInUsingTheSameAttack;
 	}
 
-	public int getIdPokemon() {
-		return idPokemon;
+	public int getId() {
+		return id;
 	}
 
-	public void setIdPokemon(int idPokemon) {
-		this.idPokemon = idPokemon;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public String getNombrePokemon() {
-		return nombrePokemon;
+	public String getName() {
+		return name;
 	}
 
-	public void setNombrePokemon(String nombrePokemon) {
-		this.nombrePokemon = nombrePokemon;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public float getPs() {
@@ -142,12 +185,12 @@ public class Pokemon {
 		this.ps = f;
 	}
 
-	public float getAta() {
-		return ata;
+	public float getAttack() {
+		return attack;
 	}
 
-	public void setAta(float ata) {
-		this.ata = ata;
+	public void setAttack(float attack) {
+		this.attack = attack;
 	}
 
 	public float getDef() {
@@ -158,28 +201,28 @@ public class Pokemon {
 		this.def = def;
 	}
 
-	public float getVel() {
-		return vel;
+	public float getSpeed() {
+		return speed;
 	}
 
-	public void setVel(float vel) {
-		this.vel = vel;
+	public void setSpeed(float speed) {
+		this.speed = speed;
 	}
 
-	public float getAtEsp() {
-		return atEsp;
+	public float getSpecialAttack() {
+		return specialAttack;
 	}
 
-	public void setAtEsp(float atEsp) {
-		this.atEsp = atEsp;
+	public void setSpecialAttack(float specialAttack) {
+		this.specialAttack = specialAttack;
 	}
 
-	public float getDefEsp() {
-		return defEsp;
+	public float getSpecialDefense() {
+		return specialDefense;
 	}
 
-	public void setDefEsp(float defEsp) {
-		this.defEsp = defEsp;
+	public void setSpecialDefense(float specialDefense) {
+		this.specialDefense = specialDefense;
 	}
 
 	public float getInitialPs() {
@@ -190,12 +233,12 @@ public class Pokemon {
 		this.initialPs = initialPs;
 	}
 
-	public float getInitialAta() {
-		return initialAta;
+	public float getInitialAttack() {
+		return initialAttack;
 	}
 
-	public void setInitialAta(float initialAta) {
-		this.initialAta = initialAta;
+	public void setInitialAttack(float initialAttack) {
+		this.initialAttack = initialAttack;
 	}
 
 	public float getInitialDef() {
@@ -206,44 +249,44 @@ public class Pokemon {
 		this.initialDef = initialDef;
 	}
 
-	public float getInitialVel() {
-		return initialVel;
+	public float getInitialSpeed() {
+		return initialSpeed;
 	}
 
-	public void setInitialVel(float initialVel) {
-		this.initialVel = initialVel;
+	public void setInitialSpeed(float initialSpeed) {
+		this.initialSpeed = initialSpeed;
 	}
 
-	public float getInitialAtEsp() {
-		return initialAtEsp;
+	public float getInitialSpecialAttack() {
+		return initialSpecialAttack;
 	}
 
-	public void setInitialAtEsp(float initialAtEsp) {
-		this.initialAtEsp = initialAtEsp;
+	public void setInitialSpecialAttack(float initialSpecialAttack) {
+		this.initialSpecialAttack = initialSpecialAttack;
 	}
 
-	public float getInitialDefEsp() {
-		return initialDefEsp;
+	public float getInitialSpecialDefense() {
+		return initialSpecialDefense;
 	}
 
-	public void setInitialDefEsp(float initialDefEsp) {
-		this.initialDefEsp = initialDefEsp;
+	public void setInitialSpecialDefense(float initialSpecialDefense) {
+		this.initialSpecialDefense = initialSpecialDefense;
 	}
 
-	public ArrayList<Habilidad> getNormalHabs() {
-		return normalHabs;
+	public ArrayList<Ability> getNormalAbilities() {
+		return normalAbilities;
 	}
 
-	public void setNormalHabs(ArrayList<Habilidad> normalHabs) {
-		this.normalHabs = normalHabs;
+	public void setNormalAbilities(ArrayList<Ability> normalAbilities) {
+		this.normalAbilities = normalAbilities;
 	}
 
-	public ArrayList<Habilidad> getOcultedHabs() {
-		return ocultedHabs;
+	public ArrayList<Ability> getHiddenAbilities() {
+		return hiddenAbilities;
 	}
 
-	public void setOcultedHabs(ArrayList<Habilidad> ocultedHabs) {
-		this.ocultedHabs = ocultedHabs;
+	public void setHiddenAbilities(ArrayList<Ability> hiddenAbilities) {
+		this.hiddenAbilities = hiddenAbilities;
 	}
 
 	public ArrayList<PokemonType> getTypes() {
@@ -254,158 +297,158 @@ public class Pokemon {
 		this.types = types;
 	}
 
-	public ArrayList<Ataque> getAtaFisicos() {
-		return ataFisicos;
+	public ArrayList<Attack> getPhysicalAttacks() {
+		return physicalAttacks;
 	}
 
-	public void setAtaFisicos(ArrayList<Ataque> ataFisicos) {
-		this.ataFisicos = ataFisicos;
+	public void setPhysicalAttacks(ArrayList<Attack> physicalAttacks) {
+		this.physicalAttacks = physicalAttacks;
 	}
 
-	public ArrayList<Ataque> getAtaEspeciales() {
-		return ataEspeciales;
+	public ArrayList<Attack> getSpecialAttacks() {
+		return specialAttacks;
 	}
 
-	public void setAtaEspeciales(ArrayList<Ataque> ataEspeciales) {
-		this.ataEspeciales = ataEspeciales;
+	public void setSpecialAttacks(ArrayList<Attack> specialAttacks) {
+		this.specialAttacks = specialAttacks;
 	}
 
-	public ArrayList<Ataque> getAtaEstado() {
-		return ataEstado;
+	public ArrayList<Attack> getOtherAttacks() {
+		return otherAttacks;
 	}
 
-	public void setAtaEstado(ArrayList<Ataque> ataEstado) {
-		this.ataEstado = ataEstado;
+	public void setOtherAttacks(ArrayList<Attack> otherAttacks) {
+		this.otherAttacks = otherAttacks;
 	}
 
-	public ArrayList<Ataque> getCuatroAtaques() {
-		return cuatroAtaques;
+	public ArrayList<Attack> getFourPrincipalAttacks() {
+		return fourPrincipalAttacks;
 	}
 
-	public void setCuatroAtaques(ArrayList<Ataque> cuatroAtaques) {
-		this.cuatroAtaques = cuatroAtaques;
+	public void setFourPrincipalAttacks(ArrayList<Attack> fourPrincipalAttacks) {
+		this.fourPrincipalAttacks = fourPrincipalAttacks;
 	}
 
-	public Ataque getNextMouvement() {
+	public Attack getNextMouvement() {
 		return nextMouvement;
 	}
 
-	public void setNextMouvement(Ataque nextMouvement) {
+	public void setNextMouvement(Attack nextMouvement) {
 		this.nextMouvement = nextMouvement;
 	}
 
-	public ArrayList<Ataque> getAtaquesRebientan() {
-		return ataquesRebientan;
+	public ArrayList<Attack> getLotDamageAttacks() {
+		return lotDamageAttacks;
 	}
 
-	public void setAtaquesRebientan(ArrayList<Ataque> ataquesRebientan) {
-		this.ataquesRebientan = ataquesRebientan;
+	public void setLotDamageAttacks(ArrayList<Attack> lotDamageAttacks) {
+		this.lotDamageAttacks = lotDamageAttacks;
 	}
 
-	public ArrayList<Ataque> getAtaquesNormales() {
-		return ataquesNormales;
+	public ArrayList<Attack> getNormalAttacks() {
+		return normalAttacks;
 	}
 
-	public void setAtaquesNormales(ArrayList<Ataque> ataquesNormales) {
-		this.ataquesNormales = ataquesNormales;
+	public void setNormalAttacks(ArrayList<Attack> normalAttacks) {
+		this.normalAttacks = normalAttacks;
 	}
 
-	public ArrayList<Ataque> getAtaquesDebiles() {
-		return ataquesDebiles;
+	public ArrayList<Attack> getLowAttacks() {
+		return lowAttacks;
 	}
 
-	public void setAtaquesDebiles(ArrayList<Ataque> ataquesDebiles) {
-		this.ataquesDebiles = ataquesDebiles;
+	public void setLowAttacks(ArrayList<Attack> lowAttacks) {
+		this.lowAttacks = lowAttacks;
 	}
 
-	public ArrayList<Ataque> getAtaquesNoAfectan() {
-		return ataquesNoAfectan;
+	public ArrayList<Attack> getNotEffectAttacks() {
+		return notEffectAttacks;
 	}
 
-	public void setAtaquesNoAfectan(ArrayList<Ataque> ataquesNoAfectan) {
-		this.ataquesNoAfectan = ataquesNoAfectan;
+	public void setNotEffectAttacks(ArrayList<Attack> notEffectAttacks) {
+		this.notEffectAttacks = notEffectAttacks;
 	}
 
-	public ArrayList<Integer> getCuatroAtaquesIds() {
-		return cuatroAtaquesIds;
+	public ArrayList<Integer> getFourIdAttacks() {
+		return fourIdAttacks;
 	}
 
-	public void setCuatroAtaquesIds(ArrayList<Integer> cuatroAtaquesIds) {
-		this.cuatroAtaquesIds = cuatroAtaquesIds;
+	public void setFourIdAttacks(ArrayList<Integer> fourIdAttacks) {
+		this.fourIdAttacks = fourIdAttacks;
 	}
 
-	public int getPuntosPrecision() {
-		return puntosPrecision;
+	public int getPrecisionPoints() {
+		return precisionPoints;
 	}
 
-	public void setPuntosPrecision(int puntosPrecision) {
-		this.puntosPrecision = puntosPrecision;
+	public void setPrecisionPoints(int precisionPoints) {
+		this.precisionPoints = precisionPoints;
 	}
 
-	public int getPuntosEvasion() {
-		return puntosEvasion;
+	public int getEvasionPoints() {
+		return evasionPoints;
 	}
 
-	public void setPuntosEvasion(int puntosEvasion) {
-		this.puntosEvasion = puntosEvasion;
+	public void setEvasionPoints(int evasionPoints) {
+		this.evasionPoints = evasionPoints;
 	}
 
-	public Estado getEstadoPersistente() {
-		return estadoPersistente;
+	public State getStatusCondition() {
+		return statusCondition;
 	}
 
-	public void setEstadoPersistente(Estado estadoPersistente) {
-		this.estadoPersistente = estadoPersistente;
+	public void setStatusCondition(State statusCondition) {
+		this.statusCondition = statusCondition;
 	}
 
-	public ArrayList<Estado> getEstadosEfimeros() {
-		return estadosEfimeros;
+	public ArrayList<State> getEphemeralStates() {
+		return ephemeralStates;
 	}
 
-	public void setEstadosEfimeros(ArrayList<Estado> estadosEfimeros) {
-		this.estadosEfimeros = estadosEfimeros;
+	public void setEphemeralStates(ArrayList<State> ephemeralStates) {
+		this.ephemeralStates = ephemeralStates;
 	}
 
-	public boolean isChargingAttackForNextRound() {
+	public boolean getIsChargingAttackForNextRound() {
 		return isChargingAttackForNextRound;
 	}
 
-	public void setChargingAttackForNextRound(boolean isChargingAttackForNextRound) {
+	public void setIsChargingAttackForNextRound(boolean isChargingAttackForNextRound) {
 		this.isChargingAttackForNextRound = isChargingAttackForNextRound;
 	}
 
-	public boolean isPuedeAtacar() {
-		return isPuedeAtacar;
+	public boolean getCanAttack() {
+		return canAttack;
 	}
 
-	public void setPuedeAtacar(boolean isPuedeAtacar) {
-		this.isPuedeAtacar = isPuedeAtacar;
+	public void setCanAttack(boolean canAttack) {
+		this.canAttack = canAttack;
 	}
 	
-	public boolean isAlreadyUsedVuelo() {
-		return alreadyUsedVuelo;
+	public boolean getAlreadyUsedFly() {
+		return alreadyUsedFly;
 	}
 
-	public void setAlreadyUsedVuelo(boolean alreadyUsedVuelo) {
-		this.alreadyUsedVuelo = alreadyUsedVuelo;
+	public void setAlreadyUsedFly(boolean alreadyUsedFly) {
+		this.alreadyUsedFly = alreadyUsedFly;
 	}
 
-	public boolean isFirstInUsingTheSameAttack() {
-		return firstInUsingTheSameAttack;
+	public boolean getIsFirstInUsingTheSameAttack() {
+		return isFirstInUsingTheSameAttack;
 	}
 
-	public void setFirstInUsingTheSameAttack(boolean firstInUsingTheSameAttack) {
-		this.firstInUsingTheSameAttack = firstInUsingTheSameAttack;
+	public void setIsFirstInUsingTheSameAttack(boolean isFirstInUsingTheSameAttack) {
+		this.isFirstInUsingTheSameAttack = isFirstInUsingTheSameAttack;
 	}
 
-	// Adds habs to Pokemon
-	public void addNormalHab(Habilidad nHab) {
-		this.normalHabs.add(nHab);
+	// Adds abilities to Pokemon
+	public void addNormalAbility(Ability ablty) {
+		this.normalAbilities.add(ablty);
 	}
 
-	// Adds oculted habs to Pokemon
-	public void addOcultedHab(Habilidad oHab) {
-		this.ocultedHabs.add(oHab);
+	// Adds hidden abilities to Pokemon
+	public void addHiddenAbility(Ability hidAblty) {
+		this.hiddenAbilities.add(hidAblty);
 	}
 
 	// Adds types to Pokemon
@@ -413,69 +456,69 @@ public class Pokemon {
 		this.types.add(pt);
 	}
 
-	// Adds fisic attacs to Pokemon
-	public void addAtaFisicos(Ataque ataF) {
-		this.ataFisicos.add(ataF);
+	// Adds physical attacks to Pokemon
+	public void addPhysicalAttack(Attack phAtck) {
+		this.physicalAttacks.add(phAtck);
 	}
 
-	// Adds special attacs to Pokemon
-	public void addAtaEspeciales(Ataque ataE) {
-		this.ataEspeciales.add(ataE);
+	// Adds special attacks to Pokemon
+	public void addSpecialAttack(Attack spAtck) {
+		this.specialAttacks.add(spAtck);
 	}
 
-	// Adds other attacs to Pokemon
-	public void addAtaEstado(Ataque ataO) {
-		this.ataEstado.add(ataO);
+	// Adds other attacks to Pokemon
+	public void addOtherAttack(Attack otAtck) {
+		this.otherAttacks.add(otAtck);
 	}
 
-	// Adds the four final attacs to Pokemon
-	public void addAtaques(Ataque ata) {
-		this.cuatroAtaques.add(ata);
+	// Adds the four principal attacks to Pokemon
+	public void addAttacks(Attack attack) {
+		this.fourPrincipalAttacks.add(attack);
 	}
 
-	// Adds the four final attacs Ids to Pokemon
-	public void addAtaquesIds(Integer ataId) {
-		this.cuatroAtaquesIds.add(ataId);
+	// Adds the four final attacks Ids to Pokemon
+	public void addIdAttack(Integer idAtck) {
+		this.fourIdAttacks.add(idAtck);
 	}
 
-	// Adds a stado efímero to Pokemon
-	public void addEstadoEfimero(Estado estadoEf) {
-		this.estadosEfimeros.add(estadoEf);
+	// Adds a ephemeral state to Pokemon
+	public void addEstadoEfimero(State ephState) {
+		this.ephemeralStates.add(ephState);
 	}
 
 	// Restart stats after some attacks... (cause not accumulated)
 	public void restartParametersEffect() {
 
-		switch (this.getEstadoPersistente().getEstadoEnum()) {
-		case ATRAPADO:
+		switch (this.getStatusCondition().getStatusCondition()) {
+		case TRAPPED:
 			break;
-		case CANTO_MORTAL:
+		case PERISH_SONG:
 			break;
-		case CONFUSO:
+		case CONFUSED:
 			break;
-		case CONGELADO:
+		case FROZEN:
 			break;
-		case DEBILITADO:
+		case DEBILITATED:
 			break;
-		case DORMIDO:
+		case ASLEEP:
 			break;
-		case DRENADO:
+		case SEEDED:
 			break;
-		case ENAMORADO:
+		case INFATUATED:
 			break;
-		case ENVENENADO:
+		case POISONED:
 			break;
-		case GRAVEMENTE_ENVENENADO:
+		case BADLY_POISONED:
 			break;
-		case MALDITO:
+		case CURSED:
 			break;
-		case PARALIZADO:
-			this.setVel(this.getInitialVel());
+		case PARALYZED:
+			this.setSpeed(this.getInitialSpeed());
 			break;
-		case QUEMADO:
-			this.setAta(this.getInitialAta());
+		case BURNED:
+			this.setAttack(this.getInitialAttack());
 			break;
-		case SIN_ESTADO:
+		case NO_STATUS:
 			break;
 		default:
 			break;
@@ -483,60 +526,79 @@ public class Pokemon {
 		}
 	}
 
-	// Modifie stats for Estados
-	public void checkEffectsEstadoPersistente(boolean isAttackingBurned) {
-		// Do effect of the Estado
-		this.getEstadoPersistente().doEffectEstadoPersistente(this.getEstadoPersistente().getEstadoEnum());
+	// Modify conditions of Pokemon depending on States
+	public void checkEffectsStatusCondition(boolean isAttackingBurned) {
+		// Do effect of the State
+		this.getStatusCondition().doEffectStatusCondition(this.getStatusCondition().getStatusCondition());
 		float reducePs = 0;
 
-		if (!(this.getEstadoPersistente().getEstadoEnum() == EstadosEnum.SIN_ESTADO)) {
-			switch (this.getEstadoPersistente().getEstadoEnum()) {
+		if (!(this.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS)) {
+			
+			switch (this.getStatusCondition().getStatusCondition()) {
 			// Can move or not
-			case CONGELADO:
-				// Can attack the moment he is not frozen anymore
-				if (this.getEstadoPersistente().isPuedeMoverseEstadoEfimero()) {
-					System.out.println(this.getNombrePokemon() + " se descongeló y puede atacar");
-					this.setPuedeAtacar(true);
+			case FROZEN:
+				// Can attack at the moment cause he is not frozen anymore
+				if (this.getStatusCondition().getCanMoveStatusCondition()) {
+					
+					System.out.println(this.getName() + " se descongelÃ³ y puede atacar");
+					
+					this.setCanAttack(true);
+					
 				} else {
-					this.setPuedeAtacar(false);
-					System.out.println(this.getNombrePokemon() + " no se descongeló");
+					
+					this.setCanAttack(false);
+					System.out.println(this.getName() + " no se descongelÃ³");
+					
 				}
 				break;
-			case DEBILITADO:
+			case DEBILITATED:
 				break;
-			case ENVENENADO:
+			case POISONED:
 				break;
-			case GRAVEMENTE_ENVENENADO:
+			case BADLY_POISONED:
 				break;
 			// Modifies speed of Pokemon if can attack (reduces by 50%)
-			case PARALIZADO:
-				if (this.getEstadoPersistente().isPuedeMoverseEstadoPersistente()) {
-					this.setVel((this.getVel() * 50) / 100);
-					this.setPuedeAtacar(true);
-					System.out.println(this.getNombrePokemon() + " pudo atacar paralizado");
+			case PARALYZED:
+				if (this.getStatusCondition().getCanMoveEphemeralState()) {
+					
+					this.setSpeed((this.getSpeed() * 50) / 100);
+					
+					this.setCanAttack(true);
+					
+					System.out.println(this.getName() + " pudo atacar paralizado");
+					
 				} else {
-					this.setPuedeAtacar(false);
-					System.out.println(this.getNombrePokemon() + " no pudo atacar paralizado");
+					
+					this.setCanAttack(false);
+					
+					System.out.println(this.getName() + " no pudo atacar paralizado");
+					
 				}
 				break;
 			// Reduces current PS by 6.25% and damage by 50%
-			case QUEMADO:
+			case BURNED:
 				if (isAttackingBurned) {
-					this.setAta(this.getAta() / 2);
-					this.setPuedeAtacar(true);
+					
+					this.setAttack(this.getAttack() / 2);
+					
+					this.setCanAttack(true);
+					
 				} else {
+					
 					reducePs = this.getPs() * 0.0625f;
+					
 					this.setPs(this.getPs() - reducePs);
 
-					// Reset parameters (when a Pokemon is burned, at the end of the round, he will
-					// lose PS, so we will pass directly through the method)
-					if(this.getAta() != this.getInitialAta()) {
+					// Reset parameters (when a Pokemon is burned, at the end of the round, he will lose PS, so we will pass directly through the method)
+					if(this.getAttack() != this.getInitialAttack()) {
+						
 						this.restartParametersEffect();
+						
 					}
 					
-					this.setPuedeAtacar(true);
-					System.out.println(this.getNombrePokemon() + " se resiente de la quemadura XD - PS actuales : "
-							+ this.getPs());
+					this.setCanAttack(true);
+					
+					System.out.println(this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
 				}
 				break;
 			default:

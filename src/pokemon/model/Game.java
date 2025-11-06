@@ -24,74 +24,74 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import pokemon.enums.EstadosEnum;
+import pokemon.enums.StatusConditions;
 
 public class Game {
 	private static final String SAMPLE_CSV_ALL_POKEMON = "./data/pokemonList.csv";
-	private static final String SAMPLE_CSV_ALL_POKEMON_HABS = "./data/pokemonList2.csv";
-	private static final String SAMPLE_CSV_ALL_HABS = "./data/habsList.csv";
+	private static final String SAMPLE_CSV_ALL_POKEMON_ABS = "./data/pokemonList2.csv";
+	private static final String SAMPLE_CSV_ALL_ABS = "./data/absList.csv";
 	private static final String SAMPLE_CSV_ALL_TYPES = "./data/typesList.txt";
 	private static final String SAMPLE_CSV_ALL_POKEMON_TYPES = "./data/pokemonList3.csv";
-	private static final String SAMPLE_CSV_ALL_ATTACS = "./data/attacsList.txt";
-	private static final String SAMPLE_CSV_ALL_ATTACS_FOREACH_POKEMON = "./data/attacsForeachPokemon.txt";
+	private static final String SAMPLE_CSV_ALL_ATTACKS = "./data/attacksList.txt";
+	private static final String SAMPLE_CSV_ALL_ATTACKS_FOREACH_POKEMON = "./data/attacksForEachPokemon.txt";
 
-	private ArrayList<Pokemon> pokemons;
-	private HashMap<String, ArrayList<PokemonType>> tipoPkPorPokemon;
-	private ArrayList<Habilidad> habilidades;
-	private HashMap<String, HashMap<String, ArrayList<Habilidad>>> habilidadPorPokemon;
+	private ArrayList<Pokemon> pokemon;
+	private HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon;
+	private ArrayList<Ability> abilities;
+	private HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon;
 	private ArrayList<PokemonType> types;
-	private HashMap<String, HashMap<String, ArrayList<PokemonType>>> efectoPorTipos;
-	private ArrayList<Ataque> ataques;
-	private HashMap<Integer, HashMap<String, ArrayList<Integer>>> ataquesPorPokemon;
-	private HashMap<String, ArrayList<Pokemon>> pokemonsPorTipo;
+	private HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes;
+	private ArrayList<Attack> attacks;
+	private HashMap<Integer, HashMap<String, ArrayList<Integer>>> attacksPerPokemon;
+	private HashMap<String, ArrayList<Pokemon>> pokemonPerType;
 
 	private Player player;
 	private IAPlayer IA;
 
 	public Game() {
-		this.pokemons = new ArrayList<>();
-		this.tipoPkPorPokemon = new HashMap<>();
-		this.habilidades = new ArrayList<>();
-		this.habilidadPorPokemon = new HashMap<>();
+		this.pokemon = new ArrayList<>();
+		this.pokemonTypePerPokemon = new HashMap<>();
+		this.abilities = new ArrayList<>();
+		this.abilitiesPerPokemon = new HashMap<>();
 		this.types = new ArrayList<>();
-		this.efectoPorTipos = new HashMap<>();
-		this.ataques = new ArrayList<>();
-		this.ataquesPorPokemon = new HashMap<>();
+		this.effectPerTypes = new HashMap<>();
+		this.attacks = new ArrayList<>();
+		this.attacksPerPokemon = new HashMap<>();
 		this.player = new Player();
 		this.IA = new IAPlayer();
-		this.pokemonsPorTipo = new HashMap<>();
+		this.pokemonPerType = new HashMap<>();
 	}
 
-	public ArrayList<Pokemon> getPokemons() {
-		return pokemons;
+	public ArrayList<Pokemon> getPokemon() {
+		return pokemon;
 	}
 
-	public void setPokemons(ArrayList<Pokemon> pokemons) {
-		this.pokemons = pokemons;
+	public void setPokemon(ArrayList<Pokemon> pokemon) {
+		this.pokemon = pokemon;
 	}
 
-	public ArrayList<Habilidad> getHabilidades() {
-		return habilidades;
+	public ArrayList<Ability> getHabilities() {
+		return abilities;
 	}
 
-	public void setHabilidades(ArrayList<Habilidad> habilidades) {
-		this.habilidades = habilidades;
+	public void setHabilities(ArrayList<Ability> abilities) {
+		this.abilities = abilities;
 	}
 
-	public HashMap<String, HashMap<String, ArrayList<Habilidad>>> getHabilidadPorPokemon() {
-		return habilidadPorPokemon;
+	public HashMap<String, HashMap<String, ArrayList<Ability>>> getHabilitiesPerPokemon() {
+		return abilitiesPerPokemon;
 	}
 
-	public void setHabilidadPorPokemon(HashMap<String, HashMap<String, ArrayList<Habilidad>>> habilidadPorPokemon) {
-		this.habilidadPorPokemon = habilidadPorPokemon;
+	public void setHabilitiesPerPokemon(HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon) {
+		this.abilitiesPerPokemon = abilitiesPerPokemon;
 	}
 
-	public HashMap<String, ArrayList<PokemonType>> getTipoPkPorPokemon() {
-		return tipoPkPorPokemon;
+	public HashMap<String, ArrayList<PokemonType>> getPokemonTypePerPokemon() {
+		return pokemonTypePerPokemon;
 	}
 
-	public void setTipoPkPorPokemon(HashMap<String, ArrayList<PokemonType>> typePorPokemon) {
-		this.tipoPkPorPokemon = typePorPokemon;
+	public void setPokemonTypePerPokemon(HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon) {
+		this.pokemonTypePerPokemon = pokemonTypePerPokemon;
 	}
 
 	public ArrayList<PokemonType> getTypes() {
@@ -102,28 +102,28 @@ public class Game {
 		this.types = types;
 	}
 
-	public HashMap<String, HashMap<String, ArrayList<PokemonType>>> getEfectoPorTipos() {
-		return efectoPorTipos;
+	public HashMap<String, HashMap<String, ArrayList<PokemonType>>> getEffectPerTypes() {
+		return effectPerTypes;
 	}
 
-	public void setEfectoPorTipos(HashMap<String, HashMap<String, ArrayList<PokemonType>>> efectoPorTipos) {
-		this.efectoPorTipos = efectoPorTipos;
+	public void setEffectPerTypes(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
+		this.effectPerTypes = effectPerTypes;
 	}
 
-	public ArrayList<Ataque> getAtaques() {
-		return ataques;
+	public ArrayList<Attack> getAttacks() {
+		return attacks;
 	}
 
-	public void setAtaques(ArrayList<Ataque> ataques) {
-		this.ataques = ataques;
+	public void setAttacks(ArrayList<Attack> attacks) {
+		this.attacks = attacks;
 	}
 
-	public HashMap<Integer, HashMap<String, ArrayList<Integer>>> getAtaquesPorPokemon() {
-		return ataquesPorPokemon;
+	public HashMap<Integer, HashMap<String, ArrayList<Integer>>> getAttacksPerPokemon() {
+		return attacksPerPokemon;
 	}
 
-	public void setAtaquesPorPokemon(HashMap<Integer, HashMap<String, ArrayList<Integer>>> ataquesPorPokemon) {
-		this.ataquesPorPokemon = ataquesPorPokemon;
+	public void setAttacksPerPokemon(HashMap<Integer, HashMap<String, ArrayList<Integer>>> attacksPerPokemon) {
+		this.attacksPerPokemon = attacksPerPokemon;
 	}
 
 	public Player getPlayer() {
@@ -142,16 +142,15 @@ public class Game {
 		IA = iA;
 	}
 
-	public HashMap<String, ArrayList<Pokemon>> getPokemonsPorTipo() {
-		return pokemonsPorTipo;
+	public HashMap<String, ArrayList<Pokemon>> getPokemonPerType() {
+		return pokemonPerType;
 	}
 
-	public void setPokemonsPorTipo(HashMap<String, ArrayList<Pokemon>> pokemonsPorTipo) {
-		this.pokemonsPorTipo = pokemonsPorTipo;
+	public void setPokemonPerType(HashMap<String, ArrayList<Pokemon>> pokemonPerType) {
+		this.pokemonPerType = pokemonPerType;
 	}
 
-	// ==================================== SCRAPPING WEB
-	// ====================================
+	// ==================================== SCRAPPING WEB ====================================
 
 	// Add to Pokemon list all the Pokemon from 1 to 809
 	public void scrappingWebPokemon() {
@@ -163,18 +162,18 @@ public class Game {
 			for (int id = 1; id <= nbPk; id++) {
 				// Each Pokemon change by id in the url
 				String url = "https://www.pokexperto.net/index2.php?seccion=nds/nationaldex/stats&pk=" + id;
+				
 				// Gets the url
 				Document document = Jsoup.connect(url).get();
-				// Gets the "pkmain" class we are interested for estadistics
+				
+				// Gets the "pkmain" class we are interested for statistics
 				int classPkMain = 0;
 
 				// Gets the "pktitle" class for the Pokemon name
 				Element pokemonName = document.selectFirst(".pktitle");
 				String name = pokemonName.select(".mini").text();
 
-				// Counts number of "pkmain" class (there are more or less mega evolutions
-				// depending on the Pokemon, so there
-				// are more or less "pkmain" class
+				// Counts number of "pkmain" class (there are more or less mega evolutions depending on the Pokemon, so there are more or less "pkmain" class)
 				Elements nbClass = document.getElementsByClass("pkmain");
 				int nbAmount = nbClass.size();
 
@@ -206,50 +205,50 @@ public class Game {
 
 				Element pokemon = document.select(".pkmain").get(classPkMain);
 
-				// Prints the content (the current pokemon treating)
-//				System.out.println("================Pkmain name================");
-//				System.out.println(name + "-" + id);
-
-				// Gets only the first 6 estadistics elements on the table with "right" class
+				// Gets only the first 6 statistics elements on the table with "right" class
 				List<Object> pokemonStats = pokemon.select(".right").stream().limit(6).collect(Collectors.toList());
 
 				// Create Pokemon
-				Pokemon pk = new Pokemon(id, name, Integer.parseInt(((Element) pokemonStats.get(0)).text()),
-						Integer.parseInt(((Element) pokemonStats.get(1)).text()),
-						Integer.parseInt(((Element) pokemonStats.get(2)).text()),
-						Integer.parseInt(((Element) pokemonStats.get(3)).text()),
-						Integer.parseInt(((Element) pokemonStats.get(4)).text()),
-						Integer.parseInt(((Element) pokemonStats.get(5)).text()));
-				this.pokemons.add(pk);
+				Pokemon pk = new Pokemon(id, 
+										 name, Integer.parseInt(((Element) pokemonStats.get(0)).text()),
+										 Integer.parseInt(((Element) pokemonStats.get(1)).text()),
+										 Integer.parseInt(((Element) pokemonStats.get(2)).text()),
+										 Integer.parseInt(((Element) pokemonStats.get(3)).text()),
+										 Integer.parseInt(((Element) pokemonStats.get(4)).text()),
+										 Integer.parseInt(((Element) pokemonStats.get(5)).text()));
+				this.pokemon.add(pk);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// Add to hability list all the habilities (309)
-	public void scrappingWebAllHabs() {
+	// Add to ability list all the abilities (309)
+	public void scrappingWebAllAbs() {
 		try {
 			String url = "https://www.wikidex.net/wiki/Lista_de_habilidades";
+			
 			// Gets the url
 			Document document = Jsoup.connect(url).get();
-			// Selects the habilities table
+			
+			// Selects the abilities table
 			Elements table = document.select(".tabpokemon");
+			
 			// Selects all the "tr" in the table
 			Elements elementObjTr = table.first().children().select("tr");
 
 			for (Element tr : elementObjTr) {
-				// We not consider the first "tr" cause it represents the titles (# represents
-				// the column name for habilities Id)
+				
+				// We not consider the first "tr" cause it represents the titles (# represents the column name for abilities Id)
 				if (!tr.firstElementChild().text().equals("#")) {
-					// We get the 2 first "td" (representing the name and the description effect) -
-					// we remove all diacritics
-					Habilidad hab = new Habilidad(Integer.parseInt(tr.firstElementChild().text()),
-							Normalizer.normalize(tr.select("td>a").get(0).text(), Normalizer.Form.NFKD)
-									.replaceAll("[^\\p{ASCII}]", ""),
-							Normalizer.normalize(tr.select("td").get(2).text(), Normalizer.Form.NFKD)
-									.replaceAll("[^\\p{ASCII}]", ""));
-					this.habilidades.add(hab);
+					
+					// We get the 2 firsts "td" (representing the name and the description effect) - we remove all accents
+					Ability ablty = new Ability(Integer.parseInt(tr.firstElementChild().text()),
+												Normalizer.normalize(tr.select("td>a").get(0).text(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""),
+										  		Normalizer.normalize(tr.select("td").get(2).text(), Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", ""));
+					
+					this.abilities.add(ablty);
+					
 				}
 			}
 		} catch (IOException e) {
@@ -257,56 +256,59 @@ public class Game {
 		}
 	}
 
-	// Reads all the possible habilities for diferent Pokemon and put it to dico
-	public HashMap<String, HashMap<String, ArrayList<Habilidad>>> scrappingWebReadHabsFromPokemonAllTables() {
+	// Reads all the possible abilities for different Pokemon and put it to dico
+	public HashMap<String, HashMap<String, ArrayList<Ability>>> scrappingWebReadAbsFromPokemonAllTables() {
 		try {
 			String url = "https://www.wikidex.net/wiki/Lista_de_Pok%C3%A9mon_con_sus_habilidades";
+			
 			// Gets the url
 			Document document = Jsoup.connect(url).get();
-			// Select all the pokemon tables we are interested (each table represents a
-			// generation, we have a total of 809 pokemon in 7 tables)
+			
+			// Select all the Pokemon tables we are interested (each table represents a generation, we have a total of 809 Pokemon in 7 tables)
 			for (int tab = 0; tab < 7; tab++) {
 
 				// We get each table
 				Element table = document.select(".tabpokemon").get(tab);
+				
 				// We get each <tr> from the table concerned
 				Elements elementObjTr = table.select("tr");
 
 				for (Element tPk : elementObjTr) {
+					
 					// We don't take the first <tr> line (represents the name of the columns)
-					if (!tPk.firstElementChild().text().equals("Nº")) {
-						// We don't want the mega evolutions (they have the same number as the last
-						// evolution of the Pokemon)
-						if (!this.habilidadPorPokemon.containsKey(tPk.select("td").get(0).text())) {
-							// Hash Map to put al the habilities for each Pokemon
-							HashMap<String, ArrayList<Habilidad>> habs = new HashMap<>();
-							// List of normal habilities for each pokemon
-							ArrayList<Habilidad> pokemonHabs = new ArrayList<>();
-							// List of oculted habilities for each pokemon
-							ArrayList<Habilidad> pokemonHabsOcultas = new ArrayList<>();
-							// First hability
-							Optional<Habilidad> h;
-							// Second hability
-							Habilidad h2;
-							// Oculted hability
-							Optional<Habilidad> hO;
+					if (!tPk.firstElementChild().text().equals("NÂº")) {
+						
+						// We don't want the mega evolutions (they have the same number as the last evolution of the Pokemon)
+						if (!this.abilitiesPerPokemon.containsKey(tPk.select("td").get(0).text())) {
+							
+							// Hash Map to put al the abilities for each Pokemon
+							HashMap<String, ArrayList<Ability>> abs = new HashMap<>();
+							
+							// List of normal abilities for each Pokemon
+							ArrayList<Ability> pokemonAbs = new ArrayList<>();
+							
+							// List of hidden abilities for each Pokemon
+							ArrayList<Ability> pokemonHiddenAbs = new ArrayList<>();
+							
+							// First ability
+							Optional<Ability> ablty;
+							
+							// Second ability
+							Ability ablty2;
+							
+							// Hidden ability
+							Optional<Ability> abltyHid;
 
-//								System.out.println("================Pkmain id================");
-//								System.out.println(tPk.select("td").get(0).text());
-//								System.out.println(tPk.select("td").size() + " columns");
-
-							// Depending on the number of columns, there are more or less habilities (each
-							// hability is in a column)
+							// Depending on the number of columns, there are more or less abilities (each ability is in a column)
 							int nbTd = tPk.select("td").size();
 
 							switch (nbTd) {
-							// There's only one hability, so we put it as normal hability
+							// There's only one ability, so we put it as normal ability
 							case 6:
-								// We remove all the digits from the hability and we search the hability in our
-								// list of habilities (we compare by name)
-								h = this.habilidades
+								// We remove all the digits from the ability and we search the ability in our list of abilities (we compare by name)
+								ablty = this.abilities
 										.stream().filter(
-												habil -> habil.getNombreHab()
+												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
 																		tPk.select("td").get(5).text()
@@ -314,21 +316,25 @@ public class Game {
 																		Normalizer.Form.NFKD)
 																.replaceAll("[^\\p{ASCII}]", "")))
 										.findFirst();
-								// Habilities are optional, so we do a condition of nullability
-								if (h.isPresent()) {
-									// We put the hability in the normal list of habilities
-									h2 = new Habilidad(h.get().getIdHab(), h.get().getNombreHab(),
-											h.get().getDescripcionHab());
-									pokemonHabs.add(h2);
+								
+								// Abilities are optional, so we do a condition of nullability
+								if (ablty.isPresent()) {
+									
+									// We put the ability in the normal list of abilities
+									ablty2 = new Ability(ablty.get().getId(), 
+														 ablty.get().getName(),
+														 ablty.get().getDescription());
+									
+									pokemonAbs.add(ablty2);
+									
 								}
-								// We put the normal list of habilities in the dico as "Habilidad" (normal
-								// hability)
-								habs.put("Habilidad", pokemonHabs);
+								// We put the normal list of abilities in the dico as "Habilidad" (normal ability)
+								abs.put("Habilidad", pokemonAbs);
 								break;
 							case 7:
-								h = this.habilidades
+								ablty = this.abilities
 										.stream().filter(
-												habil -> habil.getNombreHab()
+												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
 																		tPk.select("td").get(5).text()
@@ -336,16 +342,21 @@ public class Game {
 																		Normalizer.Form.NFKD)
 																.replaceAll("[^\\p{ASCII}]", "")))
 										.findFirst();
-								if (h.isPresent()) {
-									h2 = new Habilidad(h.get().getIdHab(), h.get().getNombreHab(),
-											h.get().getDescripcionHab());
-									pokemonHabs.add(h2);
+								
+								if (ablty.isPresent()) {
+									
+									ablty2 = new Ability(ablty.get().getId(), 
+														 ablty.get().getName(),
+														 ablty.get().getDescription());
+												
+									pokemonAbs.add(ablty2);
+									
 								}
-								habs.put("Habilidad", pokemonHabs);
+								abs.put("Habilidad", pokemonAbs);
 
-								hO = this.habilidades
+								abltyHid = this.abilities
 										.stream().filter(
-												habil -> habil.getNombreHab()
+												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
 																		tPk.select("td").get(6).text()
@@ -353,17 +364,22 @@ public class Game {
 																		Normalizer.Form.NFKD)
 																.replaceAll("[^\\p{ASCII}]", "")))
 										.findFirst();
-								if (hO.isPresent()) {
-									h2 = new Habilidad(hO.get().getIdHab(), hO.get().getNombreHab(),
-											hO.get().getDescripcionHab());
-									pokemonHabsOcultas.add(h2);
+								
+								if (abltyHid.isPresent()) {
+									
+									ablty2 = new Ability(abltyHid.get().getId(), 
+														 abltyHid.get().getName(),
+													     abltyHid.get().getDescription());
+									
+									pokemonHiddenAbs.add(ablty2);
+									
 								}
-								habs.put("Habilidad oculta", pokemonHabsOcultas);
+								abs.put("Habilidad oculta", pokemonHiddenAbs);
 								break;
 							case 8:
-								h = this.habilidades
+								ablty = this.abilities
 										.stream().filter(
-												habil -> habil.getNombreHab()
+												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
 																		tPk.select("td").get(5).text()
@@ -371,15 +387,20 @@ public class Game {
 																		Normalizer.Form.NFKD)
 																.replaceAll("[^\\p{ASCII}]", "")))
 										.findFirst();
-								if (h.isPresent()) {
-									h2 = new Habilidad(h.get().getIdHab(), h.get().getNombreHab(),
-											h.get().getDescripcionHab());
-									pokemonHabs.add(h2);
+								
+								if (ablty.isPresent()) {
+									
+									ablty2 = new Ability(ablty.get().getId(), 
+														 ablty.get().getName(),
+														 ablty.get().getDescription());
+									
+									pokemonAbs.add(ablty2);
+									
 								}
 
-								h = this.habilidades
+								ablty = this.abilities
 										.stream().filter(
-												habil -> habil.getNombreHab()
+												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
 																		tPk.select("td").get(6).text()
@@ -387,24 +408,28 @@ public class Game {
 																		Normalizer.Form.NFKD)
 																.replaceAll("[^\\p{ASCII}]", "")))
 										.findFirst();
-								if (h.isPresent()) {
-									h2 = new Habilidad(h.get().getIdHab(), h.get().getNombreHab(),
-											h.get().getDescripcionHab());
-									pokemonHabs.add(h2);
+								
+								if (ablty.isPresent()) {
+									
+									ablty2 = new Ability(ablty.get().getId(), 
+														 ablty.get().getName(),
+														 ablty.get().getDescription());
+									
+									pokemonAbs.add(ablty2);
+									
 								}
-								habs.put("Habilidad", pokemonHabs);
+								abs.put("Habilidad", pokemonAbs);
 
-								// There's only (at the moment) one Pokemon that has 2 oculted habilities. We do
-								// a split (with "/", cause there are not 2 columns for each hability)
-								// For the first hability, we remove the last white space (replaceAll("\\s","")
-								// cause there are not spaces in the word) before the ("/")
-								// For the second hability, we remove the first white space (trim()) after the
-								// ("/")
+								// There's only (at the moment) one Pokemon that has 2 hidden abilities. 
+								// We do a split (with "/", cause there are not 2 columns for each ability)
+								// For the first ability, we remove the last white space (replaceAll("\\s","") cause there are not spaces in the word) before the ("/")
+								// For the second ability, we remove the first white space (trim()) after the ("/")
 								if (tPk.select("td").get(0).text().equals("744")) {
-									hO = this.habilidades
+									
+									abltyHid = this.abilities
 											.stream().filter(
 													habil -> habil
-															.getNombreHab().equals(
+															.getName().equals(
 																	Normalizer
 																			.normalize(
 																					tPk.select("td").get(7).text()
@@ -417,15 +442,21 @@ public class Game {
 																					Normalizer.Form.NFKD)
 																			.replaceAll("[^\\p{ASCII}]", "")))
 											.findFirst();
-									if (hO.isPresent()) {
-										h2 = new Habilidad(hO.get().getIdHab(), hO.get().getNombreHab(),
-												hO.get().getDescripcionHab());
-										pokemonHabsOcultas.add(h2);
+									
+									if (abltyHid.isPresent()) {
+										
+										ablty2 = new Ability(abltyHid.get().getId(), 
+															 abltyHid.get().getName(),
+														     abltyHid.get().getDescription());
+										
+										pokemonHiddenAbs.add(ablty2);
+										
 									}
-									hO = this.habilidades
+									
+									abltyHid = this.abilities
 											.stream().filter(
 													habil -> habil
-															.getNombreHab().equals(
+															.getName().equals(
 																	Normalizer
 																			.normalize(
 																					tPk.select("td").get(7).text()
@@ -437,14 +468,19 @@ public class Game {
 																					Normalizer.Form.NFKD)
 																			.replaceAll("[^\\p{ASCII}]", "")))
 											.findFirst();
-									if (hO.isPresent()) {
-										h2 = new Habilidad(hO.get().getIdHab(), hO.get().getNombreHab(),
-												hO.get().getDescripcionHab());
-										pokemonHabsOcultas.add(h2);
+									
+									if (abltyHid.isPresent()) {
+										
+										ablty2 = new Ability(abltyHid.get().getId(), 
+															 abltyHid.get().getName(),
+														     abltyHid.get().getDescription());
+										
+										pokemonHiddenAbs.add(ablty2);
+										
 									}
 								} else {
-									hO = this.habilidades.stream()
-											.filter(habil -> habil.getNombreHab()
+									abltyHid = this.abilities.stream()
+											.filter(habil -> habil.getName()
 													.equals(Normalizer
 															.normalize(
 																	tPk.select("td").get(7).text()
@@ -452,19 +488,27 @@ public class Game {
 																	Normalizer.Form.NFKD)
 															.replaceAll("[^\\p{ASCII}]", "")))
 											.findFirst();
-									if (hO.isPresent()) {
-										h2 = new Habilidad(hO.get().getIdHab(), hO.get().getNombreHab(),
-												hO.get().getDescripcionHab());
-										pokemonHabsOcultas.add(h2);
+									
+									if (abltyHid.isPresent()) {
+										
+										ablty2 = new Ability(abltyHid.get().getId(), 
+												             abltyHid.get().getName(),
+														     abltyHid.get().getDescription());
+										
+										pokemonHiddenAbs.add(ablty2);
+										
 									}
 								}
-								habs.put("Habilidad oculta", pokemonHabsOcultas);
+								
+								abs.put("Habilidad oculta", pokemonHiddenAbs);
 								break;
 							}
 
 							// We put the dico in our principal var
-							if (!this.habilidadPorPokemon.containsKey(tPk.select("td").get(0).text())) {
-								this.habilidadPorPokemon.put(tPk.select("td").get(0).text(), habs);
+							if (!this.abilitiesPerPokemon.containsKey(tPk.select("td").get(0).text())) {
+								
+								this.abilitiesPerPokemon.put(tPk.select("td").get(0).text(), abs);
+								
 							}
 						}
 					}
@@ -473,13 +517,14 @@ public class Game {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return this.habilidadPorPokemon;
+		return this.abilitiesPerPokemon;
 	}
 
-	// Read all the possible types for diferent Pokemon and put it to dico
-	public HashMap<String, ArrayList<PokemonType>> scrappingWebReadTypeForeachPokemon() {
+	// Read all the possible types for different Pokemon and put it to dico
+	public HashMap<String, ArrayList<PokemonType>> scrappingWebReadTypeForEachPokemon() {
 		try {
 			String url = "https://www.wikidex.net/wiki/Lista_de_Pok%C3%A9mon_con_sus_habilidades";
+			
 			// Gets the url
 			Document document = Jsoup.connect(url).get();
 
@@ -487,24 +532,25 @@ public class Game {
 
 				// We get each table
 				Element table = document.select(".tabpokemon").get(tab);
+				
 				// We get each <tr> from the table concerned
 				Elements elementObjTr = table.select("tr");
 
 				for (Element tPk : elementObjTr) {
+					
 					// We don't take the first <tr> line (represents the name of the columns)
-					if (!tPk.firstElementChild().text().equals("Nº")) {
-						if (!this.tipoPkPorPokemon.containsKey(tPk.select("td").get(0).text())) {
+					if (!tPk.firstElementChild().text().equals("NÂº")) {
+						
+						if (!this.pokemonTypePerPokemon.containsKey(tPk.select("td").get(0).text())) {
+							
 							ArrayList<PokemonType> pokemonTypes = new ArrayList<>();
 							Optional<PokemonType> optPkT1;
 							Optional<PokemonType> optPkT2;
 							Element aAfterTD;
 
-//									System.out.println("================Pkmain id================");
-//									System.out.println(tPk.select("td").get(0).text());
-
-							// Gets first type (there will be one everytime at position 3)
+							// Gets first type (there will be one every time at position 3)
 							optPkT1 = this.types.stream()
-									.filter(tp -> tp.getNombreTipo()
+									.filter(tp -> tp.getName()
 											.equals(Normalizer
 													.normalize(
 															tPk.select("td").get(3).select("a").first().attr("title")
@@ -515,16 +561,19 @@ public class Game {
 									.findFirst();
 
 							if (optPkT1.isPresent()) {
+								
 								pokemonTypes.add(optPkT1.get());
+								
 							}
 
 							// Gets second type (it can be null)
-							// We check if there is an "a" to get the type name (if true, the Pokemon only
-							// has one type, so skip column at position 4)
+							// We check if there is an "a" to get the type name (if true, the Pokemon only has one type, so skip column at position 4)
 							aAfterTD = tPk.select("td").get(4).select("a").first();
+							
 							if (aAfterTD != null) {
+								
 								optPkT2 = this.types.stream()
-										.filter(tp -> tp.getNombreTipo().equals(Normalizer
+										.filter(tp -> tp.getName().equals(Normalizer
 												.normalize(
 														tPk.select("td").get(4).select("a").first().attr("title")
 																.replaceAll("[0-9]", "").toUpperCase(),
@@ -534,13 +583,17 @@ public class Game {
 										.findFirst();
 
 								if (optPkT2.isPresent()) {
+									
 									pokemonTypes.add(optPkT2.get());
+									
 								}
 							}
 
 							// We put the dico in our principal var
-							if (!this.tipoPkPorPokemon.containsKey(tPk.select("td").get(0).text())) {
-								this.tipoPkPorPokemon.put(tPk.select("td").get(0).text(), pokemonTypes);
+							if (!this.pokemonTypePerPokemon.containsKey(tPk.select("td").get(0).text())) {
+								
+								this.pokemonTypePerPokemon.put(tPk.select("td").get(0).text(), pokemonTypes);
+								
 							}
 						}
 					}
@@ -549,21 +602,21 @@ public class Game {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return this.tipoPkPorPokemon;
+		return this.pokemonTypePerPokemon;
 	}
 
-	// Gets all the attacs
-	public void scrappingWebAttacs() {
+	// Gets all the attacks
+	public void scrappingWebAttacks() {
 		try {
 			String url = "https://www.pokexperto.net/index2.php?seccion=nds/movimientos_pokemon";
+			
 			// Gets the url and converts to String (HTML)
-			// Names are in spanish and english, so we remove the english version with a
-			// regex
-			// The first replace, it's used to remove the href (<a>) and the content after
-			// br
+			// Names are in Spanish and English, so we remove the English version with a regex
+			// The first replace, it's used to remove the href (<a>) and the content after br
 			// Other ones are used to remove spaces and the content after br
 			String documentStr = Jsoup.connect(url).get().toString().replaceAll("<br><[^>]*>.*?/a>", "")
-					.replaceAll("<br>\n\\s{2,}.*?/td", "</td>").replaceAll("<br>\n\\s{2,}.*?/th", "</th>");
+																	.replaceAll("<br>\n\\s{2,}.*?/td", "</td>")
+																	.replaceAll("<br>\n\\s{2,}.*?/th", "</th>");
 
 			// Parse the HTML to Document
 			Document document = Jsoup.parse(documentStr);
@@ -575,28 +628,30 @@ public class Game {
 			Elements elementObjTr = table.select("tr");
 
 			for (Element ta : elementObjTr) {
-				// Skip first line (titles of columns) andattac number 905 (there are no values)
+				
+				// Skip first line (titles of columns) and attack number 905 (there are no values)
 				if (!ta.firstElementChild().text().equals("#") && !ta.select("th").text().equals("905")) {
 
 					// Sets the new Attack
-					Ataque atq = new Ataque(Integer.parseInt(ta.select("th").text()), ta.select("td").get(0).text(),
-							ta.select("td").get(1).attr("sorttable_customkey").toUpperCase(),
-							ta.select("td").get(3).text().equals("--") ? 0
-									: Integer.parseInt(ta.select("td").get(3).text()),
-							Integer.parseInt(ta.select("td").get(4).text()),
-							ta.select("td").get(5).text().equals("--") ? 0
-									: Integer.parseInt(ta.select("td").get(5).text().substring(0,
+					Attack atk = new Attack(Integer.parseInt(ta.select("th").text()), ta.select("td").get(0).text(),
+											ta.select("td").get(1).attr("sorttable_customkey").toUpperCase(),
+											ta.select("td").get(3).text().equals("--") ? 0 : Integer.parseInt(ta.select("td").get(3).text()),
+											Integer.parseInt(ta.select("td").get(4).text()),
+											ta.select("td").get(5).text().equals("--") ? 0 : Integer.parseInt(ta.select("td").get(5).text().substring(0,
 											ta.select("td").get(5).text().length() - 1)),
-							ta.select("td").get(6).text().replace(",", ""));
+											ta.select("td").get(6).text().replace(",", ""));
 
-					// There are some attacs that have 2 base types, so we put it in a list
+					// There are some attacks that have 2 base types, so we put it in a list
 					Elements bases = ta.select("td").get(2).select("img");
-					for (Element b : bases) {
-						atq.addBase(b.attr("alt"));
+					
+					for (Element base : bases) {
+						
+						atk.addBase(base.attr("alt"));
+						
 					}
 
-					// Adds the attac to the general attacs list
-					this.ataques.add(atq);
+					// Adds the attack to the general attacks list
+					this.attacks.add(atk);
 				}
 			}
 		} catch (IOException e) {
@@ -604,113 +659,123 @@ public class Game {
 		}
 	}
 
-	// Gets all the attacs for each Pokemon
-	// TD + TH [1-(235,664,789,790),6-722,7-650,8-494,9-387,10-152,
-	// 11-1]
-	public void scrappingWebAttacsForEachPokemon() {
+	// Gets all the attacks for each Pokemon
+	// TD + TH [1-(235,664,789,790),6-722,7-650,8-494,9-387,10-152,11-1]
+	public void scrappingWebAttacksForEachPokemon() {
 		try {
 
-			for (int iP = 1; iP < 808; iP++) {
+			for (int iPk = 1; iPk < 808; iPk++) {
 
-				// Some Pokemon have only one attac (they are treated manually)
-				if (iP != 235 && iP != 664 && iP != 789 && iP != 790) {
+				// Some Pokemon have only one attack (they are treated manually)
+				if (iPk != 235 && iPk != 664 && iPk != 789 && iPk != 790) {
 
-					HashMap<String, ArrayList<Integer>> todosLosAtas = new HashMap<>();
+					HashMap<String, ArrayList<Integer>> AllAttacks = new HashMap<>();
 
-					ArrayList<Integer> ataFisicos = new ArrayList<>();
-					ArrayList<Integer> ataEspeciales = new ArrayList<>();
-					ArrayList<Integer> ataOtros = new ArrayList<>();
+					ArrayList<Integer> physicalAttacks = new ArrayList<>();
+					ArrayList<Integer> specialAttacks = new ArrayList<>();
+					ArrayList<Integer> otherAttacks = new ArrayList<>();
 
-					// URL foreach Pokemon
-					String url = "https://www.pokexperto.net/index2.php?seccion=nds/nationaldex/movimientos_pokemon&pk="
-							+ iP;
+					// URL for each Pokemon
+					String url = "https://www.pokexperto.net/index2.php?seccion=nds/nationaldex/movimientos_pokemon&pk=" + iPk;
 
 					// We convert the page in a string (HTML)
-					// We remove the english name version
+					// We remove the English name version
 					String documentStr = Jsoup.connect(url).get().toString().replaceAll("<br><[^>]*>.*?/td>", "</td>");
 
 					// We parse the string to a Document
 					Document document = Jsoup.parse(documentStr);
 
-					// There are 3 tables (fisic, special and others)
-					Element tableFisicos = document.getElementsByClass("bordetodos").get(0);
-					Element tableEspeciales = document.getElementsByClass("bordetodos").get(1);
-					Element tableOtros = document.getElementsByClass("bordetodos").get(2);
+					// There are 3 tables (physical, special and others)
+					Element tablePhysical = document.getElementsByClass("bordetodos").get(0);
+					Element tableSpecials = document.getElementsByClass("bordetodos").get(1);
+					Element tableOthers = document.getElementsByClass("bordetodos").get(2);
 
 					// We are interested only in <tr>
-					Elements allTrF = tableFisicos.select("tr");
-					Elements allTrE = tableEspeciales.select("tr");
-					Elements allTrO = tableOtros.select("tr");
+					Elements allTrPh = tablePhysical.select("tr");
+					Elements allTrSp = tableSpecials.select("tr");
+					Elements allTrO = tableOthers.select("tr");
 
-					// Fisic attacs
-					for (Element trF : allTrF) {
-						Optional<Ataque> atq;
-						int thSize = trF.select("th").size();
+					// Physical attacks
+					for (Element trPh : allTrPh) {
+						
+						Optional<Attack> atk;
+						int thSize = trPh.select("th").size();
 
 						// Titles are only composed by th (so we skip the first line (titles))
 						if (thSize != 0) {
+							
 							// We take only name class "bverde3"
-							if (!trF.select("th").get(0).attr("class").equals("bverde3")) {
-								// The attac name is situated at the first <td>
-								String nombreAta = trF.select("td").get(0).text();
-								// We search the attac on the attacs list by its name
-								atq = this.ataques.stream().filter(at -> at.getNombreAta().equals(nombreAta))
-										.findFirst();
+							if (!trPh.select("th").get(0).attr("class").equals("bverde3")) {
+								
+								// The attack name is situated at the first <td>
+								String attackName = trPh.select("td").get(0).text();
+								
+								// We search the attack on the attacks list by its name
+								atk = this.attacks.stream().filter(at -> at.getName().equals(attackName)).findFirst();
 
-								if (atq.isPresent()) {
-									ataFisicos.add(atq.get().getIdAta());
+								if (atk.isPresent()) {
+									
+									physicalAttacks.add(atk.get().getId());
+									
 								}
 							}
 						}
 					}
 
-					todosLosAtas.put("Ataques fisicos", ataFisicos);
+					AllAttacks.put("Ataques fisicos", physicalAttacks);
 
-					// Special attacs
-					for (Element trE : allTrE) {
-						Optional<Ataque> atq;
-						String s = trE.attr("class");
-						System.out.println(s);
-						int thSize = trE.select("th").size();
+					// Special attacks
+					for (Element trSp : allTrSp) {
+						
+						Optional<Attack> atk;
+						int thSize = trSp.select("th").size();
 
 						if (thSize != 0) {
-							if (!trE.select("th").get(0).attr("class").equals("bverde3")) {
-								String nombreAta = trE.select("td").get(0).text();
-								atq = this.ataques.stream().filter(at -> at.getNombreAta().equals(nombreAta))
-										.findFirst();
+							
+							if (!trSp.select("th").get(0).attr("class").equals("bverde3")) {
+								
+								String attackName = trSp.select("td").get(0).text();
+								
+								atk = this.attacks.stream().filter(at -> at.getName().equals(attackName)).findFirst();
 
-								if (atq.isPresent()) {
-									ataEspeciales.add(atq.get().getIdAta());
+								if (atk.isPresent()) {
+									
+									specialAttacks.add(atk.get().getId());
+									
 								}
 							}
 						}
 					}
 
-					todosLosAtas.put("Ataques especiales", ataEspeciales);
+					AllAttacks.put("Ataques especiales", specialAttacks);
 
-					// Other attacs
+					// Other attacks
 					for (Element trO : allTrO) {
-						Optional<Ataque> atq;
-						String s = trO.attr("class");
-						System.out.println(s);
+						
+						Optional<Attack> atk;
 						int thSize = trO.select("th").size();
 
 						if (thSize != 0) {
+							
 							if (!trO.select("th").get(0).attr("class").equals("bverde3")) {
-								String nombreAta = trO.select("td").get(0).text();
-								atq = this.ataques.stream().filter(at -> at.getNombreAta().equals(nombreAta))
-										.findFirst();
+								
+								String attackName = trO.select("td").get(0).text();
+								
+								atk = this.attacks.stream().filter(at -> at.getName().equals(attackName)).findFirst();
 
-								if (atq.isPresent()) {
-									ataOtros.add(atq.get().getIdAta());
+								if (atk.isPresent()) {
+									
+									otherAttacks.add(atk.get().getId());
+									
 								}
 							}
 						}
 					}
 
-					todosLosAtas.put("Ataques otros", ataOtros);
-					// We put all the attacs for the current Pokemon
-					this.ataquesPorPokemon.put(iP, todosLosAtas);
+					AllAttacks.put("Ataques otros", otherAttacks);
+					
+					// We put all the attacks for the current Pokemon
+					this.attacksPerPokemon.put(iPk, AllAttacks);
 				}
 			}
 		} catch (IOException e) {
@@ -718,151 +783,187 @@ public class Game {
 		}
 	}
 
-	// ==================================== WRITTERS
-	// ====================================
+	// ==================================== WRITTERS ====================================
 
 	// Writes in a CSV all the Pokemon from Pokemon list
 	@SuppressWarnings("resource")
-	public static void writePokemonCSV(ArrayList<Pokemon> pokemonsList) {
+	public static void writePokemonCSV(ArrayList<Pokemon> pokemonList) {
 		try {
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_POKEMON));
 
-			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("PokemonId", "PokemonName",
-					"PS", "Ata", "Def", "Vel", "AtEsp", "DefEsp"));
+			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("PokemonId", "PokemonName", "PS", "Attack", "Def", "Speed", "AttackSp", "DefSp"));
 
-			for (Pokemon p : pokemonsList) {
-				csvPrinter.printRecord(p.getIdPokemon(), p.getNombrePokemon(), p.getPs(), p.getAta(), p.getDef(),
-						p.getVel(), p.getAtEsp(), p.getDefEsp());
+			for (Pokemon pk : pokemonList) {
+				
+				csvPrinter.printRecord(pk.getId(), pk.getName(), pk.getPs(), pk.getAttack(), pk.getDef(), pk.getSpeed(), pk.getSpecialAttack(), pk.getSpecialDefense());
+				
 			}
+			
 			csvPrinter.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// Writes in a CSV all the habilities from hability list
+	// Writes in a CSV all the abilities from abilities list
 	@SuppressWarnings("resource")
-	public static void writeHabilitiesCSV(ArrayList<Habilidad> habilidadesList) {
+	public static void writeAbilitiesCSV(ArrayList<Ability> abilitiesList) {
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_HABS));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_ABS));
 
-			CSVPrinter csvPrinter = new CSVPrinter(writer,
-					CSVFormat.DEFAULT.withHeader("HabilityId", "HabilityName", "Effect"));
+			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("AbilityId", "AbilityName", "Effect"));
 
-			for (Habilidad h : habilidadesList) {
-				csvPrinter.printRecord(h.getIdHab(), h.getNombreHab(), h.getDescripcionHab());
+			for (Ability ablty : abilitiesList) {
+				
+				csvPrinter.printRecord(ablty.getId(), ablty.getName(), ablty.getDescription());
+				
 			}
+			
 			csvPrinter.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// This method extends the CSV of pokemonList.csv in a new file
-	// (pokemonList2.csv)
-	// Appends the habilities for each Pokemon in pokemonList2.csv
+	// This method extends the CSV of pokemonList.csv in a new file (pokemonList2.csv)
+	// Appends the abilities for each Pokemon in pokemonList2.csv
 	@SuppressWarnings("resource")
-	public void AppendHabilities() {
+	public void AppendAbilities() {
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_POKEMON_HABS));
-			CSVPrinter csvPrinter = new CSVPrinter(writer,
-					CSVFormat.DEFAULT.withHeader("PokemonId", "PokemonName", "PS", "Ata", "Def", "Vel", "AtEsp",
-							"DefEsp", "Habilidad1", "Habilidad2", "Habilidad oculta1", "Habilidad oculta2"));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_POKEMON_ABS));
+			
+			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("PokemonId", "PokemonName", "PS", "Attack", "Def", "Speed", "AttackSp",
+																						"DefSp", "Ability1", "Ability2", "HiddenAbility1", "HiddenAbility2"));
 
 			FileReader fileReader = new FileReader(SAMPLE_CSV_ALL_POKEMON);
 			BufferedReader br = new BufferedReader(fileReader);
+			
 			// Skips first line
 			br.readLine();
 			StringBuilder sb = new StringBuilder();
-			String ligne;
+			String line;
 
 			// We read each line of pokemonList.csv and put it to pokemonList2.csv
-			while ((ligne = br.readLine()) != null) {
-				System.out.println("rentre 1");
-				String[] pks = ligne.split(",");
-				for (Map.Entry<String, HashMap<String, ArrayList<Habilidad>>> entry : this.habilidadPorPokemon
-						.entrySet()) {
+			while ((line = br.readLine()) != null) {
+				
+				String[] pks = line.split(",");
+				
+				for (Map.Entry<String, HashMap<String, ArrayList<Ability>>> entry : this.abilitiesPerPokemon.entrySet()) {
+					
 					if (pks[0].equals(entry.getKey())) {
-						// If there is only one dico (one hability)
+						
+						// If there is only one dico (one ability)
 						if (entry.getValue().size() == 1) {
-							sb.append("," + entry.getValue().get("Habilidad").get(0).getIdHab() + "," + "," + ",");
+							
+							sb.append("," + entry.getValue().get("Habilidad").get(0).getId() + "," + "," + ",");
+							
 						} else {
-							// If there are 2 values in dico for normal habilities
+							
+							// If there are 2 values in dico for normal abilities
 							if (entry.getValue().get("Habilidad").size() == 2) {
-								for (Habilidad h : entry.getValue().get("Habilidad")) {
-									sb.append("," + h.getIdHab());
+								
+								for (Ability ablty : entry.getValue().get("Habilidad")) {
+									
+									sb.append("," + ablty.getId());
+									
 								}
 							}
-							// If there is 1 value in dico for normal habilities
+							
+							// If there is 1 value in dico for normal abilities
 							else {
-								sb.append("," + entry.getValue().get("Habilidad").get(0).getIdHab() + ",");
+								
+								sb.append("," + entry.getValue().get("Habilidad").get(0).getId() + ",");
+								
 							}
 
-							// If there are 2 values in dico for oculted habilities
+							// If there are 2 values in dico for hidden abilities
 							if (entry.getValue().get("Habilidad oculta").size() == 2) {
-								for (Habilidad h : entry.getValue().get("Habilidad oculta")) {
-									sb.append("," + h.getIdHab());
+								
+								for (Ability ablty : entry.getValue().get("Habilidad oculta")) {
+									
+									sb.append("," + ablty.getId());
+									
 								}
 							}
-							// If there is 1 value in dico for oculted habilities
+							
+							// If there is 1 value in dico for hidden abilities
 							else {
-								sb.append("," + entry.getValue().get("Habilidad oculta").get(0).getIdHab() + ",");
+								
+								sb.append("," + entry.getValue().get("Habilidad oculta").get(0).getId() + ",");
+								
 							}
 						}
-						// Prints the line in the nex CSV
-						csvPrinter.printRecord(ligne + sb);
-						// Restart the string for habilities
+						
+						// Prints the line in the next CSV
+						csvPrinter.printRecord(line + sb);
+						
+						// Restart the string for abilities
 						sb = new StringBuilder();
 					}
 				}
 			}
+			
 			csvPrinter.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// This method extends the CSV of pokemonList2.csv in a new file
-	// (pokemonList3.csv)
+	// This method extends the CSV of pokemonList2.csv in a new file (pokemonList3.csv)
 	// Appends the Pokemon types for each Pokemon in pokemonList3.csv
 	@SuppressWarnings("resource")
 	public void AppendPokemonTypes() {
 		try {
 			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_POKEMON_TYPES));
-			CSVPrinter csvPrinter = new CSVPrinter(writer,
-					CSVFormat.DEFAULT.withHeader("PokemonId", "PokemonName", "PS", "Ata", "Def", "Vel", "AtEsp",
-							"DefEsp", "Habilidad1", "Habilidad2", "Habilidad oculta1", "Habilidad oculta2", "Tipo1",
-							"Tipo2"));
+			
+			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("PokemonId", "PokemonName", "PS", "Attack", "Def", "Speed", "AttackSp", "DefSp",
+																						"Ability1", "Ability2", "HiddenAbility1", "HiddenAbility2", "Type1", "Type2"));
 
-			FileReader fileReader = new FileReader(SAMPLE_CSV_ALL_POKEMON_HABS);
+			FileReader fileReader = new FileReader(SAMPLE_CSV_ALL_POKEMON_ABS);
 			BufferedReader br = new BufferedReader(fileReader);
+			
 			// Skips first line
 			br.readLine();
 			StringBuilder sb = new StringBuilder();
-			String ligne;
+			String line;
 
-			// We read each line of pokemonList.csv and put it to pokemonList2.csv
-			while ((ligne = br.readLine()) != null) {
-				String[] pks = ligne.split(",");
-				for (Map.Entry<String, ArrayList<PokemonType>> entry : tipoPkPorPokemon.entrySet()) {
+			// We read each line of pokemonList2.csv and put it to pokemonList3.csv
+			while ((line = br.readLine()) != null) {
+				
+				String[] pks = line.split(",");
+				
+				for (Map.Entry<String, ArrayList<PokemonType>> entry : pokemonTypePerPokemon.entrySet()) {
+					
 					if (pks[0].equals(entry.getKey())) {
-						// If there is only one dico (one hability)
+						
+						// If there is only one dico (one ability)
 						if (entry.getValue().size() == 1) {
-							sb.append("," + entry.getValue().get(0).getIdPkTipo() + ",");
+							
+							sb.append("," + entry.getValue().get(0).getId() + ",");
+							
 						} else {
-							// If there are 2 values in dico for normal habilities
-							sb.append("," + entry.getValue().get(0).getIdPkTipo() + ",");
-							sb.append(entry.getValue().get(1).getIdPkTipo());
+							
+							// If there are 2 values in dico for normal abilities
+							sb.append("," + entry.getValue().get(0).getId() + ",");
+							sb.append(entry.getValue().get(1).getId());
 
 						}
-						// Prints the line in the nex CSV
-						csvPrinter.printRecord(ligne + sb);
-						// Restart the string for habilities
+						
+						// Prints the line in the next CSV
+						csvPrinter.printRecord(line + sb);
+						
+						// Restart the string for abilities
 						sb = new StringBuilder();
+						
 					}
 				}
 			}
+			
 			csvPrinter.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -870,20 +971,22 @@ public class Game {
 
 	// Writes in a CSV all the attacks from attacks list
 	@SuppressWarnings("resource")
-	public void writeAttacsCSV() {
+	public void writeAttacksCSV() {
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_ATTACS));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_ATTACKS));
 
-			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("AttacId", "AttacName", "Tipo",
-					"Poder", "PP", "Precision", "Efecto", "Base"));
+			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("AttackId", "AttackName", "Type", "Power", "PP", "Precision", "Effect", "Base"));
 
-			for (Ataque a : this.ataques) {
-				csvPrinter.printRecord(a.getIdAta(), a.getNombreAta(), a.getTipo(), a.getPoder(), a.getPp(),
-						a.getPrecision(), a.getEfecto(),
-						a.getBases().size() > 1 ? a.getBases().get(0) + ";" + a.getBases().get(1)
-								: a.getBases().get(0));
+			for (Attack atk : this.attacks) {
+				
+				csvPrinter.printRecord(atk.getId(), atk.getName(), atk.getType(), atk.getPower(), atk.getPp(), atk.getPrecision(), atk.getEffect(),
+									   atk.getBases().size() > 1 ? atk.getBases().get(0) + ";" + atk.getBases().get(1)
+								                    			 : atk.getBases().get(0));
+				
 			}
+			
 			csvPrinter.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -891,71 +994,93 @@ public class Game {
 
 	// Writes in a CSV all the attacks from attacks list
 	@SuppressWarnings("resource")
-	public void writeAttacsCSV2() {
+	public void writeAttacksCSV2() {
 		try {
-			FileWriter fileWriter = new FileWriter(SAMPLE_CSV_ALL_ATTACS, true);
+			FileWriter fileWriter = new FileWriter(SAMPLE_CSV_ALL_ATTACKS, true);
 			BufferedWriter writer = new BufferedWriter(fileWriter);
 
-			writer.append("AttacId,AttacName,Tipo,Poder,PP,Precision,Efecto,Base");
+			writer.append("AttackId,AttackName,Type,Power,PP,Precision,Effect,Base");
 			writer.newLine();
 
-			for (Ataque a : this.ataques) {
-				writer.append(String.valueOf(a.getIdAta()) + "," + a.getNombreAta() + "," + a.getTipo() + ","
-						+ String.valueOf(a.getPoder()) + "," + String.valueOf(a.getPp()) + ","
-						+ String.valueOf(a.getPrecision()) + "," + a.getEfecto() + ",");
+			for (Attack atk : this.attacks) {
+				
+				writer.append(String.valueOf(atk.getId()) + "," + atk.getName() + "," + atk.getType() + "," +
+							  String.valueOf(atk.getPower()) + "," + String.valueOf(atk.getPp()) + "," +
+							  String.valueOf(atk.getPrecision()) + "," + atk.getEffect() + ",");
 
-				if (a.getBases().size() > 1) {
-					writer.append(String.valueOf(a.getBases().get(0) + ";" + a.getBases().get(1)));
+				if (atk.getBases().size() > 1) {
+					
+					writer.append(String.valueOf(atk.getBases().get(0) + ";" + atk.getBases().get(1)));
+					
 				} else {
-					writer.append(String.valueOf(a.getBases().get(0)));
+					
+					writer.append(String.valueOf(atk.getBases().get(0)));
+					
 				}
+				
 				writer.newLine();
+				
 			}
+			
 			writer.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// Writes in a CSV all the attacks foreach Pokemon
+	// Writes in a CSV all the attacks for each Pokemon
 	@SuppressWarnings("resource")
-	public void writeAttacsForeachPokemon() {
+	public void writeAttacksForEachPokemon() {
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_ATTACS_FOREACH_POKEMON));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_ALL_ATTACKS_FOREACH_POKEMON));
 
-			CSVPrinter csvPrinter = new CSVPrinter(writer,
-					CSVFormat.DEFAULT.withHeader("PokemonId", "AtaFisicos", "AtaEspeciales", "AtaOtros"));
+			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("PokemonId", "PhysAttacks", "SpeAttacks", "OthAttacks"));
 
-			for (Map.Entry<Integer, HashMap<String, ArrayList<Integer>>> a : this.ataquesPorPokemon.entrySet()) {
+			for (Map.Entry<Integer, HashMap<String, ArrayList<Integer>>> attack : this.attacksPerPokemon.entrySet()) {
 
 				String csvP = "";
-				csvP += a.getKey() + ",";
-				for (Integer atId : a.getValue().get("Ataques fisicos")) {
+				csvP += attack.getKey() + ",";
+				
+				for (Integer atId : attack.getValue().get("Ataques fisicos")) {
+					
 					csvP += atId + ";";
+					
 				}
-				// Remove the last ";" and put instead a ","
+				
+				// Remove the last ";" => instead put a "," 
 				csvP = StringUtils.chop(csvP);
 				csvP += ",";
-				for (Integer atId : a.getValue().get("Ataques especiales")) {
+				
+				for (Integer atId : attack.getValue().get("Ataques especiales")) {
+					
 					csvP += atId + ";";
+					
 				}
+				
 				csvP = StringUtils.chop(csvP);
 				csvP += ",";
-				for (Integer atId : a.getValue().get("Ataques otros")) {
+				
+				for (Integer atId : attack.getValue().get("Ataques otros")) {
+					
 					csvP += atId + ";";
+					
 				}
+				
 				csvP = StringUtils.chop(csvP);
 
 				csvPrinter.printRecord(csvP);
+				
 			}
+			
 			csvPrinter.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// ==================================== READERS
-	// ====================================
+	// ==================================== READERS ====================================
 
 	// Reads pokemon.csv file and adds to Pokemon list
 	public void readPokemon(String fileName) {
@@ -965,46 +1090,69 @@ public class Game {
 		try {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
+			
 			// Skips first line
 			bufferedReader.readLine();
-			String ligne;
-			while ((ligne = bufferedReader.readLine()) != null) {
-				String[] pks = ligne.split(",");
-				if (this.pokemons.size() == 809) {
+			String line;
+			
+			while ((line = bufferedReader.readLine()) != null) {
+				
+				String[] pks = line.split(",");
+				
+				if (this.pokemon.size() == 809) {
+					
 					break;
+					
 				} else {
-					Pokemon pika = new Pokemon(Integer.parseInt(pks[0]), pks[1], Integer.parseInt(pks[2]),
-							Integer.parseInt(pks[3]), Integer.parseInt(pks[4]), Integer.parseInt(pks[5]),
-							Integer.parseInt(pks[6]), Integer.parseInt(pks[7]));
+					
+					Pokemon pokemon = new Pokemon(Integer.parseInt(pks[0]), 
+											      pks[1], 
+											      Integer.parseInt(pks[2]),
+											      Integer.parseInt(pks[3]), 
+											      Integer.parseInt(pks[4]), 
+											      Integer.parseInt(pks[5]),
+											      Integer.parseInt(pks[6]), 
+											      Integer.parseInt(pks[7]));
 
-					// Gets first hability (all Pokemon have at least one hability)
+					// Gets first ability (all Pokemon have at least one ability)
 					if (!pks[12].isEmpty()) {
-						for (PokemonType pt : this.types) {
-							if (pt.getIdPkTipo() == Integer.parseInt(pks[12])) {
-								pika.addType(pt);
+						
+						for (PokemonType pkty : this.types) {
+							
+							if (pkty.getId() == Integer.parseInt(pks[12])) {
+								
+								pokemon.addType(pkty);
+								
 							}
 						}
 					}
+					
 					// Gets the other type (if a Pokemon has 2 types)
 					if (pks.length == 14) {
-						// It detects a " " " at the end of the second type, so we remove it : we have
-						// 17" instead of 17
+						
+						// It detects a " " " at the end of the second type, so we remove it : we have 17" instead of 17
 //						pks[13] = pks[13].substring(0, pks[13].length() - 1);
+						
 						// Gets second type
 						if (!pks[13].isEmpty()) {
-							for (PokemonType pt : this.types) {
-								if (pt.getIdPkTipo() == Integer.parseInt(pks[13])) {
-									pika.addType(pt);
+							
+							for (PokemonType pkty : this.types) {
+								
+								if (pkty.getId() == Integer.parseInt(pks[13])) {
+									
+									pokemon.addType(pkty);
+									
 								}
 							}
 						}
 					}
 
-					this.pokemons.add(pika);
+					this.pokemon.add(pokemon);
+					
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Exception ï¿½ la lecture du fichier : " + e.getMessage());
+			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
 				if (fileReader != null) {
@@ -1014,32 +1162,42 @@ public class Game {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				System.out.println("Exception survenue ï¿½ la fermeture du fichier : " + e.getMessage());
+				System.out.println("Exception closing the file  : " + e.getMessage());
 			}
 		}
 	}
 
-	// Reads habsList.csv file and adds to habilities list
-	public void readHabilities(String fileName) {
+	// Reads habsList.csv file and adds to abilities list
+	public void readAbilities(String fileName) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
 		try {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
+			
 			// Skips first line
 			bufferedReader.readLine();
-			String ligne;
-			while ((ligne = bufferedReader.readLine()) != null) {
-				String[] pks = ligne.split(",");
-				if (this.habilidades.size() == 309) {
+			String line;
+			
+			while ((line = bufferedReader.readLine()) != null) {
+				
+				String[] ablty = line.split(",");
+				
+				if (this.abilities.size() == 309) {
+					
 					break;
+					
 				} else {
-					this.habilidades.add(new Habilidad(Integer.parseInt(pks[0]), pks[1].toUpperCase(), pks[2]));
+					
+					this.abilities.add(new Ability(Integer.parseInt(ablty[0]),
+												   ablty[1].toUpperCase(),
+												   ablty[2]));
+					
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Exception ï¿½ la lecture du fichier : " + e.getMessage());
+			System.out.println("Exception reading the file : " + e.getMessage());
 		} finally {
 			try {
 				if (fileReader != null) {
@@ -1049,62 +1207,87 @@ public class Game {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				System.out.println("Exception survenue ï¿½ la fermeture du fichier : " + e.getMessage());
+				System.out.println("Exception closing the file  : " + e.getMessage());
 			}
 		}
 	}
 
-	// Reads pokemon.csv file (for habilities) and adds to Pokemon
-	public void addHabsForEachPokemon(String fileName) {
+	// Reads pokemon.csv file (for abilities) and adds to Pokemon
+	public void addAbsForEachPokemon(String fileName) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
 		try {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
+			
 			// Skips first line
 			bufferedReader.readLine();
-			String ligne;
+			String line;
 
-			while ((ligne = bufferedReader.readLine()) != null) {
+			while ((line = bufferedReader.readLine()) != null) {
+				
 				Optional<Pokemon> pkOpt;
-				String[] habs = ligne.split(",");
+				String[] abltysPk = line.split(",");
 
-				// Gets the curent pokemon of the line form the pokemon list
-				pkOpt = this.pokemons.stream().filter(pk -> pk.getIdPokemon() == Integer.parseInt(habs[0])).findFirst();
+				// Gets the current Pokemon of the line from the Pokemon list
+				pkOpt = this.pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(abltysPk[0])).findFirst();
+				
 				if (pkOpt.isPresent()) {
-					// Gets first hability (all Pokemon have already one hability)
-					if (!habs[8].isEmpty()) {
-						for (Habilidad h : this.habilidades) {
-							if (h.getIdHab() == Integer.parseInt(habs[8])) {
-								pkOpt.get().addNormalHab(h);
+					
+					// Gets first ability (all Pokemon have at least one ability)
+					if (!abltysPk[8].isEmpty()) {
+						
+						for (Ability ablty : this.abilities) {
+							
+							if (ablty.getId() == Integer.parseInt(abltysPk[8])) {
+								
+								pkOpt.get().addNormalAbility(ablty);
+								
 							}
 						}
 					}
-					// Gets other hablities (if a Pokemon has more)
-					if (habs.length > 9) {
-						// Gets second hability
-						if (!habs[9].isEmpty()) {
-							for (Habilidad h : this.habilidades) {
-								if (h.getIdHab() == Integer.parseInt(habs[9])) {
-									pkOpt.get().addNormalHab(h);
+					
+					// Gets other abilities (if a Pokemon has more)
+					if (abltysPk.length > 9) {
+						
+						// Gets second ability
+						if (!abltysPk[9].isEmpty()) {
+							
+							for (Ability ablty : this.abilities) {
+								
+								if (ablty.getId() == Integer.parseInt(abltysPk[9])) {
+									
+									pkOpt.get().addNormalAbility(ablty);
+									
 								}
 							}
 						}
-						// Gets oculted hability
-						if (!habs[10].isEmpty()) {
-							for (Habilidad h : this.habilidades) {
-								if (h.getIdHab() == Integer.parseInt(habs[10])) {
-									pkOpt.get().addOcultedHab(h);
+						
+						// Gets hidden ability
+						if (!abltysPk[10].isEmpty()) {
+							
+							for (Ability ablty : this.abilities) {
+								
+								if (ablty.getId() == Integer.parseInt(abltysPk[10])) {
+									
+									pkOpt.get().addHiddenAbility(ablty);
+									
 								}
 							}
 						}
-						// Gets second oculted hability : only one Pokemon at the moment
-						if (habs.length == 12) {
-							if (!habs[11].isEmpty()) {
-								for (Habilidad h : this.habilidades) {
-									if (h.getIdHab() == Integer.parseInt(habs[11])) {
-										pkOpt.get().addOcultedHab(h);
+						
+						// Gets second hidden ability : only one Pokemon at the moment
+						if (abltysPk.length == 12) {
+							
+							if (!abltysPk[11].isEmpty()) {
+								
+								for (Ability ablty : this.abilities) {
+									
+									if (ablty.getId() == Integer.parseInt(abltysPk[11])) {
+										
+										pkOpt.get().addHiddenAbility(ablty);
+										
 									}
 								}
 							}
@@ -1113,7 +1296,7 @@ public class Game {
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Exception ï¿½ la lecture du fichier : " + e.getMessage());
+			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
 				if (fileReader != null) {
@@ -1123,7 +1306,7 @@ public class Game {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				System.out.println("Exception survenue ï¿½ la fermeture du fichier : " + e.getMessage());
+				System.out.println("Exception closing the file  : " + e.getMessage());
 			}
 		}
 	}
@@ -1136,39 +1319,52 @@ public class Game {
 		try {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
+			
 			// Skips first line
 			bufferedReader.readLine();
-			String ligne;
+			String line;
 
-			while ((ligne = bufferedReader.readLine()) != null) {
+			while ((line = bufferedReader.readLine()) != null) {
+				
 				Optional<Pokemon> pkOpt;
-				String[] tps = ligne.split(",");
+				String[] types = line.split(",");
 
-				// It detects a " " " at the beginning of the Pokemon Id, so we remove it : we
-				// have "001 instead of 001
-				tps[0] = tps[0].substring(1);
+				// It detects a " at the beginning of the Pokemon Id, so we remove it => ex : we have "001 instead of 001
+				types[0] = types[0].substring(1);
 
-				// Gets the curent pokemon of the line from the Pokemon list
-				pkOpt = this.pokemons.stream().filter(pk -> pk.getIdPokemon() == Integer.parseInt(tps[0])).findFirst();
+				// Gets the current Pokemon of the line from the Pokemon list
+				pkOpt = this.pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(types[0])).findFirst();
+				
 				if (pkOpt.isPresent()) {
-					// Gets first hability (all Pokemon have at least one hability)
-					if (!tps[12].isEmpty()) {
-						for (PokemonType pt : this.types) {
-							if (pt.getIdPkTipo() == Integer.parseInt(tps[12])) {
-								pkOpt.get().addType(pt);
+					
+					// Gets first ability (all Pokemon have at least one ability)
+					if (!types[12].isEmpty()) {
+						
+						for (PokemonType pkty : this.types) {
+							
+							if (pkty.getId() == Integer.parseInt(types[12])) {
+								
+								pkOpt.get().addType(pkty);
+								
 							}
 						}
 					}
+					
 					// Gets the other type (if a Pokemon has 2 types)
-					if (tps.length == 14) {
-						// It detects a " " " at the end of the second type, so we remove it : we have
-						// 17" instead of 17
-						tps[13] = tps[13].substring(0, tps[13].length() - 1);
+					if (types.length == 14) {
+						
+						// It detects a " at the end of the second type, so we remove it => ex : we have 17" instead of 17
+						types[13] = types[13].substring(0, types[13].length() - 1);
+						
 						// Gets second type
-						if (!tps[13].isEmpty()) {
-							for (PokemonType pt : this.types) {
-								if (pt.getIdPkTipo() == Integer.parseInt(tps[13])) {
-									pkOpt.get().addType(pt);
+						if (!types[13].isEmpty()) {
+							
+							for (PokemonType pkty : this.types) {
+								
+								if (pkty.getId() == Integer.parseInt(types[13])) {
+									
+									pkOpt.get().addType(pkty);
+									
 								}
 							}
 						}
@@ -1176,7 +1372,7 @@ public class Game {
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Exception ï¿½ la lecture du fichier : " + e.getMessage());
+			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
 				if (fileReader != null) {
@@ -1186,7 +1382,7 @@ public class Game {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				System.out.println("Exception survenue ï¿½ la fermeture du fichier : " + e.getMessage());
+				System.out.println("Exception closing the file  : " + e.getMessage());
 			}
 		}
 	}
@@ -1199,19 +1395,27 @@ public class Game {
 		try {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
+			
 			// Skips first line
 			bufferedReader.readLine();
-			String ligne;
-			while ((ligne = bufferedReader.readLine()) != null) {
-				String[] pks = ligne.split(",");
+			String line;
+			
+			while ((line = bufferedReader.readLine()) != null) {
+				
+				String[] pkTypes = line.split(",");
+				
 				if (this.types.size() == 18) {
+					
 					break;
+					
 				} else {
-					this.types.add(new PokemonType(Integer.parseInt(pks[0]), pks[1].toUpperCase()));
+					
+					this.types.add(new PokemonType(Integer.parseInt(pkTypes[0]), pkTypes[1].toUpperCase()));
+					
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Exception ï¿½ la lecture du fichier : " + e.getMessage());
+			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
 				if (fileReader != null) {
@@ -1221,7 +1425,7 @@ public class Game {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				System.out.println("Exception survenue ï¿½ la fermeture du fichier : " + e.getMessage());
+				System.out.println("Exception closing the file  : " + e.getMessage());
 			}
 		}
 	}
@@ -1234,101 +1438,137 @@ public class Game {
 		try {
 			fileReader = new FileReader(SAMPLE_CSV_ALL_TYPES);
 			bufferedReader = new BufferedReader(fileReader);
+			
 			// Skips first line
 			bufferedReader.readLine();
-			String ligne;
-			while ((ligne = bufferedReader.readLine()) != null) {
-				HashMap<String, ArrayList<PokemonType>> tps = new HashMap<>();
-				ArrayList<PokemonType> tpsEfc = new ArrayList<>();
+			String line;
+			
+			while ((line = bufferedReader.readLine()) != null) {
+				
+				HashMap<String, ArrayList<PokemonType>> types = new HashMap<>();
+				ArrayList<PokemonType> typesEffect = new ArrayList<>();
 
-				String[] ty = ligne.split(",");
+				String[] type = line.split(",");
+				
 				// Each string[] can have several values: we split them by ";"
-				String[] pksEfcDmg = ty[2].split(";");
-				String[] pksEfcVulbl = ty[3].split(";");
-				String[] pksEfcLttDmg = ty[4].split(";");
-				String[] pksEfcLttVulbl = ty[5].split(";");
-				String[] pksNoEfc = ty[6].split(";");
+				String[] pkTypeEffectBigDmg = type[2].split(";");
+				String[] pkTypeEffectVulnerable = type[3].split(";");
+				String[] pkTypeEffectLittleDmg = type[4].split(";");
+				String[] pkTypeEffectLittleVulnerable = type[5].split(";");
+				String[] pkTypeNoEffect = type[6].split(";");
 
 				Optional<PokemonType> pTypeOpt;
-				PokemonType pT;
+				PokemonType pkTy;
 
-				// Do a lot of dammage
-				if (pksEfcDmg.length >= 1 && Integer.parseInt(pksEfcDmg[0]) != 0) {
-					for (String pkE : pksEfcDmg) {
-						pTypeOpt = this.types.stream().filter(type -> type.getIdPkTipo() == Integer.parseInt(pkE))
-								.findFirst();
+				// Do a lot of damage
+				if (pkTypeEffectBigDmg.length >= 1 && Integer.parseInt(pkTypeEffectBigDmg[0]) != 0) {
+					
+					for (String pkT : pkTypeEffectBigDmg) {
+						
+						pTypeOpt = this.types.stream().filter(ty -> ty.getId() == Integer.parseInt(pkT)).findFirst();
+						
 						if (pTypeOpt.isPresent()) {
-							pT = pTypeOpt.get();
-							tpsEfc.add(pT);
+							
+							pkTy = pTypeOpt.get();
+							
+							typesEffect.add(pkTy);
+							
 						}
 					}
-					tps.put("Rebienta", tpsEfc);
-					tpsEfc = new ArrayList<>();
+					
+					types.put("Rebienta", typesEffect);
+					typesEffect = new ArrayList<>();
 				}
 
 				// Hurts from other types
-				if (pksEfcVulbl.length >= 1 && Integer.parseInt(pksEfcVulbl[0]) != 0) {
-					for (String pkE : pksEfcVulbl) {
-						pTypeOpt = this.types.stream().filter(type -> type.getIdPkTipo() == Integer.parseInt(pkE))
-								.findFirst();
+				if (pkTypeEffectVulnerable.length >= 1 && Integer.parseInt(pkTypeEffectVulnerable[0]) != 0) {
+					
+					for (String pkT : pkTypeEffectVulnerable) {
+						
+						pTypeOpt = this.types.stream().filter(ty -> ty.getId() == Integer.parseInt(pkT)).findFirst();
+						
 						if (pTypeOpt.isPresent()) {
-							pT = pTypeOpt.get();
-							tpsEfc.add(pT);
+							
+							pkTy = pTypeOpt.get();
+							
+							typesEffect.add(pkTy);
+							
 						}
 					}
-					tps.put("Le rebientan", tpsEfc);
-					tpsEfc = new ArrayList<>();
+					
+					types.put("Le rebientan", typesEffect);
+					typesEffect = new ArrayList<>();
 				}
 
-				// Do little dammage
-				if (pksEfcLttDmg.length >= 1 && Integer.parseInt(pksEfcLttDmg[0]) != 0) {
-					for (String pkE : pksEfcLttDmg) {
-						pTypeOpt = this.types.stream().filter(type -> type.getIdPkTipo() == Integer.parseInt(pkE))
-								.findFirst();
+				// Do little damage
+				if (pkTypeEffectLittleDmg.length >= 1 && Integer.parseInt(pkTypeEffectLittleDmg[0]) != 0) {
+					
+					for (String pkT : pkTypeEffectLittleDmg) {
+						
+						pTypeOpt = this.types.stream().filter(ty -> ty.getId() == Integer.parseInt(pkT)).findFirst();
+						
 						if (pTypeOpt.isPresent()) {
-							pT = pTypeOpt.get();
-							tpsEfc.add(pT);
+							
+							pkTy = pTypeOpt.get();
+							
+							typesEffect.add(pkTy);
+							
 						}
 					}
-					tps.put("Rebienta poco", tpsEfc);
-					tpsEfc = new ArrayList<>();
+					
+					types.put("Rebienta poco", typesEffect);
+					typesEffect = new ArrayList<>();
 				}
 
 				// It hurts less than other types
-				if (pksEfcLttVulbl.length >= 1 && Integer.parseInt(pksEfcLttVulbl[0]) != 0) {
-					for (String pkE : pksEfcLttVulbl) {
-						pTypeOpt = this.types.stream().filter(type -> type.getIdPkTipo() == Integer.parseInt(pkE))
-								.findFirst();
+				if (pkTypeEffectLittleVulnerable.length >= 1 && Integer.parseInt(pkTypeEffectLittleVulnerable[0]) != 0) {
+					
+					for (String pkT : pkTypeEffectLittleVulnerable) {
+						
+						pTypeOpt = this.types.stream().filter(ty -> ty.getId() == Integer.parseInt(pkT)).findFirst();
+						
 						if (pTypeOpt.isPresent()) {
-							pT = pTypeOpt.get();
-							tpsEfc.add(pT);
+							
+							pkTy = pTypeOpt.get();
+							
+							typesEffect.add(pkTy);
+							
 						}
 					}
-					tps.put("Le Rebientan poco", tpsEfc);
-					tpsEfc = new ArrayList<>();
+					
+					types.put("Le Rebientan poco", typesEffect);
+					typesEffect = new ArrayList<>();
 				}
 
 				// Doesn't has effect to him
-				if (pksNoEfc.length >= 1 && Integer.parseInt(pksNoEfc[0]) != 0) {
-					for (String pkE : pksNoEfc) {
-						pTypeOpt = this.types.stream().filter(type -> type.getIdPkTipo() == Integer.parseInt(pkE))
-								.findFirst();
+				if (pkTypeNoEffect.length >= 1 && Integer.parseInt(pkTypeNoEffect[0]) != 0) {
+					
+					for (String pkT : pkTypeNoEffect) {
+						
+						pTypeOpt = this.types.stream().filter(ty -> ty.getId() == Integer.parseInt(pkT)).findFirst();
+						
 						if (pTypeOpt.isPresent()) {
-							pT = pTypeOpt.get();
-							tpsEfc.add(pT);
+							
+							pkTy = pTypeOpt.get();
+							
+							typesEffect.add(pkTy);
+							
 						}
 					}
-					tps.put("No tiene efecto", tpsEfc);
+					
+					types.put("No tiene efecto", typesEffect);
 				}
 
 				// We put the dico in our principal var
-				if (!this.efectoPorTipos.containsKey(ty[1])) {
-					this.efectoPorTipos.put(ty[1], tps);
+				if (!this.effectPerTypes.containsKey(type[1])) {
+					
+					this.effectPerTypes.put(type[1], types);
+					
 				}
 
 			}
 		} catch (IOException e) {
-			System.out.println("Exception ï¿½ la lecture du fichier : " + e.getMessage());
+			System.out.println("Exception reading the file : " + e.getMessage());
 		} finally {
 			try {
 				if (fileReader != null) {
@@ -1338,45 +1578,61 @@ public class Game {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				System.out.println("Exception survenue ï¿½ la fermeture du fichier : " + e.getMessage());
+				System.out.println("Exception closing the file : " + e.getMessage());
 			}
 		}
 	}
 
-	// Reads attacsList.csv file and adds to attacs list
-	public void readAttacs(String fileName) {
+	// Reads attacksList.csv file and adds to attacks list
+	public void readAttacks(String fileName) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
 		try {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
+			
 			// Skips first line
 			bufferedReader.readLine();
-			String ligne;
-			while ((ligne = bufferedReader.readLine()) != null) {
-				String[] pks = ligne.split(",");
+			String line;
+			
+			while ((line = bufferedReader.readLine()) != null) {
+				
+				String[] attacks = line.split(",");
 
-				Ataque a = new Ataque(Integer.parseInt(pks[0]), pks[1], pks[2].toUpperCase(), Integer.parseInt(pks[3]),
-						Integer.parseInt(pks[4]), Integer.parseInt(pks[5]), pks[6]);
+				Attack attack = new Attack(Integer.parseInt(attacks[0]),
+									  attacks[1], 
+								      attacks[2].toUpperCase(), 
+								      Integer.parseInt(attacks[3]),
+							          Integer.parseInt(attacks[4]),
+							          Integer.parseInt(attacks[5]),
+							          attacks[6]);
 
-				// Some attacs can have 2 bases (so we split with ";")
-				String[] bs = pks[7].split(";");
+				// Some attacks can have 2 bases (so we split with ";")
+				String[] bs = attacks[7].split(";");
 
 				if (bs.length > 1) {
+					
 					for (String s : bs) {
-						a.addBase(s);
+						
+						attack.addBase(s);
+						
 					}
+					
 				} else {
-					a.addBase(bs[0]);
+					
+					attack.addBase(bs[0]);
+					
 				}
+				
 				// Set the type of the attack to his Pokemon type instead of a string
-				a.transformStrTipoToPokemonType(this.types);
-				// Adds the attac to the general var
-				this.ataques.add(a);
+				attack.transformStrTypeToPokemonType(this.types);
+				
+				// Adds the attack to the general var
+				this.attacks.add(attack);
 			}
 		} catch (IOException e) {
-			System.out.println("Exception ï¿½ la lecture du fichier : " + e.getMessage());
+			System.out.println("Exception reading the file : " + e.getMessage());
 		} finally {
 			try {
 				if (fileReader != null) {
@@ -1386,73 +1642,90 @@ public class Game {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				System.out.println("Exception survenue ï¿½ la fermeture du fichier : " + e.getMessage());
+				System.out.println("Exception closing the file : " + e.getMessage());
 			}
 		}
 	}
 
-	// Reads attacsForeachPokemon.txt file and adds to each Pokemon
-	public void readAttacsForeachPokemon() {
+	// Reads attacksForeachPokemon.txt file and adds to each Pokemon
+	public void readAttacksForEachPokemon() {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
 		try {
-			fileReader = new FileReader(SAMPLE_CSV_ALL_ATTACS_FOREACH_POKEMON);
+			fileReader = new FileReader(SAMPLE_CSV_ALL_ATTACKS_FOREACH_POKEMON);
 			bufferedReader = new BufferedReader(fileReader);
+			
 			// Skips first line
 			bufferedReader.readLine();
-			String ligne;
-			while ((ligne = bufferedReader.readLine()) != null) {
+			String line;
+			
+			while ((line = bufferedReader.readLine()) != null) {
+				
 				Optional<Pokemon> pkOpt;
-				Optional<Ataque> pAtaOpt;
+				Optional<Attack> pAtaOpt;
 
-				String[] ata = ligne.split(",");
+				String[] pkAttacks = line.split(",");
+				
 				// Each string[] can have several values: we split them by ";"
-				String[] pkAtaFis = ata[1].split(";");
-				String[] pkAtaEsp = ata[2].split(";");
-				String[] pkAtaOto = ata[3].split(";");
+				String[] pkPhAttacks = pkAttacks[1].split(";");
+				String[] pkSpAttacks = pkAttacks[2].split(";");
+				String[] pkOtAttacks = pkAttacks[3].split(";");
 
-				// Gets the curent pokemon of the line from the Pokemon list
-				pkOpt = this.pokemons.stream().filter(pk -> pk.getIdPokemon() == Integer.parseInt(ata[0])).findFirst();
+				// Gets the current Pokemon of the line from the Pokemon list
+				pkOpt = this.pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(pkAttacks[0])).findFirst();
 
 				if (pkOpt.isPresent()) {
-					// Fisic attacs
-					// Somme Pokemon can have 0 attacs in a type of attac
-					if (pkAtaFis.length >= 1 && Integer.parseInt(pkAtaFis[0]) != 0) {
-						for (String pkA : pkAtaFis) {
-							pAtaOpt = this.ataques.stream().filter(a -> a.getIdAta() == Integer.parseInt(pkA))
-									.findFirst();
+					
+					// Physical attacks
+					// Some Pokemon can have 0 attacks in a type of attack
+					if (pkPhAttacks.length >= 1 && Integer.parseInt(pkPhAttacks[0]) != 0) {
+						
+						for (String phAtt : pkPhAttacks) {
+							
+							pAtaOpt = this.attacks.stream().filter(a -> a.getId() == Integer.parseInt(phAtt)).findFirst();
+							
 							if (pAtaOpt.isPresent()) {
-								pkOpt.get().addAtaFisicos(pAtaOpt.get());
+								
+								pkOpt.get().addPhysicalAttack(pAtaOpt.get());
+								
 							}
 						}
 					}
 
-					// Special attacs
-					if (pkAtaEsp.length >= 1 && Integer.parseInt(pkAtaEsp[0]) != 0) {
-						for (String pkA : pkAtaEsp) {
-							pAtaOpt = this.ataques.stream().filter(a -> a.getIdAta() == Integer.parseInt(pkA))
-									.findFirst();
+					// Special attacks
+					if (pkSpAttacks.length >= 1 && Integer.parseInt(pkSpAttacks[0]) != 0) {
+						
+						for (String spAtt : pkSpAttacks) {
+							
+							pAtaOpt = this.attacks.stream().filter(a -> a.getId() == Integer.parseInt(spAtt)).findFirst();
+							
 							if (pAtaOpt.isPresent()) {
-								pkOpt.get().addAtaEspeciales(pAtaOpt.get());
+								
+								pkOpt.get().addSpecialAttack(pAtaOpt.get());
+								
 							}
 						}
 					}
 
-					// Other attacs
-					if (pkAtaOto.length >= 1 && Integer.parseInt(pkAtaOto[0]) != 0) {
-						for (String pkA : pkAtaOto) {
-							pAtaOpt = this.ataques.stream().filter(a -> a.getIdAta() == Integer.parseInt(pkA))
-									.findFirst();
+					// Other attacks
+					if (pkOtAttacks.length >= 1 && Integer.parseInt(pkOtAttacks[0]) != 0) {
+						
+						for (String otAtt : pkOtAttacks) {
+							
+							pAtaOpt = this.attacks.stream().filter(a -> a.getId() == Integer.parseInt(otAtt)).findFirst();
+							
 							if (pAtaOpt.isPresent()) {
-								pkOpt.get().addAtaEstado(pAtaOpt.get());
+								
+								pkOpt.get().addOtherAttack(pAtaOpt.get());
+								
 							}
 						}
 					}
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Exception ï¿½ la lecture du fichier : " + e.getMessage());
+			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
 				if (fileReader != null) {
@@ -1462,146 +1735,158 @@ public class Game {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				System.out.println("Exception survenue ï¿½ la fermeture du fichier : " + e.getMessage());
+				System.out.println("Exception closing the file  : " + e.getMessage());
 			}
 		}
 	}
 
-	// ==================================== GAME METHODS
-	// ====================================
+	// ==================================== GAME METHODS ====================================
 
 	// Prints all the Pokemon
 	public void printPokemon() {
-		for (Pokemon pk : this.pokemons) {
-			System.out.println(pk.getIdPokemon() + " - " + pk.getNombrePokemon() + " - " + pk.getTypes().size() + " :");
-			pk.getTypes().forEach(tp -> {
-				System.out.println(tp.getNombreTipo());
-			});
+		for (Pokemon pk : this.pokemon) {
+			
+			System.out.println(pk.getId() + " - " + pk.getName() + " - " + pk.getTypes().size() + " :");
+			
+			pk.getTypes().forEach(tp -> { System.out.println(tp.getName());});
 		}
 	}
 
 	// Order Pokemon by type
 	public void classPkPerType() {
-		ArrayList<Pokemon> aceroType = new ArrayList<>();
-		ArrayList<Pokemon> aguaType = new ArrayList<>();
-		ArrayList<Pokemon> fuegoType = new ArrayList<>();
-		ArrayList<Pokemon> bichoType = new ArrayList<>();
+		ArrayList<Pokemon> steelType = new ArrayList<>();
+		ArrayList<Pokemon> waterType = new ArrayList<>();
+		ArrayList<Pokemon> fireType = new ArrayList<>();
+		ArrayList<Pokemon> bugType = new ArrayList<>();
 		ArrayList<Pokemon> dragonType = new ArrayList<>();
-		ArrayList<Pokemon> electricoType = new ArrayList<>();
-		ArrayList<Pokemon> fantasmaType = new ArrayList<>();
-		ArrayList<Pokemon> hadaType = new ArrayList<>();
-		ArrayList<Pokemon> hieloType = new ArrayList<>();
-		ArrayList<Pokemon> luchaType = new ArrayList<>();
+		ArrayList<Pokemon> electricType = new ArrayList<>();
+		ArrayList<Pokemon> ghostType = new ArrayList<>();
+		ArrayList<Pokemon> fairyType = new ArrayList<>();
+		ArrayList<Pokemon> iceType = new ArrayList<>();
+		ArrayList<Pokemon> fightingType = new ArrayList<>();
 		ArrayList<Pokemon> normalType = new ArrayList<>();
-		ArrayList<Pokemon> plantaType = new ArrayList<>();
-		ArrayList<Pokemon> psiquicoType = new ArrayList<>();
-		ArrayList<Pokemon> rocaType = new ArrayList<>();
-		ArrayList<Pokemon> siniestroType = new ArrayList<>();
-		ArrayList<Pokemon> tierraType = new ArrayList<>();
-		ArrayList<Pokemon> venenoType = new ArrayList<>();
-		ArrayList<Pokemon> voladorType = new ArrayList<>();
+		ArrayList<Pokemon> grassType = new ArrayList<>();
+		ArrayList<Pokemon> psychicType = new ArrayList<>();
+		ArrayList<Pokemon> rockType = new ArrayList<>();
+		ArrayList<Pokemon> darkType = new ArrayList<>();
+		ArrayList<Pokemon> groundType = new ArrayList<>();
+		ArrayList<Pokemon> poisonType = new ArrayList<>();
+		ArrayList<Pokemon> flyingType = new ArrayList<>();
 
 		Optional<PokemonType> pkTOpt;
 
-		for (Pokemon pk : this.pokemons) {
-			// If 2 types, puts the Pokemon in the two diferent types
-			for (PokemonType pt : pk.getTypes()) {
-				pkTOpt = this.types.stream().filter(t -> t.getIdPkTipo() == pt.getIdPkTipo()).findFirst();
+		for (Pokemon pk : this.pokemon) {
+			
+			// If 2 types, puts the Pokemon in the two different types
+			for (PokemonType pkty : pk.getTypes()) {
+				
+				pkTOpt = this.types.stream().filter(t -> t.getId() == pkty.getId()).findFirst();
+				
 				if (pkTOpt.isPresent()) {
-					switch (pkTOpt.get().getIdPkTipo()) {
+					
+					switch (pkTOpt.get().getId()) {
 					case 1:
-						aceroType.add(pk);
+						steelType.add(pk);
 						break;
 					case 2:
-						aguaType.add(pk);
+						waterType.add(pk);
 						break;
 					case 3:
-						bichoType.add(pk);
+						bugType.add(pk);
 						break;
 					case 4:
 						dragonType.add(pk);
 						break;
 					case 5:
-						electricoType.add(pk);
+						electricType.add(pk);
 						break;
 					case 6:
-						fantasmaType.add(pk);
+						ghostType.add(pk);
 						break;
 					case 7:
-						fuegoType.add(pk);
+						fireType.add(pk);
 						break;
 					case 8:
-						hadaType.add(pk);
+						fairyType.add(pk);
 						break;
 					case 9:
-						hieloType.add(pk);
+						iceType.add(pk);
 						break;
 					case 10:
-						luchaType.add(pk);
+						fightingType.add(pk);
 						break;
 					case 11:
 						normalType.add(pk);
 						break;
 					case 12:
-						plantaType.add(pk);
+						grassType.add(pk);
 						break;
 					case 13:
-						psiquicoType.add(pk);
+						psychicType.add(pk);
 						break;
 					case 14:
-						rocaType.add(pk);
+						rockType.add(pk);
 						break;
 					case 15:
-						siniestroType.add(pk);
+						darkType.add(pk);
 						break;
 					case 16:
-						tierraType.add(pk);
+						groundType.add(pk);
 						break;
 					case 17:
-						venenoType.add(pk);
+						poisonType.add(pk);
 						break;
 					case 18:
-						voladorType.add(pk);
+						flyingType.add(pk);
 						break;
+						
 					}
 				}
 			}
 		}
 
-		this.pokemonsPorTipo.put("ACERO", aceroType);
-		this.pokemonsPorTipo.put("AGUA", aguaType);
-		this.pokemonsPorTipo.put("BICHO", bichoType);
-		this.pokemonsPorTipo.put("DRAGON", dragonType);
-		this.pokemonsPorTipo.put("ELECTRICO", electricoType);
-		this.pokemonsPorTipo.put("FANTASMA", fantasmaType);
-		this.pokemonsPorTipo.put("FUEGO", fuegoType);
-		this.pokemonsPorTipo.put("HADA", hadaType);
-		this.pokemonsPorTipo.put("HIELO", hieloType);
-		this.pokemonsPorTipo.put("LUCHA", luchaType);
-		this.pokemonsPorTipo.put("NORMAL", normalType);
-		this.pokemonsPorTipo.put("PLANTA", plantaType);
-		this.pokemonsPorTipo.put("PSIQUICO", psiquicoType);
-		this.pokemonsPorTipo.put("ROCA", rocaType);
-		this.pokemonsPorTipo.put("SINIESTRO", siniestroType);
-		this.pokemonsPorTipo.put("TIERRA", tierraType);
-		this.pokemonsPorTipo.put("VENENO", venenoType);
-		this.pokemonsPorTipo.put("VOLADOR", voladorType);
+		this.pokemonPerType.put("ACERO", steelType);
+		this.pokemonPerType.put("AGUA", waterType);
+		this.pokemonPerType.put("BICHO", bugType);
+		this.pokemonPerType.put("DRAGON", dragonType);
+		this.pokemonPerType.put("ELECTRICO", electricType);
+		this.pokemonPerType.put("FANTASMA", ghostType);
+		this.pokemonPerType.put("FUEGO", fireType);
+		this.pokemonPerType.put("HADA", fairyType);
+		this.pokemonPerType.put("HIELO", iceType);
+		this.pokemonPerType.put("LUCHA", fightingType);
+		this.pokemonPerType.put("NORMAL", normalType);
+		this.pokemonPerType.put("PLANTA", grassType);
+		this.pokemonPerType.put("PSIQUICO", psychicType);
+		this.pokemonPerType.put("ROCA", rockType);
+		this.pokemonPerType.put("SINIESTRO", darkType);
+		this.pokemonPerType.put("TIERRA", groundType);
+		this.pokemonPerType.put("VENENO", poisonType);
+		this.pokemonPerType.put("VOLADOR", flyingType);
 	}
 
 	// Regex to match Pokemon player choices
-	public String checkRegexToChoicePokemon() {
-		// Player can choice with format : d,d,d,d,d,d, but numbers are between 1 and
-		// 807
+	public String checkRegexToChoosePokemon() {
+		
+		// Player can choice with format : d,d,d,d,d,d, but numbers are between 1 and 807
 		String strRegex = "\\b([1-9]";
 
+		// 1 to 99
 		for (int i = 1; i <= 9; i++) {
+			
 			// The "|" represents OR
 			strRegex += "|" + i + "[0-9]";
+			
 		}
 
+		// 100 to 799
 		for (int i = 10; i <= 79; i++) {
+			
 			strRegex += "|" + i + "[0-9]";
+			
 		}
+		
+		// Complete the rest : 800 to 807
 		strRegex += "|800|801|802|803|804|805|806|807)\\b,";
 
 		// Repeat regex 6 times cause 6 Pokemon
@@ -1622,8 +1907,7 @@ public class Game {
 		return repeat(count, " ");
 	}
 
-	// ==================================== GAME
-	// ====================================
+	// ==================================== GAME ====================================
 
 	// Intialize all vars from files
 	public void InitiateVars() {
@@ -1631,60 +1915,59 @@ public class Game {
 		// scrappingWebPokemon();
 
 		// Write all Pokemon to a CSV file
-		// writePokemonCSV(this.pokemons);
+		// writePokemonCSV(this.pokemon);
 
-		// Instantiate all the habilities (if CSV not already created)
-//		scrappingWebAllHabs() ;
+		// Instantiate all the abilities (if CSV not already created)
+//		scrappingWebAllAbs() ;
 
 		// Write all habilities to a CSV file
-//		writeHabilitiesCSV(this.habilidades);
+//		writeAbilitiesCSV(this.abilities);
 
 		// Initialise the diferent lists
 		readPkTypes(SAMPLE_CSV_ALL_TYPES);
 //		readPokemon(SAMPLE_CSV_ALL_POKEMON);
 		readPokemon(SAMPLE_CSV_ALL_POKEMON_TYPES);
-		readHabilities(SAMPLE_CSV_ALL_HABS);
-		readAttacs(SAMPLE_CSV_ALL_ATTACS);
+		readAbilities(SAMPLE_CSV_ALL_ABS);
+		readAttacks(SAMPLE_CSV_ALL_ATTACKS);
 
-		// Adds the habilities for diferent Pokemon (on the general list)
-//		scrappingWebReadHabsFromPokemonAllTables();
+		// Adds the abilities for different Pokemon (on the general list)
+//		scrappingWebReadAbsFromPokemonAllTables();
 
-		// Append habilities to pokemonList.csv (pokemonList2.csv)
-//		AppendHabilities();
+		// Append abilities to pokemonList.csv (pokemonList2.csv)
+//		AppendAbilities();
 
-		// Adds habilities to pokemon (on the pokemon)
-		addHabsForEachPokemon(SAMPLE_CSV_ALL_POKEMON_HABS);
+		// Adds abilities to Pokemon (on the Pokemon)
+		addAbsForEachPokemon(SAMPLE_CSV_ALL_POKEMON_ABS);
 
-		// Puts the lists of diferent damages for each type
+		// Puts the lists of different damages for each type
 		readPkTypesEffectsToOtherTypes();
 
 		// Adds the type for each Pokemon
-//		scrappingWebReadTypeForeachPokemon();
+//		scrappingWebReadTypeForEachPokemon();
 
 		// Append Pokemon type to pokemonList.csv (pokemonList3.csv)
 //		AppendPokemonTypes();
 
 		// Adds types to Pokemon (on the pokemon)
-		//
-		//
 //		addTypesForEachPokemon(SAMPLE_CSV_ALL_POKEMON_TYPES);
 
-		// All the attacs
-//		scrappingWebAttacs();
+		// All the attacks
+//		scrappingWebAttacks();
 
-		// Writes the attacs
-//		writeAttacsCSV();
+		// Writes the attacks
+//		writeAttacksCSV();
+		
 		// Takes accents
-//		writeAttacsCSV2();
+//		writeAttacksCSV2();
 
-		// All attacs foreach Pokemon
-//		scrappingWebAttacsForEachPokemon();
+		// All attacks for each Pokemon
+//		scrappingWebAttacksForEachPokemon();
 
-		// Writes in a new CSV all the attacs foreach Pokemon
-//		writeAttacsForeachPokemon();
+		// Writes in a new CSV all the attacks for each Pokemon
+//		writeAttacksForEachPokemon();
 
-		// Adds the attacs foreach Pokemon
-		readAttacsForeachPokemon();
+		// Adds the attacks for each Pokemon
+		readAttacksForEachPokemon();
 
 		// Order Pokemon by type
 		classPkPerType();
@@ -1694,18 +1977,20 @@ public class Game {
 	public void PokemonChoice() {
 		printPokemon();
 		System.out.println();
-		// Instructions/Description of the game
+		// Instructions / Description of the game
 		System.out.println(
-				"Escoge 6 Pokemon para el combate (todos están al nivel 100, con sus estadísticas a nivel máximo),\n"
-						+ "Puedes escoger el mismo Pokemon 6 veces seguidas. La máquina no podrá.\n"
-						+ "Los ataques de cada Pokemon serán iniciados aleatoriamente una vez escojas los Pokemon. Lo que quiere decir que cada Pokemon idéntico, puede tener ataques diferentes.\n"
-						+ "Solo puedes escoger Pokemon entre el 1 y el 807. Algunos números no estan disponibles así que asegúrate de mirar bien la lista presentada.\n"
-						+ "No importa el orden en que los escojas, solo determina el primer Pokemon que va a salir (el primero en escoger)\n"
-						+ "Ten en cuenta que por cada Pokemon que tú escojas, la máquina va a buscar el tipo que más le afecte a tu Pokemon\n"
-						+ "Teniendo en cuenta, que quizás a la máquina no le salgan ataques muy favorecidos, ni a ti tampoco jeje\n"
-						+ "Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número\n");
+				"Escoge 6 PokÃ©mon para el combate (todos estÃ¡n al nivel 100, con sus estadÃ­sticas a nivel mÃ¡ximo, como si fueran PokÃ©mon favorecidos, es decir, su mejor versiÃ³n),\n"
+				+ "Puedes escoger el mismo PokÃ©mon 6 veces seguidas. La mÃ¡quina no podrÃ¡.\n"
+				+ "Los ataques de cada PokÃ©mon serÃ¡n iniciados aleatoriamente una vez escojas los PokÃ©mon. Lo que quiere decir que cada PokÃ©mon idÃ©ntico, puede tener ataques diferentes. "
+				+ "Cada PokÃ©mon tendrÃ¡ 1 ataque especial, 2 ataques normales y 1 ataque de tipo otro (protecciÃ³n, ataques de estado, etc.).\n"
+				+ "Cada PokÃ©mon tednrÃ¡ ataques que puede tener en los juegos. Es decir, que no habrÃ¡ un Charizard con surf."
+				+ "Solo puedes escoger PokÃ©mon entre el 1 y el 807. Algunos nÃºmeros no estan disponibles asÃ­ que asegÃºrate de mirar bien la lista presentada arriba.\n"
+				+ "No importa el orden en que los escojas, solo determina el primer PokÃ©mon que va a salir (el primero en escoger)\n"
+				+ "Ten en cuenta que por cada PokÃ©mon que escojas, la mÃ¡quina va a buscar el tipo que mÃ¡s le afecte a tu PokÃ©mon\n"
+				+ "Ten en cuenta, que quizÃ¡s a la mÃ¡quina no le salgan ataques muy favorecidos, ni a ti tampoco jeje\n"
+				+ "Para escoger los PokÃ©mon, utiliza el formato : nÃºmero,nÃºmero,nÃºmero,nÃºmero,nÃºmero,nÃºmero\n => ej : 31,45,3,69,500,666");
 
-		System.out.println("Escoge tus 6 Pokemon :");
+		System.out.println("Escoge tus 6 PokÃ©mon :");
 
 		// Player choice
 		Scanner sc = new Scanner(System.in);
@@ -1713,171 +1998,208 @@ public class Game {
 		sc.useDelimiter(";|\r?\n|\r");
 
 		// Regex that match the Pokemon choices
-		String matchFormatChoice = checkRegexToChoicePokemon();
+		String matchFormatChoice = checkRegexToChoosePokemon();
+		
+		// While it doesn't match
 		if (!allPkPlayer.matches(matchFormatChoice)) {
+			
 			while (!allPkPlayer.matches(matchFormatChoice)) {
-				System.out.println(
-						"Para escoger los Pokemon, utiliza el formato : número,número,número,número,número,número y los números deben estar entre el 1 y el 807");
+				
+				System.out.println("Para escoger los Pokemon, utiliza el formato :nÃºmero,nÃºmero,nÃºmero,nÃºmero,nÃºmero,nÃºmero y los nÃºmeros deben estar entre el 1 y el 807");
 				allPkPlayer = sc.next();
 				sc.useDelimiter(";|\r?\n|\r");
 				System.out.println(allPkPlayer.split(","));
+				
 			}
 		}
 
 		// Adds the Pokemon to player Pokemon list
 		String[] pkByPkPlayer = allPkPlayer.split(",");
+		
 		for (String PkID : pkByPkPlayer) {
+			
 			Optional<Pokemon> pkOpt;
-			pkOpt = this.pokemons.stream().filter(pk -> pk.getIdPokemon() == Integer.parseInt(PkID)).findFirst();
+			pkOpt = this.pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(PkID)).findFirst();
+			
 			if (pkOpt.isPresent()) {
+				
 				player.addPokemon(pkOpt.get());
+				
 			} else {
-				System.out.println("El número marcado no está en la lista : " + PkID);
-				System.out.println("Tendrás que volver a escoger tus Pokemon (reinicia el juego)");
+				
+				System.out.println("El nÃºmero marcado no estÃ¡ en la lista : " + PkID);
+				System.out.println("TendrÃ¡s que volver a escoger tus Pokemon (reinicia el juego)");
+				
 			}
 		}
 
-		// Machine choice Pokemon
-		IA.IAChoicePokemon(player.getPokemons(), this.pokemonsPorTipo, this.efectoPorTipos);
+		// Pokemon machine choices
+		IA.IAChoicePokemon(player.getPokemon(), this.pokemonPerType, this.effectPerTypes);
 
-		// Add attacks to eah Pokemon list
-		player.addAtacsForEackPokemon();
-		IA.addAtacsForEackPokemon();
+		// Add attacks to each Pokemon list
+		player.addAttacksForEachPokemon();
+		IA.addAttacksForEachPokemon();
 
-		// Sets first Pokemon choose for the combat
-		// Needs to be done during the methods ?
-		player.setPkCombatting(player.getPokemons().get(0));
-		IA.setPkCombatting(IA.getPokemons().get(0));
+		// Sets first Pokemon chosen for the combat
+		player.setPkCombatting(player.getPokemon().get(0));
+		IA.setPkCombatting(IA.getPokemon().get(0));
 
 		player.setPkFacing(IA.getPkCombatting());
 		IA.setPkFacing(player.getPkCombatting());
 
 		System.out.println("Player");
-		for (Pokemon p : player.getPokemons()) {
-			System.out.println(p.getNombrePokemon() + ":");
+		
+		// Shows Pokemon from player
+		for (Pokemon p : player.getPokemon()) {
+			
+			System.out.println(p.getName() + ":");
 			System.out.println();
+			
+			// Shows types from Pokemon
 			for (PokemonType pt : p.getTypes()) {
-				System.out.println(pt.getNombreTipo());
+				
+				System.out.println(pt.getName());
+				
 			}
-			for (Ataque a : p.getCuatroAtaques()) {
-				System.out.println(a.getNombreAta() + " - " + a.getStrTipoToPkType().getNombreTipo());
+			
+			// Shows attacks from Pokemon
+			for (Attack a : p.getFourPrincipalAttacks()) {
+				
+				System.out.println(a.getName() + " - " + a.getStrTypeToPkType().getName());
+				
 			}
+			
 			System.out.println();
 		}
+		
 		System.out.println();
 
 		System.out.println("IA");
-		for (Pokemon p : IA.getPokemons()) {
-			System.out.println(p.getNombrePokemon() + ":");
+		
+		// Shows Pokemon from IA
+		for (Pokemon p : IA.getPokemon()) {
+			
+			System.out.println(p.getName() + ":");
 			System.out.println();
+			
+			// Shows types from Pokemon
 			for (PokemonType pt : p.getTypes()) {
-				System.out.println(pt.getNombreTipo());
+				
+				System.out.println(pt.getName());
+				
 			}
-			for (Ataque a : p.getCuatroAtaques()) {
-				System.out.println(a.getNombreAta() + " - " + a.getStrTipoToPkType().getNombreTipo());
+			
+			// Shows attacks from Pokemon
+			for (Attack a : p.getFourPrincipalAttacks()) {
+				
+				System.out.println(a.getName() + " - " + a.getStrTypeToPkType().getName());
+				
 			}
+			
 			System.out.println();
 		}
 
 		System.out.println("Tipo ataques primer Pk IA");
-		for (Ataque a : IA.getPkCombatting().getCuatroAtaques()) {
-			System.out.println(a.getStrTipoToPkType().getNombreTipo());
+		
+		for (Attack a : IA.getPkCombatting().getFourPrincipalAttacks()) {
+			
+			System.out.println(a.getStrTypeToPkType().getName());
+			
 		}
 
-		IA.orderAttacksFromDammageLevelPokemon(this.pokemonsPorTipo, this.efectoPorTipos);
-		player.orderAttacksFromDammageLevelPokemon(this.pokemonsPorTipo, this.efectoPorTipos);
+		// Put attacks into different lists to determine damage from attacks
+		IA.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
+		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 
+		// IA Prepares best attack against Pokemon player
 		IA.prepareBestAttack(false, null);
 
 		System.out.println("Next attack from machine :");
-		System.out.println(IA.getPkCombatting().getNextMouvement().getNombreAta() + " - "
-				+ IA.getPkCombatting().getNextMouvement().getStrTipoToPkType().getNombreTipo());
+		System.out.println(IA.getPkCombatting().getNextMouvement().getName() + " - " + IA.getPkCombatting().getNextMouvement().getStrTypeToPkType().getName());
 	}
 
 	// Main battle (start battle)
 	public void startBattle() {
 		Scanner sc = new Scanner(System.in);
-		while (IA.getPokemons().size() > 1 && player.getPokemons().size() > 1) {
-			boolean playerCheckedBurned = false;
-			boolean IACheckedBurned = false;
-
+		while (IA.getPokemon().size() > 1 && player.getPokemon().size() > 1) {
+			
 			int escogerOpt = player.getPkCombatting().isChargingAttackForNextRound ? 1 : getPlayerChoice(sc);
 
 			if (escogerOpt == 1) {
+				
 				int ataqueId = 0;
 				if (!player.getPkCombatting().isChargingAttackForNextRound) {
+					
 					ataqueId = getValidAttackId(sc, player);
+					
 				}
 
 				printPokemonStates();
 
-				playerCheckedBurned = checkAndApplyBurnedEffect(player, playerCheckedBurned);
-				IACheckedBurned = checkAndApplyBurnedEffect(IA, IACheckedBurned);
+				// Check for state of Pokemon combating
+				checkAndApplyBurnedEffect(player);
+				checkAndApplyBurnedEffect(IA);
 
-				if ((player.getPkCombatting().isChargingAttackForNextRound()
-						&& !player.getPkCombatting().isAlreadyUsedVuelo())
-						|| (IA.getPkCombatting().isChargingAttackForNextRound()
-								&& !IA.getPkCombatting().isAlreadyUsedVuelo())) {
+				if ((player.getPkCombatting().getIsChargingAttackForNextRound() && !player.getPkCombatting().getAlreadyUsedFly()) ||
+					(IA.getPkCombatting().getIsChargingAttackForNextRound() && !IA.getPkCombatting().getAlreadyUsedFly())) {
 
-					if (player.getPkCombatting().isChargingAttackForNextRound()
-							&& !player.getPkCombatting().isAlreadyUsedVuelo()
-							&& !(IA.getPkCombatting().isChargingAttackForNextRound()
-									&& !IA.getPkCombatting().isAlreadyUsedVuelo())) {
+					if (player.getPkCombatting().getIsChargingAttackForNextRound() && 
+						!player.getPkCombatting().getAlreadyUsedFly() && 
+						!(IA.getPkCombatting().getIsChargingAttackForNextRound() && !IA.getPkCombatting().getAlreadyUsedFly())) {
 
 						executeChargedAttack(player, true);
 						System.out.println("first--------executeChargedAttack");
 
-					} else if (IA.getPkCombatting().isChargingAttackForNextRound()
-							&& !IA.getPkCombatting().isAlreadyUsedVuelo()
-							&& !(player.getPkCombatting().isChargingAttackForNextRound()
-									&& !player.getPkCombatting().isAlreadyUsedVuelo())) {
+					} else if (IA.getPkCombatting().getIsChargingAttackForNextRound() && 
+							   !IA.getPkCombatting().getAlreadyUsedFly() && 
+							   !(player.getPkCombatting().getIsChargingAttackForNextRound() && !player.getPkCombatting().getAlreadyUsedFly())) {
 
 						executeChargedAttack(IA, true);
 						executeNormalAttack(ataqueId, true, false);
 						System.out.println("second--------executeChargedAttack");
 
-					} else if ((player.getPkCombatting().isChargingAttackForNextRound()
-							&& !player.getPkCombatting().isAlreadyUsedVuelo())
-							&& (IA.getPkCombatting().isChargingAttackForNextRound()
-									&& !IA.getPkCombatting().isAlreadyUsedVuelo())
+					} else if ((player.getPkCombatting().getIsChargingAttackForNextRound() && !player.getPkCombatting().getAlreadyUsedFly()) && 
+							   (IA.getPkCombatting().getIsChargingAttackForNextRound() && !IA.getPkCombatting().getAlreadyUsedFly())
 
-							|| (player.getPkCombatting().isChargingAttackForNextRound()
-									&& player.getPkCombatting().isAlreadyUsedVuelo())
-									&& (IA.getPkCombatting().isChargingAttackForNextRound()
-											&& IA.getPkCombatting().isAlreadyUsedVuelo())) {
+							  || (player.getPkCombatting().getIsChargingAttackForNextRound() && player.getPkCombatting().getAlreadyUsedFly()) && 
+							     (IA.getPkCombatting().getIsChargingAttackForNextRound() && IA.getPkCombatting().getAlreadyUsedFly())) {
 
-						if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
-								&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+						if (player.getPkCombatting().getNextMouvement().getId() == 19 && 
+							IA.getPkCombatting().getNextMouvement().getId() == 19) {
+							
 							System.out.println("same attack  = true");
+							
 						}
-//						if() {
-//							
-//						}
-//						else {
-							executeNormalAttack(ataqueId, false, true);
-//						}
+						
+						executeNormalAttack(ataqueId, false, true);
 						System.out.println("third--------executeChargedAttack");
+						
 					}
-				} else if ((player.getPkCombatting().getNextMouvement().getIdAta() == 19
-						&& player.getPkCombatting().isAlreadyUsedVuelo())
-						|| (IA.getPkCombatting().getNextMouvement().getIdAta() == 19
-								&& IA.getPkCombatting().isAlreadyUsedVuelo())) {
+					
+				} else if ((player.getPkCombatting().getNextMouvement().getId() == 19 && player.getPkCombatting().getAlreadyUsedFly())
+						  || (IA.getPkCombatting().getNextMouvement().getId() == 19 && IA.getPkCombatting().getAlreadyUsedFly())) {
 
 					executeFlightAttack();
 					System.out.println("fourth--------executeFLightAttack");
 
 				} else {
-					if ((player.getPkCombatting().getNextMouvement().getIdAta() == 19
-							|| IA.getPkCombatting().getNextMouvement().getIdAta() == 19) && (player.getPkCombatting().isFirstInUsingTheSameAttack() || IA.getPkCombatting().isFirstInUsingTheSameAttack())) {
+					if ((player.getPkCombatting().getNextMouvement().getId() == 19 || IA.getPkCombatting().getNextMouvement().getId() == 19) && 
+						(player.getPkCombatting().getIsChargingAttackForNextRound() || IA.getPkCombatting().getIsChargingAttackForNextRound())) {
+						
 						executeNormalAttack(ataqueId, false, true);
 						System.out.println("fifth--------executeNormalAttack");
+						
 					}
+					
 					executeNormalAttack(ataqueId, false, false);
 					System.out.println("six--------executeNormalAttack");
 
 				}
+				
 			} else {
+				
 				changePokemon(sc);
+				
 			}
 		}
 	}
@@ -1895,7 +2217,7 @@ public class Game {
 		int ataqueId = sc.nextInt();
 		sc.useDelimiter(";|\r?\n|\r");
 
-		while (!player.getPkCombatting().getCuatroAtaquesIds().contains(ataqueId)) {
+		while (!player.getPkCombatting().getFourIdAttacks().contains(ataqueId)) {
 			System.out.println("Escoge un ataque que tenga el Pokemon");
 			ataqueId = sc.nextInt();
 			sc.useDelimiter(";|\r?\n|\r");
@@ -1905,99 +2227,133 @@ public class Game {
 
 	private void printPokemonStates() {
 		System.out.println(
-				"Estado del Pokemon del jugador : " + player.getPkCombatting().getEstadoPersistente().getEstadoEnum());
+				"Estado del Pokemon del jugador : " + player.getPkCombatting().getStatusCondition().getStatusCondition());
 		System.out.println(
-				"Estado del Pokemon de la máquina : " + IA.getPkCombatting().getEstadoPersistente().getEstadoEnum());
+				"Estado del Pokemon de la mï¿½quina : " + IA.getPkCombatting().getStatusCondition().getStatusCondition());
 	}
 
-	private boolean checkAndApplyBurnedEffect(Player combatant, boolean alreadyChecked) {
-		if (combatant.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-			combatant.getPkCombatting().checkEffectsEstadoPersistente(true);
-			alreadyChecked = true;
+	private void checkAndApplyBurnedEffect(Player combatant) {
+		if (combatant.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
+			combatant.getPkCombatting().checkEffectsStatusCondition(true);
 		}
-		return alreadyChecked;
 	}
 
 	private void executeChargedAttack(Player player, boolean isPlayer) {
-		player.getPkCombatting().checkEffectsEstadoPersistente(false);
-		if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() != EstadosEnum.DEBILITADO) {
-			if (player.getPkCombatting().isPuedeAtacar()) {
+		player.getPkCombatting().checkEffectsStatusCondition(false);
+		if (player.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
+			if (player.getPkCombatting().getCanAttack()) {
 				player.applyDamage(isPlayer);
 			}
 		}
 	}
 
 	private void executeFlightAttack() {
-		IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-		if (IA.getPkCombatting().isPuedeAtacar()) {
+		IA.getPkCombatting().checkEffectsStatusCondition(false);
+		
+		if (IA.getPkCombatting().getCanAttack()) {
+			
 			IA.applyDamage(false);
 			IA.getPkCombatting().restartParametersEffect();
 //			IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
 			System.out.println("executeFlightAttack IA");
+			
 		}
-		if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() != EstadosEnum.DEBILITADO) {
-			if (player.getPkCombatting().isChargingAttackForNextRound()) {
-				player.getPkCombatting().checkEffectsEstadoPersistente(false);
+		
+		if (player.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
+			
+			if (player.getPkCombatting().getIsChargingAttackForNextRound()) {
+				
+				player.getPkCombatting().checkEffectsStatusCondition(false);
+				
 			}
-			if (player.getPkCombatting().isPuedeAtacar()) {
+			
+			if (player.getPkCombatting().getCanAttack()) {
+				
 				player.applyDamage(false);
 //				player.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				
 			}
+			
 			System.out.println("executeFlightAttack Player");
+			
 		}
 	}
 
 	private void executeNormalAttack(int ataqueId, boolean onlyPlayerAttacks, boolean sameAttack) {
 		if (sameAttack) {
+			
 			player.prepareBestAttack(true, ataqueId);
 			handleStateEffects();
 			handleAttackSequence(false, true);
+			
 		} else {
+			
 			if (onlyPlayerAttacks) {
+				
 				player.prepareBestAttack(true, ataqueId);
 				handleStateEffects();
 				handleAttackSequence(true, false);
+				
 			} else {
+				
 				player.prepareBestAttack(true, ataqueId);
 				handleStateEffects();
 				handleAttackSequence(false, false);
+				
 			}
 		}
 	}
 
 	private void handleStateEffects() {
-		checkAndApplyEffect(player, EstadosEnum.PARALIZADO, false);
-		checkAndApplyEffect(IA, EstadosEnum.PARALIZADO, false);
+		checkAndApplyEffect(player, StatusConditions.PARALYZED, false);
+		checkAndApplyEffect(IA, StatusConditions.PARALYZED, false);
 	}
 
 	private void handleAttackSequence(boolean onlyPlayerAttacks, boolean sameAttack) {
 		if (onlyPlayerAttacks) {
+			
 			handlePlayerRetaliation();
+			
 		} else {
+			
 			if (sameAttack) {
+				
 				handleSimultaneousAttack();
+				
 				if (playerCanAttackFirst()) {
-					player.getPkCombatting().setFirstInUsingTheSameAttack(true);
+					
+					player.getPkCombatting().setIsFirstInUsingTheSameAttack(true);
+					
 				} else {
-					IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
+					
+					IA.getPkCombatting().setIsFirstInUsingTheSameAttack(true);
+					
 				}
+				
 			} else {
+				
 				if (playerCanAttackFirst()) {
+					
 					player.applyDamage(false);
 					handleIARetaliation();
 //					if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
 //							&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
 //						player.getPkCombatting().setFirstInUsingTheSameAttack(true);
 //					}
+					
 				} else if (IACanAttackFirst()) {
+					
 					IA.applyDamage(false);
 					handlePlayerRetaliation();
 //					if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
 //							&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
 //						IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
 //					}
+					
 				} else {
+					
 					handleSimultaneousAttack();
+					
 				}
 			}
 		}
@@ -2005,87 +2361,105 @@ public class Game {
 		resetBurnedEffect();
 	}
 
-	private void checkAndApplyEffect(Player combatant, EstadosEnum state, boolean alreadyChecked) {
-		if (combatant.getPkCombatting().getEstadoPersistente().getEstadoEnum() == state) {
+	// Check and apply state of pokemon
+	private void checkAndApplyEffect(Player combatant, StatusConditions status, boolean alreadyChecked) {
+		if (combatant.getPkCombatting().getStatusCondition().getStatusCondition() == status) {
+			
 			if (!alreadyChecked) {
-				combatant.getPkCombatting().checkEffectsEstadoPersistente(false);
+				
+				combatant.getPkCombatting().checkEffectsStatusCondition(false);
+				
 			}
+			
 			alreadyChecked = true;
 		}
 	}
 
+	// Player attack first
 	private boolean playerCanAttackFirst() {
-		return player.getPkCombatting().isPuedeAtacar()
-				&& player.getPkCombatting().getVel() > IA.getPkCombatting().getVel();
+		return player.getPkCombatting().getCanAttack() && player.getPkCombatting().getSpeed() > IA.getPkCombatting().getSpeed();
 	}
 
+	// IA can attack first
 	private boolean IACanAttackFirst() {
-		return IA.getPkCombatting().isPuedeAtacar()
-				&& IA.getPkCombatting().getVel() > player.getPkCombatting().getVel();
+		return IA.getPkCombatting().getCanAttack() && IA.getPkCombatting().getSpeed() > player.getPkCombatting().getSpeed();
 	}
 
+	// IA handle attack after player
 	private void handleIARetaliation() {
-		if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() != EstadosEnum.DEBILITADO) {
-			checkAndApplyEffect(IA, EstadosEnum.PARALIZADO, false);
-			checkAndApplyEffect(IA, EstadosEnum.QUEMADO, true);
+		if (IA.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
+			
+			checkAndApplyEffect(IA, StatusConditions.PARALYZED, false);
+			
+			checkAndApplyEffect(IA, StatusConditions.BURNED, true);
+			
 			IA.applyDamage(false);
+			
 			IA.getPkCombatting().restartParametersEffect();
+			
 		}
 	}
 
+	// Player handle attack after IA
 	private void handlePlayerRetaliation() {
-		if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() != EstadosEnum.DEBILITADO) {
-			checkAndApplyEffect(player, EstadosEnum.PARALIZADO, false);
-			checkAndApplyEffect(player, EstadosEnum.QUEMADO, true);
+		
+		if (player.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
+			
+			checkAndApplyEffect(player, StatusConditions.PARALYZED, false);
+			
+			checkAndApplyEffect(player, StatusConditions.BURNED, true);
+			
 			player.applyDamage(false);
+			
 			player.getPkCombatting().restartParametersEffect();
+			
 		}
 	}
 
 	// Check here conditions of flying...
 	private void handleSimultaneousAttack() {
-		if (IA.getPkCombatting().isFirstInUsingTheSameAttack()
-				&& player.getPkCombatting().getNextMouvement().getIdAta() == 19
-				&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+		if (IA.getPkCombatting().getIsFirstInUsingTheSameAttack()
+				&& player.getPkCombatting().getNextMouvement().getId() == 19
+				&& IA.getPkCombatting().getNextMouvement().getId() == 19) {
 			IA.applyDamage(false);
 			handlePlayerRetaliation();
-			IA.getPkCombatting().setFirstInUsingTheSameAttack(false);
-		} else if (player.getPkCombatting().isFirstInUsingTheSameAttack()
-				&& player.getPkCombatting().getNextMouvement().getIdAta() == 19
-				&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+			IA.getPkCombatting().setIsFirstInUsingTheSameAttack(false);
+		} else if (player.getPkCombatting().getIsFirstInUsingTheSameAttack()
+				&& player.getPkCombatting().getNextMouvement().getId() == 19
+				&& IA.getPkCombatting().getNextMouvement().getId() == 19) {
 			player.applyDamage(false);
 			handleIARetaliation();
-			player.getPkCombatting().setFirstInUsingTheSameAttack(false);
+			player.getPkCombatting().setIsFirstInUsingTheSameAttack(false);
 		} else {
-			if (player.getPkCombatting().getVel() > IA.getPkCombatting().getVel()) {
+			if (player.getPkCombatting().getSpeed() > IA.getPkCombatting().getSpeed()) {
 				player.applyDamage(false);
 				handleIARetaliation();
-				if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
-						&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
-					IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				if (player.getPkCombatting().getNextMouvement().getId() == 19
+						&& IA.getPkCombatting().getNextMouvement().getId() == 19) {
+					IA.getPkCombatting().setIsFirstInUsingTheSameAttack(true);
 				} else {
-					player.getPkCombatting().setFirstInUsingTheSameAttack(false);
-					IA.getPkCombatting().setFirstInUsingTheSameAttack(false);
+					player.getPkCombatting().setIsFirstInUsingTheSameAttack(false);
+					IA.getPkCombatting().setIsFirstInUsingTheSameAttack(false);
 				}
-			} else if (player.getPkCombatting().getVel() < IA.getPkCombatting().getVel()) {
+			} else if (player.getPkCombatting().getSpeed() < IA.getPkCombatting().getSpeed()) {
 				IA.applyDamage(false);
 				handlePlayerRetaliation();
-				if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
-						&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
-					player.getPkCombatting().setFirstInUsingTheSameAttack(true);
+				if (player.getPkCombatting().getNextMouvement().getId() == 19
+						&& IA.getPkCombatting().getNextMouvement().getId() == 19) {
+					player.getPkCombatting().setIsFirstInUsingTheSameAttack(true);
 				} else {
-					player.getPkCombatting().setFirstInUsingTheSameAttack(false);
-					IA.getPkCombatting().setFirstInUsingTheSameAttack(false);
+					player.getPkCombatting().setIsFirstInUsingTheSameAttack(false);
+					IA.getPkCombatting().setIsFirstInUsingTheSameAttack(false);
 				}
 			} else {
 				player.applyDamage(false);
 				handleIARetaliation();
-				if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
-						&& IA.getPkCombatting().getNextMouvement().getIdAta() == 19) {
+				if (player.getPkCombatting().getNextMouvement().getId() == 19
+						&& IA.getPkCombatting().getNextMouvement().getId() == 19) {
 //					IA.getPkCombatting().setFirstInUsingTheSameAttack(true);
 				} else {
-					player.getPkCombatting().setFirstInUsingTheSameAttack(false);
-					IA.getPkCombatting().setFirstInUsingTheSameAttack(false);
+					player.getPkCombatting().setIsFirstInUsingTheSameAttack(false);
+					IA.getPkCombatting().setIsFirstInUsingTheSameAttack(false);
 				}
 			}
 		}
@@ -2093,11 +2467,16 @@ public class Game {
 	}
 
 	private void resetBurnedEffect() {
-		if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-			player.getPkCombatting().checkEffectsEstadoPersistente(false);
+		if (player.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
+			
+			player.getPkCombatting().checkEffectsStatusCondition(false);
+			
 		}
-		if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-			IA.getPkCombatting().checkEffectsEstadoPersistente(false);
+		
+		if (IA.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
+			
+			IA.getPkCombatting().checkEffectsStatusCondition(false);
+			
 		}
 	}
 
@@ -2107,14 +2486,15 @@ public class Game {
 		int pokemonId = sc.nextInt();
 		sc.useDelimiter(";|\r?\n|\r");
 
-		Optional<Pokemon> pkOpt = player.getPokemons().stream().filter(pk -> pk.getIdPokemon() == pokemonId)
-				.findFirst();
+		Optional<Pokemon> pkOpt = player.getPokemon().stream().filter(pk -> pk.getId() == pokemonId).findFirst();
+		
 		if (pkOpt.isPresent()) {
+			
 			player.addPokemon(pkOpt.get());
 			player.setPkCombatting(pkOpt.get());
+			
 		} else {
-			System.out.println(
-					"No has escogido un Pokemon que te corresponde, seguirás un turno más con el mismo Pokemon");
+			System.out.println("No has escogido un Pokemon que te corresponde, seguirÃ¡s un turno mÃ¡s con el mismo PokÃ©mon");
 		}
 	}
 
@@ -2124,7 +2504,7 @@ public class Game {
 //
 //		Scanner sc = new Scanner(System.in);
 //		// Battle ends when a player doesn't have Pokemon
-//		while (IA.getPokemons().size() > 1 && player.getPokemons().size() > 1) {
+//		while (IA.getPokemon().size() > 1 && player.getPokemon().size() > 1) {
 //
 //			boolean playerAlreadyCheckedParalized = false;
 //			boolean IAAlreadyCheckedParalized = false;
@@ -2163,7 +2543,7 @@ public class Game {
 //
 //				System.out.println("Estado del Pokemon del jugador : "
 //						+ player.getPkCombatting().getEstadoPersistente().getEstadoEnum());
-//				System.out.println("Estado del Pokemon de la máquina : "
+//				System.out.println("Estado del Pokemon de la mï¿½quina : "
 //						+ IA.getPkCombatting().getEstadoPersistente().getEstadoEnum());
 //
 //				// If Pokemon are burned, there are effects before attacking
@@ -2501,13 +2881,13 @@ public class Game {
 //				sc.useDelimiter(";|\r?\n|\r");
 //
 //				Optional<Pokemon> pkOpt;
-//				pkOpt = player.getPokemons().stream().filter(pk -> pk.getIdPokemon() == pokemonId).findFirst();
+//				pkOpt = player.getPokemon().stream().filter(pk -> pk.getIdPokemon() == pokemonId).findFirst();
 //				if (pkOpt.isPresent()) {
 //					player.addPokemon(pkOpt.get());
 //					player.setPkCombatting(pkOpt.get());
 //				} else {
 //					System.out.println(
-//							"No has escogido un Pokemon que te corresponde, seguirás un turno más con el mismo Pokemon");
+//							"No has escogido un Pokemon que te corresponde, seguirï¿½s un turno mï¿½s con el mismo Pokemon");
 //				}
 //
 //				// TO DO >>> needs to restart the values for damage with the new Pokemon
@@ -2516,65 +2896,89 @@ public class Game {
 //		}
 //	}
 
-	// Tests for attacks (466 Electivire, 398 Staraptor)
-
+	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard)
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "6,6,6";
-		String allPkIA = "398,398,398";
+		String allPkIA = "466,466,466";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
+		
+		// Add Pokemon to player
 		for (String PkID : pkByPkPlayer) {
+			
 			Optional<Pokemon> pkOpt;
-			pkOpt = this.pokemons.stream().filter(pk -> pk.getIdPokemon() == Integer.parseInt(PkID)).findFirst();
+			
+			pkOpt = this.pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(PkID)).findFirst();
+			
 			if (pkOpt.isPresent()) {
-				player.addPokemon(pkOpt.get());
-//				IA.addPokemon(pkOpt.get());
+				
+				// Creates a new instance of Pokemon in memory (otherwise there are problems of duplications)
+				player.addPokemon(new Pokemon(pkOpt.get()));
+				
 			}
 		}
+		
+		// Sets first Pokemon to combat for player
+		player.setPkCombatting(player.getPokemon().get(0));
 
+		// Sets the attacks to pokemon's player to test
+		for (Pokemon pk : player.getPokemon()) {
+			
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+			
+			// Adds the Ids of attacks chosed in a list
+			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
+				
+				player.getPkCombatting().addIdAttack(ataChosed.getId());
+				
+			}
+
+		}
+		
 		String[] pkByPkIA = allPkIA.split(",");
+		
+		// Add Pokemon to IA
 		for (String PkID : pkByPkIA) {
+			
 			Optional<Pokemon> pkOpt;
-			pkOpt = this.pokemons.stream().filter(pk -> pk.getIdPokemon() == Integer.parseInt(PkID)).findFirst();
+			
+			pkOpt = this.pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(PkID)).findFirst();
+			
 			if (pkOpt.isPresent()) {
-				IA.addPokemon(pkOpt.get());
+
+				// Creates a new instance of Pokemon in memory (otherwise there are problems of duplications)
+				IA.addPokemon(new Pokemon(pkOpt.get()));
+				
 			}
 		}
 
-		player.setPkCombatting(player.getPokemons().get(0));
+		// Sets first Pokemon to combat for IA
+		IA.setPkCombatting(IA.getPokemon().get(0));
+		
+		for (Pokemon pk : IA.getPokemon()) {
+			
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+//			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 19).findFirst().get());
 
-		// Sets the attacks to player to test
-		for (Pokemon pk : player.getPokemons()) {
-			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 7).findFirst().get());
-			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 9).findFirst().get());
-			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 19).findFirst().get());
-
-			// Adds the Ids of attacks chosed in a list
-			for (Ataque ataChosed : player.getPkCombatting().getCuatroAtaques()) {
-				player.getPkCombatting().addAtaquesIds(ataChosed.getIdAta());
+			// Adds the Ids of attacks chosen in a list
+			for (Attack ataChosed : IA.getPkCombatting().getFourPrincipalAttacks()) {
+				
+				IA.getPkCombatting().addIdAttack(ataChosed.getId());
+				
 			}
-		}
+		}		
 
-		for (Pokemon pk : IA.getPokemons()) {
-//			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 7).findFirst().get());
-//			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 9).findFirst().get());
-			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 19).findFirst().get());
+		// Sets Pokemon facing to each other
+		player.setPkFacing(IA.getPokemon().get(0));
+		IA.setPkFacing(player.getPokemon().get(0));
 
-			// Adds the Ids of attacks chosed in a list
-			for (Ataque ataChosed : pk.getCuatroAtaques()) {
-				pk.addAtaquesIds(ataChosed.getIdAta());
-			}
-		}
-		IA.setPkCombatting(IA.getPokemons().get(0));
-
-		player.setPkFacing(IA.getPokemons().get(0));
-		IA.setPkFacing(player.getPokemons().get(0));
-
-		IA.orderAttacksFromDammageLevelPokemon(this.pokemonsPorTipo, this.efectoPorTipos);
-		player.orderAttacksFromDammageLevelPokemon(this.pokemonsPorTipo, this.efectoPorTipos);
+		IA.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
+		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 
 		IA.prepareBestAttack(false, null);
 	}
-
 }
