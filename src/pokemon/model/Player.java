@@ -80,9 +80,9 @@ public class Player {
 			pk.addAttacks(pk.getSpecialAttacks().get(rand.nextInt(pk.getSpecialAttacks().size())));
 
 			// Adds the Ids of attacks chosen in a list
-			for (Attack ataChosed : pk.getFourPrincipalAttacks()) {
+			for (Attack attackChosen : pk.getFourPrincipalAttacks()) {
 				
-				pk.addIdAttack(ataChosed.getId());
+				pk.addIdAttack(attackChosen.getId());
 				
 			}
 
@@ -329,7 +329,7 @@ public class Player {
 
 		// Sets all the attacks from the Pokemon by their level of damage
 		this.getPkCombatting().setLotDamageAttacks(iaLotDamageAttacks);
-		this.getPkCombatting().setNormalAttacks(iaHasNoEffectAttacks);
+		this.getPkCombatting().setNormalAttacks(iaNormalDamageAttacks);
 		this.getPkCombatting().setLowAttacks(iaLowAttacks);
 		this.getPkCombatting().setNotEffectAttacks(iaHasNoEffectAttacks);
 
