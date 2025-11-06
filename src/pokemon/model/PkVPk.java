@@ -6,17 +6,17 @@ public class PkVPk {
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
 	private float effectiveness;
-	private int variacion;
+	private int variation;
 	private float finalDamage;
-	private float bonificacion;
+	private float bonus;
 
 	public PkVPk(Pokemon pkAttacking, Pokemon pkFacing) {
 		this.pkCombatting = pkAttacking;
 		this.pkFacing = pkFacing;
 		this.effectiveness = 0;
-		this.variacion = 0;
+		this.variation = 0;
 		this.finalDamage = 0;
-		this.bonificacion = 0;
+		this.bonus = 0;
 	}
 
 	public Pokemon getPkCombatting() {
@@ -43,12 +43,12 @@ public class PkVPk {
 		this.effectiveness = effectiveness;
 	}
 
-	public int getVariacion() {
-		return variacion;
+	public int getVariation() {
+		return variation;
 	}
 
-	public void setVariacion(int variacion) {
-		this.variacion = variacion;
+	public void setVariation(int variation) {
+		this.variation = variation;
 	}
 
 	public float getFinalDamage() {
@@ -59,12 +59,12 @@ public class PkVPk {
 		this.finalDamage = finalDamage;
 	}
 
-	public float getBonificacion() {
-		return bonificacion;
+	public float getBonus() {
+		return bonus;
 	}
 
-	public void setBonificacion(float bonificacion) {
-		this.bonificacion = bonificacion;
+	public void setBonus(float bonus) {
+		this.bonus = bonus;
 	}
 
 	// Knows the evasion or accuracy for the pokemon selected (1 is for accuracy, 2 is for evasion)
