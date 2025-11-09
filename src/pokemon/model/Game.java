@@ -2034,7 +2034,7 @@ public class Game {
 		}
 
 		// Pokemon machine choices
-		IA.IAChoicePokemon(player.getPokemon(), this.pokemonPerType, this.effectPerTypes);
+		IA.IAPokemonChoice(player.getPokemon(), this.pokemonPerType, this.effectPerTypes);
 
 		// Add attacks to each Pokemon list
 		player.addAttacksForEachPokemon();
