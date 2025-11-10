@@ -2191,9 +2191,12 @@ public class Game {
 						
 					}
 					
-					executeNormalAttack(ataqueId, false, false);
-					System.out.println("six--------executeNormalAttack");
+					else {
 
+						executeNormalAttack(ataqueId, false, false);
+						System.out.println("six--------executeNormalAttack");
+						
+					}
 				}
 				
 			} else {
