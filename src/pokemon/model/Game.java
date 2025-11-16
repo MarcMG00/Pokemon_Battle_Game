@@ -2349,6 +2349,8 @@ public class Game {
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
 
+		Pokemon pkIA = IA.getPkCombatting();
+
 		while (IA.getPokemon().size() > 1 && player.getPokemon().size() > 1) {
 
 			System.out.println("----------------------------------");
@@ -2358,10 +2360,10 @@ public class Game {
 			// Turn has started
 			boolean isStartTurn = true;
 
-			int attackedChoice = player.getPkCombatting().getIsChargingAttackForNextRound() ? 1 : getPlayerChoice(sc);
+			int attackChoice = player.getPkCombatting().getIsChargingAttackForNextRound() ? 1 : getPlayerChoice(sc);
 
 			// Do attack
-			if (attackedChoice == 1) {
+			if (attackChoice == 1) {
 
 				int attackId = 0;
 				if (!player.getPkCombatting().getIsChargingAttackForNextRound()) {
@@ -2372,7 +2374,6 @@ public class Game {
 				printPokemonStates();
 
 				Pokemon pkPlayer = player.getPkCombatting();
-				Pokemon pkIA = IA.getPkCombatting();
 
 				// Check for state for both Pokemon combating
 				boolean canAttackPkPlayer = checkCanAttackFromStatusCondition(pkPlayer);
@@ -2403,10 +2404,28 @@ public class Game {
 				// Get next round
 				nbRound++;
 
-				// Change Pokemon
+				// Change Pokemon (only for player)
 			} else {
 
 				changePokemon(sc);
+
+				boolean canAttackPkIA = checkCanAttackFromStatusCondition(pkIA);
+
+				// Apply status effect
+				if (canAttackPkIA) {
+					applyEffectStatusCondition(pkIA, isStartTurn);
+					// Prepare best attack for IA (set effectiveness and bonus)
+					IA.prepareBestAttackIA();
+				}
+
+				handleChangeSequence();
+
+				if (canAttackPkIA) {
+					resetEffectStatusCondition(pkIA);
+				}
+
+				// Get next round
+				nbRound++;
 			}
 		}
 	}
@@ -2476,6 +2495,11 @@ public class Game {
 		}
 	}
 
+	// Handle change sequence
+	private void handleChangeSequence() {
+		handleIARetaliation();
+	}
+
 	// Player handle attack
 	private void handlePlayerRetaliation() {
 
@@ -2532,420 +2556,28 @@ public class Game {
 	// Change Pokemon
 	private void changePokemon(Scanner sc) {
 		player.printPokemonInfo();
-		System.out.println("Escoge uno de tus Pokemon : ");
-		int pokemonId = sc.nextInt();
-		sc.useDelimiter(";|\r?\n|\r");
+		System.out.println("Escoge uno de tus Pokémon : ");
 
-		Optional<Pokemon> pkOpt = player.getPokemon().stream().filter(pk -> pk.getId() == pokemonId).findFirst();
+		Pokemon selected = null;
 
-		if (pkOpt.isPresent()) {
+		while (selected == null) {
+			int pokemonId = sc.nextInt();
+			sc.useDelimiter(";|\r?\n|\r");
 
-			player.addPokemon(pkOpt.get());
-			player.setPkCombatting(pkOpt.get());
+			selected = player.getPokemon().stream().filter(pk -> pk.getId() == pokemonId).findFirst().orElse(null);
 
-		} else {
-			System.out
-					.println("No escogiste un Pokémon que te corresponde, seguirás un turno más con el mismo Pokémon");
+			if (selected == null) {
+				System.out.println("No escogiste un Pokémon válido. Escoge un Pokemon de los que posees :");
+			}
 		}
-	}
 
-//	// Main battle (start battle)
-//	@SuppressWarnings("resource")
-//	public void startBattle() {
-//
-//		Scanner sc = new Scanner(System.in);
-//		// Battle ends when a player doesn't have Pokemon
-//		while (IA.getPokemon().size() > 1 && player.getPokemon().size() > 1) {
-//
-//			boolean playerAlreadyCheckedParalized = false;
-//			boolean IAAlreadyCheckedParalized = false;
-//			boolean playerAlreadyCheckedBurned = false;
-//			boolean IAAlreadyCheckedBurned = false;
-//			int escogerOpt = 0;
-//
-//			// Only can chose an attack if it's not charging another one (ex : vuelo)
-//			if (player.getPkCombatting().isChargingAttackForNextRound) {
-//				escogerOpt = 1;
-//			} else {
-//				// Player choice (change Pk or attack)
-//				System.out.println("Quieres atacar (1) o cambiar de Pokemon (2) :");
-//				escogerOpt = sc.nextInt();
-//				sc.useDelimiter(";|\r?\n|\r");
-//			}
-//
-//			// Attack
-//			if (escogerOpt == 1) {
-//				int ataqueId = 0;
-//				if (!player.getPkCombatting().isChargingAttackForNextRound) {
-//					System.out.println("Escoge un ataque :");
-//					player.printAttacksFromPokemonCombating();
-//					ataqueId = sc.nextInt();
-//					sc.useDelimiter(";|\r?\n|\r");
-//
-//					// Chose an attack from the Pokemon
-//					if (!player.getPkCombatting().getCuatroAtaquesIds().contains(ataqueId)) {
-//						while (!player.getPkCombatting().getCuatroAtaquesIds().contains(ataqueId)) {
-//							System.out.println("Escoge un ataque que tenga el Pokemon");
-//							ataqueId = sc.nextInt();
-//							sc.useDelimiter(";|\r?\n|\r");
-//						}
-//					}
-//				}
-//
-//				System.out.println("Estado del Pokemon del jugador : "
-//						+ player.getPkCombatting().getEstadoPersistente().getEstadoEnum());
-//				System.out.println("Estado del Pokemon de la m�quina : "
-//						+ IA.getPkCombatting().getEstadoPersistente().getEstadoEnum());
-//
-//				// If Pokemon are burned, there are effects before attacking
-//				if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//					player.getPkCombatting().checkEffectsEstadoPersistente(true);
-//					playerAlreadyCheckedBurned = true;
-//				}
-//				if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//					IA.getPkCombatting().checkEffectsEstadoPersistente(true);
-//					IAAlreadyCheckedBurned = true;
-//				}
-//
-//				//////
-//				//////
-//				//////
-//				//////
-//				////// SEE HERE THE PROBLEMS (IF ANY) XD (TO DO >>> apply estados)
-//				//////
-//				//////
-//				//////
-//				//////
-//				// If pokemon combatting is charging attack, then uses the attack charged
-//				// (attacks firstly and Pokemon facing cannot attack (see conditions on
-//				// methods PkVPk))
-//				if (player.getPkCombatting().isChargingAttackForNextRound
-//						&& !player.getPkCombatting().isAlreadyUsedVuelo()) {
-//					player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//					if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() != EstadosEnum.DEBILITADO) {
-//						if (player.getPkCombatting().isPuedeAtacar()) {
-//							player.applyDamage(true);
-//						}
-//					}
-//				}
-//				// See if Pokemon combating is doing again vuelo (if true, cannot use the attack
-//				// first)
-//				else if (player.getPkCombatting().getNextMouvement().getIdAta() == 19
-//						&& player.getPkCombatting().isAlreadyUsedVuelo()) {
-//					IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//					if (IA.getPkCombatting().isPuedeAtacar()) {
-//						IA.applyDamage(false);
-//						// If IA it is paralyzed, restart his speed (cause it is not something
-//						// accumulated)
-//						if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//							IA.getPkCombatting().restartParametersEffect();
-//						}
-//					}
-//					if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() != EstadosEnum.DEBILITADO) {
-//						System.out.println("entro aquiiiiiiiiiiiiii");
-//						if (player.getPkCombatting().isChargingAttackForNextRound) {
-//							System.out.println("no aplica paralizar (estoy preparando el ataque)");
-//							player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//						}
-//						if (player.getPkCombatting().isPuedeAtacar()) {
-//							player.applyDamage(false);
-//						}
-//					}
-//				}
-//				// Is a normal attack
-//				else {
-//					// Attack needs to be final or static, that's why we take the initial var into a
-//					// new one
-//					int ataqueIdR = ataqueId;
-//					// See the effectivity of the attack against rival
-//					player.prepareBestAttack(true, ataqueIdR);
-//
-//					// Check for Estado (paralyzed or frozen)
-//					if ((player.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.CONGELADO
-//							|| player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() == EstadosEnum.PARALIZADO)
-//							|| (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.CONGELADO
-//									|| IA.getPkCombatting().getEstadoPersistente()
-//											.getEstadoEnum() == EstadosEnum.PARALIZADO)) {
-//
-//						// See the Estado of Pokemon player
-//						if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//							player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							// No more checking for the entire round
-//							playerAlreadyCheckedParalized = true;
-//						}
-//						// See the Estado of Pokemon IA
-//						if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//							IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							IAAlreadyCheckedParalized = true;
-//						}
-//
-//						// Attack if Pokemon player can move and has more speed than Pokemon IA
-//						if (player.getPkCombatting().isPuedeAtacar()
-//								&& (player.getPkCombatting().getVel() > IA.getPkCombatting().getVel())) {
-//							player.applyDamage(false);
-//							// If player it is paralyzed, restart his speed (cause it is not something
-//							// accumulated)
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//								player.getPkCombatting().restartParametersEffect();
-//							}
-//							// Attack if Pokemon IA is not debilitated
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() != EstadosEnum.DEBILITADO) {
-//
-//								// See if Pokemon IA has an Estado during the attack
-//								if (IA.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.PARALIZADO && !IAAlreadyCheckedParalized) {
-//									IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//									System.out.println("IA paralizada al momento");
-//								} else if (IA.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.QUEMADO && !IAAlreadyCheckedBurned) {
-//									IA.getPkCombatting().checkEffectsEstadoPersistente(true);
-//								}
-//
-//								// Attack if Pokemon can move
-//								if (IA.getPkCombatting().isPuedeAtacar()) {
-//									IA.applyDamage(false);
-//									// If IA it is paralyzed, restart his speed (cause it is not something
-//									// accumulated)
-//									if (IA.getPkCombatting().getEstadoPersistente()
-//											.getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//										IA.getPkCombatting().restartParametersEffect();
-//									}
-//								}
-//							}
-//							// Check for other Estados
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//								player.getPkCombatting().restartParametersEffect();
-//							}
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//
-//							// Attack if Pokemon IA can move and has more speed than player IA
-//						} else if (IA.getPkCombatting().isPuedeAtacar()
-//								&& (IA.getPkCombatting().getVel() > player.getPkCombatting().getVel())) {
-//							IA.applyDamage(false);
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//								IA.getPkCombatting().restartParametersEffect();
-//							}
-//							// Attack if Pokemon player is not debilitated
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() != EstadosEnum.DEBILITADO) {
-//								// See if Pokemon player has an estado during the attack
-//								if (player.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.PARALIZADO && !playerAlreadyCheckedParalized) {
-//									player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//									System.out.println("jugador paralizado al momento");
-//								} else if (player.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.QUEMADO && !playerAlreadyCheckedBurned) {
-//									player.getPkCombatting().checkEffectsEstadoPersistente(true);
-//								}
-//
-//								if (player.getPkCombatting().isPuedeAtacar()) {
-//									player.applyDamage(false);
-//									if (player.getPkCombatting().getEstadoPersistente()
-//											.getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//										player.getPkCombatting().restartParametersEffect();
-//									}
-//								}
-//							}
-//							// Check for other Estados
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//
-//							// Attack if Pokemon player can move and Pokemon IA cannot
-//						} else if (player.getPkCombatting().isPuedeAtacar() && !IA.getPkCombatting().isPuedeAtacar()) {
-//							player.applyDamage(false);
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//								player.getPkCombatting().restartParametersEffect();
-//							}
-//							System.out.println(
-//									"El " + IA.getPkCombatting().getNombrePokemon() + " enemigo, no puede moverse");
-//
-//							// Check for other Estados
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//
-//							// Attack if IA player can move and Pokemon player cannot
-//						} else if (!player.getPkCombatting().isPuedeAtacar() && IA.getPkCombatting().isPuedeAtacar()) {
-//							IA.applyDamage(false);
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//								IA.getPkCombatting().restartParametersEffect();
-//							}
-//							System.out.println(player.getPkCombatting().getNombrePokemon() + " no puede moverse");
-//
-//							// Check for other Estados
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//
-//							// Both Pokemon cannot attack
-//						} else if (!player.getPkCombatting().isPuedeAtacar() && !IA.getPkCombatting().isPuedeAtacar()) {
-//							if (player.getPkCombatting().getVel() > IA.getPkCombatting().getVel()) {
-//								System.out.println(player.getPkCombatting().getNombrePokemon() + " no puede moverse");
-//								System.out.println(
-//										"El " + IA.getPkCombatting().getNombrePokemon() + " enemigo, no puede moverse");
-//							} else {
-//								System.out.println(
-//										"El " + IA.getPkCombatting().getNombrePokemon() + " enemigo, no puede moverse");
-//								System.out.println(player.getPkCombatting().getNombrePokemon() + " no puede moverse");
-//							}
-//							// Check for other Estados
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//
-//						}
-//						// Both Pokemon attack just in case (without any conditions)
-//						else {
-//							if (player.getPkCombatting().getVel() > IA.getPkCombatting().getVel()) {
-//								player.applyDamage(false);
-//								if (IA.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() != EstadosEnum.DEBILITADO) {
-//
-//									if (IA.getPkCombatting().getEstadoPersistente()
-//											.getEstadoEnum() == EstadosEnum.PARALIZADO && !IAAlreadyCheckedParalized) {
-//										IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//										System.out.println("IA paralizada al momento");
-//									} else if (IA.getPkCombatting().getEstadoPersistente()
-//											.getEstadoEnum() == EstadosEnum.QUEMADO && !IAAlreadyCheckedBurned) {
-//										IA.getPkCombatting().checkEffectsEstadoPersistente(true);
-//									}
-//
-//									IA.applyDamage(false);
-//									if (IA.getPkCombatting().getEstadoPersistente()
-//											.getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//										IA.getPkCombatting().restartParametersEffect();
-//									}
-//								}
-//							} else {
-//								IA.applyDamage(false);
-//								if (player.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() != EstadosEnum.DEBILITADO) {
-//
-//									if (player.getPkCombatting().getEstadoPersistente()
-//											.getEstadoEnum() == EstadosEnum.PARALIZADO
-//											&& !playerAlreadyCheckedParalized) {
-//										player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//										System.out.println("jugador paralizado al momento");
-//									} else if (player.getPkCombatting().getEstadoPersistente()
-//											.getEstadoEnum() == EstadosEnum.QUEMADO && !playerAlreadyCheckedBurned) {
-//										player.getPkCombatting().checkEffectsEstadoPersistente(true);
-//									}
-//
-//									player.applyDamage(false);
-//									if (player.getPkCombatting().getEstadoPersistente()
-//											.getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//										player.getPkCombatting().restartParametersEffect();
-//									}
-//								}
-//							}
-//							// Check for other Estados
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//								IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//							}
-//						}
-//
-//						// Without estado
-//					} else {
-//						if (player.getPkCombatting().getVel() > IA.getPkCombatting().getVel()) {
-//							player.applyDamage(false);
-//							if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() != EstadosEnum.DEBILITADO) {
-//
-//								if (IA.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.PARALIZADO && !IAAlreadyCheckedParalized) {
-//									IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//									System.out.println("IA paralizada al momento");
-//								} else if (IA.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.QUEMADO && !IAAlreadyCheckedBurned) {
-//									IA.getPkCombatting().checkEffectsEstadoPersistente(true);
-//								}
-//
-//								IA.applyDamage(false);
-//								if (IA.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//									IA.getPkCombatting().restartParametersEffect();
-//								}
-//							}
-//						} else {
-//							IA.applyDamage(false);
-//							if (player.getPkCombatting().getEstadoPersistente()
-//									.getEstadoEnum() != EstadosEnum.DEBILITADO) {
-//
-//								if (player.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.PARALIZADO && !playerAlreadyCheckedParalized) {
-//									player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//									System.out.println("jugador paralizado al momento");
-//								} else if (player.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.QUEMADO && !playerAlreadyCheckedBurned) {
-//									player.getPkCombatting().checkEffectsEstadoPersistente(true);
-//								}
-//
-//								player.applyDamage(false);
-//								if (player.getPkCombatting().getEstadoPersistente()
-//										.getEstadoEnum() == EstadosEnum.PARALIZADO) {
-//									player.getPkCombatting().restartParametersEffect();
-//								}
-//							}
-//						}
-//						// Check for other Estados
-//						if (player.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//							player.getPkCombatting().checkEffectsEstadoPersistente(false);
-//						}
-//						if (IA.getPkCombatting().getEstadoPersistente().getEstadoEnum() == EstadosEnum.QUEMADO) {
-//							IA.getPkCombatting().checkEffectsEstadoPersistente(false);
-//						}
-//					}
-//				}
-//			}
-//			// Change Pokemon
-//			else {
-//				player.printPokemonInfo();
-//				System.out.println("Escoge uno de tus Pokemon : ");
-//				int pokemonId = sc.nextInt();
-//				sc.useDelimiter(";|\r?\n|\r");
-//
-//				Optional<Pokemon> pkOpt;
-//				pkOpt = player.getPokemon().stream().filter(pk -> pk.getIdPokemon() == pokemonId).findFirst();
-//				if (pkOpt.isPresent()) {
-//					player.addPokemon(pkOpt.get());
-//					player.setPkCombatting(pkOpt.get());
-//				} else {
-//					System.out.println(
-//							"No has escogido un Pokemon que te corresponde, seguir�s un turno m�s con el mismo Pokemon");
-//				}
-//
-//				// TO DO >>> needs to restart the values for damage with the new Pokemon
-////				IA.applieDamage(false);
-//			}
-//		}
-//	}
+		// Update Pokemon combating
+		player.setPkCombatting(selected);
+
+		// Update Pokemon facing for each player
+		player.setPkFacing(IA.getPkCombatting());
+		IA.setPkFacing(player.getPkCombatting());
+	}
 
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard)
 	public void doTest() {
@@ -2954,20 +2586,35 @@ public class Game {
 		String allPkIA = "398,398,398";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
+		Map<Integer, Integer> pkCount = new HashMap<>();
 
 		// Add Pokemon to player
 		for (String PkID : pkByPkPlayer) {
 
-			Optional<Pokemon> pkOpt;
+			int baseId = Integer.parseInt(PkID);
 
-			pkOpt = this.pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(PkID)).findFirst();
+			Optional<Pokemon> pkOpt = this.pokemon.stream().filter(pk -> pk.getId() == baseId).findFirst();
 
 			if (pkOpt.isPresent()) {
 
 				// Creates a new instance of Pokemon in memory (otherwise there are problems of
 				// duplications)
-				player.addPokemon(new Pokemon(pkOpt.get()));
+				Pokemon newPk = new Pokemon(pkOpt.get());
 
+				// Increase count for this base ID
+				int count = pkCount.getOrDefault(baseId, 0);
+
+				// If it's not the first one, modify ID
+				if (count > 0) {
+					int newId = baseId * 1000 + count;
+					newPk.setId(newId);
+				}
+
+				// Update repetitions counter
+				pkCount.put(baseId, count + 1);
+
+				// Add to player team
+				player.addPokemon(newPk);
 			}
 		}
 
@@ -2982,10 +2629,13 @@ public class Game {
 			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
-			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
-
-				player.getPkCombatting().addIdAttack(ataChosed.getId());
-
+//			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
+//
+//				player.getPkCombatting().addIdAttack(ataChosed.getId());
+//
+//			}
+			for (Attack ataChosed : pk.getFourPrincipalAttacks()) {
+				pk.addIdAttack(ataChosed.getId());
 			}
 
 		}
