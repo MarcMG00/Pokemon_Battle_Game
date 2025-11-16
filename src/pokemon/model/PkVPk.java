@@ -97,184 +97,134 @@ public class PkVPk {
 	// Gets the probability of attacking
 	public void getProbabilityOfAttacking() {
 
-		// Get if Pokemon are charging an attack
-		boolean isAttackerChargingAttack = this.getPkCombatting().getIsChargingAttackForNextRound();
-		boolean isDefenderChargingAttack = this.getPkFacing().getIsChargingAttackForNextRound();
+		boolean isAttackerCharging = this.getPkCombatting().getIsChargingAttackForNextRound();
+		boolean isDefenderCharging = this.getPkFacing().getIsChargingAttackForNextRound();
 
-		// Get next movement from Pokemon
 		Attack atkAttacker = this.getPkCombatting().getNextMouvement();
 		Attack atkDefender = this.getPkFacing().getNextMouvement();
 
-		// Get if defender is using a special attack and can be hit meanwhile
 		boolean canHitInvulnerable = atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
 
-		// Calculates "accuracy factor"
-		float a = (atkAttacker.getPrecision() / 100.0f)
+		float accuracyFactor = (atkAttacker.getPrecision() / 100f)
 				* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
 
-		// ------------------------------------------------------
-		// Normal attack
-		// ------------------------------------------------------
-		// Normal conditions from both
-		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderChargingAttack) {
+		// Reset CanAttack if doesn't enter in any case
+		this.getPkCombatting().setCanAttack(false);
 
-			System.out.println(ANSI_PURPLE + "Probability of attacking - Normal condition" + ANSI_RESET);
+		// -----------------------------
+		// BLOC 1 : NORMAL ATTACK
+		// -----------------------------
+		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
+			System.out.println(ANSI_PURPLE + "Probability - Normal attack (defender not charging)" + ANSI_RESET);
 
-			// Can attack
-			if (a >= 1.0f) {
-
-				this.getPkCombatting().setCanAttack(true);
-			} else {
-
-				int randomEfectivity = (int) (Math.random() * 100);
-
-				// Can attack
-				if ((randomEfectivity / 100.0f) <= a) {
-
-					this.getPkCombatting().setCanAttack(true);
-
-					// fail -> reduce PP and notify
-				} else {
-
-					this.getPkCombatting().getNextMouvement()
-							.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
-
-					this.getPkCombatting().setCanAttack(false);
-
-					System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
-							+ this.getPkFacing().getName() + " evitó el ataque jijijija. (1)" + ANSI_RESET);
-				}
-			}
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bolc 1)");
+			return;
 		}
 
-		// ------------------------------------------------------
-		// Normal attack
-		// ------------------------------------------------------
-		// Combatant will use a charged attack
-		if (atkAttacker.getCategory() == AttackCategory.CHARGED && !isAttackerChargingAttack) {
+		// -----------------------------
+		// BLOC 2 : NORMAL ATTACK - CAN HIT INVULNERABLE POKEMON
+		// -----------------------------
+		if (canHitInvulnerable && isDefenderCharging) {
+			System.out
+					.println(ANSI_PURPLE + "Probability - Normal attack can hit while defender charging" + ANSI_RESET);
 
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bolc 2)");
+			return;
+		}
+
+		// -----------------------------
+		// BLOC 3 : FIRST TURN FOR (FROM CHARGING ATTACK)
+		// -----------------------------
+		if (atkAttacker.getCategory() == AttackCategory.CHARGED && !isAttackerCharging) {
+			System.out.println(ANSI_PURPLE + "Probability - Starting a charged attack" + ANSI_RESET);
+
+			pkCombatting.setCanAttack(true);
+			System.out.println(ANSI_PURPLE + pkCombatting.getName() + " utilizará " + atkAttacker.getName()
+					+ " - comienza a cargar el ataque. (bloc 3)" + ANSI_RESET);
+			return;
+		}
+
+		// -----------------------------
+		// BLOC 4 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER NOT CHARGING
+		// -----------------------------
+		if (isAttackerCharging && !isDefenderCharging) {
 			System.out.println(
-					ANSI_PURPLE + "Probability of attacking - Combatant will use a charged attack" + ANSI_RESET);
+					ANSI_PURPLE + "Probability - Charged attack execution (defender not charging)" + ANSI_RESET);
 
-			this.getPkCombatting().setCanAttack(true);
-
-			System.out.println(ANSI_PURPLE + this.getPkCombatting().getName() + " utilizará " + atkAttacker.getName()
-					+ " - prepara un ataque cargado" + ANSI_RESET);
+			handleChargedAttackExecution(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bolc 4)");
+			return;
 		}
 
-		// ------------------------------------------------------
-		// Normal attack (can hit special attack)
-		// ------------------------------------------------------
-		// Apply an attack from combatant that can hit defender (while defender is
-		// charging) => ex : "Tornado" can hit "Vuelo"
-		else if (canHitInvulnerable && isDefenderChargingAttack) {
+		// -----------------------------
+		// BLO 5 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER IS CHARGING
+		// -----------------------------
+		if (isAttackerCharging && isDefenderCharging) {
+			System.out.println(ANSI_PURPLE + "Probability - Charged vs Charged (attack avoided)" + ANSI_RESET);
 
-			System.out.println(
-					ANSI_PURPLE + "Probability of attacking - Apply normal attack that can hit (defender is charging)"
-							+ ANSI_RESET);
+			pkCombatting.setCanAttack(false);
+			pkCombatting.setIsChargingAttackForNextRound(false);
 
-			// Can attack
-			if (a >= 1.0f) {
-
-				this.getPkCombatting().setCanAttack(true);
-			} else {
-
-				int randomEfectivity = (int) (Math.random() * 100);
-
-				// Can attack
-				if ((randomEfectivity / 100.0f) <= a) {
-
-					this.getPkCombatting().setCanAttack(true);
-
-					// fail -> reduce PP and notify
-				} else {
-
-					this.getPkCombatting().getNextMouvement()
-							.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
-
-					this.getPkCombatting().setCanAttack(false);
-
-					System.out.println(ANSI_PURPLE + this.getPkCombatting().getName() + " usó " + atkAttacker.getName()
-							+ ". " + this.getPkFacing().getName() + " evitó el ataque jijijija. (2)" + ANSI_RESET);
-				}
-			}
+			System.out.println(pkCombatting.getName() + " usó " + atkAttacker.getName() + ". " + pkFacing.getName()
+					+ " evitó el ataque jijijija. (bloc 5)");
+			return;
 		}
 
-		// ------------------------------------------------------
-		// Special attack (two turns)
-		// ------------------------------------------------------
-		// Apply charged attack from combatant (defender not charging)
-		else if (isAttackerChargingAttack && !isDefenderChargingAttack) {
+		// -----------------------------
+		// BLOC 6 : OTHER ATTACK AGAINST INVULNERABLE (CANNOT DO DAMMAGE)
+		// -----------------------------
+		if (!canHitInvulnerable && isDefenderCharging) {
 
-			System.out.println(ANSI_PURPLE
-					+ "Probability of attacking - Charged attack from combatant (defender not charging)" + ANSI_RESET);
+			System.out.println(ANSI_PURPLE + "Probability - Normal attack fails vs invulnerable defender" + ANSI_RESET);
 
-			// Can attack
-			if (a >= 1.0f) {
+			pkCombatting.setCanAttack(false);
+			pkCombatting.setIsChargingAttackForNextRound(false);
 
-				this.getPkCombatting().setCanAttack(true);
-			} else {
+			System.out.println(pkCombatting.getName() + " usó " + atkAttacker.getName() + ". " + pkFacing.getName()
+					+ " evitó el ataque jijijija. (bloc 6)");
+		}
+	}
 
-				int randomEfectivity = (int) (Math.random() * 100);
+	private void handleNormalAccuracyCheck(float accuracyFactor, Attack atk, Pokemon attacker, Pokemon defender,
+			String code) {
 
-				// Can attack
-				if ((randomEfectivity / 100.0f) <= a) {
-
-					this.getPkCombatting().setCanAttack(true);
-
-					// fail -> reduce PP and notify
-				} else {
-
-					this.getPkCombatting().getNextMouvement()
-							.setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
-
-					this.getPkCombatting().setCanAttack(false);
-
-					this.getPkCombatting().setIsChargingAttackForNextRound(false);
-
-					System.out.println(ANSI_PURPLE + this.getPkCombatting().getName() + " usó " + atkAttacker.getName()
-							+ ". " + this.getPkFacing().getName() + " evitó el ataque jijijija. (3)" + ANSI_RESET);
-				}
-			}
+		if (accuracyFactor >= 1f) {
+			attacker.setCanAttack(true);
+			return;
 		}
 
-		// ------------------------------------------------------
-		// Special attack (two turns)
-		// ------------------------------------------------------
-		// Apply charged attack from combatant (defender is charging)
-		else if (isAttackerChargingAttack && isDefenderChargingAttack) {
+		int rand = (int) (Math.random() * 100);
 
-			System.out.println(ANSI_PURPLE
-					+ "Probability of attacking - Charged attack from combatant (defender is charging)" + ANSI_RESET);
+		if (rand / 100f <= accuracyFactor) {
+			attacker.setCanAttack(true);
+		} else {
+			atk.setPp(atk.getPp() - 1);
+			attacker.setCanAttack(false);
 
-			this.getPkCombatting().setCanAttack(false);
+			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName()
+					+ " evitó el ataque jijijija. " + code);
+		}
+	}
 
-			this.getPkCombatting().setIsChargingAttackForNextRound(false);
+	private void handleChargedAttackExecution(float accuracyFactor, Attack atk, Pokemon attacker, Pokemon defender,
+			String code) {
 
-			// Pokemon defender avoided the attack
-			System.out.println(ANSI_PURPLE + this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
-					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (4)" + ANSI_RESET);
+		if (accuracyFactor >= 1f) {
+			attacker.setCanAttack(true);
+			return;
 		}
 
-		// ------------------------------------------------------
-		// Special attack (two turns)
-		// ------------------------------------------------------
-		// Apply other attack from combatant (defender is charging) => avoid the attack
-		else if (!canHitInvulnerable && isDefenderChargingAttack) {
+		int rand = (int) (Math.random() * 100);
 
-			System.out.println(ANSI_PURPLE
-					+ "Probability of attacking - Apply other attack from combatant (defender is charging) => avoid the attack"
-					+ ANSI_RESET);
+		if (rand / 100f <= accuracyFactor) {
+			attacker.setCanAttack(true);
+		} else {
+			atk.setPp(atk.getPp() - 1);
+			attacker.setCanAttack(false);
+			attacker.setIsChargingAttackForNextRound(false);
 
-			this.getPkCombatting().setCanAttack(false);
-
-			this.getPkCombatting().setIsChargingAttackForNextRound(false);
-
-			// Pokemon defender avoided the attack
-			System.out.println(ANSI_PURPLE + this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
-					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (5)" + ANSI_RESET);
+			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName()
+					+ " evitó el ataque jijijija. " + code);
 		}
-
 	}
 
 	// Gets the attack effect and apply damage

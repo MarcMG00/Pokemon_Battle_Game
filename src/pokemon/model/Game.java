@@ -2239,8 +2239,8 @@ public class Game {
 						"Para escoger los Pokemon, utiliza el formato :número,número,número,número,número,número y los números deben estar entre el 1 y el 807");
 				allPkPlayer = sc.next();
 				sc.useDelimiter(";|\r?\n|\r");
-				System.out.println(allPkPlayer.split(","));
 
+				System.out.println(allPkPlayer.split(","));
 			}
 		}
 
@@ -2260,7 +2260,6 @@ public class Game {
 
 				System.out.println("El número marcado no está en la lista : " + PkID);
 				System.out.println("Tendrás que volver a escoger tus Pokemon (reinicia el juego)");
-
 			}
 		}
 
@@ -2290,21 +2289,18 @@ public class Game {
 			for (PokemonType pt : p.getTypes()) {
 
 				System.out.println(pt.getName());
-
 			}
 
 			// Shows attacks from Pokemon
 			for (Attack a : p.getFourPrincipalAttacks()) {
 
 				System.out.println(a.getName() + " - " + a.getStrTypeToPkType().getName());
-
 			}
 
 			System.out.println();
 		}
 
 		System.out.println();
-
 		System.out.println("IA");
 
 		// Shows Pokemon from IA
@@ -2317,14 +2313,12 @@ public class Game {
 			for (PokemonType pt : p.getTypes()) {
 
 				System.out.println(pt.getName());
-
 			}
 
 			// Shows attacks from Pokemon
 			for (Attack a : p.getFourPrincipalAttacks()) {
 
 				System.out.println(a.getName() + " - " + a.getStrTypeToPkType().getName());
-
 			}
 
 			System.out.println();
@@ -2335,7 +2329,6 @@ public class Game {
 		for (Attack a : IA.getPkCombatting().getFourPrincipalAttacks()) {
 
 			System.out.println(a.getStrTypeToPkType().getName());
-
 		}
 
 		// Put attacks into different lists to determine damage from attacks
@@ -2381,26 +2374,6 @@ public class Game {
 				Pokemon pkPlayer = player.getPkCombatting();
 				Pokemon pkIA = IA.getPkCombatting();
 
-				Attack atkPlayer = pkPlayer.getNextMouvement();
-				Attack atkIA = pkIA.getNextMouvement();
-
-				// Control of Pokemon having a special attack (two turns needed)
-				boolean atkPlayerIsSpecialCategory = atkPlayer.getCategory() == AttackCategory.CHARGED;
-				boolean atkIAIsSpecialCategory = atkIA.getCategory() == AttackCategory.CHARGED;
-
-				// Control of Pokemon charging an attack
-				boolean pkPlayerIsCharging = pkPlayer.getIsChargingAttackForNextRound();
-				boolean pkIAIsCharging = pkIA.getIsChargingAttackForNextRound();
-
-				// Control of Pokemon already used the attack with two turns behavior
-				boolean pkPlayerAlreadyUsedTwoTurnAttackBehavior = pkPlayer.getAlreadyUsedTwoTurnAttackBehavior();
-				boolean pkIAAlreadyUsedTwoTurnAttackBehavior = pkIA.getAlreadyUsedTwoTurnAttackBehavior();
-
-				boolean noOneIsCharging = !pkPlayerIsCharging && !pkIAIsCharging;
-
-				boolean noOneAlreadyUsedTwoTurnAttackBehavior = !pkPlayerAlreadyUsedTwoTurnAttackBehavior
-						&& !pkIAAlreadyUsedTwoTurnAttackBehavior;
-
 				// Check for state for both Pokemon combating
 				boolean canAttackPkPlayer = checkCanAttackFromStatusCondition(pkPlayer);
 				boolean canAttackPkIA = checkCanAttackFromStatusCondition(pkIA);
@@ -2417,44 +2390,7 @@ public class Game {
 					IA.prepareBestAttackIA();
 				}
 
-				// If both Pokemon can attack
-				if (canAttackPkPlayer && canAttackPkIA) {
-					System.out.println(ANSI_YELLOW + "Both Pokemon can attack" + ANSI_RESET);
-
-					// If no one has used a special attack with two turn behavior => apply normal
-					// execution
-					if (noOneAlreadyUsedTwoTurnAttackBehavior && noOneIsCharging) {
-
-						System.out.println(ANSI_YELLOW + "Normal execution - Normal attack sequence" + ANSI_RESET);
-						handleNormalAttackSequence();
-					}
-
-					// If at least one has used a special attack (two turns)
-					else if (atkPlayerIsSpecialCategory || atkIAIsSpecialCategory) {
-
-						System.out.println(
-								ANSI_YELLOW + "At least one is using a special attack (two turns)" + ANSI_RESET);
-
-						// If no one is charging => charge the attacks
-						if (noOneIsCharging) {
-
-							System.out.println(ANSI_YELLOW
-									+ "No one is charging the special attack (two turns) - charge attack" + ANSI_RESET);
-							System.out.println(ANSI_YELLOW + "Normal execution - Normal attack sequence" + ANSI_RESET);
-							handleNormalAttackSequence();
-						}
-
-						// One is charging the attack
-						else if (pkPlayerIsCharging || pkIAIsCharging) {
-
-							System.out.println(
-									ANSI_YELLOW + "At least one is charging the special attack (two turns) - do effect"
-											+ ANSI_RESET);
-
-							handleNormalAttackSequence();
-						}
-					}
-				}
+				handleNormalAttackSequence();
 
 				// Reset status effect
 				if (canAttackPkPlayer) {
@@ -2467,10 +2403,10 @@ public class Game {
 				// Get next round
 				nbRound++;
 
+				// Change Pokemon
 			} else {
 
 				changePokemon(sc);
-
 			}
 		}
 	}
@@ -2527,7 +2463,7 @@ public class Game {
 				&& player.getPkCombatting().getSpeed() > IA.getPkCombatting().getSpeed();
 	}
 
-	// handle normal attack sequence
+	// Handle normal attack sequence
 	private void handleNormalAttackSequence() {
 		if (playerCanAttackFirst()) {
 
@@ -2581,12 +2517,14 @@ public class Game {
 
 				System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
 				IA.applyDamage();
+
 			} else {
 				System.out.println(ANSI_RED + "Pokemon IA cannot attack" + ANSI_RESET);
 			}
 
 			IA.getPkCombatting().restartParametersEffect();
 		} else {
+
 			System.out.println(ANSI_RED + "Pokemon IA is debilitated" + ANSI_RESET);
 		}
 	}
