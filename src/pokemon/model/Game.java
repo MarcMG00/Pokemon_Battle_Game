@@ -2349,84 +2349,94 @@ public class Game {
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
 
-		Pokemon pkIA = IA.getPkCombatting();
-
 		while (IA.getPokemon().size() > 1 && player.getPokemon().size() > 1) {
 
 			System.out.println("----------------------------------");
 			System.out.println("Let's start round nº : " + nbRound);
 			System.out.println("----------------------------------");
 
-			// Turn has started
 			boolean isStartTurn = true;
 
-			int attackChoice = player.getPkCombatting().getIsChargingAttackForNextRound() ? 1 : getPlayerChoice(sc);
+			boolean playerIsCharging = player.getPkCombatting().getIsChargingAttackForNextRound();
+			int attackChoice = playerIsCharging ? 1 : getPlayerChoice(sc);
 
-			// Do attack
 			if (attackChoice == 1) {
-
-				int attackId = 0;
-				if (!player.getPkCombatting().getIsChargingAttackForNextRound()) {
-					// Get the attack Id chosen
-					attackId = getValidAttackId(sc, player);
-				}
-
-				printPokemonStates();
-
-				Pokemon pkPlayer = player.getPkCombatting();
-
-				// Check for state for both Pokemon combating
-				boolean canAttackPkPlayer = checkCanAttackFromStatusCondition(pkPlayer);
-				boolean canAttackPkIA = checkCanAttackFromStatusCondition(pkIA);
-
-				// Apply status effect
-				if (canAttackPkPlayer) {
-					applyEffectStatusCondition(pkPlayer, isStartTurn);
-					// Prepare best attack for player (set effectiveness and bonus)
-					player.prepareBestAttackPlayer(attackId);
-				}
-				if (canAttackPkIA) {
-					applyEffectStatusCondition(pkIA, isStartTurn);
-					// Prepare best attack for IA (set effectiveness and bonus)
-					IA.prepareBestAttackIA();
-				}
-
-				handleNormalAttackSequence();
-
-				// Reset status effect
-				if (canAttackPkPlayer) {
-					resetEffectStatusCondition(pkPlayer);
-				}
-				if (canAttackPkIA) {
-					resetEffectStatusCondition(pkIA);
-				}
-
-				// Get next round
-				nbRound++;
-
-				// Change Pokemon (only for player)
+				handleAttackTurn(sc, isStartTurn);
 			} else {
-
-				changePokemon(sc);
-
-				boolean canAttackPkIA = checkCanAttackFromStatusCondition(pkIA);
-
-				// Apply status effect
-				if (canAttackPkIA) {
-					applyEffectStatusCondition(pkIA, isStartTurn);
-					// Prepare best attack for IA (set effectiveness and bonus)
-					IA.prepareBestAttackIA();
-				}
-
-				handleChangeSequence();
-
-				if (canAttackPkIA) {
-					resetEffectStatusCondition(pkIA);
-				}
-
-				// Get next round
-				nbRound++;
+				handleChangeTurn(sc, isStartTurn);
 			}
+
+			// Get next round
+			nbRound++;
+		}
+	}
+
+	// Handle attacks from the turn
+	private void handleAttackTurn(Scanner sc, boolean isStartTurn) {
+
+		int attackId = 0;
+
+		if (!player.getPkCombatting().getIsChargingAttackForNextRound()) {
+			attackId = getValidAttackId(sc, player);
+		}
+
+		printPokemonStates();
+
+		Pokemon pkPlayer = player.getPkCombatting();
+		Pokemon pkIA = IA.getPkCombatting();
+
+		boolean canAttackPlayer = checkCanAttackFromStatusCondition(pkPlayer);
+		boolean canAttackIA = checkCanAttackFromStatusCondition(pkIA);
+
+		// Apply status effects from beginning of the turn + prepare effectiveness and
+		// bonus from attacks chosen
+		if (canAttackPlayer) {
+			applyEffectStatusCondition(pkPlayer, isStartTurn);
+			player.prepareBestAttackPlayer(attackId);
+		}
+
+		prepareIAIfPossible(canAttackIA, isStartTurn);
+
+		// Handle normal attack sequence
+		handleNormalAttackSequence();
+
+		// Reset status conditions
+		if (canAttackPlayer) {
+			resetEffectStatusCondition(pkPlayer);
+		}
+		resetIAIfPossible(canAttackIA);
+	}
+
+	// Handle attack from IA when player is changing the Pokemon
+	private void handleChangeTurn(Scanner sc, boolean isStartTurn) {
+
+		Pokemon pkIA = IA.getPkCombatting();
+
+		changePokemon(sc);
+
+		boolean canIA = checkCanAttackFromStatusCondition(pkIA);
+
+		prepareIAIfPossible(canIA, isStartTurn);
+
+		// Only IA can attack
+		handleChangeSequence();
+
+		resetIAIfPossible(canIA);
+	}
+
+	// Prepare attack from IA if can attack (after checking status conditions from
+	// the beginning of the turn)
+	private void prepareIAIfPossible(boolean canIA, boolean isStartTurn) {
+		if (canIA) {
+			applyEffectStatusCondition(IA.getPkCombatting(), isStartTurn);
+			IA.prepareBestAttackIA();
+		}
+	}
+
+	// Reset status effects from IA at the end of the turn
+	private void resetIAIfPossible(boolean canIA) {
+		if (canIA) {
+			resetEffectStatusCondition(IA.getPkCombatting());
 		}
 	}
 
