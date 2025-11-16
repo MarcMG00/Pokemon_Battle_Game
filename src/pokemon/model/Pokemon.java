@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import pokemon.enums.StatusConditions;
 
-
 public class Pokemon {
 	private int id;
 	private String name;
@@ -39,8 +38,7 @@ public class Pokemon {
 	private ArrayList<State> ephemeralStates;
 	public boolean isChargingAttackForNextRound;
 	public boolean canAttack;
-	public boolean alreadyUsedFly;
-	public boolean isFirstInUsingTheSameAttack;
+	public boolean alreadyUsedTwoTurnAttackBehavior;
 
 	public Pokemon() {
 		this.id = 0;
@@ -76,11 +74,11 @@ public class Pokemon {
 		this.ephemeralStates = new ArrayList<>();
 		this.isChargingAttackForNextRound = false;
 		this.canAttack = true;
-		this.alreadyUsedFly = false;
-		this.isFirstInUsingTheSameAttack = false;
+		this.alreadyUsedTwoTurnAttackBehavior = false;
 	}
 
-	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack, float specialDefense) {
+	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
+			float specialDefense) {
 		this.id = id;
 		this.name = name;
 		this.ps = ps;
@@ -114,11 +112,11 @@ public class Pokemon {
 		this.ephemeralStates = new ArrayList<>();
 		this.isChargingAttackForNextRound = false;
 		this.canAttack = true;
-		this.alreadyUsedFly = false;
-		this.isFirstInUsingTheSameAttack = false;
+		this.alreadyUsedTwoTurnAttackBehavior = false;
 	}
-	
-	// Constructor to set same Pokemon in a different memory space (otherwise, some duplications for the same objects)
+
+	// Constructor to set same Pokemon in a different memory space (otherwise, some
+	// duplications for the same objects)
 	public Pokemon(Pokemon pokemon) {
 		this.id = pokemon.id;
 		this.name = pokemon.name;
@@ -137,28 +135,27 @@ public class Pokemon {
 		this.normalAbilities = pokemon.normalAbilities;
 		this.hiddenAbilities = pokemon.hiddenAbilities;
 		this.types = pokemon.types;
-		
-	    this.physicalAttacks = new ArrayList<>(pokemon.physicalAttacks);
-	    this.specialAttacks = new ArrayList<>(pokemon.specialAttacks);
-	    this.otherAttacks = new ArrayList<>(pokemon.otherAttacks);
-	    this.fourPrincipalAttacks = new ArrayList<>(); // starts empty
-	    this.fourIdAttacks = new ArrayList<>();
 
-	    this.nextMouvement = pokemon.nextMouvement;
-	    this.lotDamageAttacks = new ArrayList<>(pokemon.lotDamageAttacks);
-	    this.normalAttacks = new ArrayList<>(pokemon.normalAttacks);
-	    this.lowAttacks = new ArrayList<>(pokemon.lowAttacks);
-	    this.notEffectAttacks = new ArrayList<>(pokemon.notEffectAttacks);
+		this.physicalAttacks = new ArrayList<>(pokemon.physicalAttacks);
+		this.specialAttacks = new ArrayList<>(pokemon.specialAttacks);
+		this.otherAttacks = new ArrayList<>(pokemon.otherAttacks);
+		this.fourPrincipalAttacks = new ArrayList<>(); // starts empty
+		this.fourIdAttacks = new ArrayList<>();
 
-	    this.precisionPoints = 0;
-	    this.evasionPoints = 0;
-	    this.statusCondition = pokemon.statusCondition;
-	    this.ephemeralStates = new ArrayList<>(pokemon.ephemeralStates);
+		this.nextMouvement = pokemon.nextMouvement;
+		this.lotDamageAttacks = new ArrayList<>(pokemon.lotDamageAttacks);
+		this.normalAttacks = new ArrayList<>(pokemon.normalAttacks);
+		this.lowAttacks = new ArrayList<>(pokemon.lowAttacks);
+		this.notEffectAttacks = new ArrayList<>(pokemon.notEffectAttacks);
 
-	    this.isChargingAttackForNextRound = pokemon.isChargingAttackForNextRound;
-	    this.canAttack = pokemon.canAttack;
-	    this.alreadyUsedFly = pokemon.alreadyUsedFly;
-	    this.isFirstInUsingTheSameAttack = pokemon.isFirstInUsingTheSameAttack;
+		this.precisionPoints = 0;
+		this.evasionPoints = 0;
+		this.statusCondition = pokemon.statusCondition;
+		this.ephemeralStates = new ArrayList<>(pokemon.ephemeralStates);
+
+		this.isChargingAttackForNextRound = pokemon.isChargingAttackForNextRound;
+		this.canAttack = pokemon.canAttack;
+		this.alreadyUsedTwoTurnAttackBehavior = pokemon.alreadyUsedTwoTurnAttackBehavior;
 	}
 
 	public int getId() {
@@ -424,21 +421,13 @@ public class Pokemon {
 	public void setCanAttack(boolean canAttack) {
 		this.canAttack = canAttack;
 	}
-	
-	public boolean getAlreadyUsedFly() {
-		return alreadyUsedFly;
+
+	public boolean getAlreadyUsedTwoTurnAttackBehavior() {
+		return alreadyUsedTwoTurnAttackBehavior;
 	}
 
-	public void setAlreadyUsedFly(boolean alreadyUsedFly) {
-		this.alreadyUsedFly = alreadyUsedFly;
-	}
-
-	public boolean getIsFirstInUsingTheSameAttack() {
-		return isFirstInUsingTheSameAttack;
-	}
-
-	public void setIsFirstInUsingTheSameAttack(boolean isFirstInUsingTheSameAttack) {
-		this.isFirstInUsingTheSameAttack = isFirstInUsingTheSameAttack;
+	public void setAlreadyUsedTwoTurnAttackBehavior(boolean alreadyUsedTwoTurnAttackBehavior) {
+		this.alreadyUsedTwoTurnAttackBehavior = alreadyUsedTwoTurnAttackBehavior;
 	}
 
 	// Adds abilities to Pokemon
@@ -527,28 +516,24 @@ public class Pokemon {
 	}
 
 	// Modify conditions of Pokemon depending on States
-	public void checkEffectsStatusCondition(boolean isAttackingBurned) {
-		// Do effect of the State
-		this.getStatusCondition().doEffectStatusCondition(this.getStatusCondition().getStatusCondition());
+	public void checkEffectsStatusCondition(boolean isStartTurn) {
 		float reducePs = 0;
 
 		if (!(this.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS)) {
-			
+
 			switch (this.getStatusCondition().getStatusCondition()) {
 			// Can move or not
 			case FROZEN:
-				// Can attack at the moment cause he is not frozen anymore
-				if (this.getStatusCondition().getCanMoveStatusCondition()) {
-					
-					System.out.println(this.getName() + " se descongeló y puede atacar");
-					
-					this.setCanAttack(true);
-					
-				} else {
-					
-					this.setCanAttack(false);
-					System.out.println(this.getName() + " no se descongeló");
-					
+				if (isStartTurn) {
+					// Can attack at the moment cause he is not frozen anymore
+					if (this.getStatusCondition().getCanMoveStatusCondition()) {
+
+						this.setCanAttack(true);
+
+					} else {
+
+						this.setCanAttack(false);
+					}
 				}
 				break;
 			case DEBILITATED:
@@ -559,46 +544,44 @@ public class Pokemon {
 				break;
 			// Modifies speed of Pokemon if can attack (reduces by 50%)
 			case PARALYZED:
-				if (this.getStatusCondition().getCanMoveEphemeralState()) {
-					
-					this.setSpeed((this.getSpeed() * 50) / 100);
-					
-					this.setCanAttack(true);
-					
-					System.out.println(this.getName() + " pudo atacar paralizado");
-					
-				} else {
-					
-					this.setCanAttack(false);
-					
-					System.out.println(this.getName() + " no pudo atacar paralizado");
-					
+				if (isStartTurn) {
+					if (this.getStatusCondition().getCanMoveEphemeralState()) {
+
+						this.setSpeed((this.getSpeed() * 50) / 100);
+
+						this.setCanAttack(true);
+
+					} else {
+
+						this.setCanAttack(false);
+					}
 				}
 				break;
 			// Reduces current PS by 6.25% and damage by 50%
 			case BURNED:
-				if (isAttackingBurned) {
-					
+				if (isStartTurn) {
+
 					this.setAttack(this.getAttack() / 2);
-					
+
 					this.setCanAttack(true);
-					
+
 				} else {
-					
+
 					reducePs = this.getPs() * 0.0625f;
-					
+
 					this.setPs(this.getPs() - reducePs);
 
-					// Reset parameters (when a Pokemon is burned, at the end of the round, he will lose PS, so we will pass directly through the method)
-					if(this.getAttack() != this.getInitialAttack()) {
-						
+					// Reset parameters (when a Pokemon is burned, at the end of the round, he will
+					// lose PS, so we will pass directly through the method)
+					if (this.getAttack() != this.getInitialAttack()) {
+
 						this.restartParametersEffect();
-						
 					}
-					
+
 					this.setCanAttack(true);
-					
-					System.out.println(this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
+
+					System.out.println(
+							this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
 				}
 				break;
 			default:

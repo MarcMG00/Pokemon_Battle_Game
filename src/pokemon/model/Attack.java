@@ -1,6 +1,10 @@
 package pokemon.model;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import pokemon.enums.AttackCategory;
+import pokemon.interfce.TwoTurnAttackBehavior;
 
 public class Attack {
 	private int id;
@@ -14,6 +18,9 @@ public class Attack {
 	private PokemonType strTypeToPkType;
 	private float effectivenessAgainstPkFacing;
 	private float bonus;
+	private AttackCategory category = AttackCategory.NORMAL;
+    private TwoTurnAttackBehavior specialBehavior = null;
+    private List<Integer> canHitWhileInvulnerable = new ArrayList<>();
 	
 	public Attack() {
 		super();
@@ -48,66 +55,87 @@ public class Attack {
 	public int getId() {
 		return id;
 	}
+	
 	public void setId(int id) {
 		this.id = id;
 	}
+	
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public String getType() {
 		return type;
 	}
+	
 	public void setType(String type) {
 		this.type = type;
 	}
+	
 	public ArrayList<String> getBases() {
 		return bases;
 	}
+	
 	public void setBases(ArrayList<String> bases) {
 		this.bases = bases;
 	}
+	
 	public int getPower() {
 		return power;
 	}
+	
 	public void setPower(int power) {
 		this.power = power;
 	}
+	
 	public int getPp() {
 		return pp;
 	}
+	
 	public void setPp(int pp) {
 		this.pp = pp;
 	}
+	
 	public int getPrecision() {
 		return precision;
 	}
+	
 	public void setPrecision(int precision) {
 		this.precision = precision;
 	}
+	
 	public String getEffect() {
 		return effect;
 	}
+	
 	public void setEffect(String effect) {
 		this.effect = effect;
 	}
+	
 	public PokemonType getStrTypeToPkType() {
 		return strTypeToPkType;
 	}
+	
 	public void setStrTypeToPkType(PokemonType strTypeToPkType) {
 		this.strTypeToPkType = strTypeToPkType;
 	}
+	
 	public float getEffectivenessAgainstPkFacing() {
 		return effectivenessAgainstPkFacing;
 	}
+	
 	public void setEffectivenessAgainstPkFacing(float effectivenessAgainstPkFacing) {
 		this.effectivenessAgainstPkFacing = effectivenessAgainstPkFacing;
 	}
+	
 	public float getBonus() {
 		return bonus;
 	}
+	
 	public void setBonus(float bonus) {
 		this.bonus = bonus;
 	}
@@ -117,8 +145,37 @@ public class Attack {
 		this.bases.add(base);
 	}
 	
+	public AttackCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(AttackCategory category) {
+        this.category = category;
+    }
+
+    public TwoTurnAttackBehavior getSpecialBehavior() {
+        return specialBehavior;
+    }
+
+    public void setSpecialBehavior(TwoTurnAttackBehavior specialBehavior) {
+        this.specialBehavior = specialBehavior;
+    }
+    
+	public List<Integer> getCanHitWhileInvulnerable() {
+		return canHitWhileInvulnerable;
+	}
+
+	public void setCanHitWhileInvulnerable(List<Integer> canHitWhileInvulnerable) {
+		this.canHitWhileInvulnerable = canHitWhileInvulnerable;
+	}	
+	
 	// Set the type of the attack to his Pokemon type instead of a string
 	public void transformStrTypeToPokemonType(ArrayList<PokemonType> types) {
 		this.setStrTypeToPkType(types.stream().filter(pk -> pk.getName().equals(this.getType())).findFirst().get());
-	}	
+	}
+	
+	// Check if can hit while target is invulnerable
+	public boolean canHitWhileTargetInvulnerable(int targetAttackId) {
+	    return canHitWhileInvulnerable != null && canHitWhileInvulnerable.contains(targetAttackId);
+	}
 }
