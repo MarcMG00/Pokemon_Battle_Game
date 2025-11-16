@@ -9,6 +9,9 @@ public class State {
 	private boolean canMoveStatusCondition;
 	private int nbTurns;
 	private float PSReduction;
+	
+	private static final String ANSI_CYAN = "\u001B[36m";
+	private static final String ANSI_RESET = "\u001B[0m";
 
 	public State() {
 		this.statusCondition = StatusConditions.NO_STATUS;
@@ -24,7 +27,7 @@ public class State {
 		this.nbTurns = numTurnos;
 		this.PSReduction = 0;
 	}
-	
+
 	public State(StatusConditions estadoEnum) {
 		this.statusCondition = estadoEnum;
 		this.canMoveEphemeralState = true;
@@ -73,11 +76,13 @@ public class State {
 		this.PSReduction = PSReduction;
 	}
 
-	// Sets the amount of damage, mobility and effects at the end/beginning of each turn
-	public void doEffectStatusCondition(StatusConditions status) {
+	// Sets the amount of damage, mobility and effects at the end/beginning of each
+	// turn
+	public boolean doEffectStatusCondition(StatusConditions status) {
 
 		int getRidOfStatusProbability = (int) (Math.random() * 100);
 		int attackProbability = (int) (Math.random() * 100);
+		boolean canAttack = true;
 
 		switch (status) {
 		case CONFUSED:
@@ -88,31 +93,31 @@ public class State {
 			break;
 		case FROZEN:
 			if (this.getNbTurns() == 0) {
-				
+
 				this.setStatusCondition(StatusConditions.NO_STATUS);
 				this.setCanMoveEphemeralState(true);
-				
-				System.out.println("Se terminó el número de turnos congelado, ya puede volver a atacar");
-				
+
+				System.out.println(ANSI_CYAN + "Se terminó el número de turnos congelado, ya puede volver a atacar" + ANSI_RESET);
+
 			} else {
-				
+
 				// Only can be thawed if probability <= 20%
 				if (getRidOfStatusProbability <= 20) {
-					
+
 					this.setNbTurns(0);
 					this.setStatusCondition(StatusConditions.NO_STATUS);
 					this.setCanMoveEphemeralState(true);
-					
-					System.out.println("Se descongeló (proba sup a 20) : " + getRidOfStatusProbability);
-					
+
+					System.out.println(ANSI_CYAN + "Se descongeló (proba sup a 20) : " + getRidOfStatusProbability + ANSI_RESET);
+
 				} else {
-					
-					this.setCanMoveEphemeralState(false);
+
 					this.setNbTurns(this.getNbTurns() - 1);
-					
-					System.out.println("No se descongeló (proba inf a 20) : " + getRidOfStatusProbability);
-					System.out.println("Faltan " + this.getNbTurns() + " turnos");
-					
+					this.setCanMoveEphemeralState(false);
+
+					System.out.println(ANSI_CYAN + "No se descongeló (proba inf a 20) : " + getRidOfStatusProbability + ANSI_RESET);
+					System.out.println(ANSI_CYAN + "Faltan " + this.getNbTurns() + " turnos (congelado - no puede atacar)" + ANSI_RESET);
+					canAttack = false;
 				}
 			}
 			break;
@@ -132,50 +137,51 @@ public class State {
 			break;
 		case PARALYZED:
 			if (this.getNbTurns() == 0) {
-				
+
 				this.setStatusCondition(StatusConditions.NO_STATUS);
 				this.setCanMoveEphemeralState(true);
-				
-				System.out.println("Ya no está paralizado");
-				
+
+				System.out.println(ANSI_CYAN + "Ya no está paralizado" + ANSI_RESET);
+
 			} else {
-				
+
 				// Only can attack if proba <= 25%
 				if (attackProbability <= 25) {
-					
+
+					this.setNbTurns(this.getNbTurns() - 1);
 					this.setCanMoveEphemeralState(true);
-					this.setNbTurns(this.getNbTurns() - 1);
-					
-					System.out.println("Faltan " + this.getNbTurns() + " turnos (paralizado pero puede atacar): " + attackProbability);
-					
+
+					System.out.println(ANSI_CYAN + "Faltan " + this.getNbTurns() + " turnos (paralizado - puede atacar): " + ANSI_RESET);
+
 				} else {
-					
-					this.setCanMoveEphemeralState(false);
+
 					this.setNbTurns(this.getNbTurns() - 1);
-					
-					System.out.println("Faltan " + this.getNbTurns() + " turnos (sigue paralizado): " + attackProbability);
-					
+					this.setCanMoveEphemeralState(false);
+
+					System.out.println(ANSI_CYAN + 
+							"Faltan " + this.getNbTurns() + " turnos (paralizado - no puede atacar): " + ANSI_RESET);
+					canAttack = false;
 				}
 			}
 			break;
 		case BURNED:
 			// In all cases, can attack. This is just a reminder in case of problems
-			if(this.getNbTurns() == 0) {
-				
+			if (this.getNbTurns() == 0) {
+
 				this.setStatusCondition(StatusConditions.NO_STATUS);
 				this.setCanMoveEphemeralState(true);
-				
-			}
-			else {
-				
-				this.setCanMoveEphemeralState(true);
+
+			} else {
+
 				this.setNbTurns(this.getNbTurns() - 1);
-				
+				this.setCanMoveEphemeralState(true);
 			}
 			break;
 		case NO_STATUS:
 			this.setCanMoveEphemeralState(true);
 			break;
 		}
+
+		return canAttack;
 	}
 }

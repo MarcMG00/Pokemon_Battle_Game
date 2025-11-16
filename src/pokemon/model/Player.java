@@ -12,14 +12,14 @@ public class Player {
 	private ArrayList<Pokemon> pokemon;
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
-	private Attack nextAttack;
+	private PkVPk battleVS;
 
 	public Player() {
 		super();
 		this.pokemon = new ArrayList<>();
 		this.pkCombatting = new Pokemon();
-		this.nextAttack = new Attack();
 		this.pkFacing = new Pokemon();
+		this.battleVS = new PkVPk(this.pkCombatting, this.pkFacing);
 	}
 
 	public ArrayList<Pokemon> getPokemon() {
@@ -38,14 +38,6 @@ public class Player {
 		this.pkCombatting = pkCombatting;
 	}
 
-	public Attack getNextAttack() {
-		return nextAttack;
-	}
-
-	public void setNextAttack(Attack nextAttack) {
-		this.nextAttack = nextAttack;
-	}
-
 	// Adds Pokemon to Pokemon player
 	public void addPokemon(Pokemon pk) {
 		this.pokemon.add(pk);
@@ -59,21 +51,29 @@ public class Player {
 		this.pkFacing = pkFacing;
 	}
 
+	public PkVPk getBattleVS() {
+		return battleVS;
+	}
+
+	public void setBattleVS(PkVPk battleVS) {
+		this.battleVS = battleVS;
+	}
+
 	// Adds 4 attacks to each Pokemon from player (1 other, 2 physicals, 1 special)
 	public void addAttacksForEachPokemon() {
-		
+
 		for (Pokemon pk : this.pokemon) {
-			
+
 			System.out.println(pk.getName());
-			
+
 			Random rand = new Random();
 			pk.addAttacks(pk.getOtherAttacks().get(rand.nextInt(pk.getOtherAttacks().size())));
 
 			for (int times = 0; times < 2; times++) {
-				
+
 				rand = new Random();
 				pk.addAttacks(pk.getPhysicalAttacks().get(rand.nextInt(pk.getPhysicalAttacks().size())));
-				
+
 			}
 
 			rand = new Random();
@@ -81,508 +81,532 @@ public class Player {
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack attackChosen : pk.getFourPrincipalAttacks()) {
-				
+
 				pk.addIdAttack(attackChosen.getId());
-				
+
 			}
 
 			System.out.println("fin PK");
 		}
 	}
-	
-//	public void addSpecificAttacksForTests() {
-//		for (Pokemon pk : this.getPokemon()) {
-//			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 7).findFirst().get());
-//			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 9).findFirst().get());
-//			pk.addAtaques(pk.getAtaFisicos().stream().filter(af -> af.getIdAta() == 19).findFirst().get());
-//			
-//
-//			// Adds the Ids of attacks chosed in a list
-//			for (Ataque ataChosed : pk.getCuatroAtaques()) {
-//				pk.addAtaquesIds(ataChosed.getIdAta());
-//			}
-//		}
-//	}
 
 	// Order all the attacks by damage level against the Pokemon facing
-	public void orderAttacksFromDammageLevelPokemon(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
-	    // Gets the Pokemon types that player is currently facing
-	    ArrayList<PokemonType> pkFacing = this.pkFacing.getTypes();
+	public void orderAttacksFromDammageLevelPokemon(
+			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
+		// Gets the Pokemon types that player is currently facing
+		ArrayList<PokemonType> pkFacing = this.pkFacing.getTypes();
 
-	    // Copy all the effects for each type of the current Pokemon player
-	    HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesCopy = new HashMap<>();
+		// Copy all the effects for each type of the current Pokemon player
+		HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesCopy = new HashMap<>();
 
-	    // Vars that put the attacks by their level of damage
-	    ArrayList<Attack> iaLotDamageAttacks = new ArrayList<>();
-	    ArrayList<Attack> iaNormalDamageAttacks = new ArrayList<>();
-	    ArrayList<Attack> iaLowAttacks = new ArrayList<>();
-	    ArrayList<Attack> iaHasNoEffectAttacks = new ArrayList<>();
+		// Vars that put the attacks by their level of damage
+		ArrayList<Attack> iaLotDamageAttacks = new ArrayList<>();
+		ArrayList<Attack> iaNormalDamageAttacks = new ArrayList<>();
+		ArrayList<Attack> iaLowAttacks = new ArrayList<>();
+		ArrayList<Attack> iaHasNoEffectAttacks = new ArrayList<>();
 
-	    // Puts the different types of the attacks in a list without duplicates
-	    ArrayList<PokemonType> noRepeatedAttackTypes = getUniqueAttackTypes();
+		// Puts the different types of the attacks in a list without duplicates
+		ArrayList<PokemonType> noRepeatedAttackTypes = getUniqueAttackTypes();
 
-	    // Gets information about the type of Pokemon (different damages...)
-	    Map<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesFiltered;
+		// Gets information about the type of Pokemon (different damages...)
+		Map<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesFiltered;
 
-	    // Types that doesn't hurt the Pokemon facing
-	    ArrayList<PokemonType> hasNoEffect = new ArrayList<>();
+		// Types that doesn't hurt the Pokemon facing
+		ArrayList<PokemonType> hasNoEffect = new ArrayList<>();
 
-	    // Vars to get the different information for each type of the Pokemon facing
-	    List<String> lotDamageRepeatedTypes = new ArrayList<>();
-	    List<String> normalDamageRepeatedTypes = new ArrayList<>();
-	    List<String> lowDamageRepeatedTypes = new ArrayList<>();
+		// Vars to get the different information for each type of the Pokemon facing
+		List<String> lotDamageRepeatedTypes = new ArrayList<>();
+		List<String> normalDamageRepeatedTypes = new ArrayList<>();
+		List<String> lowDamageRepeatedTypes = new ArrayList<>();
 
-	    // Filter all the damage information for each type of the Pokemon facing
-	    for (PokemonType facingType : pkFacing) {
-	    	
-	        effectPerTypesFiltered = effectPerTypes.entrySet().stream().filter(ef -> ef.getKey().equalsIgnoreCase(facingType.getName()))
-														               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		// Filter all the damage information for each type of the Pokemon facing
+		for (PokemonType facingType : pkFacing) {
 
-	        effectPerTypesCopy.putAll(effectPerTypesFiltered);
-	    }
+			effectPerTypesFiltered = effectPerTypes.entrySet().stream()
+					.filter(ef -> ef.getKey().equalsIgnoreCase(facingType.getName()))
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-	    // If Pokemon facing has 2 types
-	    if (effectPerTypesCopy.size() == 2) {
-	    	
-	        fillDamageTypeLists(effectPerTypesCopy, noRepeatedAttackTypes, hasNoEffect,
-	                			lotDamageRepeatedTypes, normalDamageRepeatedTypes, lowDamageRepeatedTypes);
+			effectPerTypesCopy.putAll(effectPerTypesFiltered);
+		}
 
-	        Map<String, Long> finalLotDammageRepeatedTypes = countDuplicates(lotDamageRepeatedTypes);
-	        Map<String, Long> finalLittleDammageRepeatedTypes = countDuplicates(lowDamageRepeatedTypes);
+		// If Pokemon facing has 2 types
+		if (effectPerTypesCopy.size() == 2) {
 
-	        for (Attack finalAttack : this.getPkCombatting().getFourPrincipalAttacks()) {
-	        	
-	            boolean isPicked = false;
+			fillDamageTypeLists(effectPerTypesCopy, noRepeatedAttackTypes, hasNoEffect, lotDamageRepeatedTypes,
+					normalDamageRepeatedTypes, lowDamageRepeatedTypes);
 
-	            if (hasNoEffect.contains(finalAttack.getStrTypeToPkType()) && !iaHasNoEffectAttacks.contains(finalAttack)) {
-	            	
-	                iaHasNoEffectAttacks.add(finalAttack);
-	                
-	            } else {
-	            	
-	                // Affects both types strongly
-	                isPicked = addIfDoubleType(finalAttack, finalLotDammageRepeatedTypes, iaLotDamageAttacks);
-	                isPicked |= addIfDoubleType(finalAttack, finalLittleDammageRepeatedTypes, iaLowAttacks);
+			Map<String, Long> finalLotDammageRepeatedTypes = countDuplicates(lotDamageRepeatedTypes);
+			Map<String, Long> finalLittleDammageRepeatedTypes = countDuplicates(lowDamageRepeatedTypes);
 
-	                // If not picked, apply single-type logic
-	                if (!isPicked) {
-	                	
-	                    if (finalLittleDammageRepeatedTypes.containsKey(finalAttack.getStrTypeToPkType().getName().toUpperCase())
-	                        && !iaLowAttacks.contains(finalAttack)) {
-	                    	
-	                        iaLowAttacks.add(finalAttack);
-	                        
-	                    } else if (finalLotDammageRepeatedTypes.containsKey(finalAttack.getStrTypeToPkType().getName().toUpperCase())
-		                           && normalDamageRepeatedTypes.contains(finalAttack.getStrTypeToPkType().getName().toUpperCase())
-		                           && !iaLotDamageAttacks.contains(finalAttack)) {
-	                    	
-	                        iaLotDamageAttacks.add(finalAttack);
-	                        
-	                    } else if (!iaNormalDamageAttacks.contains(finalAttack)) {
-	                    	
-	                        iaNormalDamageAttacks.add(finalAttack);
-	                        
-	                    }
-	                }
-	            }
-	        }
-	    }
+			for (Attack finalAttack : this.getPkCombatting().getFourPrincipalAttacks()) {
 
-	    // If Pokemon facing has 1 type
-	    else {
-	        for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> ef : effectPerTypesCopy.entrySet()) {
-	        	
-	            for (Attack finalAttack : this.getPkCombatting().getFourPrincipalAttacks()) {
-	            	
-	                if (ef.getValue().get("Le rebientan").contains(finalAttack.getStrTypeToPkType()) &&
-	                        !iaLotDamageAttacks.contains(finalAttack) &&
-	                        !hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
+				boolean isPicked = false;
 
-	                    iaLotDamageAttacks.add(finalAttack);
+				if (hasNoEffect.contains(finalAttack.getStrTypeToPkType())
+						&& !iaHasNoEffectAttacks.contains(finalAttack)) {
 
-	                } else if (ef.getValue().get("Le Rebientan poco").contains(finalAttack.getStrTypeToPkType()) &&
-	                        !iaLowAttacks.contains(finalAttack) &&
-	                        !hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
+					iaHasNoEffectAttacks.add(finalAttack);
 
-	                    iaLowAttacks.add(finalAttack);
+				} else {
 
-	                } else if (hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
+					// Affects both types strongly
+					isPicked = addIfDoubleType(finalAttack, finalLotDammageRepeatedTypes, iaLotDamageAttacks);
+					isPicked |= addIfDoubleType(finalAttack, finalLittleDammageRepeatedTypes, iaLowAttacks);
 
-	                    iaHasNoEffectAttacks.add(finalAttack);
+					// If not picked, apply single-type logic
+					if (!isPicked) {
 
-	                } else if (!iaNormalDamageAttacks.contains(finalAttack) &&
-	                        !hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
+						if (finalLittleDammageRepeatedTypes
+								.containsKey(finalAttack.getStrTypeToPkType().getName().toUpperCase())
+								&& !iaLowAttacks.contains(finalAttack)) {
 
-	                    iaNormalDamageAttacks.add(finalAttack);
-	                }
-	            }
-	        }
-	    }
+							iaLowAttacks.add(finalAttack);
 
-	    // Sets all the attacks from the Pokemon by their level of damage
-	    this.getPkCombatting().setLotDamageAttacks(iaLotDamageAttacks);
-	    this.getPkCombatting().setNormalAttacks(iaNormalDamageAttacks);
-	    this.getPkCombatting().setLowAttacks(iaLowAttacks);
-	    this.getPkCombatting().setNotEffectAttacks(iaHasNoEffectAttacks);
-	    
-	    // System.out.println("Ataques no afectan");
-	    // for (Ataque a : this.getPkCombatting().getAtaquesNoAfectan()) {
-	    //     System.out.println(a.getNombreAta() + " - " + a.getStrTipoToPkType().getNombreTipo());
-	    // }
-	    // System.out.println("Ataques rebientan");
-	    // for (Ataque a : this.getPkCombatting().getAtaquesRebientan()) {
-	    //     System.out.println(a.getNombreAta() + " - " + a.getStrTipoToPkType().getNombreTipo());
-	    // }
-	    // System.out.println("Ataques normales");
-	    // for (Ataque a : this.getPkCombatting().getAtaquesNormales()) {
-	    //     System.out.println(a.getNombreAta() + " - " + a.getStrTipoToPkType().getNombreTipo());
-	    // }
-	    // System.out.println("Ataques debiles");
-	    // for (Ataque a : this.getPkCombatting().getAtaquesDebiles()) {
-	    //     System.out.println(a.getNombreAta() + " - " + a.getStrTipoToPkType().getNombreTipo());
-	    // }
-	    // System.out.println("next method");
-	    // System.out.println();
+						} else if (finalLotDammageRepeatedTypes
+								.containsKey(finalAttack.getStrTypeToPkType().getName().toUpperCase())
+								&& normalDamageRepeatedTypes
+										.contains(finalAttack.getStrTypeToPkType().getName().toUpperCase())
+								&& !iaLotDamageAttacks.contains(finalAttack)) {
+
+							iaLotDamageAttacks.add(finalAttack);
+
+						} else if (!iaNormalDamageAttacks.contains(finalAttack)) {
+
+							iaNormalDamageAttacks.add(finalAttack);
+
+						}
+					}
+				}
+			}
+		}
+
+		// If Pokemon facing has 1 type
+		else {
+			for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> ef : effectPerTypesCopy.entrySet()) {
+
+				for (Attack finalAttack : this.getPkCombatting().getFourPrincipalAttacks()) {
+
+					if (ef.getValue().get("Le rebientan").contains(finalAttack.getStrTypeToPkType())
+							&& !iaLotDamageAttacks.contains(finalAttack)
+							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
+
+						iaLotDamageAttacks.add(finalAttack);
+
+					} else if (ef.getValue().get("Le Rebientan poco").contains(finalAttack.getStrTypeToPkType())
+							&& !iaLowAttacks.contains(finalAttack)
+							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
+
+						iaLowAttacks.add(finalAttack);
+
+					} else if (hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
+
+						iaHasNoEffectAttacks.add(finalAttack);
+
+					} else if (!iaNormalDamageAttacks.contains(finalAttack)
+							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
+
+						iaNormalDamageAttacks.add(finalAttack);
+					}
+				}
+			}
+		}
+
+		// Sets all the attacks from the Pokemon by their level of damage
+		this.getPkCombatting().setLotDamageAttacks(iaLotDamageAttacks);
+		this.getPkCombatting().setNormalAttacks(iaNormalDamageAttacks);
+		this.getPkCombatting().setLowAttacks(iaLowAttacks);
+		this.getPkCombatting().setNotEffectAttacks(iaHasNoEffectAttacks);
+
+		// System.out.println("Ataques no afectan");
+		// for (Ataque a : this.getPkCombatting().getAtaquesNoAfectan()) {
+		// System.out.println(a.getNombreAta() + " - " +
+		// a.getStrTipoToPkType().getNombreTipo());
+		// }
+		// System.out.println("Ataques rebientan");
+		// for (Ataque a : this.getPkCombatting().getAtaquesRebientan()) {
+		// System.out.println(a.getNombreAta() + " - " +
+		// a.getStrTipoToPkType().getNombreTipo());
+		// }
+		// System.out.println("Ataques normales");
+		// for (Ataque a : this.getPkCombatting().getAtaquesNormales()) {
+		// System.out.println(a.getNombreAta() + " - " +
+		// a.getStrTipoToPkType().getNombreTipo());
+		// }
+		// System.out.println("Ataques debiles");
+		// for (Ataque a : this.getPkCombatting().getAtaquesDebiles()) {
+		// System.out.println(a.getNombreAta() + " - " +
+		// a.getStrTipoToPkType().getNombreTipo());
+		// }
+		// System.out.println("next method");
+		// System.out.println();
 	}
 
 	/* -------------------------- Helper Methods -------------------------- */
 
-	/** Returns a list of unique PokemonType from the attacks of the current Pokemon */
+	/**
+	 * Returns a list of unique PokemonType from the attacks of the current Pokemon
+	 */
 	private ArrayList<PokemonType> getUniqueAttackTypes() {
-	    ArrayList<PokemonType> uniquePkType = new ArrayList<>();
-	    
-	    for (Attack atck : this.getPkCombatting().getFourPrincipalAttacks()) {
-	    	
-	        if (!uniquePkType.contains(atck.getStrTypeToPkType())) {
-	        	
-	        	uniquePkType.add(atck.getStrTypeToPkType());
-	            
-	        }
-	    }
-	    
-	    return uniquePkType;
+		ArrayList<PokemonType> uniquePkType = new ArrayList<>();
+
+		for (Attack atck : this.getPkCombatting().getFourPrincipalAttacks()) {
+
+			if (!uniquePkType.contains(atck.getStrTypeToPkType())) {
+
+				uniquePkType.add(atck.getStrTypeToPkType());
+
+			}
+		}
+
+		return uniquePkType;
 	}
 
 	/** Add attacks that hit both types strongly or weakly */
 	private boolean addIfDoubleType(Attack attack, Map<String, Long> repeatedTypeMap, ArrayList<Attack> targetList) {
-	    for (Map.Entry<String, Long> key : repeatedTypeMap.entrySet()) {
-	    	
-	        if (key.getKey().equals(attack.getStrTypeToPkType().getName().toUpperCase()) && key.getValue() == 2 && 
-	        		!targetList.contains(attack)) {
-	        	
-	            targetList.add(attack);
-	            
-	            return true;
-	            
-	        }
-	    }
-	    
-	    return false;
+		for (Map.Entry<String, Long> key : repeatedTypeMap.entrySet()) {
+
+			if (key.getKey().equals(attack.getStrTypeToPkType().getName().toUpperCase()) && key.getValue() == 2
+					&& !targetList.contains(attack)) {
+
+				targetList.add(attack);
+
+				return true;
+
+			}
+		}
+
+		return false;
 	}
 
-	/** Fill lists of strong, weak, normal and no effect type names based on the facing Pokemon */
+	/**
+	 * Fill lists of strong, weak, normal and no effect type names based on the
+	 * facing Pokemon
+	 */
 	private void fillDamageTypeLists(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesCopy,
-								     ArrayList<PokemonType> noRepeatedAttackTypes,
-								     ArrayList<PokemonType> hasNoEffect,
-								     List<String> lotDamageRepeatedTypes,
-								     List<String> normalDamageRepeatedTypes,
-								     List<String> lowDamageRepeatedTypes) {
+			ArrayList<PokemonType> noRepeatedAttackTypes, ArrayList<PokemonType> hasNoEffect,
+			List<String> lotDamageRepeatedTypes, List<String> normalDamageRepeatedTypes,
+			List<String> lowDamageRepeatedTypes) {
 
-	    for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> eftc : effectPerTypesCopy.entrySet()) {
+		for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> eftc : effectPerTypesCopy.entrySet()) {
 
-	        // Put only types that doesn't hurt
-	        if (eftc.getValue().containsKey("No tiene efecto")) {
-	        	
-	            for (PokemonType noEffect : eftc.getValue().get("No tiene efecto")) {
-	            	
-	                if (!hasNoEffect.contains(noEffect)) {
-	                	
-	                    hasNoEffect.add(noEffect);
-	                    
-	                }
-	            }
-	        }
+			// Put only types that doesn't hurt
+			if (eftc.getValue().containsKey("No tiene efecto")) {
 
-	        // Put only types that hurts a lot
-	        if (eftc.getValue().containsKey("Le rebientan")) {
-	        	
-	            for (PokemonType lotDamage : eftc.getValue().get("Le rebientan")) {
-	            	
-	                lotDamageRepeatedTypes.add(lotDamage.getName().toUpperCase());
-	                
-	            }
-	        }
+				for (PokemonType noEffect : eftc.getValue().get("No tiene efecto")) {
 
-	        // Put only types that hurt a little
-	        if (eftc.getValue().containsKey("Le Rebientan poco")) {
-	        	
-	            for (PokemonType lowDamage : eftc.getValue().get("Le Rebientan poco")) {
-	            	
-	                lowDamageRepeatedTypes.add(lowDamage.getName().toUpperCase());
-	                
-	            }
-	        }
+					if (!hasNoEffect.contains(noEffect)) {
 
-	        // Put normal attacks
-	        for (PokemonType pAttck : noRepeatedAttackTypes) {
-	        	
-	            boolean notStrong = eftc.getValue().containsKey("Le rebientan") && 
-	            					!eftc.getValue().get("Le rebientan").contains(pAttck);
-	            
-	            boolean notWeak = eftc.getValue().containsKey("Le Rebientan poco") && !
-	            				  eftc.getValue().get("Le Rebientan poco").contains(pAttck);
-	            
-	            if ((notStrong || notWeak) && !hasNoEffect.contains(pAttck)) {
-	            	
-	                normalDamageRepeatedTypes.add(pAttck.getName().toUpperCase());
-	                
-	            }
-	        }
-	    }
+						hasNoEffect.add(noEffect);
+
+					}
+				}
+			}
+
+			// Put only types that hurts a lot
+			if (eftc.getValue().containsKey("Le rebientan")) {
+
+				for (PokemonType lotDamage : eftc.getValue().get("Le rebientan")) {
+
+					lotDamageRepeatedTypes.add(lotDamage.getName().toUpperCase());
+
+				}
+			}
+
+			// Put only types that hurt a little
+			if (eftc.getValue().containsKey("Le Rebientan poco")) {
+
+				for (PokemonType lowDamage : eftc.getValue().get("Le Rebientan poco")) {
+
+					lowDamageRepeatedTypes.add(lowDamage.getName().toUpperCase());
+
+				}
+			}
+
+			// Put normal attacks
+			for (PokemonType pAttck : noRepeatedAttackTypes) {
+
+				boolean notStrong = eftc.getValue().containsKey("Le rebientan")
+						&& !eftc.getValue().get("Le rebientan").contains(pAttck);
+
+				boolean notWeak = eftc.getValue().containsKey("Le Rebientan poco")
+						&& !eftc.getValue().get("Le Rebientan poco").contains(pAttck);
+
+				if ((notStrong || notWeak) && !hasNoEffect.contains(pAttck)) {
+
+					normalDamageRepeatedTypes.add(pAttck.getName().toUpperCase());
+
+				}
+			}
+		}
 	}
-	
+
 	// Puts in a Map the number of times that appears the elements in the list
 	private Map<String, Long> countDuplicates(List<String> list) {
 		return list.stream().collect(Collectors.groupingBy(e -> e.toString(), Collectors.counting()));
 	}
 
 	// Chooses the attack: detects if it's machine or player
-	public void prepareBestAttack(boolean isNormalPlayer, Object idAttackPkPlayer) {
-	    
-	    // Gets a random number to choose the attack base (>10 : "others", and if it's the machine's choice)
-	    int randomNumber = 0;
-	    
-	    if (!isNormalPlayer) {
-	    	
-	        randomNumber = (int) (Math.random() * 100) + 1;
-	        // System.out.println(randomNumber);
-	        
-	    }
+	public void prepareBestAttackIA() {
 
-	    boolean isAttackChosen = false;
+		// Gets a random number to choose the attack base (>10 : "others", and if it's
+		// the machine's choice)
+		int randomNumber = (int) (Math.random() * 100) + 1;
 
-	    // Physical or special attack
-	    if (randomNumber > 10 || isNormalPlayer) {
+		boolean isAttackChosen = false;
 
-	        // ===============================
-	        // 1️ High damage attack - same type as Pokemon
-	        // ===============================
-	        if (!this.getPkCombatting().getFourPrincipalAttacks().isEmpty()) {
+		// Physical or special attack
+		if (randomNumber > 10) {
 
-	            for (PokemonType pkType : this.getPkCombatting().getTypes()) {
-	            	
-	                Optional<Attack> nextAttack = Optional.empty();
+			// ===============================
+			// 1️ High damage attack - same type as Pokemon
+			// ===============================
+			if (!this.getPkCombatting().getFourPrincipalAttacks().isEmpty()) {
 
-	                if (isNormalPlayer) {
-	                	
-	                    // Player: chooses the attack matching Pokemon type
-	                    nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
-	                            			.filter(a -> a.getId() == (int) idAttackPkPlayer && a.getStrTypeToPkType() == pkType).findFirst();
-	                    
-	                } else {
-	                	
-	                    // Machine: chooses best attack matching type and not "otros"
-	                    nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
-	                            			.filter(a -> a.getStrTypeToPkType() == pkType && !a.getBases().contains("otros")).findFirst();
-	                }
+				for (PokemonType pkType : this.getPkCombatting().getTypes()) {
 
-	                if (nextAttack.isPresent()) {
-	                	
-	                    Attack atk = nextAttack.get();
+					Optional<Attack> nextAttack = Optional.empty();
 
-	                    // Set effectiveness & bonus
-	                    if (isNormalPlayer) {
-	                    	
-	                        if (!atk.getBases().contains("otros") && atk.getStrTypeToPkType() == pkType) {
-	                        	
-	                            atk.setEffectivenessAgainstPkFacing(2);
-	                            atk.setBonus(randomNumber);
-	                            
-	                        } else if (!atk.getBases().contains("otros")) {
-	                        	
-	                            atk.setEffectivenessAgainstPkFacing(1.5f);
-	                            atk.setBonus(1f);
-	                            
-	                        }
-	                    } else {
-	                    	
-	                        atk.setEffectivenessAgainstPkFacing(2);
-	                        atk.setBonus(1.5f);
-	                        
-	                    }
+					// Machine: chooses best attack matching type and not "otros"
+					nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
+							.filter(a -> a.getStrTypeToPkType() == pkType && !a.getBases().contains("otros"))
+							.findFirst();
 
-	                    this.getPkCombatting().setNextMouvement(atk);
-	                    System.out.println(atk.getName() + " - high damage and same type " + atk.getBases());
-	                    isAttackChosen = true;
-	                    break;
-	                }
-	            }
-	        }
+					if (nextAttack.isPresent()) {
 
-	        // ===============================
-	        // 2️ High damage attack - different type
-	        // ===============================
-	        if (!isAttackChosen && !this.getPkCombatting().getLotDamageAttacks().isEmpty()) {
+						Attack atk = nextAttack.get();
 
-	            Optional<Attack> nextAttack = isNormalPlayer ? this.getPkCombatting().getLotDamageAttacks().stream()
-										                           .filter(a -> a.getId() == (int) idAttackPkPlayer).findFirst()
-										                     : this.getPkCombatting().getLotDamageAttacks().stream()
-										                           .filter(a -> !a.getBases().contains("otros")).findFirst();
+						// Set effectiveness & bonus
+						atk.setEffectivenessAgainstPkFacing(2);
+						atk.setBonus(1.5f);
 
-	            if (nextAttack.isPresent()) {
-	            	
-	                Attack atk = nextAttack.get();
+						this.getPkCombatting().setNextMouvement(atk);
+						System.out.println(atk.getName() + " - high damage and same type " + atk.getBases());
+						isAttackChosen = true;
+						break;
+					}
+				}
+			}
 
-	                if (isNormalPlayer) {
-	                	
-	                    if (!atk.getBases().contains("otros") && this.getPkCombatting().getTypes().contains(atk.getStrTypeToPkType())) {
-	                    	
-	                        atk.setEffectivenessAgainstPkFacing(2);
-	                        atk.setBonus(1.5f);
-	                        
-	                    } else if (!atk.getBases().contains("otros")) {
-	                    	
-	                        atk.setEffectivenessAgainstPkFacing(1.5f);
-	                        atk.setBonus(1);
-	                        
-	                    }
-	                } else {
-	                	
-	                    atk.setEffectivenessAgainstPkFacing(1.5f);
-	                    atk.setBonus(1);
-	                    
-	                }
+			// ===============================
+			// 2️ High damage attack - different type
+			// ===============================
+			if (!isAttackChosen && !this.getPkCombatting().getLotDamageAttacks().isEmpty()) {
 
-	                this.getPkCombatting().setNextMouvement(atk);
-	                System.out.println(atk.getName() + " - high damage and different type " + atk.getBases());
-	                isAttackChosen = true;
-	            }
-	        }
+				Optional<Attack> nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
+						.filter(a -> !a.getBases().contains("otros")).findFirst();
 
-	        // ===============================
-	        // 3️ Normal attack
-	        // ===============================
-	        if (!isAttackChosen && !this.getPkCombatting().getNormalAttacks().isEmpty()) {
+				if (nextAttack.isPresent()) {
 
-	            Optional<Attack> nextAttack = isNormalPlayer ? this.getPkCombatting().getNormalAttacks().stream()
-										                           .filter(a -> a.getId() == (int) idAttackPkPlayer).findFirst()
-										                     : this.getPkCombatting().getNormalAttacks().stream()
-										                           .filter(a -> !a.getBases().contains("otros")
-										                                    && !this.getPkCombatting().getLowAttacks().contains(a)).findFirst();
+					Attack atk = nextAttack.get();
 
-	            if (nextAttack.isPresent()) {
-	            	
-	                Attack atk = nextAttack.get();
+					atk.setEffectivenessAgainstPkFacing(1.5f);
+					atk.setBonus(1);
 
-	                if (!isNormalPlayer || !atk.getBases().contains("otros")) {
-	                	
-	                    atk.setEffectivenessAgainstPkFacing(1);
-	                    atk.setBonus(1);
-	                    
-	                }
+					this.getPkCombatting().setNextMouvement(atk);
+					System.out.println(atk.getName() + " - high damage and different type " + atk.getBases());
+					isAttackChosen = true;
+				}
+			}
 
-	                this.getPkCombatting().setNextMouvement(atk);
-	                System.out.println(atk.getName() + " - normal " + atk.getBases());
-	                isAttackChosen = true;
-	                
-	            }
-	        }
+			// ===============================
+			// 3️ Normal attack
+			// ===============================
+			if (!isAttackChosen && !this.getPkCombatting().getNormalAttacks().isEmpty()) {
 
-	        // ===============================
-	        // 4️ Random attack (no "otros")
-	        // ===============================
-	        if (!isAttackChosen) {
+				Optional<Attack> nextAttack = this.getPkCombatting().getNormalAttacks().stream().filter(
+						a -> !a.getBases().contains("otros") && !this.getPkCombatting().getLowAttacks().contains(a))
+						.findFirst();
 
-	            Optional<Attack> nextAttack = isNormalPlayer ? this.getPkCombatting().getFourPrincipalAttacks().stream()
-										                           .filter(a -> a.getId() == (int) idAttackPkPlayer).findFirst()
-										                     : this.getPkCombatting().getFourPrincipalAttacks().stream()
-										                           .filter(a -> !a.getBases().contains("otros")).findFirst();
+				if (nextAttack.isPresent()) {
 
-	            if (nextAttack.isPresent()) {
-	            	
-	                Attack atk = nextAttack.get();
+					Attack atk = nextAttack.get();
 
-	                if (isNormalPlayer) {
-	                	
-	                    if (!atk.getBases().contains("otros") && this.getPkCombatting().getLowAttacks().contains(atk)) {
-	                    	
-	                        atk.setEffectivenessAgainstPkFacing(0.5f);
-	                        atk.setBonus(1);
-	                        
-	                    }
-	                } else {
-	                	
-	                    if (this.getPkCombatting().getLotDamageAttacks().contains(atk)) {
-	                    	
-	                        atk.setEffectivenessAgainstPkFacing(randomNumber);
-	                        atk.setBonus(1);
-	                        
-	                    } else if (this.getPkCombatting().getNormalAttacks().contains(atk)) {
-	                    	
-	                        atk.setEffectivenessAgainstPkFacing(1);
-	                        atk.setBonus(1);
-	                        
-	                    } else {
-	                    	
-	                        atk.setEffectivenessAgainstPkFacing(0.5f);
-	                        atk.setBonus(1);
-	                        
-	                    }
-	                }
+					if (!atk.getBases().contains("otros")) {
 
-	                this.getPkCombatting().setNextMouvement(atk);
-	                System.out.println(atk.getName() + " - random without 'otros' " + atk.getBases());
-	                isAttackChosen = true;
-	            }
-	        }
+						atk.setEffectivenessAgainstPkFacing(1);
+						atk.setBonus(1);
 
-	    } else {
-	        // ===============================
-	        // 5️ Attack from "otros"
-	        // ===============================
-	        this.getPkCombatting().setNextMouvement( this.getPkCombatting().getFourPrincipalAttacks().stream()
-	                        							 .filter(a -> a.getBases().contains("otros")).findFirst().get()
-	        );
+					}
 
-	        System.out.println(this.getPkCombatting().getNextMouvement().getName());
-	    }
+					this.getPkCombatting().setNextMouvement(atk);
+					System.out.println(atk.getName() + " - normal " + atk.getBases());
+					isAttackChosen = true;
+
+				}
+			}
+
+			// ===============================
+			// 4️ Random attack (no "otros")
+			// ===============================
+			if (!isAttackChosen) {
+
+				Optional<Attack> nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream()
+						.filter(a -> !a.getBases().contains("otros")).findFirst();
+
+				if (nextAttack.isPresent()) {
+
+					Attack atk = nextAttack.get();
+
+					if (this.getPkCombatting().getLotDamageAttacks().contains(atk)) {
+
+						atk.setEffectivenessAgainstPkFacing(1.5f);
+						atk.setBonus(1);
+
+					} else if (this.getPkCombatting().getNormalAttacks().contains(atk)) {
+
+						atk.setEffectivenessAgainstPkFacing(1);
+						atk.setBonus(1);
+
+					} else {
+
+						atk.setEffectivenessAgainstPkFacing(0.5f);
+						atk.setBonus(1);
+
+					}
+
+					this.getPkCombatting().setNextMouvement(atk);
+					System.out.println(atk.getName() + " - random without 'otros' " + atk.getBases());
+					isAttackChosen = true;
+				}
+			}
+
+		} else {
+			// ===============================
+			// 5️ Attack from "otros" OR first attack founded
+			// ===============================
+			if(this.getPkCombatting().getFourPrincipalAttacks().stream().anyMatch(a -> a.getBases().contains("otros"))) {
+				
+				this.getPkCombatting().setNextMouvement(this.getPkCombatting().getFourPrincipalAttacks().stream()
+						.filter(a -> a.getBases().contains("otros")).findFirst().get());
+			}
+			else {
+				this.getPkCombatting().setNextMouvement(this.getPkCombatting().getFourPrincipalAttacks().stream().findFirst().get());
+			}
+
+			System.out.println(this.getPkCombatting().getNextMouvement().getName());
+		}
 	}
 
 	// Prints the attacks of current Pokemon
 	public void printAttacksFromPokemonCombating() {
 		for (Attack currentAttack : this.getPkCombatting().getFourPrincipalAttacks()) {
-			
-			System.out.println(currentAttack.getId() + " - " + currentAttack.getName() + " - " + currentAttack.getType());
-			
+
+			System.out
+					.println(currentAttack.getId() + " - " + currentAttack.getName() + " - " + currentAttack.getType());
 		}
 	}
 
 	// Prints all the info from all the Pokemon player
 	public void printPokemonInfo() {
 		for (Pokemon pk : this.getPokemon()) {
-			
+
 			System.out.println(pk.getId() + " - " + pk.getName() + " - tipo(s) : ");
-			
+
 			for (PokemonType pkT : pk.getTypes()) {
-				
+
 				System.out.println(pkT.getName());
-				
 			}
-			
+
 			for (Attack currentAttacks : pk.getFourPrincipalAttacks()) {
-				
+
 				System.out.println(currentAttacks.getName() + " - " + currentAttacks.getType());
-				
 			}
-			
+
 			System.out.println("---------------");
 		}
 	}
-	
-	// Apply damage
-	public void applyDamage(boolean useAttackChargedNow) {
-		PkVPk battleVS = new PkVPk(this.getPkCombatting(), this.getPkFacing());
-		
-		battleVS.getProbabilityOfAttackingAndAttack(useAttackChargedNow);
+
+	public void prepareBestAttackPlayer(int attackId) {
+		Optional<Attack> nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream()
+				.filter(a -> a.getId() == attackId).findFirst();
+		boolean isAttackChoosen = false;
+
+		if (nextAttack.isPresent()) {
+
+			Attack atk = nextAttack.get();
+			Optional<PokemonType> typeOpt = this.getPkCombatting().getTypes().stream()
+					.filter(ty -> ty == atk.getStrTypeToPkType()).findFirst();
+
+			// ===============================
+			// 1️ High damage attack - same type as Pokemon
+			// ===============================
+			if (typeOpt.isPresent()) {
+
+				if (!atk.getBases().contains("otros")) {
+
+					atk.setEffectivenessAgainstPkFacing(2);
+					atk.setBonus(1f);
+
+				} else if (!atk.getBases().contains("otros")) {
+
+					atk.setEffectivenessAgainstPkFacing(1.5f);
+					atk.setBonus(1f);
+
+				}
+				isAttackChoosen = true;
+			}
+			// ===============================
+			// 2️ High damage attack - different type
+			// ===============================
+			if (!isAttackChoosen && !this.getPkCombatting().getLotDamageAttacks().isEmpty()) {
+
+				if (!atk.getBases().contains("otros")
+						&& this.getPkCombatting().getTypes().contains(atk.getStrTypeToPkType())) {
+
+					atk.setEffectivenessAgainstPkFacing(2);
+					atk.setBonus(1.5f);
+
+				} else if (!atk.getBases().contains("otros")) {
+
+					atk.setEffectivenessAgainstPkFacing(1.5f);
+					atk.setBonus(1);
+
+				}
+				isAttackChoosen = true;
+			}
+			// ===============================
+			// 3️ Normal attack
+			// ===============================
+			if (!isAttackChoosen && !this.getPkCombatting().getNormalAttacks().isEmpty()) {
+
+				if (!atk.getBases().contains("otros")) {
+
+					atk.setEffectivenessAgainstPkFacing(1);
+					atk.setBonus(1);
+
+				}
+				isAttackChoosen = true;
+			}
+			// ===============================
+			// 4️ Random attack (no "otros")
+			// ===============================
+			if (!isAttackChoosen) {
+
+				if (!atk.getBases().contains("otros") && this.getPkCombatting().getLowAttacks().contains(atk)) {
+
+					atk.setEffectivenessAgainstPkFacing(0.5f);
+					atk.setBonus(1);
+
+				}
+				isAttackChoosen = true;
+			}
+			// ===============================
+			// 5️ Attack from "otros"
+			// ===============================
+			// Else is an attack from "otros", so nothing to do
+
+			this.getPkCombatting().setNextMouvement(atk);
+		}
 	}
+
+	// Check for evasion/accuracy from Pokemon
+	public void getProbabiltyOfAttacking() {
+		this.getBattleVS().getProbabilityOfAttacking();
+	}
+
+	// Apply damage
+	public void applyDamage() {
+		this.getBattleVS().doAttackEffect();
+	}
+
 }
