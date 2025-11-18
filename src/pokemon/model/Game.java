@@ -2363,7 +2363,14 @@ public class Game {
 			if (attackChoice == 1) {
 				handleAttackTurn(sc, isStartTurn);
 			} else {
-				handleChangeTurn(sc, isStartTurn);
+				boolean cancelled = !handleChangeTurn(sc, isStartTurn);
+
+				if (cancelled) {
+					System.out.println("Cambio cancelado. Regresando al menú principal...");
+					attackChoice = -1; // show again options : attack/change
+					// Stay in the same round
+					nbRound--;
+				}
 			}
 
 			// Get next round
@@ -2391,8 +2398,14 @@ public class Game {
 		// Apply status effects from beginning of the turn + prepare effectiveness and
 		// bonus from attacks chosen
 		if (canAttackPlayer) {
-			applyEffectStatusCondition(pkPlayer, isStartTurn);
+			applyEffectStatusCondition(pkPlayer);
 			player.prepareBestAttackPlayer(attackId);
+		}
+
+		// IA can decide to change Pokemon
+		if (tryIAChange()) {
+			// If change realized => don't attack
+			return;
 		}
 
 		prepareIAIfPossible(canAttackIA, isStartTurn);
@@ -2408,27 +2421,31 @@ public class Game {
 	}
 
 	// Handle attack from IA when player is changing the Pokemon
-	private void handleChangeTurn(Scanner sc, boolean isStartTurn) {
+	private boolean handleChangeTurn(Scanner sc, boolean isStartTurn) {
 
 		Pokemon pkIA = IA.getPkCombatting();
 
-		changePokemon(sc);
+		boolean changed = changePokemon(sc);
+
+		if (!changed)
+			return false; // jugador canceló
 
 		boolean canIA = checkCanAttackFromStatusCondition(pkIA);
 
 		prepareIAIfPossible(canIA, isStartTurn);
 
-		// Only IA can attack
-		handleChangeSequence();
+		handleChangeSequence(); // solo IA ataca
 
 		resetIAIfPossible(canIA);
+
+		return true;
 	}
 
 	// Prepare attack from IA if can attack (after checking status conditions from
 	// the beginning of the turn)
 	private void prepareIAIfPossible(boolean canIA, boolean isStartTurn) {
 		if (canIA) {
-			applyEffectStatusCondition(IA.getPkCombatting(), isStartTurn);
+			applyEffectStatusCondition(IA.getPkCombatting());
 			IA.prepareBestAttackIA();
 		}
 	}
@@ -2440,6 +2457,7 @@ public class Game {
 		}
 	}
 
+	// Get the player choice (attack or change Pokemon)
 	private int getPlayerChoice(Scanner sc) {
 		System.out.println("Quieres atacar (1) o cambiar de Pokemon (2) :");
 		int choice = sc.nextInt();
@@ -2447,6 +2465,7 @@ public class Game {
 		return choice;
 	}
 
+	// Check validity of attack id from player Pokemon
 	private int getValidAttackId(Scanner sc, Player player) {
 		System.out.println("Escoge un ataque :");
 		player.printAttacksFromPokemonCombating();
@@ -2461,6 +2480,7 @@ public class Game {
 		return ataqueId;
 	}
 
+	// Print Pokemon states (for debug)
 	private void printPokemonStates() {
 		System.out.println("Estado del Pokemon del jugador : "
 				+ player.getPkCombatting().getStatusCondition().getStatusCondition());
@@ -2476,12 +2496,14 @@ public class Game {
 		return canAttackPk;
 	}
 
-	// Apply effect of status condition at the beginning/end of the turn for Pokemon
+	// Apply effect of status condition at the beginning of the turn for Pokemon
 	// combating
-	private void applyEffectStatusCondition(Pokemon attacker, boolean isStartTurn) {
-		attacker.checkEffectsStatusCondition(isStartTurn);
+	private void applyEffectStatusCondition(Pokemon attacker) {
+		attacker.checkEffectsStatusCondition(true);
 	}
 
+	// Apply effect of status condition at the end of the turn for Pokemon
+	// combating
 	private void resetEffectStatusCondition(Pokemon attacker) {
 		attacker.checkEffectsStatusCondition(false);
 	}
@@ -2564,29 +2586,85 @@ public class Game {
 	}
 
 	// Change Pokemon
-	private void changePokemon(Scanner sc) {
-		player.printPokemonInfo();
-		System.out.println("Escoge uno de tus Pokémon : ");
+	private boolean changePokemon(Scanner sc) {
 
-		Pokemon selected = null;
+		while (true) {
 
-		while (selected == null) {
-			int pokemonId = sc.nextInt();
+			System.out.println("\n--- Cambio de Pokémon ---");
+			player.printPokemonInfo();
+			System.out.println("Escribe el ID del Pokémon a usar o '0' para cancelar : ");
+
+			int id = sc.nextInt();
 			sc.useDelimiter(";|\r?\n|\r");
 
-			selected = player.getPokemon().stream().filter(pk -> pk.getId() == pokemonId).findFirst().orElse(null);
-
-			if (selected == null) {
-				System.out.println("No escogiste un Pokémon válido. Escoge un Pokemon de los que posees :");
+			if (id == 0) {
+				return false; // cancel change
 			}
+
+			// Not allowed to chose the Pokemon combating
+			if (player.getPkCombatting().getId() == id) {
+				System.out.println("Ese Pokémon ya está combatiendo. Escoge otro.");
+				continue;
+			}
+
+			Optional<Pokemon> opt = player.getPokemon().stream().filter(p -> p.getId() == id).findFirst();
+
+			if (opt.isEmpty()) {
+				System.out.println("No escogiste un Pokémon válido. Escoge un Pokemon de los que posees :");
+				continue;
+			}
+
+			Pokemon selected = opt.get();
+
+			System.out.println("Jugador cambió a " + selected.getName());
+
+			// Update Pokemon combating
+			player.setPkCombatting(selected);
+
+			// Update facing Pokemon
+			player.setPkFacing(IA.getPkCombatting());
+			IA.setPkFacing(player.getPkCombatting());
+
+			refreshAttackOrders();
+
+			return true; // change successfuly
+		}
+	}
+
+	// Try IA to change Pokemon. Return true if IA changed Pokemon. If return false,
+	// will attack normally
+	private boolean tryIAChange() {
+		// 15% of probability to change Pokemon
+		int randomNumber = (int) (Math.random() * 100) + 1;
+		if (randomNumber > 15) {
+			System.out.println("IA no cambiará (probabilidad muy baja)");
+			return false; // don't change
 		}
 
-		// Update Pokemon combating
-		player.setPkCombatting(selected);
+		// Check from others Pokemon from the team to see a potential better option
+		Pokemon changeTo = IA.decideBestChangePokemon(player.getPkCombatting(), this.effectPerTypes);
+
+		if (changeTo == null) {
+			System.out.println("IA no tiene un mejor Pokemon al que cambiar");
+			return false; // doesn't exists a better option
+		}
+
+		// Do Pokemon change => update Pokemon comabting from IA, etc.
+		System.out.println("IA cambió a " + changeTo.getName());
+		IA.setPkCombatting(changeTo);
 
 		// Update Pokemon facing for each player
-		player.setPkFacing(IA.getPkCombatting());
 		IA.setPkFacing(player.getPkCombatting());
+		player.setPkFacing(IA.getPkCombatting());
+
+		refreshAttackOrders();
+
+		return true;
+	}
+
+	private void refreshAttackOrders() {
+		IA.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
+		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 	}
 
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard)

@@ -222,8 +222,8 @@ public class PkVPk {
 			attacker.setCanAttack(false);
 			attacker.setIsChargingAttackForNextRound(false);
 
-			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName() + " (Id:" + defender.getId() + ")"
-					+ " evitó el ataque jijijija. " + code);
+			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName() + " (Id:"
+					+ defender.getId() + ")" + " evitó el ataque jijijija. " + code);
 		}
 	}
 
@@ -241,7 +241,8 @@ public class PkVPk {
 		switch (this.getPkCombatting().getNextMouvement().getId()) {
 		// Destructor (tested)
 		case 1:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Destructor");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Destructor");
 
 			dmg = doDammage();
 
@@ -265,7 +266,8 @@ public class PkVPk {
 
 		// Golpe kárate (tested)
 		case 2:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Golpe kárate");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Golpe kárate");
 
 			dmg = doDammage();
 
@@ -290,7 +292,8 @@ public class PkVPk {
 
 		// Doble bofetón (tested)
 		case 3:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Doble bofetón");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Doble bofetón");
 
 			dmg = doDammage();
 
@@ -319,7 +322,8 @@ public class PkVPk {
 
 		// Puño cometa (tested)
 		case 4:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Puño cometa");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Puño cometa");
 
 			dmg = doDammage();
 
@@ -349,7 +353,8 @@ public class PkVPk {
 
 		// Megapuño (tested)
 		case 5:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Megapuño");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Megapuño");
 
 			dmg = doDammage();
 
@@ -373,7 +378,8 @@ public class PkVPk {
 
 		// Día de pago (tested)
 		case 6:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Día de pago");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Día de pago");
 
 			dmg = doDammage();
 
@@ -396,7 +402,8 @@ public class PkVPk {
 
 		// Puño fuego (tested)
 		case 7:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Puño fuego");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Puño fuego");
 
 			dmg = doDammage();
 
@@ -440,7 +447,8 @@ public class PkVPk {
 
 		// Puño hielo
 		case 8:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Puño hielo");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Puño hielo");
 
 			dmg = doDammage();
 
@@ -488,7 +496,8 @@ public class PkVPk {
 
 		// Puño trueno (tested)
 		case 9:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Puño trueno");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Puño trueno");
 
 			dmg = doDammage();
 
@@ -534,7 +543,8 @@ public class PkVPk {
 
 		// Arañazo (tested)
 		case 10:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Arañazo");
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Arañazo");
 
 			dmg = doDammage();
 
@@ -558,7 +568,8 @@ public class PkVPk {
 
 		// Agarre (tested)
 		case 11:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Agarre");
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Agarre");
 
 			dmg = doDammage();
 
@@ -590,13 +601,15 @@ public class PkVPk {
 			if (!this.getPkCombatting().getIsChargingAttackForNextRound()) {
 
 				// This attack requires to charge first time for one round
-				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " se prepara para Viento cortante");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " se prepara para Viento cortante");
 
 				this.getPkCombatting().setIsChargingAttackForNextRound(true);
 
 			} else {
 
-				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Viento cortante");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Viento cortante");
 
 				dmg = doDammage();
 
@@ -625,7 +638,8 @@ public class PkVPk {
 
 		// Corte (tested)
 		case 15:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Corte");
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Corte");
 
 			dmg = doDammage();
 
@@ -655,7 +669,8 @@ public class PkVPk {
 			this.getPkCombatting().getNextMouvement()
 					.setPower(this.getPkCombatting().getNextMouvement().getPower() * 2);
 
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Tornado");
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Tornado");
 
 			dmg = doDammage();
 
@@ -682,7 +697,8 @@ public class PkVPk {
 
 		// Ataque ala (tested)
 		case 17:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Ataque ala");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Ataque ala");
 
 			dmg = doDammage();
 
@@ -704,20 +720,22 @@ public class PkVPk {
 			}
 			break;
 
-		// Vuelo
+		// Vuelo (tested)
 		case 19:
 			// If not charging => first turn charge the attack
 			if (!this.getPkCombatting().getIsChargingAttackForNextRound()) {
 
 				// This attack requires to charge first time for one round
-				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " voló muy alto");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " voló muy alto");
 
 				this.getPkCombatting().setIsChargingAttackForNextRound(true);
 
 				// Apply damage => second turn
 			} else {
 
-				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Vuelo");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Vuelo");
 
 				dmg = doDammage();
 
@@ -745,7 +763,8 @@ public class PkVPk {
 
 		// Atadura
 		case 20:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Atadura");
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Atadura");
 
 			dmg = doDammage();
 
@@ -779,7 +798,8 @@ public class PkVPk {
 
 		// Atizar (tested)
 		case 21:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Atizar");
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Atizar");
 
 			dmg = doDammage();
 
@@ -803,7 +823,8 @@ public class PkVPk {
 
 		// Látigo cepa (tested)
 		case 22:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Látigo cepa");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Látigo cepa");
 
 			dmg = doDammage();
 
@@ -827,7 +848,8 @@ public class PkVPk {
 
 		// Pisotón
 		case 23:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Pisotón");
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Pisotón");
 			break;
 		}
 	}
@@ -854,7 +876,8 @@ public class PkVPk {
 							* this.getPkCombatting().getNextMouvement().getPower())
 							/ (25 * this.getPkFacing().getSpecialDefense()) + 2);
 
-			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")" + ") : " + dmg);
+			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
+					+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 
 			// Apply normal damage
 		} else {
@@ -865,7 +888,8 @@ public class PkVPk {
 							* this.getPkCombatting().getNextMouvement().getPower()) / (25 * this.getPkFacing().getDef())
 							+ 2);
 
-			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")" + ") : " + dmg);
+			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
+					+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 		}
 
 		return dmg;

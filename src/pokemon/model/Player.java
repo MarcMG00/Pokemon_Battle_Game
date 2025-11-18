@@ -474,13 +474,14 @@ public class Player {
 			// ===============================
 			// 5️ Attack from "otros" OR first attack founded
 			// ===============================
-			if(this.getPkCombatting().getFourPrincipalAttacks().stream().anyMatch(a -> a.getBases().contains("otros"))) {
-				
+			if (this.getPkCombatting().getFourPrincipalAttacks().stream()
+					.anyMatch(a -> a.getBases().contains("otros"))) {
+
 				this.getPkCombatting().setNextMouvement(this.getPkCombatting().getFourPrincipalAttacks().stream()
 						.filter(a -> a.getBases().contains("otros")).findFirst().get());
-			}
-			else {
-				this.getPkCombatting().setNextMouvement(this.getPkCombatting().getFourPrincipalAttacks().stream().findFirst().get());
+			} else {
+				this.getPkCombatting()
+						.setNextMouvement(this.getPkCombatting().getFourPrincipalAttacks().stream().findFirst().get());
 			}
 
 			System.out.println(this.getPkCombatting().getNextMouvement().getName());
@@ -597,6 +598,87 @@ public class Player {
 
 			this.getPkCombatting().setNextMouvement(atk);
 		}
+	}
+
+	public Pokemon decideBestChangePokemon(Pokemon pkPlayerFacing,
+			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
+
+		// 1️ - Random check (15% of probability to change)
+		int random = (int) (Math.random() * 100) + 1;
+		if (random > 15) {
+			return null; // no cambio
+		}
+
+		Pokemon currentPkCombatingBeforeChange = this.getPkCombatting();
+
+		// 2️ - Analyze actual attacks from Pokemon combating
+		this.orderAttacksFromDammageLevelPokemon(effectPerTypes);
+		int currentBestDamage = getDamageScore(currentPkCombatingBeforeChange);
+
+		// 3️ - Search other Pokemon form the team (not including Pokemon combating)
+		Pokemon bestCandidate = null;
+		int bestScore = currentBestDamage;
+
+		for (Pokemon candidate : this.getPokemon()) {
+
+			if (candidate == currentPkCombatingBeforeChange)
+				continue;
+
+			// Ordenate attacks from the candidate Pokemon vs Pokemon facing
+			this.setPkCombatting(candidate);
+			this.setPkFacing(pkPlayerFacing);
+			this.orderAttacksFromDammageLevelPokemon(effectPerTypes);
+
+			int score = getDamageScore(candidate);
+
+			// Rule 1: Pokemon with STAB super effective
+			if (hasSTABSuperEffective(candidate)) {
+				return candidate;
+			}
+
+			// Rule 2: Pokemon with a very high damage but no STAB
+			if (score > bestScore) {
+				bestScore = score;
+				bestCandidate = candidate;
+			}
+		}
+
+		// Restore real battler before returning!
+		this.setPkCombatting(currentPkCombatingBeforeChange);
+
+		// 4️ - Apply rule 2 if founded something better than actual Pokemon
+		if (bestCandidate != null && bestScore > currentBestDamage) {
+			return bestCandidate;
+		}
+
+		// 5️ - If nothing founded, don't change
+		return null;
+	}
+
+	// Get damage score from Pokemon candidate
+	private int getDamageScore(Pokemon pk) {
+		if (!pk.getLotDamageAttacks().isEmpty())
+			return 3; // very high damage
+		if (!pk.getNormalAttacks().isEmpty())
+			return 2; // normal damage
+		if (!pk.getLowAttacks().isEmpty())
+			return 1; // low damage
+
+		return 0; // no effect
+	}
+
+	// Check if an attack has STAB super effective
+	private boolean hasSTABSuperEffective(Pokemon pk) {
+
+		for (Attack atk : pk.getLotDamageAttacks()) {
+
+			// "same type" (STAB)
+			if (pk.getTypes().contains(atk.getStrTypeToPkType())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	// Check for evasion/accuracy from Pokemon
