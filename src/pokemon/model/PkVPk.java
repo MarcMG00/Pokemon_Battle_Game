@@ -117,7 +117,7 @@ public class PkVPk {
 		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
 			System.out.println(ANSI_PURPLE + "Probability - Normal attack (defender not charging)" + ANSI_RESET);
 
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bolc 1)");
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bloc 1)");
 			return;
 		}
 
@@ -128,7 +128,7 @@ public class PkVPk {
 			System.out
 					.println(ANSI_PURPLE + "Probability - Normal attack can hit while defender charging" + ANSI_RESET);
 
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bolc 2)");
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bloc 2)");
 			return;
 		}
 
@@ -151,7 +151,7 @@ public class PkVPk {
 			System.out.println(
 					ANSI_PURPLE + "Probability - Charged attack execution (defender not charging)" + ANSI_RESET);
 
-			handleChargedAttackExecution(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bolc 4)");
+			handleChargedAttackExecution(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bloc 4)");
 			return;
 		}
 

@@ -2236,7 +2236,7 @@ public class Game {
 			while (!allPkPlayer.matches(matchFormatChoice)) {
 
 				System.out.println(
-						"Para escoger los Pokemon, utiliza el formato :número,número,número,número,número,número y los números deben estar entre el 1 y el 807");
+						"Para escoger los Pokémon, utiliza el formato :número,número,número,número,número,número y los números deben estar entre el 1 y el 807");
 				allPkPlayer = sc.next();
 				sc.useDelimiter(";|\r?\n|\r");
 
@@ -2259,7 +2259,7 @@ public class Game {
 			} else {
 
 				System.out.println("El número marcado no está en la lista : " + PkID);
-				System.out.println("Tendrás que volver a escoger tus Pokemon (reinicia el juego)");
+				System.out.println("Tendrás que volver a escoger tus Pokémon (reinicia el juego)");
 			}
 		}
 
@@ -2403,7 +2403,7 @@ public class Game {
 		}
 
 		// IA can decide to change Pokemon
-		if (tryIAChange()) {
+		if (IA.getPkCombatting().getIsChargingAttackForNextRound() == false && tryIAChange()) {
 			// If change realized => don't attack
 			return;
 		}
@@ -2411,7 +2411,7 @@ public class Game {
 		prepareIAIfPossible(canAttackIA, isStartTurn);
 
 		// Handle normal attack sequence
-		handleNormalAttackSequence();
+		handleNormalAttackSequence(sc);
 
 		// Reset status conditions
 		if (canAttackPlayer) {
@@ -2428,13 +2428,13 @@ public class Game {
 		boolean changed = changePokemon(sc);
 
 		if (!changed)
-			return false; // jugador canceló
+			return false; // player cancelled the change (return to start options)
 
 		boolean canIA = checkCanAttackFromStatusCondition(pkIA);
 
 		prepareIAIfPossible(canIA, isStartTurn);
 
-		handleChangeSequence(); // solo IA ataca
+		handleChangeSequence(sc); // only IA attacks
 
 		resetIAIfPossible(canIA);
 
@@ -2459,7 +2459,7 @@ public class Game {
 
 	// Get the player choice (attack or change Pokemon)
 	private int getPlayerChoice(Scanner sc) {
-		System.out.println("Quieres atacar (1) o cambiar de Pokemon (2) :");
+		System.out.println("Quieres atacar (1) o cambiar de Pokémon (2) :");
 		int choice = sc.nextInt();
 		sc.useDelimiter(";|\r?\n|\r");
 		return choice;
@@ -2482,10 +2482,10 @@ public class Game {
 
 	// Print Pokemon states (for debug)
 	private void printPokemonStates() {
-		System.out.println("Estado del Pokemon del jugador : "
+		System.out.println("Estado del Pokémon del jugador : "
 				+ player.getPkCombatting().getStatusCondition().getStatusCondition());
 		System.out.println(
-				"Estado del Pokemon de la máquina : " + IA.getPkCombatting().getStatusCondition().getStatusCondition());
+				"Estado del Pokémon de la máquina : " + IA.getPkCombatting().getStatusCondition().getStatusCondition());
 	}
 
 	// Check if Pokemon combating can attack due to effect from status condition
@@ -2515,21 +2515,27 @@ public class Game {
 	}
 
 	// Handle normal attack sequence
-	private void handleNormalAttackSequence() {
+	private void handleNormalAttackSequence(Scanner sc) {
 		if (playerCanAttackFirst()) {
 
 			handlePlayerRetaliation();
+		    checkForcedPokemonChange(sc);
+		    
 			handleIARetaliation();
+		    checkForcedPokemonChange(sc);
 		} else {
 
 			handleIARetaliation();
+		    checkForcedPokemonChange(sc);
+		    
 			handlePlayerRetaliation();
+		    checkForcedPokemonChange(sc);
 		}
 	}
 
 	// Handle change sequence
-	private void handleChangeSequence() {
-		handleIARetaliation();
+	private void handleChangeSequence(Scanner sc) {
+		handleIARetaliation();checkForcedPokemonChange(sc);
 	}
 
 	// Player handle attack
@@ -2585,6 +2591,41 @@ public class Game {
 		}
 	}
 
+	// Check if needed to chose a new Pokemon (ex : combating Pokemon dies from burning in final turn while flying, etc.)
+	private void checkForcedPokemonChange(Scanner sc) {
+
+		// Player dies
+		if (player.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			System.out.println(player.getPkCombatting().getName() + " fue derrotado.");
+			System.out.println("¿Qué Pokémon deberías escoger?");
+
+			boolean changed = false;
+			while (!changed) {
+				changed = changePokemon(sc); // chose a new Pokemon (mandatory)
+			}
+		}
+
+		// IA dies
+		if (IA.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			System.out.println(IA.getPkCombatting().getName() + " fue derrotado.");
+
+			Pokemon newIA = IA.decideBestChangePokemon(player.getPkCombatting(), effectPerTypes);
+
+			// If decideBestChangePokemon returns null => choose the first Pokemon available
+			if (newIA == null) {
+				newIA = IA.getPokemon().stream().filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).findFirst().get();
+			}
+
+			System.out.println("IA eligió a " + newIA.getName());
+			
+			IA.setPkCombatting(newIA);
+			IA.setPkFacing(player.getPkCombatting());
+			
+			player.setPkFacing(IA.getPkCombatting());
+			refreshAttackOrders();
+		}
+	}
+
 	// Change Pokemon
 	private boolean changePokemon(Scanner sc) {
 
@@ -2610,13 +2651,13 @@ public class Game {
 			Optional<Pokemon> opt = player.getPokemon().stream().filter(p -> p.getId() == id).findFirst();
 
 			if (opt.isEmpty()) {
-				System.out.println("No escogiste un Pokémon válido. Escoge un Pokemon de los que posees :");
+				System.out.println("No escogiste un Pokémon válido. Escoge un Pokémon de los que posees :");
 				continue;
 			}
 
 			Pokemon selected = opt.get();
 
-			System.out.println("Jugador cambió a " + selected.getName());
+			System.out.println("Jugador eligió a " + selected.getName());
 
 			// Update Pokemon combating
 			player.setPkCombatting(selected);
@@ -2645,7 +2686,7 @@ public class Game {
 		Pokemon changeTo = IA.decideBestChangePokemon(player.getPkCombatting(), this.effectPerTypes);
 
 		if (changeTo == null) {
-			System.out.println("IA no tiene un mejor Pokemon al que cambiar");
+			System.out.println("IA no tiene un mejor Pokémon al que cambiar");
 			return false; // doesn't exists a better option
 		}
 
