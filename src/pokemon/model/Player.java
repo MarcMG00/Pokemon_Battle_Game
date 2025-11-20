@@ -484,7 +484,7 @@ public class Player {
 						.setNextMouvement(this.getPkCombatting().getFourPrincipalAttacks().stream().findFirst().get());
 			}
 
-			System.out.println(this.getPkCombatting().getNextMouvement().getName());
+			System.out.println(this.getPkCombatting().getNextMovement().getName());
 		}
 	}
 

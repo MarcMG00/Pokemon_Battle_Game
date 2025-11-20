@@ -2057,7 +2057,7 @@ public class Game {
 	// Regex to match Pokemon player choices
 	public String checkRegexToChoosePokemon() {
 
-		// Player can choice with format : d,d,d,d,d,d, but numbers are between 1 and
+		// Player can choose with format : d,d,d,d,d,d, and numbers are between 1 and
 		// 807
 		String strRegex = "\\b([1-9]";
 
@@ -2213,8 +2213,8 @@ public class Game {
 						+ "Puedes escoger el mismo Pokémon 6 veces seguidas. La máquina no podrá.\n"
 						+ "Los ataques de cada Pokémon serán iniciados aleatoriamente una vez escojas los Pokémon. Lo que quiere decir que cada Pokémon idéntico, puede tener ataques diferentes. "
 						+ "Cada Pokémon tendrá 1 ataque especial, 2 ataques normales y 1 ataque de tipo otro (protección, ataques de estado, etc.).\n"
-						+ "Cada Pokémon tednrá ataques que puede tener en los juegos. Es decir, que no habrá un Charizard con surf."
-						+ "Solo puedes escoger Pokémon entre el 1 y el 807. Algunos números no estan disponibles así que asegúrate de mirar bien la lista presentada arriba.\n"
+						+ "Cada Pokémon tendrá ataques que puede tener en los juegos. Es decir, que no habrá un Charizard con surf."
+						+ "Solo puedes escoger Pokémon entre el 1 y el 807. Algunos números no están disponibles, así que asegúrate de mirar bien la lista presentada arriba.\n"
 						+ "No importa el orden en que los escojas, solo determina el primer Pokémon que va a salir (el primero en escoger)\n"
 						+ "Ten en cuenta que por cada Pokémon que escojas, la máquina va a buscar el tipo que más le afecte a tu Pokémon\n"
 						+ "Ten en cuenta, que quizás a la máquina no le salgan ataques muy favorecidos, ni a ti tampoco jeje\n"
@@ -2339,8 +2339,8 @@ public class Game {
 		IA.prepareBestAttackIA();
 
 		System.out.println("Next attack from machine :");
-		System.out.println(IA.getPkCombatting().getNextMouvement().getName() + " - "
-				+ IA.getPkCombatting().getNextMouvement().getStrTypeToPkType().getName());
+		System.out.println(IA.getPkCombatting().getNextMovement().getName() + " - "
+				+ IA.getPkCombatting().getNextMovement().getStrTypeToPkType().getName());
 	}
 
 	// Main battle (start battle)
@@ -2349,7 +2349,7 @@ public class Game {
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
 
-		while (IA.getPokemon().size() > 1 && player.getPokemon().size() > 1) {
+		while (IA.getPokemon().size() >= 1 && player.getPokemon().size() >= 1) {
 
 			System.out.println("----------------------------------");
 			System.out.println("Let's start round nº : " + nbRound);
@@ -2368,7 +2368,7 @@ public class Game {
 				if (cancelled) {
 					System.out.println("Cambio cancelado. Regresando al menú principal...");
 					attackChoice = -1; // show again options : attack/change
-					// Stay in the same round
+					// Stay in the same round 
 					nbRound--;
 				}
 			}
@@ -2519,23 +2519,24 @@ public class Game {
 		if (playerCanAttackFirst()) {
 
 			handlePlayerRetaliation();
-		    checkForcedPokemonChange(sc);
-		    
+			checkForcedPokemonChange(sc);
+
 			handleIARetaliation();
-		    checkForcedPokemonChange(sc);
+			checkForcedPokemonChange(sc);
 		} else {
 
 			handleIARetaliation();
-		    checkForcedPokemonChange(sc);
-		    
+			checkForcedPokemonChange(sc);
+
 			handlePlayerRetaliation();
-		    checkForcedPokemonChange(sc);
+			checkForcedPokemonChange(sc);
 		}
 	}
 
 	// Handle change sequence
 	private void handleChangeSequence(Scanner sc) {
-		handleIARetaliation();checkForcedPokemonChange(sc);
+		handleIARetaliation();
+		checkForcedPokemonChange(sc);
 	}
 
 	// Player handle attack
@@ -2591,7 +2592,8 @@ public class Game {
 		}
 	}
 
-	// Check if needed to chose a new Pokemon (ex : combating Pokemon dies from burning in final turn while flying, etc.)
+	// Check if needed to chose a new Pokemon (ex : combating Pokemon dies from
+	// burning in final turn while flying, etc.)
 	private void checkForcedPokemonChange(Scanner sc) {
 
 		// Player dies
@@ -2613,14 +2615,16 @@ public class Game {
 
 			// If decideBestChangePokemon returns null => choose the first Pokemon available
 			if (newIA == null) {
-				newIA = IA.getPokemon().stream().filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).findFirst().get();
+				newIA = IA.getPokemon().stream()
+						.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED)
+						.findFirst().get();
 			}
 
 			System.out.println("IA eligió a " + newIA.getName());
-			
+
 			IA.setPkCombatting(newIA);
 			IA.setPkFacing(player.getPkCombatting());
-			
+
 			player.setPkFacing(IA.getPkCombatting());
 			refreshAttackOrders();
 		}

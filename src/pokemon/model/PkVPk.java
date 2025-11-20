@@ -100,8 +100,8 @@ public class PkVPk {
 		boolean isAttackerCharging = this.getPkCombatting().getIsChargingAttackForNextRound();
 		boolean isDefenderCharging = this.getPkFacing().getIsChargingAttackForNextRound();
 
-		Attack atkAttacker = this.getPkCombatting().getNextMouvement();
-		Attack atkDefender = this.getPkFacing().getNextMouvement();
+		Attack atkAttacker = this.getPkCombatting().getNextMovement();
+		Attack atkDefender = this.getPkFacing().getNextMovement();
 
 		boolean canHitInvulnerable = atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
 
@@ -238,7 +238,7 @@ public class PkVPk {
 		int highProbabilityCritic;
 		int setBaseDmgFromBegining;
 
-		switch (this.getPkCombatting().getNextMouvement().getId()) {
+		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor (tested)
 		case 1:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -254,7 +254,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -280,7 +280,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -310,7 +310,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -341,7 +341,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -366,7 +366,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -390,7 +390,7 @@ public class PkVPk {
 				dmg = dmg * 2;
 				System.out.println("Fue un golpe crítico");
 			}
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -435,7 +435,7 @@ public class PkVPk {
 				}
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -484,7 +484,7 @@ public class PkVPk {
 				}
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -531,7 +531,7 @@ public class PkVPk {
 				}
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -556,7 +556,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -581,7 +581,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -625,7 +625,7 @@ public class PkVPk {
 				// Pokemon is no more charging an attack
 				this.getPkCombatting().setIsChargingAttackForNextRound(false);
 
-				this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
@@ -651,7 +651,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -664,10 +664,10 @@ public class PkVPk {
 		// Tornado (tested)
 		case 16:
 			// Gets the power from the beginning (to avoid variations after attacking)
-			setBaseDmgFromBegining = this.getPkCombatting().getNextMouvement().getPower();
+			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
 
-			this.getPkCombatting().getNextMouvement()
-					.setPower(this.getPkCombatting().getNextMouvement().getPower() * 2);
+			this.getPkCombatting().getNextMovement()
+					.setPower(this.getPkCombatting().getNextMovement().getPower() * 2);
 
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Tornado");
@@ -683,9 +683,9 @@ public class PkVPk {
 			}
 
 			// Puts again the same power base as the beginning
-			this.getPkCombatting().getNextMouvement().setPower(setBaseDmgFromBegining);
+			this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -710,7 +710,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -750,7 +750,7 @@ public class PkVPk {
 				// Pokemon is no more charging an attack
 				this.getPkCombatting().setIsChargingAttackForNextRound(false);
 
-				this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 				this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -811,7 +811,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -836,7 +836,7 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 			}
 
-			this.getPkCombatting().getNextMouvement().setPp(this.getPkCombatting().getNextMouvement().getPp() - 1);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
@@ -863,17 +863,17 @@ public class PkVPk {
 
 		randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
 
-		boolean isSpecialAttack = this.getPkCombatting().getNextMouvement().getBases().contains("especial");
+		boolean isSpecialAttack = this.getPkCombatting().getNextMovement().getBases().contains("especial");
 
 		float dmg = 0;
 
 		if (isSpecialAttack) {
 
 			// Apply special damage
-			dmg = 0.01f * this.getPkCombatting().getNextMouvement().getBonus()
-					* this.getPkCombatting().getNextMouvement().getEffectivenessAgainstPkFacing() * randomVariation
+			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
+					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
 					* (((0.2f * 100 + 1) * this.getPkCombatting().getSpecialAttack()
-							* this.getPkCombatting().getNextMouvement().getPower())
+							* this.getPkCombatting().getNextMovement().getPower())
 							/ (25 * this.getPkFacing().getSpecialDefense()) + 2);
 
 			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
@@ -882,10 +882,10 @@ public class PkVPk {
 			// Apply normal damage
 		} else {
 
-			dmg = 0.01f * this.getPkCombatting().getNextMouvement().getBonus()
-					* this.getPkCombatting().getNextMouvement().getEffectivenessAgainstPkFacing() * randomVariation
+			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
+					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
 					* (((0.2f * 100 + 1) * this.getPkCombatting().getAttack()
-							* this.getPkCombatting().getNextMouvement().getPower()) / (25 * this.getPkFacing().getDef())
+							* this.getPkCombatting().getNextMovement().getPower()) / (25 * this.getPkFacing().getDef())
 							+ 2);
 
 			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
