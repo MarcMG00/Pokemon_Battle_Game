@@ -470,7 +470,8 @@ public class PkVPk {
 				// 10% of probabilities to be frozen
 				if (probabilityGettingStatus <= 10) {
 
-					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
+							&& !(this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.FROZEN)) {
 
 						nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
 
