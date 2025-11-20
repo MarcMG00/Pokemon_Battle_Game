@@ -26,7 +26,7 @@ public class Pokemon {
 	private ArrayList<Attack> specialAttacks;
 	private ArrayList<Attack> otherAttacks;
 	private ArrayList<Attack> fourPrincipalAttacks;
-	private Attack nextMouvement;
+	private Attack nextMovement;
 	private ArrayList<Attack> lotDamageAttacks;
 	private ArrayList<Attack> normalAttacks;
 	private ArrayList<Attack> lowAttacks;
@@ -62,7 +62,7 @@ public class Pokemon {
 		this.specialAttacks = new ArrayList<>();
 		this.otherAttacks = new ArrayList<>();
 		this.fourPrincipalAttacks = new ArrayList<>();
-		this.nextMouvement = new Attack();
+		this.nextMovement = new Attack();
 		this.lotDamageAttacks = new ArrayList<>();
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
@@ -100,7 +100,7 @@ public class Pokemon {
 		this.specialAttacks = new ArrayList<>();
 		this.otherAttacks = new ArrayList<>();
 		this.fourPrincipalAttacks = new ArrayList<>();
-		this.nextMouvement = new Attack();
+		this.nextMovement = new Attack();
 		this.lotDamageAttacks = new ArrayList<>();
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
@@ -142,7 +142,7 @@ public class Pokemon {
 		this.fourPrincipalAttacks = new ArrayList<>(); // starts empty
 		this.fourIdAttacks = new ArrayList<>();
 
-		this.nextMouvement = pokemon.nextMouvement;
+		this.nextMovement = pokemon.nextMovement;
 		this.lotDamageAttacks = new ArrayList<>(pokemon.lotDamageAttacks);
 		this.normalAttacks = new ArrayList<>(pokemon.normalAttacks);
 		this.lowAttacks = new ArrayList<>(pokemon.lowAttacks);
@@ -326,12 +326,12 @@ public class Pokemon {
 		this.fourPrincipalAttacks = fourPrincipalAttacks;
 	}
 
-	public Attack getNextMouvement() {
-		return nextMouvement;
+	public Attack getNextMovement() {
+		return nextMovement;
 	}
 
-	public void setNextMouvement(Attack nextMouvement) {
-		this.nextMouvement = nextMouvement;
+	public void setNextMovement(Attack nextMovement) {
+		this.nextMovement = nextMovement;
 	}
 
 	public ArrayList<Attack> getLotDamageAttacks() {
