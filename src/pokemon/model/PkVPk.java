@@ -633,7 +633,7 @@ public class PkVPk {
 
 				highProbabilityCritic = (int) (Math.random() * 100);
 
-				// 10/100 of probabilities to have a critic attack
+				// 30/100 of probabilities to have a critic attack
 				if (highProbabilityCritic <= 30) {
 
 					dmg = dmg * 2;
