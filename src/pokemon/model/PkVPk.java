@@ -612,8 +612,9 @@ public class PkVPk {
 
 			break;
 
-		// Viento cortante
+		// Viento cortante (tested)
 		case 13:
+			// If not charging => first turn charge the attack
 			if (!this.getPkCombatting().getIsChargingAttackForNextRound()) {
 
 				// This attack requires to charge first time for one round
@@ -622,6 +623,7 @@ public class PkVPk {
 
 				this.getPkCombatting().setIsChargingAttackForNextRound(true);
 
+				// Apply damage => second turn
 			} else {
 
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -632,7 +634,7 @@ public class PkVPk {
 				highProbabilityCritic = (int) (Math.random() * 100);
 
 				// 10/100 of probabilities to have a critic attack
-				if (highProbabilityCritic <= 40) {
+				if (highProbabilityCritic <= 30) {
 
 					dmg = dmg * 2;
 					System.out.println("Fue un golpe crítico");
