@@ -2519,17 +2519,23 @@ public class Game {
 		if (playerCanAttackFirst()) {
 
 			handlePlayerRetaliation();
-			checkForcedPokemonChange(sc);
-
-			handleIARetaliation();
-			checkForcedPokemonChange(sc);
+			if(IA.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+				checkForcedPokemonChange(sc);
+			}
+			else {
+				handleIARetaliation();
+				checkForcedPokemonChange(sc);
+			}
 		} else {
 
 			handleIARetaliation();
-			checkForcedPokemonChange(sc);
-
-			handlePlayerRetaliation();
-			checkForcedPokemonChange(sc);
+			if(player.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+				checkForcedPokemonChange(sc);
+			}
+			else {
+				handlePlayerRetaliation();
+				checkForcedPokemonChange(sc);	
+			}
 		}
 	}
 
@@ -2627,6 +2633,7 @@ public class Game {
 
 			player.setPkFacing(IA.getPkCombatting());
 			refreshAttackOrders();
+			IA.prepareBestAttackIA();
 		}
 	}
 
@@ -2712,11 +2719,11 @@ public class Game {
 		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 	}
 
-	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir, 123 Scyther)
+	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir, 123 Scyther, 16 Pidgey)
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "6,6,6";
-		String allPkIA = "123,123,123";
+		String allPkIA = "16,16,16";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -2799,7 +2806,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 13).findFirst().get());
+			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : IA.getPkCombatting().getFourPrincipalAttacks()) {

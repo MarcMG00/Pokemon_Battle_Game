@@ -684,7 +684,9 @@ public class PkVPk {
 			// Gets the power from the beginning (to avoid variations after attacking)
 			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
 
-			this.getPkCombatting().getNextMovement().setPower(this.getPkCombatting().getNextMovement().getPower() * 2);
+			if(this.getPkCombatting().getNextMovement().getCanHitWhileInvulnerable().contains(this.getPkFacing().getNextMovement().getId())) {
+				this.getPkCombatting().getNextMovement().setPower(this.getPkCombatting().getNextMovement().getPower() * 2);
+			}
 
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Tornado");
