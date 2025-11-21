@@ -105,8 +105,17 @@ public class PkVPk {
 
 		boolean canHitInvulnerable = atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
 
-		float accuracyFactor = (atkAttacker.getPrecision() / 100f)
-				* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+		float accuracyFactor = 0f;
+
+		// Guillotina
+		if (atkAttacker.getId() == 12) {
+			accuracyFactor = (atkAttacker.getPrecision() / 100f); // don't take into account Pokemon levels (cause all are on the same lvl)
+		}
+		// Other attacks
+		else {
+			accuracyFactor = (atkAttacker.getPrecision() / 100f)
+					* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+		}
 
 		// Reset CanAttack if doesn't enter in any case
 		this.getPkCombatting().setCanAttack(false);
@@ -445,7 +454,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Puño hielo
+		// Puño hielo (tested)
 		case 8:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 					+ " usó Puño hielo");
@@ -471,7 +480,8 @@ public class PkVPk {
 				if (probabilityGettingStatus <= 10) {
 
 					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
-							&& !(this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.FROZEN)) {
+							&& !(this.getPkFacing().getStatusCondition()
+									.getStatusCondition() == StatusConditions.FROZEN)) {
 
 						nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
 
@@ -592,9 +602,14 @@ public class PkVPk {
 			}
 			break;
 
-		// Guillotina
+		// Guillotina (tested)
 		case 12:
 			System.out.println(this.getPkCombatting().getName() + " usó Guillotina");
+
+			// One-Hit KO => Pokemon facing dies instantly
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+
 			break;
 
 		// Viento cortante
@@ -667,8 +682,7 @@ public class PkVPk {
 			// Gets the power from the beginning (to avoid variations after attacking)
 			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
 
-			this.getPkCombatting().getNextMovement()
-					.setPower(this.getPkCombatting().getNextMovement().getPower() * 2);
+			this.getPkCombatting().getNextMovement().setPower(this.getPkCombatting().getNextMovement().getPower() * 2);
 
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Tornado");

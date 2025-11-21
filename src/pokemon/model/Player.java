@@ -379,7 +379,7 @@ public class Player {
 						atk.setEffectivenessAgainstPkFacing(2);
 						atk.setBonus(1.5f);
 
-						this.getPkCombatting().setNextMouvement(atk);
+						this.getPkCombatting().setNextMovement(atk);
 						System.out.println(atk.getName() + " - high damage and same type " + atk.getBases());
 						isAttackChosen = true;
 						break;
@@ -402,7 +402,7 @@ public class Player {
 					atk.setEffectivenessAgainstPkFacing(1.5f);
 					atk.setBonus(1);
 
-					this.getPkCombatting().setNextMouvement(atk);
+					this.getPkCombatting().setNextMovement(atk);
 					System.out.println(atk.getName() + " - high damage and different type " + atk.getBases());
 					isAttackChosen = true;
 				}
@@ -428,7 +428,7 @@ public class Player {
 
 					}
 
-					this.getPkCombatting().setNextMouvement(atk);
+					this.getPkCombatting().setNextMovement(atk);
 					System.out.println(atk.getName() + " - normal " + atk.getBases());
 					isAttackChosen = true;
 
@@ -464,7 +464,7 @@ public class Player {
 
 					}
 
-					this.getPkCombatting().setNextMouvement(atk);
+					this.getPkCombatting().setNextMovement(atk);
 					System.out.println(atk.getName() + " - random without 'otros' " + atk.getBases());
 					isAttackChosen = true;
 				}
@@ -477,11 +477,11 @@ public class Player {
 			if (this.getPkCombatting().getFourPrincipalAttacks().stream()
 					.anyMatch(a -> a.getBases().contains("otros"))) {
 
-				this.getPkCombatting().setNextMouvement(this.getPkCombatting().getFourPrincipalAttacks().stream()
+				this.getPkCombatting().setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream()
 						.filter(a -> a.getBases().contains("otros")).findFirst().get());
 			} else {
 				this.getPkCombatting()
-						.setNextMouvement(this.getPkCombatting().getFourPrincipalAttacks().stream().findFirst().get());
+						.setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream().findFirst().get());
 			}
 
 			System.out.println(this.getPkCombatting().getNextMovement().getName());
@@ -596,7 +596,7 @@ public class Player {
 			// ===============================
 			// Else is an attack from "otros", so nothing to do
 
-			this.getPkCombatting().setNextMouvement(atk);
+			this.getPkCombatting().setNextMovement(atk);
 		}
 	}
 
