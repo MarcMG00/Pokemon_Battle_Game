@@ -39,6 +39,8 @@ public class Pokemon {
 	public boolean isChargingAttackForNextRound;
 	public boolean canAttack;
 	public boolean alreadyUsedTwoTurnAttackBehavior;
+	public boolean hasUsedMinimize;
+	public boolean hasRetreated;
 
 	public Pokemon() {
 		this.id = 0;
@@ -75,6 +77,8 @@ public class Pokemon {
 		this.isChargingAttackForNextRound = false;
 		this.canAttack = true;
 		this.alreadyUsedTwoTurnAttackBehavior = false;
+		this.hasUsedMinimize = false;
+		this.hasRetreated = false;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -113,6 +117,8 @@ public class Pokemon {
 		this.isChargingAttackForNextRound = false;
 		this.canAttack = true;
 		this.alreadyUsedTwoTurnAttackBehavior = false;
+		this.hasUsedMinimize = false;
+		this.hasRetreated = false;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -156,6 +162,8 @@ public class Pokemon {
 		this.isChargingAttackForNextRound = pokemon.isChargingAttackForNextRound;
 		this.canAttack = pokemon.canAttack;
 		this.alreadyUsedTwoTurnAttackBehavior = pokemon.alreadyUsedTwoTurnAttackBehavior;
+		this.hasUsedMinimize = pokemon.hasUsedMinimize;
+		this.hasRetreated = pokemon.hasRetreated;
 	}
 
 	public int getId() {
@@ -430,6 +438,22 @@ public class Pokemon {
 		this.alreadyUsedTwoTurnAttackBehavior = alreadyUsedTwoTurnAttackBehavior;
 	}
 
+	public boolean getHasUsedMinimize() {
+		return hasUsedMinimize;
+	}
+
+	public void setHasUsedMinimize(boolean hasUsedMinimize) {
+		this.hasUsedMinimize = hasUsedMinimize;
+	}
+
+	public boolean getHasRetreated() {
+		return hasRetreated;
+	}
+
+	public void setHasRetreated(boolean hasRetreated) {
+		this.hasRetreated = hasRetreated;
+	}
+
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
 		this.normalAbilities.add(ablty);
@@ -602,9 +626,9 @@ public class Pokemon {
 				break;
 			}
 		}
-		
+
 		// Trapped
-		if((this.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
+		if ((this.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 			if (!isStartTurn) {
 				// Reduces 12,5% from his actual PS remaining
 				reducePs = this.getPs() * 0.125f;
@@ -613,8 +637,7 @@ public class Pokemon {
 
 				this.setCanAttack(true);
 
-				System.out.println(
-						this.getName() + " está atado - PS actuales : " + this.getPs());
+				System.out.println(this.getName() + " está atado - PS actuales : " + this.getPs());
 			}
 		}
 	}

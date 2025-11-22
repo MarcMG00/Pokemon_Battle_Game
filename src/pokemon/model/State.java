@@ -90,11 +90,10 @@ public class State {
 
 	// Sets the amount of damage, mobility and effects at the end/beginning of each
 	// turn
-	public boolean doEffectStatusCondition(StatusConditions status) {
+	public void doEffectStatusCondition(StatusConditions status) {
 
 		int getRidOfStatusProbability = (int) (Math.random() * 100);
 		int attackProbability = (int) (Math.random() * 100);
-		boolean canAttack = true;
 
 		switch (status) {
 		case CONFUSED:
@@ -147,7 +146,6 @@ public class State {
 							+ ") : " + getRidOfStatusProbability + ANSI_RESET);
 					System.out.println(ANSI_CYAN + "Faltan " + this.getNbTurns()
 							+ " turnos (congelado - no puede atacar)" + ANSI_RESET);
-					canAttack = false;
 				}
 			}
 			break;
@@ -189,7 +187,6 @@ public class State {
 
 					System.out.println(ANSI_CYAN + "Faltan " + this.getNbTurns()
 							+ " turnos (paralizado - no puede atacar): " + ANSI_RESET);
-					canAttack = false;
 				}
 			}
 			break;
@@ -212,7 +209,5 @@ public class State {
 		case DEBILITATED:
 			break;
 		}
-
-		return canAttack;
 	}
 }
