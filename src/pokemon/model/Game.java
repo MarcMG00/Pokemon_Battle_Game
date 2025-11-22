@@ -2368,7 +2368,7 @@ public class Game {
 				if (cancelled) {
 					System.out.println("Cambio cancelado. Regresando al menú principal...");
 					attackChoice = -1; // show again options : attack/change
-					// Stay in the same round 
+					// Stay in the same round
 					nbRound--;
 				}
 			}
@@ -2516,27 +2516,55 @@ public class Game {
 
 	// Handle normal attack sequence
 	private void handleNormalAttackSequence(Scanner sc) {
-		if (playerCanAttackFirst()) {
+		boolean playerFirst = playerCanAttackFirst();
 
-			handlePlayerRetaliation();
-			if(IA.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
-				checkForcedPokemonChange(sc);
-			}
-			else {
-				handleIARetaliation();
-				checkForcedPokemonChange(sc);
-			}
-		} else {
+		Player first = playerFirst ? player : IA;
+		Player second = playerFirst ? IA : player;
 
-			handleIARetaliation();
-			if(player.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
-				checkForcedPokemonChange(sc);
-			}
-			else {
-				handlePlayerRetaliation();
-				checkForcedPokemonChange(sc);	
-			}
+		// 1. Get order of players
+		boolean turnShouldEnd = attackAndCheckIfTurnEnds(first, second, sc);
+
+		// 2. Second player attacks if turn can continue
+		if (!turnShouldEnd) {
+			attackAndCheckIfTurnEnds(second, first, sc);
 		}
+
+		// 3. Reset the flinch/retreat
+		IA.getPkCombatting().setHasRetreated(false);
+		player.getPkCombatting().setHasRetreated(false);
+	}
+
+	// Check if Pokemon can attack + do retaliation
+	private boolean attackAndCheckIfTurnEnds(Player attacker, Player defender, Scanner sc) {
+
+		Pokemon pk = attacker.getPkCombatting();
+
+		// If retreated, cannot attack, but turn continues
+		if (pk.getHasRetreated()) {
+			System.out.println(pk.getName() + " retrocedió.");
+			return false; // turn continues
+		}
+
+		// If Pokemon facing is debilitated, force change and ends turn
+		if (pk.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			checkForcedPokemonChange(sc);
+			return true; // turn ends
+		}
+
+		// Execute attack
+		if (attacker == player)
+			handlePlayerRetaliation();
+		else
+			handleIARetaliation();
+
+		// If defender got Pokemon debilitated during the attack, force change and ends
+		// turn
+		if (defender.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			checkForcedPokemonChange(sc);
+			return true; // turn ends
+		}
+
+		return false; // turn continues
 	}
 
 	// Handle change sequence
@@ -2719,11 +2747,12 @@ public class Game {
 		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 	}
 
-	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir, 123 Scyther, 16 Pidgey, 95 Onix)
+	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
+	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika)
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "6,6,6";
-		String allPkIA = "95,95,95";
+		String allPkIA = "523,523,523";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -2807,8 +2836,8 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 20).findFirst().get());
-			
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
+
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : IA.getPkCombatting().getFourPrincipalAttacks()) {
 
