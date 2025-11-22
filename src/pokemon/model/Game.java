@@ -2392,32 +2392,29 @@ public class Game {
 		Pokemon pkPlayer = player.getPkCombatting();
 		Pokemon pkIA = IA.getPkCombatting();
 
-		boolean canAttackPlayer = checkCanAttackFromStatusCondition(pkPlayer);
-		boolean canAttackIA = checkCanAttackFromStatusCondition(pkIA);
+		checkCanAttackFromStatusCondition(pkPlayer);
+		checkCanAttackFromStatusCondition(pkIA);
 
 		// Apply status effects from beginning of the turn + prepare effectiveness and
 		// bonus from attacks chosen
-		if (canAttackPlayer) {
-			applyEffectStatusCondition(pkPlayer);
-			player.prepareBestAttackPlayer(attackId);
-		}
+		applyEffectStatusCondition(pkPlayer);
+		player.prepareBestAttackPlayer(attackId);
 
 		// IA can decide to change Pokemon
-		if (IA.getPkCombatting().getIsChargingAttackForNextRound() == false && tryIAChange()) {
+		if (IA.getPkCombatting().getIsChargingAttackForNextRound() == false) {
 			// If change realized => don't attack
-			return;
+			tryIAChange();
 		}
 
-		prepareIAIfPossible(canAttackIA, isStartTurn);
+		prepareIAIfPossible(isStartTurn);
 
 		// Handle normal attack sequence
 		handleNormalAttackSequence(sc);
 
 		// Reset status conditions
-		if (canAttackPlayer) {
-			resetEffectStatusCondition(pkPlayer);
-		}
-		resetIAIfPossible(canAttackIA);
+		resetEffectStatusCondition(pkPlayer);
+
+		resetIAIfPossible();
 	}
 
 	// Handle attack from IA when player is changing the Pokemon
@@ -2430,31 +2427,27 @@ public class Game {
 		if (!changed)
 			return false; // player cancelled the change (return to start options)
 
-		boolean canIA = checkCanAttackFromStatusCondition(pkIA);
+		checkCanAttackFromStatusCondition(pkIA);
 
-		prepareIAIfPossible(canIA, isStartTurn);
+		prepareIAIfPossible(isStartTurn);
 
 		handleChangeSequence(sc); // only IA attacks
 
-		resetIAIfPossible(canIA);
+		resetIAIfPossible();
 
 		return true;
 	}
 
 	// Prepare attack from IA if can attack (after checking status conditions from
 	// the beginning of the turn)
-	private void prepareIAIfPossible(boolean canIA, boolean isStartTurn) {
-		if (canIA) {
-			applyEffectStatusCondition(IA.getPkCombatting());
-			IA.prepareBestAttackIA();
-		}
+	private void prepareIAIfPossible(boolean isStartTurn) {
+		applyEffectStatusCondition(IA.getPkCombatting());
+		IA.prepareBestAttackIA();
 	}
 
 	// Reset status effects from IA at the end of the turn
-	private void resetIAIfPossible(boolean canIA) {
-		if (canIA) {
-			resetEffectStatusCondition(IA.getPkCombatting());
-		}
+	private void resetIAIfPossible() {
+		resetEffectStatusCondition(IA.getPkCombatting());
 	}
 
 	// Get the player choice (attack or change Pokemon)
@@ -2489,11 +2482,8 @@ public class Game {
 	}
 
 	// Check if Pokemon combating can attack due to effect from status condition
-	private boolean checkCanAttackFromStatusCondition(Pokemon attacker) {
-		boolean canAttackPk = attacker.getStatusCondition()
-				.doEffectStatusCondition(attacker.getStatusCondition().getStatusCondition());
-
-		return canAttackPk;
+	private void checkCanAttackFromStatusCondition(Pokemon attacker) {
+		attacker.getStatusCondition().doEffectStatusCondition(attacker.getStatusCondition().getStatusCondition());
 	}
 
 	// Apply effect of status condition at the beginning of the turn for Pokemon
@@ -2581,11 +2571,11 @@ public class Game {
 			PkVPk battleVS = new PkVPk(player.getPkCombatting(), player.getPkFacing());
 			player.setBattleVS(battleVS);
 
-			// Get probability of attacking (we already checked for status conditions. Now
-			// we do it for evasion/accuracy)
-			player.getProbabiltyOfAttacking();
-
 			if (player.getPkCombatting().getCanAttack()) {
+
+				// Get probability of attacking (we already checked for status conditions. Now
+				// we do it for evasion/accuracy)
+				player.getProbabiltyOfAttacking();
 
 				System.out.println(ANSI_GREEN + "Pokemon player can attack" + ANSI_RESET);
 				player.applyDamage();
@@ -2606,11 +2596,11 @@ public class Game {
 			PkVPk battleVS = new PkVPk(IA.getPkCombatting(), IA.getPkFacing());
 			IA.setBattleVS(battleVS);
 
-			// Get probability of attacking (we already checked for status conditions. Now
-			// we do it for evasion/accuracy)
-			IA.getProbabiltyOfAttacking();
-
 			if (IA.getPkCombatting().getCanAttack()) {
+
+				// Get probability of attacking (we already checked for status conditions. Now
+				// we do it for evasion/accuracy)
+				IA.getProbabiltyOfAttacking();
 
 				System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
 				IA.applyDamage();
@@ -2752,7 +2742,7 @@ public class Game {
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "6,6,6";
-		String allPkIA = "523,523,523";
+		String allPkIA = "466,466,466";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -2833,10 +2823,10 @@ public class Game {
 		for (Pokemon pk : IA.getPokemon()) {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : IA.getPkCombatting().getFourPrincipalAttacks()) {

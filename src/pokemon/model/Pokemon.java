@@ -437,7 +437,7 @@ public class Pokemon {
 	public void setAlreadyUsedTwoTurnAttackBehavior(boolean alreadyUsedTwoTurnAttackBehavior) {
 		this.alreadyUsedTwoTurnAttackBehavior = alreadyUsedTwoTurnAttackBehavior;
 	}
-	
+
 	public boolean getHasUsedMinimize() {
 		return hasUsedMinimize;
 	}
