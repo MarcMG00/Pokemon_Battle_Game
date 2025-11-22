@@ -100,6 +100,16 @@ public class State {
 		case CONFUSED:
 			break;
 		case TRAPPED:
+			// In all cases, can attack. This is just a reminder in case of problems
+			if (this.getNbTurns() == 0) {
+
+				this.setCanMoveEphemeralState(true);
+
+			} else {
+
+				this.setNbTurns(this.getNbTurns() - 1);
+				this.setCanMoveEphemeralState(true);
+			}
 			break;
 		case PERISH_SONG:
 			break;
@@ -140,8 +150,6 @@ public class State {
 					canAttack = false;
 				}
 			}
-			break;
-		case DEBILITATED:
 			break;
 		case ASLEEP:
 			break;
@@ -200,6 +208,8 @@ public class State {
 			break;
 		case NO_STATUS:
 			this.setCanMoveEphemeralState(true);
+			break;
+		case DEBILITATED:
 			break;
 		}
 

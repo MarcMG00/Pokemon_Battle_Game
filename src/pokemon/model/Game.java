@@ -2719,11 +2719,11 @@ public class Game {
 		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 	}
 
-	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir, 123 Scyther, 16 Pidgey)
+	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir, 123 Scyther, 16 Pidgey, 95 Onix)
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "6,6,6";
-		String allPkIA = "16,16,16";
+		String allPkIA = "95,95,95";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -2806,8 +2806,9 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
-
+//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 20).findFirst().get());
+			
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : IA.getPkCombatting().getFourPrincipalAttacks()) {
 

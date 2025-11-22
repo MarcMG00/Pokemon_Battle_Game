@@ -522,6 +522,10 @@ public class Pokemon {
 		if (!(this.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS)) {
 
 			switch (this.getStatusCondition().getStatusCondition()) {
+			case CONFUSED:
+				break;
+			case PERISH_SONG:
+				break;
 			// Can move or not
 			case FROZEN:
 				if (isStartTurn) {
@@ -536,11 +540,17 @@ public class Pokemon {
 					}
 				}
 				break;
-			case DEBILITATED:
+			case ASLEEP:
+				break;
+			case SEEDED:
+				break;
+			case INFATUATED:
 				break;
 			case POISONED:
 				break;
 			case BADLY_POISONED:
+				break;
+			case CURSED:
 				break;
 			// Modifies speed of Pokemon if can attack (reduces by 50%)
 			case PARALYZED:
@@ -584,8 +594,27 @@ public class Pokemon {
 							this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
 				}
 				break;
+			case NO_STATUS:
+				break;
+			case DEBILITATED:
+				break;
 			default:
 				break;
+			}
+		}
+		
+		// Trapped
+		if((this.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
+			if (!isStartTurn) {
+				// Reduces 12,5% from his actual PS remaining
+				reducePs = this.getPs() * 0.125f;
+
+				this.setPs(this.getPs() - reducePs);
+
+				this.setCanAttack(true);
+
+				System.out.println(
+						this.getName() + " está atado - PS actuales : " + this.getPs());
 			}
 		}
 	}

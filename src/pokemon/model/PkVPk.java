@@ -794,13 +794,12 @@ public class PkVPk {
 				dmg = dmg * 2;
 				System.out.println("Fue un golpe crítico");
 			}
-			// Check if the Pokemon facing doesn't have the estado Atrapado
-			if ((this.getPkFacing().getEphemeralStates().stream()
-					.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPED).findAny().get()) != null) {
+			// Check if the Pokemon facing doesn't have the status Trapped (is a status that can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
 				nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 4)) + 4);
 
-				System.out.println(this.getPkCombatting().getName() + " quedó atrapado");
+				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
 
