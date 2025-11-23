@@ -107,6 +107,12 @@ public class PkVPk {
 
 		float accuracyFactor = 0f;
 
+		// For all attacks from "otros", it has 100% of accuracy
+		if(atkAttacker.getBases().contains("otros")) {
+			this.getPkCombatting().setCanAttack(true);
+			return;
+		}
+		
 		// Guillotina
 		if (atkAttacker.getId() == 12) {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f); // don't take into account Pokemon levels (cause all
@@ -681,6 +687,23 @@ public class PkVPk {
 			}
 			break;
 
+		// Danza espada/Swords dance
+		case 14:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Danza espada");
+
+			if (this.getPkCombatting().getAttackStage() >= 6) {
+				System.out.println("El ataque de " + this.getPkCombatting().getName() + " (Id:"
+						+ this.getPkCombatting().getId() + ")" + " no puede subir más!");
+			} else {
+				this.getPkCombatting().setAttackStage(Math.min(this.getPkCombatting().getAttackStage() + 2, 6));
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " aumentó mucho su Ataque!");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
 		// Corte/Cut (tested)
 		case 15:
 			System.out.println(
@@ -976,7 +999,7 @@ public class PkVPk {
 			// Apply special damage
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
-					* (((0.2f * 100 + 1) * this.getPkCombatting().getSpecialAttack()
+					* (((0.2f * 100 + 1) * this.getPkCombatting().getEffectiveSpecialAttack()
 							* this.getPkCombatting().getNextMovement().getPower())
 							/ (25 * this.getPkFacing().getSpecialDefense()) + 2);
 
@@ -988,7 +1011,7 @@ public class PkVPk {
 
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
-					* (((0.2f * 100 + 1) * this.getPkCombatting().getAttack()
+					* (((0.2f * 100 + 1) * this.getPkCombatting().getEffectiveAttack()
 							* this.getPkCombatting().getNextMovement().getPower()) / (25 * this.getPkFacing().getDef())
 							+ 2);
 
@@ -1013,5 +1036,4 @@ public class PkVPk {
 
 		return isCritic;
 	}
-
 }
