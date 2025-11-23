@@ -1800,6 +1800,8 @@ public class Game {
 							pk.addPhysicalAttack(a);
 					}
 				}
+				// Put "Struggle" to all Pokemon (used when has no remaining PP on the principal attacks)
+				pk.addPhysicalAttack(this.attackById.get(165));
 
 				// Special
 				if (!cols[2].equals("0")) {
@@ -2336,7 +2338,7 @@ public class Game {
 		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 
 		// IA Prepares best attack against Pokemon player
-		IA.prepareBestAttackIA();
+		IA.prepareBestAttackIA(effectPerTypes);
 
 		System.out.println("Next attack from machine :");
 		System.out.println(IA.getPkCombatting().getNextMovement().getName() + " - "
@@ -2442,7 +2444,7 @@ public class Game {
 	// the beginning of the turn)
 	private void prepareIAIfPossible(boolean isStartTurn) {
 		applyEffectStatusCondition(IA.getPkCombatting());
-		IA.prepareBestAttackIA();
+		IA.prepareBestAttackIA(effectPerTypes);
 	}
 
 	// Reset status effects from IA at the end of the turn
@@ -2669,7 +2671,7 @@ public class Game {
 
 			player.setPkFacing(IA.getPkCombatting());
 			refreshAttackOrders();
-			IA.prepareBestAttackIA();
+			IA.prepareBestAttackIA(effectPerTypes);
 		}
 	}
 

@@ -348,7 +348,23 @@ public class Player {
 	}
 
 	// Chooses the attack from machine
-	public void prepareBestAttackIA() {
+	public void prepareBestAttackIA(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
+
+		// If Pokemon combating doesn't have PP remaining on his attacks => change
+		// Pokemon
+		if (!hasAnyPPLeft(this.getPkCombatting())) {
+			System.out.println("La IA no tiene PP en ningún movimiento. Forzando cambio de Pokémon...");
+			Pokemon newPk = decideBestChangePokemon(this.getPkCombatting(), effectPerTypes);
+
+			if (newPk != null) {
+				this.setPkCombatting(newPk);
+				System.out.println("IA eligió a " + newPk.getName() + " (Id:" + newPk.getId() + ")");
+			} else {
+				System.out.println("No hay Pokémon útiles para cambiar. La IA debe usar Struggle!");
+				selectStruggle();
+			}
+			return;
+		}
 
 		// Gets a random number to choose the attack base (>10 : "others", and if it's
 		// the machine's choice)
@@ -528,6 +544,7 @@ public class Player {
 		}
 	}
 
+	// Prepares best attack for player
 	public void prepareBestAttackPlayer(int attackId) {
 		Optional<Attack> nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream()
 				.filter(a -> a.getId() == attackId).findFirst();
@@ -611,6 +628,7 @@ public class Player {
 		}
 	}
 
+	// Decides best Pokemon change against Pokemon facing
 	public Pokemon decideBestChangePokemon(Pokemon pkPlayerFacing,
 			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 
@@ -694,6 +712,16 @@ public class Player {
 		}
 
 		return false;
+	}
+
+	// Check if any attack from Pokemon has PP remaining
+	public boolean hasAnyPPLeft(Pokemon pk) {
+		return pk.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
+	}
+
+	// If no remaining Pokemon with PP on attacks, set a new attack "Struggle" (used by all Pokemon)
+	public void selectStruggle() {
+		this.getPkCombatting().setNextMovement(this.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == 165).findFirst().get());
 	}
 
 	// Check for evasion/accuracy from Pokemon
