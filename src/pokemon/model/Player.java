@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import pokemon.enums.StatusConditions;
+
 public class Player {
 	private ArrayList<Pokemon> pokemon;
 	private Pokemon pkCombatting;
@@ -499,7 +501,11 @@ public class Player {
 
 	// Prints all the info from all the Pokemon player
 	public void printPokemonInfo() {
-		for (Pokemon pk : this.getPokemon()) {
+		
+		// Get only Pokemon not debilitated
+		List<Pokemon> pokemonAvailable = this.getPokemon().stream().filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+		
+		for (Pokemon pk : pokemonAvailable) {
 
 			System.out.println(pk.getId() + " - " + pk.getName() + " - tipo(s) : ");
 
@@ -619,7 +625,10 @@ public class Player {
 		Pokemon bestCandidate = null;
 		int bestScore = currentBestDamage;
 
-		for (Pokemon candidate : this.getPokemon()) {
+		// Get only Pokemon not debilitated
+		List<Pokemon> pokemonAvailable = this.getPokemon().stream().filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+		
+		for (Pokemon candidate : pokemonAvailable) {
 
 			if (candidate == currentPkCombatingBeforeChange)
 				continue;
