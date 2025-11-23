@@ -36,11 +36,12 @@ public class Pokemon {
 	private int evasionPoints;
 	private State statusCondition;
 	private ArrayList<State> ephemeralStates;
-	public boolean isChargingAttackForNextRound;
-	public boolean canAttack;
-	public boolean alreadyUsedTwoTurnAttackBehavior;
-	public boolean hasUsedMinimize;
-	public boolean hasRetreated;
+	private boolean isChargingAttackForNextRound;
+	private boolean canAttack;
+	private boolean alreadyUsedTwoTurnAttackBehavior;
+	private boolean hasUsedMinimize;
+	private boolean hasRetreated;
+	private int attackStage;
 
 	public Pokemon() {
 		this.id = 0;
@@ -79,6 +80,7 @@ public class Pokemon {
 		this.alreadyUsedTwoTurnAttackBehavior = false;
 		this.hasUsedMinimize = false;
 		this.hasRetreated = false;
+		this.attackStage = 0;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -119,6 +121,7 @@ public class Pokemon {
 		this.alreadyUsedTwoTurnAttackBehavior = false;
 		this.hasUsedMinimize = false;
 		this.hasRetreated = false;
+		this.attackStage = 0;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -164,6 +167,7 @@ public class Pokemon {
 		this.alreadyUsedTwoTurnAttackBehavior = pokemon.alreadyUsedTwoTurnAttackBehavior;
 		this.hasUsedMinimize = pokemon.hasUsedMinimize;
 		this.hasRetreated = pokemon.hasRetreated;
+		this.attackStage = pokemon.attackStage;
 	}
 
 	public int getId() {
@@ -452,6 +456,14 @@ public class Pokemon {
 
 	public void setHasRetreated(boolean hasRetreated) {
 		this.hasRetreated = hasRetreated;
+	}
+
+	public int getAttackStage() {
+		return attackStage;
+	}
+
+	public void setAttackStage(int attackStage) {
+		this.attackStage = attackStage;
 	}
 
 	// Adds abilities to Pokemon

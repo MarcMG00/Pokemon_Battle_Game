@@ -107,6 +107,12 @@ public class PkVPk {
 
 		float accuracyFactor = 0f;
 
+		// For all attacks from "otros", it has 100% of accuracy
+		if(atkAttacker.getBases().contains("otros")) {
+			this.getPkCombatting().setCanAttack(true);
+			return;
+		}
+		
 		// Guillotina
 		if (atkAttacker.getId() == 12) {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f); // don't take into account Pokemon levels (cause all
@@ -681,6 +687,23 @@ public class PkVPk {
 			}
 			break;
 
+		// Danza espada/Swords dance
+		case 14:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Danza espada");
+
+			if (this.getPkCombatting().getAttackStage() >= 6) {
+				System.out.println("El ataque de " + this.getPkCombatting().getName() + " (Id:"
+						+ this.getPkCombatting().getId() + ")" + " no puede subir más!");
+			} else {
+				this.getPkCombatting().setAttackStage(Math.min(this.getPkCombatting().getAttackStage() + 2, 6));
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " aumentó mucho su Ataque!");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
 		// Corte/Cut (tested)
 		case 15:
 			System.out.println(
@@ -1012,6 +1035,18 @@ public class PkVPk {
 		}
 
 		return isCritic;
+	}
+
+	public float getEffectiveAttack() {
+		int stage = this.getPkCombatting().getAttackStage();
+		float multiplier;
+
+		if (stage >= 0)
+			multiplier = (2 + stage) / 2.0f;
+		else
+			multiplier = 2.0f / (2 - stage);
+
+		return this.getPkCombatting().getNextMovement().getPower() * multiplier;
 	}
 
 }
