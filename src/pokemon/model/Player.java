@@ -625,7 +625,10 @@ public class Player {
 		Pokemon bestCandidate = null;
 		int bestScore = currentBestDamage;
 
-		for (Pokemon candidate : this.getPokemon()) {
+		// Get only Pokemon not debilitated
+		List<Pokemon> pokemonAvailable = this.getPokemon().stream().filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+		
+		for (Pokemon candidate : pokemonAvailable) {
 
 			if (candidate == currentPkCombatingBeforeChange)
 				continue;

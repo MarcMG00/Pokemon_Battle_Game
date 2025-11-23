@@ -2644,7 +2644,7 @@ public class Game {
 						.findFirst().get();
 			}
 
-			System.out.println("IA eligió a " + newIA.getName());
+			System.out.println("IA eligió a " + newIA.getName() + " (Id:" + newIA.getId() + ")" );
 
 			IA.setPkCombatting(newIA);
 			IA.setPkFacing(player.getPkCombatting());
