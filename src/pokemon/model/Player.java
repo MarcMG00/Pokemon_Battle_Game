@@ -68,13 +68,18 @@ public class Player {
 
 			System.out.println(pk.getName());
 
+			// Struggle attack is only used as savior attack when no remaining PPs on other
+			// attacks from Pokemon combating
+			List<Attack> physicalAttacksWithoutStruggle = pk.getPhysicalAttacks().stream().filter(a -> a.getId() != 165)
+					.toList();
+
 			Random rand = new Random();
 			pk.addAttacks(pk.getOtherAttacks().get(rand.nextInt(pk.getOtherAttacks().size())));
 
 			for (int times = 0; times < 2; times++) {
 
 				rand = new Random();
-				pk.addAttacks(pk.getPhysicalAttacks().get(rand.nextInt(pk.getPhysicalAttacks().size())));
+				pk.addAttacks(physicalAttacksWithoutStruggle.get(rand.nextInt(pk.getPhysicalAttacks().size())));
 
 			}
 
@@ -719,9 +724,11 @@ public class Player {
 		return pk.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
 	}
 
-	// If no remaining Pokemon with PP on attacks, set a new attack "Struggle" (used by all Pokemon)
+	// If no remaining Pokemon with PP on attacks, set a new attack "Struggle" (used
+	// by all Pokemon)
 	public void selectStruggle() {
-		this.getPkCombatting().setNextMovement(this.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == 165).findFirst().get());
+		this.getPkCombatting().setNextMovement(
+				this.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == 165).findFirst().get());
 	}
 
 	// Check for evasion/accuracy from Pokemon
