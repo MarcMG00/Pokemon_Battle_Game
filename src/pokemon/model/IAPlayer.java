@@ -3,7 +3,7 @@ package pokemon.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class IAPlayer extends Player {
@@ -12,64 +12,49 @@ public class IAPlayer extends Player {
 		super();
 	}
 
-	// Chose Pokemon comparing Pokemon list from the player
-	public void IAChoicePokemon(ArrayList<Pokemon> playerPokemon, HashMap<String, ArrayList<Pokemon>> pokemonPerType,
-			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
+	// Chooses Pokemon by comparing the player's Pokémon list
+	public void IAPokemonChoice(
+	        ArrayList<Pokemon> playerPokemon,
+	        HashMap<String, ArrayList<Pokemon>> pokemonPerType,
+	        HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 
-		for (Pokemon pkPlayer : playerPokemon) {
+	    for (Pokemon pkPlayer : playerPokemon) {
 
-			int randomNumberToGetPKTypefor2Types;
+	        // Gets a random type index depending on how many types the Pokemon has
+	        int typeIndex = (pkPlayer.getTypes().size() == 2) ? ThreadLocalRandom.current().nextInt(0, 2) : 0;
 
-			// Gets a random number from the types list size of the current Pokemon
-			if (pkPlayer.getTypes().size() == 2) {
-				
-				randomNumberToGetPKTypefor2Types = (int) ((Math.random() * (pkPlayer.getTypes().size())));
-				
-			} else {
-				
-				// If there is only one type, takes first element
-				randomNumberToGetPKTypefor2Types = 0;
-				
-			}
+	        String chosenTypeName = pkPlayer.getTypes().get(typeIndex).getName().toUpperCase();
 
-			// Filters in a new Map all the damages of the Pokemon from the picked type
-			Map<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesFiltered = effectPerTypes.entrySet()
-					.stream()
-					.filter(ef -> ef.getKey().toUpperCase().equals(pkPlayer.getTypes().get(randomNumberToGetPKTypefor2Types).getName().toUpperCase()))
-					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+	        // Filters in a new Map all the damages for the chosen type
+	        Map<String, HashMap<String, ArrayList<PokemonType>>> filteredEffects = effectPerTypes.entrySet().stream()
+	                .filter(e -> e.getKey().equalsIgnoreCase(chosenTypeName))
+	                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-			for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> ef : effectPerTypesFiltered.entrySet()) {
+	        for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> entry : filteredEffects.entrySet()) {
 
-				// Pick a random type from the types of "Le rebientan"
-				Random rand = new Random();
-				
-				PokemonType pkTRandom = ef.getValue().get("Le rebientan").get(rand.nextInt(ef.getValue().get("Le rebientan").size()));
-				
-				// Get all the Pokemon concerned by the random type picked
-				Map<String, ArrayList<Pokemon>> pokemonPerTypeFiltered = pokemonPerType.entrySet()
-						.stream()
-						.filter(ppt -> ppt.getKey().equals(pkTRandom.getName().toUpperCase()))
-						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+	            // Picks a random "Le rebientan" type (the type that hits hard)
+	            ArrayList<PokemonType> rebientaList = entry.getValue().get("Le rebientan");
+	            if (rebientaList == null || rebientaList.isEmpty()) continue;
 
-				// Gets a random Pokemon from the list of pokemonPerTypeFiltered
-				Pokemon pkRandom = pokemonPerTypeFiltered.get(pkTRandom.getName().toUpperCase())
-														 .get(rand.nextInt(pokemonPerTypeFiltered.get(pkTRandom.getName().toUpperCase()).size()));
+	            PokemonType pkTRandom = rebientaList.get(ThreadLocalRandom.current().nextInt(rebientaList.size()));
 
-				// Adds the Pokemon to the list of IA, but cannot have the same Pokemon twice
-				if (this.getPokemon().contains(pkRandom)) {
-					
-					while (this.getPokemon().contains(pkRandom)) {
-						
-						pkRandom = pokemonPerTypeFiltered.get(pkTRandom.getName().toUpperCase())
-														 .get(rand.nextInt(pokemonPerTypeFiltered.get(pkTRandom.getName().toUpperCase()).size()));
-						
-					}
-				} else {
-					
-					this.addPokemon(pkRandom);
-					
-				}
-			}
-		}
+	            String randomTypeName = pkTRandom.getName().toUpperCase();
+
+	            // Gets all the Pokemon of the random type chosen
+	            ArrayList<Pokemon> pokemonsOfType = pokemonPerType.get(randomTypeName);
+	            if (pokemonsOfType == null || pokemonsOfType.isEmpty()) continue;
+
+	            // Chooses a random Pokemon of that type
+	            Pokemon pkRandom = pokemonsOfType.get(ThreadLocalRandom.current().nextInt(pokemonsOfType.size()));
+
+	            // Ensures the IA does not take the same Pokemon twice
+	            while (this.getPokemon().contains(pkRandom)) {
+	                pkRandom = pokemonsOfType.get(ThreadLocalRandom.current().nextInt(pokemonsOfType.size()));
+	            }
+
+	            // Adds the selected Pokemon to the IA team
+	            this.addPokemon(pkRandom);
+	        }
+	    }
 	}
 }

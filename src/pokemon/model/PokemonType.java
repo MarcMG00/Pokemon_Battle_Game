@@ -64,6 +64,4 @@ public class PokemonType {
 	public void setXNormalDamage(float xNormalDamage) {
 		this.xNormalDamage = xNormalDamage;
 	}
-	
-	
 }
