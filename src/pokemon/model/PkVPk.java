@@ -999,7 +999,7 @@ public class PkVPk {
 			// Apply special damage
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
-					* (((0.2f * 100 + 1) * this.getPkCombatting().getSpecialAttack()
+					* (((0.2f * 100 + 1) * this.getPkCombatting().getEffectiveSpecialAttack()
 							* this.getPkCombatting().getNextMovement().getPower())
 							/ (25 * this.getPkFacing().getSpecialDefense()) + 2);
 
@@ -1011,7 +1011,7 @@ public class PkVPk {
 
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
-					* (((0.2f * 100 + 1) * this.getPkCombatting().getAttack()
+					* (((0.2f * 100 + 1) * this.getPkCombatting().getEffectiveAttack()
 							* this.getPkCombatting().getNextMovement().getPower()) / (25 * this.getPkFacing().getDef())
 							+ 2);
 
@@ -1036,17 +1036,4 @@ public class PkVPk {
 
 		return isCritic;
 	}
-
-	public float getEffectiveAttack() {
-		int stage = this.getPkCombatting().getAttackStage();
-		float multiplier;
-
-		if (stage >= 0)
-			multiplier = (2 + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2 - stage);
-
-		return this.getPkCombatting().getNextMovement().getPower() * multiplier;
-	}
-
 }

@@ -612,7 +612,7 @@ public class Player {
 		// 1️ - Random check (15% of probability to change)
 		int random = (int) (Math.random() * 100) + 1;
 		if (random > 15) {
-			return null; // no cambio
+			return null; // don't change
 		}
 
 		Pokemon currentPkCombatingBeforeChange = this.getPkCombatting();

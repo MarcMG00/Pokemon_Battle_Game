@@ -2691,6 +2691,10 @@ public class Game {
 				continue;
 			}
 
+			// Reinitialize some stats
+			player.getPkCombatting().setAttackStage(0);
+			player.getPkCombatting().setSpecialAttackStage(0);
+			
 			Pokemon selected = opt.get();
 
 			System.out.println("Jugador eligió a " + selected.getName());
@@ -2704,7 +2708,7 @@ public class Game {
 
 			refreshAttackOrders();
 
-			return true; // change successfuly
+			return true; // change successfully
 		}
 	}
 
@@ -2726,6 +2730,10 @@ public class Game {
 			return false; // doesn't exists a better option
 		}
 
+		// Reinitialize some stats
+		IA.getPkCombatting().setAttackStage(0);
+		IA.getPkCombatting().setSpecialAttackStage(0);
+		
 		// Do Pokemon change => update Pokemon comabting from IA, etc.
 		System.out.println("IA cambió a " + changeTo.getName());
 		IA.setPkCombatting(changeTo);
@@ -2748,8 +2756,8 @@ public class Game {
 	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika)
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "6,6,6";
-		String allPkIA = "466,466,466";
+		String allPkPlayer = "127,127,127";
+		String allPkIA = "16,16,16";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -2790,10 +2798,12 @@ public class Game {
 		// Sets the attacks to pokemon's player to test
 		for (Pokemon pk : player.getPokemon()) {
 
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
+			
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
 //
@@ -2830,9 +2840,9 @@ public class Game {
 		for (Pokemon pk : IA.getPokemon()) {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
+			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list

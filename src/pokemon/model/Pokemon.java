@@ -42,6 +42,7 @@ public class Pokemon {
 	private boolean hasUsedMinimize;
 	private boolean hasRetreated;
 	private int attackStage;
+	private int specialAttackStage;
 
 	public Pokemon() {
 		this.id = 0;
@@ -81,6 +82,7 @@ public class Pokemon {
 		this.hasUsedMinimize = false;
 		this.hasRetreated = false;
 		this.attackStage = 0;
+		this.specialAttackStage = 0;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -122,6 +124,7 @@ public class Pokemon {
 		this.hasUsedMinimize = false;
 		this.hasRetreated = false;
 		this.attackStage = 0;
+		this.specialAttackStage = 0;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -168,6 +171,7 @@ public class Pokemon {
 		this.hasUsedMinimize = pokemon.hasUsedMinimize;
 		this.hasRetreated = pokemon.hasRetreated;
 		this.attackStage = pokemon.attackStage;
+		this.specialAttackStage = pokemon.specialAttackStage;
 	}
 
 	public int getId() {
@@ -465,6 +469,14 @@ public class Pokemon {
 	public void setAttackStage(int attackStage) {
 		this.attackStage = attackStage;
 	}
+	
+	public int getSpecialAttackStage() {
+		return specialAttackStage;
+	}
+
+	public void setSpecialAttackStage(int specialAttackStage) {
+		this.specialAttackStage = specialAttackStage;
+	}
 
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
@@ -652,5 +664,29 @@ public class Pokemon {
 				System.out.println(this.getName() + " está atado - PS actuales : " + this.getPs());
 			}
 		}
+	}
+	
+	public float getEffectiveAttack() {
+		int stage = this.getAttackStage();
+		float multiplier;
+
+		if (stage >= 0)
+			multiplier = (2 + stage) / 2.0f;
+		else
+			multiplier = 2.0f / (2 - stage);
+
+		return this.getAttack() * multiplier;
+	}
+	
+	public float getEffectiveSpecialAttack() {
+		int stage = this.getSpecialAttackStage();
+		float multiplier;
+
+		if (stage >= 0)
+			multiplier = (2 + stage) / 2.0f;
+		else
+			multiplier = 2.0f / (2 - stage);
+
+		return this.getSpecialAttack() * multiplier;
 	}
 }
