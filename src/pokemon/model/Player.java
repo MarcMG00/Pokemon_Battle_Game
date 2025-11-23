@@ -347,7 +347,7 @@ public class Player {
 		return list.stream().collect(Collectors.groupingBy(e -> e.toString(), Collectors.counting()));
 	}
 
-	// Chooses the attack: detects if it's machine or player
+	// Chooses the attack from machine
 	public void prepareBestAttackIA() {
 
 		// Gets a random number to choose the attack base (>10 : "others", and if it's
@@ -369,8 +369,8 @@ public class Player {
 					Optional<Attack> nextAttack = Optional.empty();
 
 					// Machine: chooses best attack matching type and not "otros"
-					nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
-							.filter(a -> a.getStrTypeToPkType() == pkType && !a.getBases().contains("otros"))
+					nextAttack = this.getPkCombatting().getLotDamageAttacks().stream().filter(
+							a -> a.getStrTypeToPkType() == pkType && !a.getBases().contains("otros") && a.getPp() > 0)
 							.findFirst();
 
 					if (nextAttack.isPresent()) {
@@ -395,7 +395,7 @@ public class Player {
 			if (!isAttackChosen && !this.getPkCombatting().getLotDamageAttacks().isEmpty()) {
 
 				Optional<Attack> nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
-						.filter(a -> !a.getBases().contains("otros")).findFirst();
+						.filter(a -> !a.getBases().contains("otros") && a.getPp() > 0).findFirst();
 
 				if (nextAttack.isPresent()) {
 
@@ -415,8 +415,9 @@ public class Player {
 			// ===============================
 			if (!isAttackChosen && !this.getPkCombatting().getNormalAttacks().isEmpty()) {
 
-				Optional<Attack> nextAttack = this.getPkCombatting().getNormalAttacks().stream().filter(
-						a -> !a.getBases().contains("otros") && !this.getPkCombatting().getLowAttacks().contains(a))
+				Optional<Attack> nextAttack = this.getPkCombatting().getNormalAttacks().stream()
+						.filter(a -> !a.getBases().contains("otros")
+								&& !this.getPkCombatting().getLowAttacks().contains(a) && a.getPp() > 0)
 						.findFirst();
 
 				if (nextAttack.isPresent()) {
@@ -443,7 +444,7 @@ public class Player {
 			if (!isAttackChosen) {
 
 				Optional<Attack> nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream()
-						.filter(a -> !a.getBases().contains("otros")).findFirst();
+						.filter(a -> !a.getBases().contains("otros") && a.getPp() > 0).findFirst();
 
 				if (nextAttack.isPresent()) {
 
@@ -477,13 +478,13 @@ public class Player {
 			// 5️ Attack from "otros" OR first attack founded
 			// ===============================
 			if (this.getPkCombatting().getFourPrincipalAttacks().stream()
-					.anyMatch(a -> a.getBases().contains("otros"))) {
+					.anyMatch(a -> a.getBases().contains("otros") && a.getPp() > 0)) {
 
 				this.getPkCombatting().setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream()
-						.filter(a -> a.getBases().contains("otros")).findFirst().get());
+						.filter(a -> a.getBases().contains("otros") && a.getPp() > 0).findFirst().get());
 			} else {
-				this.getPkCombatting()
-						.setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream().findFirst().get());
+				this.getPkCombatting().setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream()
+						.filter(a -> a.getPp() > 0).findFirst().get());
 			}
 
 			System.out.println(this.getPkCombatting().getNextMovement().getName());
@@ -492,8 +493,9 @@ public class Player {
 
 	// Prints the attacks of current Pokemon
 	public void printAttacksFromPokemonCombating() {
-		List<Attack> attacksAvailable = this.getPkCombatting().getFourPrincipalAttacks().stream().filter(a -> a.getPp() > 0).toList();
-		
+		List<Attack> attacksAvailable = this.getPkCombatting().getFourPrincipalAttacks().stream()
+				.filter(a -> a.getPp() > 0).toList();
+
 		for (Attack currentAttack : attacksAvailable) {
 
 			System.out
@@ -503,10 +505,11 @@ public class Player {
 
 	// Prints all the info from all the Pokemon player
 	public void printPokemonInfo() {
-		
+
 		// Get only Pokemon not debilitated
-		List<Pokemon> pokemonAvailable = this.getPokemon().stream().filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
-		
+		List<Pokemon> pokemonAvailable = this.getPokemon().stream()
+				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+
 		for (Pokemon pk : pokemonAvailable) {
 
 			System.out.println(pk.getId() + " - " + pk.getName() + " - tipo(s) : ");
@@ -628,8 +631,9 @@ public class Player {
 		int bestScore = currentBestDamage;
 
 		// Get only Pokemon not debilitated
-		List<Pokemon> pokemonAvailable = this.getPokemon().stream().filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
-		
+		List<Pokemon> pokemonAvailable = this.getPokemon().stream()
+				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+
 		for (Pokemon candidate : pokemonAvailable) {
 
 			if (candidate == currentPkCombatingBeforeChange)
