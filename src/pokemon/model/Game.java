@@ -2671,14 +2671,21 @@ public class Game {
 				return false; // cancel change
 			}
 
-			// Not allowed to chose the Pokemon combating
-			if (player.getPkCombatting().getId() == id) {
+			// Not allowed to chose the Pokemon combating (and not debilitated)
+			if (player.getPkCombatting().getId() == id && player.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 				System.out.println("Ese Pokémon ya está combatiendo. Escoge otro.");
 				continue;
 			}
 
 			Optional<Pokemon> opt = player.getPokemon().stream().filter(p -> p.getId() == id).findFirst();
 
+			if (!opt.isEmpty()) {
+				if (opt.get().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+					System.out.println(opt.get().getName() + " (Id:" + opt.get().getId() + ")" + " fue debilitado. Escoge otro.");
+					continue;
+				}
+			}
+			
 			if (opt.isEmpty()) {
 				System.out.println("No escogiste un Pokémon válido. Escoge un Pokémon de los que posees :");
 				continue;
