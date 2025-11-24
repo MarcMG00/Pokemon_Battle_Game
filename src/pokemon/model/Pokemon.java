@@ -469,7 +469,7 @@ public class Pokemon {
 	public void setAttackStage(int attackStage) {
 		this.attackStage = attackStage;
 	}
-	
+
 	public int getSpecialAttackStage() {
 		return specialAttackStage;
 	}
@@ -665,7 +665,8 @@ public class Pokemon {
 			}
 		}
 	}
-	
+
+	// Get attack stage for normal attack
 	public float getEffectiveAttack() {
 		int stage = this.getAttackStage();
 		float multiplier;
@@ -677,7 +678,8 @@ public class Pokemon {
 
 		return this.getAttack() * multiplier;
 	}
-	
+
+	// Get attack stage for special attack
 	public float getEffectiveSpecialAttack() {
 		int stage = this.getSpecialAttackStage();
 		float multiplier;
@@ -688,5 +690,10 @@ public class Pokemon {
 			multiplier = 2.0f / (2 - stage);
 
 		return this.getSpecialAttack() * multiplier;
+	}
+
+	// Get Attack by Id
+	public Attack getNextMovementById(int id) {
+		return this.getFourPrincipalAttacks().stream().filter(a -> a.getId() == id).findFirst().orElse(null);
 	}
 }

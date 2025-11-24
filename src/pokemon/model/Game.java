@@ -1800,6 +1800,8 @@ public class Game {
 							pk.addPhysicalAttack(a);
 					}
 				}
+				// Put "Struggle" to all Pokemon (used when has no remaining PP on the principal attacks)
+				pk.addPhysicalAttack(this.attackById.get(165));
 
 				// Special
 				if (!cols[2].equals("0")) {
@@ -2336,7 +2338,7 @@ public class Game {
 		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 
 		// IA Prepares best attack against Pokemon player
-		IA.prepareBestAttackIA();
+		IA.prepareBestAttackIA(effectPerTypes);
 
 		System.out.println("Next attack from machine :");
 		System.out.println(IA.getPkCombatting().getNextMovement().getName() + " - "
@@ -2384,7 +2386,16 @@ public class Game {
 		int attackId = 0;
 
 		if (!player.getPkCombatting().getIsChargingAttackForNextRound()) {
-			attackId = getValidAttackId(sc, player);
+			Pokemon pk = player.getPkCombatting();
+
+		    // Checks that there is no more PPs on attacks from Pokemon combating
+		    if (!player.hasAnyPPLeft(pk)) {
+		        System.out.println(pk.getName() + " no tiene más PPs en ningún ataque.");
+		        System.out.println(pk.getName() + " usó Forcejeo!");
+		        attackId = 165; // ID of "Struggle" (default attack when no more attacks remaining)
+		    } else {
+		        attackId = getValidAttackId(sc, player);
+		    }
 		}
 
 		printPokemonStates();
@@ -2442,7 +2453,7 @@ public class Game {
 	// the beginning of the turn)
 	private void prepareIAIfPossible(boolean isStartTurn) {
 		applyEffectStatusCondition(IA.getPkCombatting());
-		IA.prepareBestAttackIA();
+		IA.prepareBestAttackIA(effectPerTypes);
 	}
 
 	// Reset status effects from IA at the end of the turn
@@ -2462,15 +2473,33 @@ public class Game {
 	private int getValidAttackId(Scanner sc, Player player) {
 		System.out.println("Escoge un ataque :");
 		player.printAttacksFromPokemonCombating();
-		int ataqueId = sc.nextInt();
+
+		int attackId = sc.nextInt();
 		sc.useDelimiter(";|\r?\n|\r");
 
-		while (!player.getPkCombatting().getFourIdAttacks().contains(ataqueId)) {
-			System.out.println("Escoge un ataque que tenga el Pokemon");
-			ataqueId = sc.nextInt();
+		// While it's not a valid attack or doesn't have PP
+		while (true) {
+
+			// 1. Checks that the Pokemon has the attack chosen
+			if (!player.getPkCombatting().getFourIdAttacks().contains(attackId)) {
+				System.out.println("Escoge un ataque que tenga el Pokémon.");
+			} else {
+
+				// 2. Get the attack
+				Attack atk = player.getPkCombatting().getNextMovementById(attackId);
+
+				// 3. Verifies that the attack has PP
+				if (atk.getPp() > 0) {
+					return attackId; // valid
+				} else {
+					System.out.println("No tienes más PP para este ataque. Escoge otro.");
+				}
+			}
+
+			// New reading
+			attackId = sc.nextInt();
 			sc.useDelimiter(";|\r?\n|\r");
 		}
-		return ataqueId;
 	}
 
 	// Print Pokemon states (for debug)
@@ -2644,14 +2673,14 @@ public class Game {
 						.findFirst().get();
 			}
 
-			System.out.println("IA eligió a " + newIA.getName() + " (Id:" + newIA.getId() + ")" );
+			System.out.println("IA eligió a " + newIA.getName() + " (Id:" + newIA.getId() + ")");
 
 			IA.setPkCombatting(newIA);
 			IA.setPkFacing(player.getPkCombatting());
 
 			player.setPkFacing(IA.getPkCombatting());
 			refreshAttackOrders();
-			IA.prepareBestAttackIA();
+			IA.prepareBestAttackIA(effectPerTypes);
 		}
 	}
 
@@ -2672,7 +2701,8 @@ public class Game {
 			}
 
 			// Not allowed to chose the Pokemon combating (and not debilitated)
-			if (player.getPkCombatting().getId() == id && player.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
+			if (player.getPkCombatting().getId() == id && player.getPkCombatting().getStatusCondition()
+					.getStatusCondition() != StatusConditions.DEBILITATED) {
 				System.out.println("Ese Pokémon ya está combatiendo. Escoge otro.");
 				continue;
 			}
@@ -2681,11 +2711,12 @@ public class Game {
 
 			if (!opt.isEmpty()) {
 				if (opt.get().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
-					System.out.println(opt.get().getName() + " (Id:" + opt.get().getId() + ")" + " fue debilitado. Escoge otro.");
+					System.out.println(
+							opt.get().getName() + " (Id:" + opt.get().getId() + ")" + " fue debilitado. Escoge otro.");
 					continue;
 				}
 			}
-			
+
 			if (opt.isEmpty()) {
 				System.out.println("No escogiste un Pokémon válido. Escoge un Pokémon de los que posees :");
 				continue;
@@ -2694,7 +2725,7 @@ public class Game {
 			// Reinitialize some stats
 			player.getPkCombatting().setAttackStage(0);
 			player.getPkCombatting().setSpecialAttackStage(0);
-			
+
 			Pokemon selected = opt.get();
 
 			System.out.println("Jugador eligió a " + selected.getName());
@@ -2733,7 +2764,7 @@ public class Game {
 		// Reinitialize some stats
 		IA.getPkCombatting().setAttackStage(0);
 		IA.getPkCombatting().setSpecialAttackStage(0);
-		
+
 		// Do Pokemon change => update Pokemon comabting from IA, etc.
 		System.out.println("IA cambió a " + changeTo.getName());
 		IA.setPkCombatting(changeTo);
@@ -2803,7 +2834,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
-			
+
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
 //

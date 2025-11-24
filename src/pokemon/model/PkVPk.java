@@ -108,11 +108,17 @@ public class PkVPk {
 		float accuracyFactor = 0f;
 
 		// For all attacks from "otros", it has 100% of accuracy
-		if(atkAttacker.getBases().contains("otros")) {
+		if (atkAttacker.getBases().contains("otros")) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
 		
+		// "Struggle" attack has 100% of precision (used when no more PPs remaining on other attacks, etc.)
+		if(atkAttacker.getId() == 165) {
+			this.getPkCombatting().setCanAttack(true);
+			return;
+		}
+
 		// Guillotina
 		if (atkAttacker.getId() == 12) {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f); // don't take into account Pokemon levels (cause all
@@ -976,6 +982,40 @@ public class PkVPk {
 			if (this.getPkFacing().getPs() <= 0) {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Forcejeo/Struggle
+		case 165:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Forcejeo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			
+			// Pokemon combating receives 25% of damage from his PS remaining
+			this.getPkCombatting().setPs(this.getPkCombatting().getPs() - (this.getPkCombatting().getPs() * 0.25f));
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			
+			// Get status debilitated for Pokemon combating
+			if (this.getPkCombatting().getPs() <= 0) {
+
+				this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
 			break;
 		}
