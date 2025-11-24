@@ -2386,7 +2386,16 @@ public class Game {
 		int attackId = 0;
 
 		if (!player.getPkCombatting().getIsChargingAttackForNextRound()) {
-			attackId = getValidAttackId(sc, player);
+			Pokemon pk = player.getPkCombatting();
+
+		    // Checks that there is no more PPs on attacks from Pokemon combating
+		    if (!player.hasAnyPPLeft(pk)) {
+		        System.out.println(pk.getName() + " no tiene más PPs en ningún ataque.");
+		        System.out.println(pk.getName() + " usó Forcejeo!");
+		        attackId = 165; // ID of "Struggle" (default attack when no more attacks remaining)
+		    } else {
+		        attackId = getValidAttackId(sc, player);
+		    }
 		}
 
 		printPokemonStates();
