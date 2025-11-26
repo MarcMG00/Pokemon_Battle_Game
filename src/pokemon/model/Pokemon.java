@@ -561,6 +561,8 @@ public class Pokemon {
 			break;
 
 		}
+		
+		this.setCanAttack(true);
 	}
 
 	// Modify conditions of Pokemon depending on States

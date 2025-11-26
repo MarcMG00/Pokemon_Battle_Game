@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.text.Normalizer;
@@ -58,6 +59,7 @@ public class Game {
 	private Map<Integer, PokemonType> typeById = new HashMap<>();
 	private Map<Integer, Pokemon> pokemonById = new HashMap<>();
 	private Map<Integer, Attack> attackById = new HashMap<>();
+	private PkVPk battleVS;
 
 	private Player player;
 	private IAPlayer IA;
@@ -77,6 +79,7 @@ public class Game {
 		this.typeById = new HashMap<>();
 		this.pokemonById = new HashMap<>();
 		this.attackById = new HashMap<>();
+		this.battleVS = new PkVPk(player, IA);
 	}
 
 	public ArrayList<Pokemon> getPokemon() {
@@ -189,6 +192,14 @@ public class Game {
 
 	public void setAttackById(Map<Integer, Attack> attackById) {
 		this.attackById = attackById;
+	}
+
+	public PkVPk getBattleVS() {
+		return battleVS;
+	}
+
+	public void setBattleVS(PkVPk battleVS) {
+		this.battleVS = battleVS;
 	}
 
 	// ==================================== SCRAPPING WEB
@@ -1800,7 +1811,8 @@ public class Game {
 							pk.addPhysicalAttack(a);
 					}
 				}
-				// Put "Struggle" to all Pokemon (used when has no remaining PP on the principal attacks)
+				// Put "Struggle" to all Pokemon (used when has no remaining PP on the principal
+				// attacks)
 				pk.addPhysicalAttack(this.attackById.get(165));
 
 				// Special
@@ -2105,7 +2117,6 @@ public class Game {
 
 		switch (attack.getId()) {
 		case 16:
-		case 18:
 		case 87:
 		case 239:
 		case 327:
@@ -2388,14 +2399,14 @@ public class Game {
 		if (!player.getPkCombatting().getIsChargingAttackForNextRound()) {
 			Pokemon pk = player.getPkCombatting();
 
-		    // Checks that there is no more PPs on attacks from Pokemon combating
-		    if (!player.hasAnyPPLeft(pk)) {
-		        System.out.println(pk.getName() + " no tiene más PPs en ningún ataque.");
-		        System.out.println(pk.getName() + " usó Forcejeo!");
-		        attackId = 165; // ID of "Struggle" (default attack when no more attacks remaining)
-		    } else {
-		        attackId = getValidAttackId(sc, player);
-		    }
+			// Checks that there is no more PPs on attacks from Pokemon combating
+			if (!player.hasAnyPPLeft(pk)) {
+				System.out.println(pk.getName() + " no tiene más PPs en ningún ataque.");
+				System.out.println(pk.getName() + " usó Forcejeo!");
+				attackId = 165; // ID of "Struggle" (default attack when no more attacks remaining)
+			} else {
+				attackId = getValidAttackId(sc, player);
+			}
 		}
 
 		printPokemonStates();
@@ -2424,8 +2435,7 @@ public class Game {
 
 		// Reset status conditions
 		resetEffectStatusCondition(pkPlayer);
-
-		resetIAIfPossible();
+		resetEffectStatusCondition(IA.getPkCombatting());
 	}
 
 	// Handle attack from IA when player is changing the Pokemon
@@ -2444,7 +2454,16 @@ public class Game {
 
 		handleChangeSequence(sc); // only IA attacks
 
-		resetIAIfPossible();
+		// If defender has to change because of "Whirlwind"
+		if (player.getIsForceSwitchPokemon()) {
+
+			handleForcedSwitchWhirlwind(player);
+
+			// Turn ends because of the change
+			return true;
+		}
+
+		resetEffectStatusCondition(IA.getPkCombatting());
 
 		return true;
 	}
@@ -2454,11 +2473,6 @@ public class Game {
 	private void prepareIAIfPossible(boolean isStartTurn) {
 		applyEffectStatusCondition(IA.getPkCombatting());
 		IA.prepareBestAttackIA(effectPerTypes);
-	}
-
-	// Reset status effects from IA at the end of the turn
-	private void resetIAIfPossible() {
-		resetEffectStatusCondition(IA.getPkCombatting());
 	}
 
 	// Get the player choice (attack or change Pokemon)
@@ -2570,11 +2584,29 @@ public class Game {
 			return true; // turn ends
 		}
 
+		// If attacker forces to change because of "Whirlwind"
+		if (attacker.getIsForceSwitchPokemon()) {
+
+			handleForcedSwitchWhirlwind(attacker);
+
+			// Turn ends because of the change
+			return true;
+		}
+
 		// Execute attack
 		if (attacker == player)
 			handlePlayerRetaliation();
 		else
 			handleIARetaliation();
+
+		// If defender has to change because of "Whirlwind"
+		if (defender.getIsForceSwitchPokemon()) {
+
+			handleForcedSwitchWhirlwind(defender);
+
+			// Turn ends because of the change
+			return true;
+		}
 
 		// If defender got Pokemon debilitated during the attack, force change and ends
 		// turn
@@ -2597,17 +2629,22 @@ public class Game {
 
 		if (player.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 
-			PkVPk battleVS = new PkVPk(player.getPkCombatting(), player.getPkFacing());
-			player.setBattleVS(battleVS);
+			PkVPk battleVS = new PkVPk(player, IA);
+			this.setBattleVS(battleVS);
 
 			if (player.getPkCombatting().getCanAttack()) {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
-				player.getProbabiltyOfAttacking();
+				this.getBattleVS().getProbabilityOfAttacking();
 
-				System.out.println(ANSI_GREEN + "Pokemon player can attack" + ANSI_RESET);
-				player.applyDamage();
+				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
+				// facing is invulnerable, etc.
+				if (player.getPkCombatting().getCanAttack()) {
+
+					System.out.println(ANSI_GREEN + "Pokemon player can attack" + ANSI_RESET);
+					this.getBattleVS().doAttackEffect();
+				}
 			} else {
 				System.out.println(ANSI_RED + "Pokemon player cannot attack" + ANSI_RESET);
 			}
@@ -2622,17 +2659,22 @@ public class Game {
 	private void handleIARetaliation() {
 		if (IA.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 
-			PkVPk battleVS = new PkVPk(IA.getPkCombatting(), IA.getPkFacing());
-			IA.setBattleVS(battleVS);
+			PkVPk battleVS = new PkVPk(IA, player);
+			this.setBattleVS(battleVS);
 
 			if (IA.getPkCombatting().getCanAttack()) {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
-				IA.getProbabiltyOfAttacking();
+				this.getBattleVS().getProbabilityOfAttacking();
 
-				System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
-				IA.applyDamage();
+				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
+				// facing is invulnerable, etc.
+				if (IA.getPkCombatting().getCanAttack()) {
+
+					System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
+					this.getBattleVS().doAttackEffect();
+				}
 
 			} else {
 				System.out.println(ANSI_RED + "Pokemon IA cannot attack" + ANSI_RESET);
@@ -2783,12 +2825,49 @@ public class Game {
 		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 	}
 
+	// Handle if a player has to change to another random Pokemon because of "Whirlwind"
+	private void handleForcedSwitchWhirlwind(Player defender) {
+
+		// Get available Pokemon
+		List<Pokemon> alive = defender.getPokemon().stream()
+				.filter(p -> p.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED
+						&& p != defender.getPkCombatting())
+				.toList();
+
+		if (alive.isEmpty()) {
+			defender.setForceSwitchPokemon(false);
+			return; // Cannot change => does not anything
+		}
+
+		// Chose random Pokemon
+		Pokemon newPk = alive.get((int) (Math.random() * alive.size()));
+
+		System.out.println(defender.getPkCombatting().getName() + " fue expulsado por Remolino.");
+
+		boolean isPlayer = defender == player;
+		System.out.println((isPlayer ? "Jugador" : "IA") + " (jugador/IA) envía a " + newPk.getName() + " (Id:"
+				+ newPk.getId() + ")");
+
+		defender.setPkCombatting(newPk);
+
+		// Update Pokemon facing etc.
+		if (defender == player) {
+			IA.setPkFacing(newPk);
+			player.setPkFacing(IA.getPkCombatting());
+		} else {
+			player.setPkFacing(newPk);
+			IA.setPkFacing(player.getPkCombatting());
+		}
+
+		defender.setForceSwitchPokemon(false);
+	}
+
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
 	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika)
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "127,127,127";
-		String allPkIA = "16,16,16";
+		String allPkPlayer = "18,18,18";
+		String allPkIA = "398,398,398";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -2831,9 +2910,10 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -2872,9 +2952,10 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : IA.getPkCombatting().getFourPrincipalAttacks()) {
