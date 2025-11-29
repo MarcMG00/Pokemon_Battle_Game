@@ -95,12 +95,12 @@ public class ReaderData {
 	}
 
 	// Reads pokemon.csv file and adds to Pokemon list
-	public void readPokemon(String fileName, ArrayList<PokemonType> types, ArrayList<Pokemon> pokemon, Map<Integer, Pokemon> pokemonById) {
+	public void readPokemon(ArrayList<PokemonType> types, ArrayList<Pokemon> pokemon, Map<Integer, Pokemon> pokemonById) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
 		try {
-			fileReader = new FileReader(fileName);
+			fileReader = new FileReader(SAMPLE_CSV_ALL_POKEMON_TYPES);
 			bufferedReader = new BufferedReader(fileReader);
 
 			// Skips first line
@@ -178,12 +178,12 @@ public class ReaderData {
 	}
 
 	// Reads habsList.csv file and adds to abilities list
-	public void readAbilities(String fileName) {
+	public void readAbilities() {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
 		try {
-			fileReader = new FileReader(fileName);
+			fileReader = new FileReader(SAMPLE_CSV_ALL_ABS);
 			bufferedReader = new BufferedReader(fileReader);
 
 			// Skips first line
@@ -222,12 +222,12 @@ public class ReaderData {
 	}
 
 	// Reads pokemon.csv file (for abilities) and adds to Pokemon
-	public void readAddAbsForEachPokemon(String fileName, ArrayList<Pokemon> pokemon) {
+	public void readAddAbsForEachPokemon(ArrayList<Pokemon> pokemon) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
 		try {
-			fileReader = new FileReader(fileName);
+			fileReader = new FileReader(SAMPLE_CSV_ALL_POKEMON_ABS);
 			bufferedReader = new BufferedReader(fileReader);
 
 			// Skips first line
@@ -400,12 +400,12 @@ public class ReaderData {
 	}
 
 	// Reads typesList.csv file and adds to types list
-	public void readPkTypes(String fileName, ArrayList<PokemonType> types, Map<Integer, PokemonType> typeById) {
+	public void readPkTypes(ArrayList<PokemonType> types, Map<Integer, PokemonType> typeById) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
 		try {
-			fileReader = new FileReader(fileName);
+			fileReader = new FileReader(SAMPLE_CSV_ALL_TYPES);
 			bufferedReader = new BufferedReader(fileReader);
 
 			// Skips first line
@@ -657,12 +657,12 @@ public class ReaderData {
 //		}
 
 	// Reads attacksList.csv file and adds to attacks list
-	public void readAttacks(String fileName, ArrayList<PokemonType> types) {
+	public void readAttacks(ArrayList<PokemonType> types) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
 		try {
-			fileReader = new FileReader(fileName);
+			fileReader = new FileReader(SAMPLE_CSV_ALL_ATTACKS);
 			bufferedReader = new BufferedReader(fileReader);
 
 			// Skips first line

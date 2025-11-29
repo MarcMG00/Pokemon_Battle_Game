@@ -15,14 +15,7 @@ import pokemon.importData.ScrappingWeb;
 import pokemon.importData.WritterData;
 
 public class Game {
-	private static final String SAMPLE_CSV_ALL_POKEMON = "./data/pokemonList.csv";
-	private static final String SAMPLE_CSV_ALL_POKEMON_ABS = "./data/pokemonList2.csv";
-	private static final String SAMPLE_CSV_ALL_ABS = "./data/absList.csv";
-	private static final String SAMPLE_CSV_ALL_TYPES = "./data/typesList.txt";
-	private static final String SAMPLE_CSV_ALL_POKEMON_TYPES = "./data/pokemonList3.csv";
-	private static final String SAMPLE_CSV_ALL_ATTACKS = "./data/attacksList.txt";
-	private static final String SAMPLE_CSV_ALL_ATTACKS_FOREACH_POKEMON = "./data/attacksForEachPokemon.txt";
-
+	
 	public static final String ANSI_BLACK = "\u001B[30m";
 	public static final String ANSI_RED = "\u001B[31m";
 	public static final String ANSI_GREEN = "\u001B[32m";
@@ -411,11 +404,11 @@ public class Game {
 //		this.getWritterData().writeAbilitiesCSV(this.abilities);
 
 		// Initialize the different lists
-		this.getReaderData().readPkTypes(SAMPLE_CSV_ALL_TYPES, this.types, this.typeById);
-//		this.getReaderData().readPokemon(SAMPLE_CSV_ALL_POKEMON);
-		this.getReaderData().readPokemon(SAMPLE_CSV_ALL_POKEMON_TYPES, this.types, this.pokemon, this.pokemonById);
-		this.getReaderData().readAbilities(SAMPLE_CSV_ALL_ABS);
-		this.getReaderData().readAttacks(SAMPLE_CSV_ALL_ATTACKS, this.types);
+		this.getReaderData().readPkTypes(this.types, this.typeById);
+//		this.getReaderData().readPokemon(SAMPLE_CSV_ALL_POKEMON, this.types, this.pokemon, this.pokemonById);
+		this.getReaderData().readPokemon(this.types, this.pokemon, this.pokemonById);
+		this.getReaderData().readAbilities();
+		this.getReaderData().readAttacks(this.types);
 
 		// Adds the abilities for different Pokemon (on the general list)
 //		this.abilitiesPerPokemon =  this.getScrappingWeb().scrappingWebReadAbsFromPokemonAllTables();
@@ -425,7 +418,7 @@ public class Game {
 //		this.getWritterData().AppendAbilities();
 
 		// Adds abilities to Pokemon (on the Pokemon)
-		this.getReaderData().readAddAbsForEachPokemon(SAMPLE_CSV_ALL_POKEMON_ABS, this.pokemon);
+		this.getReaderData().readAddAbsForEachPokemon(this.pokemon);
 
 		// Puts the lists of different damages for each type
 		this.getReaderData().readPkTypesEffectsToOtherTypes(this.typeById);
