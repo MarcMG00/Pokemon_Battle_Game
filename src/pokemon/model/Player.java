@@ -14,14 +14,14 @@ public class Player {
 	private ArrayList<Pokemon> pokemon;
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
-	private PkVPk battleVS;
+	private boolean forceSwitchPokemon;
 
 	public Player() {
 		super();
 		this.pokemon = new ArrayList<>();
 		this.pkCombatting = new Pokemon();
 		this.pkFacing = new Pokemon();
-		this.battleVS = new PkVPk(this.pkCombatting, this.pkFacing);
+		this.forceSwitchPokemon = false;
 	}
 
 	public ArrayList<Pokemon> getPokemon() {
@@ -53,12 +53,12 @@ public class Player {
 		this.pkFacing = pkFacing;
 	}
 
-	public PkVPk getBattleVS() {
-		return battleVS;
+	public boolean getIsForceSwitchPokemon() {
+		return forceSwitchPokemon;
 	}
 
-	public void setBattleVS(PkVPk battleVS) {
-		this.battleVS = battleVS;
+	public void setForceSwitchPokemon(boolean forceSwitchPokemon) {
+		this.forceSwitchPokemon = forceSwitchPokemon;
 	}
 
 	// Adds 4 attacks to each Pokemon from player (1 other, 2 physicals, 1 special)
@@ -492,6 +492,23 @@ public class Player {
 					System.out.println(atk.getName() + " - random without 'otros' " + atk.getBases());
 					isAttackChosen = true;
 				}
+
+				// ===============================
+				// 4️ Random attack ("otros")
+				// ===============================
+				else {
+					nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream().filter(a -> a.getPp() > 0)
+							.findFirst();
+
+					if (nextAttack.isPresent()) {
+
+						Attack atk = nextAttack.get();
+
+						this.getPkCombatting().setNextMovement(atk);
+						System.out.println(atk.getName() + " - random 'otros' " + atk.getBases());
+						isAttackChosen = true;
+					}
+				}
 			}
 
 		} else {
@@ -731,14 +748,14 @@ public class Player {
 				this.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == 165).findFirst().get());
 	}
 
-	// Check for evasion/accuracy from Pokemon
-	public void getProbabiltyOfAttacking() {
-		this.getBattleVS().getProbabilityOfAttacking();
-	}
+	public boolean hasAvailableSwitch() {
+		// Get available Pokemon from defender
+		List<Pokemon> options = this.getPokemon().stream().filter(pk -> pk != this.getPkCombatting())
+				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
 
-	// Apply damage
-	public void applyDamage() {
-		this.getBattleVS().doAttackEffect();
+		if (options.isEmpty()) {
+			return false; // If no more Pokemon remaining, attack fails
+		}
+		return true;
 	}
-
 }

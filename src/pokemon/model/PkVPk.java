@@ -6,6 +6,8 @@ import pokemon.enums.StatusConditions;
 public class PkVPk {
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
+	private Player attacker;
+	private Player defender;
 
 	private static final String ANSI_RED = "\u001B[31m";
 	private static final String ANSI_GREEN = "\u001B[32m";
@@ -15,9 +17,11 @@ public class PkVPk {
 	private static final String ANSI_WHITE = "\u001B[37m";
 	private static final String ANSI_RESET = "\u001B[0m";
 
-	public PkVPk(Pokemon pkAttacking, Pokemon pkFacing) {
-		this.pkCombatting = pkAttacking;
-		this.pkFacing = pkFacing;
+	public PkVPk(Player attacker, Player defender) {
+		this.attacker = attacker;
+		this.defender = defender;
+		this.pkCombatting = attacker.getPkCombatting();
+		this.pkFacing = defender.getPkCombatting();
 	}
 
 	public Pokemon getPkCombatting() {
@@ -34,6 +38,22 @@ public class PkVPk {
 
 	public void setPkFacing(Pokemon pkFacing) {
 		this.pkFacing = pkFacing;
+	}
+
+	public Player getAttacker() {
+		return attacker;
+	}
+
+	public void setAttacker(Player attacker) {
+		this.attacker = attacker;
+	}
+
+	public Player getDefender() {
+		return defender;
+	}
+
+	public void setDefender(Player defender) {
+		this.defender = defender;
 	}
 
 	// Knows the evasion or accuracy for the Pokemon selected (1 is for accuracy, 2
@@ -107,14 +127,33 @@ public class PkVPk {
 
 		float accuracyFactor = 0f;
 
-		// For all attacks from "otros", it has 100% of accuracy
+		// -----------------------------
+		// WHIRLWIND / REMOLINO
+		// -----------------------------
+		if (atkAttacker.getId() == 18) {
+
+			// If Pokemon facing is invulnerable, cannot do the attack
+			if (isDefenderCharging && !canHitInvulnerable) {
+				this.getPkCombatting().setCanAttack(false);
+				System.out.println(pkCombatting.getName() + " usó Remolino, pero " + pkFacing.getName()
+						+ " evitó el ataque (invulnerable).");
+			} else {
+				// Acierta siempre
+				this.getPkCombatting().setCanAttack(true);
+			}
+
+			return;
+		}
+
+		// For almost all attacks from "otros", it has 100% of accuracy
 		if (atkAttacker.getBases().contains("otros")) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
-		
-		// "Struggle" attack has 100% of precision (used when no more PPs remaining on other attacks, etc.)
-		if(atkAttacker.getId() == 165) {
+
+		// "Struggle" attack has 100% of precision (used when no more PPs remaining on
+		// other attacks, etc.)
+		if (atkAttacker.getId() == 165) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
@@ -803,6 +842,24 @@ public class PkVPk {
 			}
 			break;
 
+		// Remolino/Whirlwind
+		case 18:
+			System.out.println(pkCombatting.getName() + " usó Remolino!");
+
+			// Reducir PP
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Si el rival no tiene más Pokémon -> no pasa nada (pero no falla)
+			if (!this.getDefender().hasAvailableSwitch()) {
+				System.out.println("Pero " + pkFacing.getName() + " no tiene más Pokémon para cambiar.");
+				break;
+			}
+
+			// Force change
+			this.getDefender().setForceSwitchPokemon(true);
+
+			System.out.println("¡" + pkFacing.getName() + " fue arrastrado y obligado a retirarse!");
+			break;
 		// Vuelo/Fly (tested)
 		case 19:
 			// If not charging => first turn charge the attack
@@ -846,7 +903,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Atadura/Bind
+		// Atadura/Bind (tested)
 		case 20:
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Atadura");
@@ -938,7 +995,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Pisotón/Stomp
+		// Pisotón/Stomp (tested)
 		case 23:
 			// Gets the power from the beginning (to avoid variations after attacking)
 			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
@@ -1003,7 +1060,7 @@ public class PkVPk {
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-			
+
 			// Pokemon combating receives 25% of damage from his PS remaining
 			this.getPkCombatting().setPs(this.getPkCombatting().getPs() - (this.getPkCombatting().getPs() * 0.25f));
 
@@ -1011,7 +1068,7 @@ public class PkVPk {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
-			
+
 			// Get status debilitated for Pokemon combating
 			if (this.getPkCombatting().getPs() <= 0) {
 
