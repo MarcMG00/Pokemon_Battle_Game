@@ -79,7 +79,7 @@ public class Player {
 	// -----------------------------
 	public void addAttacksForEachPokemon() {
 
-		for (Pokemon pk : this.pokemon) {
+		for (Pokemon pk : this.getPokemon()) {
 
 			System.out.println(pk.getName());
 
@@ -118,7 +118,7 @@ public class Player {
 	public void orderAttacksFromDammageLevelPokemon(
 			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 		// Gets the Pokemon types that player is currently facing
-		ArrayList<PokemonType> pkFacing = this.pkFacing.getTypes();
+		ArrayList<PokemonType> pkFacing = this.getPkFacing().getTypes();
 
 		// Copy all the effects for each type of the current Pokemon player
 		HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesCopy = new HashMap<>();

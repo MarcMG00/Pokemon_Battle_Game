@@ -194,7 +194,7 @@ public class WritterData {
 
 				String[] pks = line.split(",");
 
-				for (Map.Entry<String, HashMap<String, ArrayList<Ability>>> entry : this.abilitiesPerPokemon
+				for (Map.Entry<String, HashMap<String, ArrayList<Ability>>> entry : this.getAbilitiesPerPokemon()
 						.entrySet()) {
 
 					if (pks[0].equals(entry.getKey())) {
@@ -284,7 +284,7 @@ public class WritterData {
 
 				String[] pks = line.split(",");
 
-				for (Map.Entry<String, ArrayList<PokemonType>> entry : pokemonTypePerPokemon.entrySet()) {
+				for (Map.Entry<String, ArrayList<PokemonType>> entry : this.getPokemonTypePerPokemon().entrySet()) {
 
 					if (pks[0].equals(entry.getKey())) {
 
@@ -329,7 +329,7 @@ public class WritterData {
 			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("AttackId", "AttackName",
 					"Type", "Power", "PP", "Precision", "Effect", "Base"));
 
-			for (Attack atk : this.attacks) {
+			for (Attack atk : this.getAttacks()) {
 
 				csvPrinter.printRecord(atk.getId(), atk.getName(), atk.getType(), atk.getPower(), atk.getPp(),
 						atk.getPrecision(), atk.getEffect(),
@@ -357,7 +357,7 @@ public class WritterData {
 			writer.append("AttackId,AttackName,Type,Power,PP,Precision,Effect,Base");
 			writer.newLine();
 
-			for (Attack atk : this.attacks) {
+			for (Attack atk : this.getAttacks()) {
 
 				writer.append(String.valueOf(atk.getId()) + "," + atk.getName() + "," + atk.getType() + ","
 						+ String.valueOf(atk.getPower()) + "," + String.valueOf(atk.getPp()) + ","
@@ -395,7 +395,7 @@ public class WritterData {
 			CSVPrinter csvPrinter = new CSVPrinter(writer,
 					CSVFormat.DEFAULT.withHeader("PokemonId", "PhysAttacks", "SpeAttacks", "OthAttacks"));
 
-			for (Map.Entry<Integer, HashMap<String, ArrayList<Integer>>> attack : this.attacksPerPokemon.entrySet()) {
+			for (Map.Entry<Integer, HashMap<String, ArrayList<Integer>>> attack : this.getAttacksPerPokemon().entrySet()) {
 
 				String csvP = "";
 				csvP += attack.getKey() + ",";

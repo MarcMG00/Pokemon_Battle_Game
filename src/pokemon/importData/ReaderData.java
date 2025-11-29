@@ -211,13 +211,13 @@ public class ReaderData {
 
 				String[] ablty = line.split(",");
 
-				if (this.abilities.size() == 309) {
+				if (this.getAbilities().size() == 309) {
 
 					break;
 
 				} else {
 
-					this.abilities.add(new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]));
+					this.getAbilities().add(new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]));
 
 				}
 			}
@@ -266,7 +266,7 @@ public class ReaderData {
 					// Gets first ability (all Pokemon have at least one ability)
 					if (!abltysPk[8].isEmpty()) {
 
-						for (Ability ablty : this.abilities) {
+						for (Ability ablty : this.getAbilities()) {
 
 							if (ablty.getId() == Integer.parseInt(abltysPk[8])) {
 
@@ -282,7 +282,7 @@ public class ReaderData {
 						// Gets second ability
 						if (!abltysPk[9].isEmpty()) {
 
-							for (Ability ablty : this.abilities) {
+							for (Ability ablty : this.getAbilities()) {
 
 								if (ablty.getId() == Integer.parseInt(abltysPk[9])) {
 
@@ -295,7 +295,7 @@ public class ReaderData {
 						// Gets hidden ability
 						if (!abltysPk[10].isEmpty()) {
 
-							for (Ability ablty : this.abilities) {
+							for (Ability ablty : this.getAbilities()) {
 
 								if (ablty.getId() == Integer.parseInt(abltysPk[10])) {
 
@@ -310,7 +310,7 @@ public class ReaderData {
 
 							if (!abltysPk[11].isEmpty()) {
 
-								for (Ability ablty : this.abilities) {
+								for (Ability ablty : this.getAbilities()) {
 
 									if (ablty.getId() == Integer.parseInt(abltysPk[11])) {
 
@@ -517,7 +517,7 @@ public class ReaderData {
 				}
 
 				// Save into main dictionary
-				this.effectPerTypes.put(typeName, types);
+				this.getEffectPerTypes().put(typeName, types);
 			}
 
 			System.out.println("Finished reading readPokeTypeEffectsToOtherTypes");
@@ -737,8 +737,8 @@ public class ReaderData {
 				setAttackSpecialBehavior(attack);
 
 				// Adds the attack to the general var
-				this.attacks.add(attack);
-				attackById.put(attack.getId(), attack);
+				this.getAttacks().add(attack);
+				this.getAttackById().put(attack.getId(), attack);
 			}
 		} catch (IOException e) {
 			System.out.println("Exception reading the file : " + e.getMessage());
@@ -780,19 +780,19 @@ public class ReaderData {
 				// Physical
 				if (!cols[1].equals("0")) {
 					for (String idStr : cols[1].split(";")) {
-						Attack a = this.attackById.get(Integer.parseInt(idStr));
+						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
 						if (a != null)
 							pk.addPhysicalAttack(a);
 					}
 				}
 				// Put "Struggle" to all Pokemon (used when has no remaining PP on the principal
 				// attacks)
-				pk.addPhysicalAttack(this.attackById.get(165));
+				pk.addPhysicalAttack(this.getAttackById().get(165));
 
 				// Special
 				if (!cols[2].equals("0")) {
 					for (String idStr : cols[2].split(";")) {
-						Attack a = this.attackById.get(Integer.parseInt(idStr));
+						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
 						if (a != null)
 							pk.addSpecialAttack(a);
 					}
@@ -801,7 +801,7 @@ public class ReaderData {
 				// Other
 				if (!cols[3].equals("0")) {
 					for (String idStr : cols[3].split(";")) {
-						Attack a = this.attackById.get(Integer.parseInt(idStr));
+						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
 						if (a != null)
 							pk.addOtherAttack(a);
 					}

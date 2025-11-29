@@ -193,6 +193,6 @@ public class Attack {
 	// Check if can hit while target is invulnerable
 	// -----------------------------
 	public boolean canHitWhileTargetInvulnerable(int targetAttackId) {
-	    return canHitWhileInvulnerable != null && canHitWhileInvulnerable.contains(targetAttackId);
+	    return this.getCanHitWhileInvulnerable() != null && this.getCanHitWhileInvulnerable().contains(targetAttackId);
 	}
 }

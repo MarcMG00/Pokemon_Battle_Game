@@ -173,7 +173,7 @@ public class ScrappingWeb {
 							Normalizer.normalize(tr.select("td").get(2).text(), Normalizer.Form.NFKD)
 									.replaceAll("[^\\p{ASCII}]", ""));
 
-					this.abilities.add(ablty);
+					this.getAbilities().add(ablty);
 
 				}
 			}
@@ -181,7 +181,7 @@ public class ScrappingWeb {
 			e.printStackTrace();
 		}
 
-		return this.abilities;
+		return this.getAbilities();
 	}
 
 	// -----------------------------
@@ -242,8 +242,8 @@ public class ScrappingWeb {
 							case 6:
 								// We remove all the digits from the ability and we search the ability in our
 								// list of abilities (we compare by name)
-								ablty = this.abilities
-										.stream().filter(
+								ablty = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -268,8 +268,8 @@ public class ScrappingWeb {
 								abs.put("Habilidad", pokemonAbs);
 								break;
 							case 7:
-								ablty = this.abilities
-										.stream().filter(
+								ablty = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -289,8 +289,8 @@ public class ScrappingWeb {
 								}
 								abs.put("Habilidad", pokemonAbs);
 
-								abltyHid = this.abilities
-										.stream().filter(
+								abltyHid = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -311,8 +311,8 @@ public class ScrappingWeb {
 								abs.put("Habilidad oculta", pokemonHiddenAbs);
 								break;
 							case 8:
-								ablty = this.abilities
-										.stream().filter(
+								ablty = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -331,8 +331,8 @@ public class ScrappingWeb {
 
 								}
 
-								ablty = this.abilities
-										.stream().filter(
+								ablty = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -360,8 +360,8 @@ public class ScrappingWeb {
 								// ("/")
 								if (tPk.select("td").get(0).text().equals("744")) {
 
-									abltyHid = this.abilities
-											.stream().filter(
+									abltyHid = this
+											.getAbilities().stream().filter(
 													habil -> habil
 															.getName().equals(
 																	Normalizer
@@ -384,8 +384,8 @@ public class ScrappingWeb {
 
 									}
 
-									abltyHid = this.abilities
-											.stream().filter(
+									abltyHid = this
+											.getAbilities().stream().filter(
 													habil -> habil
 															.getName().equals(
 																	Normalizer
@@ -407,7 +407,7 @@ public class ScrappingWeb {
 
 									}
 								} else {
-									abltyHid = this.abilities.stream()
+									abltyHid = this.getAbilities().stream()
 											.filter(habil -> habil.getName()
 													.equals(Normalizer
 															.normalize(
@@ -480,7 +480,7 @@ public class ScrappingWeb {
 							Element aAfterTD;
 
 							// Gets first type (there will be one every time at position 3)
-							optPkT1 = this.types.stream()
+							optPkT1 = this.getTypes().stream()
 									.filter(tp -> tp.getName()
 											.equals(Normalizer
 													.normalize(
@@ -504,7 +504,7 @@ public class ScrappingWeb {
 
 							if (aAfterTD != null) {
 
-								optPkT2 = this.types.stream()
+								optPkT2 = this.getTypes().stream()
 										.filter(tp -> tp.getName().equals(Normalizer
 												.normalize(
 														tPk.select("td").get(4).select("a").first().attr("title")
@@ -589,14 +589,14 @@ public class ScrappingWeb {
 					}
 
 					// Adds the attack to the general attacks list
-					this.attacks.add(atk);
+					this.getAttacks().add(atk);
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		return this.attacks;
+		return this.getAttacks();
 	}
 
 	// -----------------------------
@@ -656,7 +656,8 @@ public class ScrappingWeb {
 								String attackName = trPh.select("td").get(0).text();
 
 								// We search the attack on the attacks list by its name
-								atk = this.attacks.stream().filter(at -> at.getName().equals(attackName)).findFirst();
+								atk = this.getAttacks().stream().filter(at -> at.getName().equals(attackName))
+										.findFirst();
 
 								if (atk.isPresent()) {
 
@@ -681,12 +682,12 @@ public class ScrappingWeb {
 
 								String attackName = trSp.select("td").get(0).text();
 
-								atk = this.attacks.stream().filter(at -> at.getName().equals(attackName)).findFirst();
+								atk = this.getAttacks().stream().filter(at -> at.getName().equals(attackName))
+										.findFirst();
 
 								if (atk.isPresent()) {
 
 									specialAttacks.add(atk.get().getId());
-
 								}
 							}
 						}
@@ -706,12 +707,12 @@ public class ScrappingWeb {
 
 								String attackName = trO.select("td").get(0).text();
 
-								atk = this.attacks.stream().filter(at -> at.getName().equals(attackName)).findFirst();
+								atk = this.getAttacks().stream().filter(at -> at.getName().equals(attackName))
+										.findFirst();
 
 								if (atk.isPresent()) {
 
 									otherAttacks.add(atk.get().getId());
-
 								}
 							}
 						}
