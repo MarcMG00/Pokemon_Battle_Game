@@ -16,6 +16,9 @@ import pokemon.importData.WritterData;
 
 public class Game {
 	
+	// ==================================== FIELDS
+	// ====================================
+	
 	public static final String ANSI_BLACK = "\u001B[30m";
 	public static final String ANSI_RED = "\u001B[31m";
 	public static final String ANSI_GREEN = "\u001B[32m";
@@ -46,6 +49,9 @@ public class Game {
 	private Player player;
 	private IAPlayer IA;
 
+	// ==================================== CONSTRUCTORS
+	// ====================================
+	
 	public Game() {
 		this.pokemon = new ArrayList<>();
 		this.pokemonTypePerPokemon = new HashMap<>();
@@ -67,6 +73,9 @@ public class Game {
 		this.readerData = new ReaderData();
 	}
 
+	// ==================================== GETTERS/SETTERS
+	// ====================================
+	
 	public ArrayList<Pokemon> getPokemon() {
 		return pokemon;
 	}
@@ -211,10 +220,12 @@ public class Game {
 		this.readerData = readerData;
 	}
 
-	// ==================================== GAME METHODS
+	// ==================================== METHODS
 	// ====================================
 
+	// -----------------------------
 	// Prints all the Pokemon
+	// -----------------------------
 	public void printPokemon() {
 		for (Pokemon pk : this.pokemon) {
 
@@ -226,7 +237,9 @@ public class Game {
 		}
 	}
 
+	// -----------------------------
 	// Order Pokemon by type
+	// -----------------------------
 	public void classPkPerType() {
 		ArrayList<Pokemon> steelType = new ArrayList<>();
 		ArrayList<Pokemon> waterType = new ArrayList<>();
@@ -341,7 +354,9 @@ public class Game {
 		System.out.println("Finished reading classPkPerType");
 	}
 
+	// -----------------------------
 	// Regex to match Pokemon player choices
+	// -----------------------------
 	public String checkRegexToChoosePokemon() {
 
 		// Player can choose with format : d,d,d,d,d,d, and numbers are between 1 and
@@ -375,11 +390,16 @@ public class Game {
 		return strRegex;
 	}
 
+	// -----------------------------
 	// Repeats sequence of the string
+	// -----------------------------
 	public static String repeat(int count, String with) {
 		return new String(new char[count]).replace("\0", with);
 	}
 
+	// -----------------------------
+	// Repeats sequence of the string
+	// -----------------------------
 	public static String repeat(int count) {
 		return repeat(count, " ");
 	}
@@ -387,7 +407,9 @@ public class Game {
 	// ==================================== GAME
 	// ====================================
 
+	// -----------------------------
 	// Intialize all vars from files
+	// -----------------------------
 	public void InitiateVars() {
 		// Instantiate all Pokemon (if CSV not already created)
 //		this.pokemon = this.getScrappingWeb().scrappingWebPokemon();
@@ -457,6 +479,9 @@ public class Game {
 		classPkPerType();
 	}
 
+	// -----------------------------
+	// Start choice of Pokemon
+	// -----------------------------
 	@SuppressWarnings("resource")
 	public void PokemonChoice() {
 		printPokemon();
@@ -597,7 +622,9 @@ public class Game {
 				+ IA.getPkCombatting().getNextMovement().getStrTypeToPkType().getName());
 	}
 
+	// -----------------------------
 	// Main battle (start battle)
+	// -----------------------------
 	public void startBattle() {
 
 		int nbRound = 1;
@@ -632,7 +659,9 @@ public class Game {
 		}
 	}
 
+	// -----------------------------
 	// Handle attacks from the turn
+	// -----------------------------
 	private void handleAttackTurn(Scanner sc, boolean isStartTurn) {
 
 		int attackId = 0;
@@ -679,7 +708,9 @@ public class Game {
 		resetEffectStatusCondition(IA.getPkCombatting());
 	}
 
+	// -----------------------------
 	// Handle attack from IA when player is changing the Pokemon
+	// -----------------------------
 	private boolean handleChangeTurn(Scanner sc, boolean isStartTurn) {
 
 		Pokemon pkIA = IA.getPkCombatting();
@@ -709,14 +740,18 @@ public class Game {
 		return true;
 	}
 
+	// -----------------------------
 	// Prepare attack from IA if can attack (after checking status conditions from
 	// the beginning of the turn)
+	// -----------------------------
 	private void prepareIAIfPossible(boolean isStartTurn) {
 		applyEffectStatusCondition(IA.getPkCombatting());
 		IA.prepareBestAttackIA(effectPerTypes);
 	}
 
+	// -----------------------------
 	// Get the player choice (attack or change Pokemon)
+	// -----------------------------
 	private int getPlayerChoice(Scanner sc) {
 		System.out.println("Quieres atacar (1) o cambiar de Pokémon (2) :");
 		int choice = sc.nextInt();
@@ -724,7 +759,9 @@ public class Game {
 		return choice;
 	}
 
+	// -----------------------------
 	// Check validity of attack id from player Pokemon
+	// -----------------------------
 	private int getValidAttackId(Scanner sc, Player player) {
 		System.out.println("Escoge un ataque :");
 		player.printAttacksFromPokemonCombating();
@@ -757,7 +794,9 @@ public class Game {
 		}
 	}
 
+	// -----------------------------
 	// Print Pokemon states (for debug)
+	// -----------------------------
 	private void printPokemonStates() {
 		System.out.println("Estado del Pokémon del jugador : "
 				+ player.getPkCombatting().getStatusCondition().getStatusCondition());
@@ -765,30 +804,40 @@ public class Game {
 				"Estado del Pokémon de la máquina : " + IA.getPkCombatting().getStatusCondition().getStatusCondition());
 	}
 
+	// -----------------------------
 	// Check if Pokemon combating can attack due to effect from status condition
+	// -----------------------------
 	private void checkCanAttackFromStatusCondition(Pokemon attacker) {
 		attacker.getStatusCondition().doEffectStatusCondition(attacker.getStatusCondition().getStatusCondition());
 	}
 
+	// -----------------------------
 	// Apply effect of status condition at the beginning of the turn for Pokemon
 	// combating
+	// -----------------------------
 	private void applyEffectStatusCondition(Pokemon attacker) {
 		attacker.checkEffectsStatusCondition(true);
 	}
 
+	// -----------------------------
 	// Apply effect of status condition at the end of the turn for Pokemon
 	// combating
+	// -----------------------------
 	private void resetEffectStatusCondition(Pokemon attacker) {
 		attacker.checkEffectsStatusCondition(false);
 	}
 
+	// -----------------------------
 	// Player attack first
+	// -----------------------------
 	private boolean playerCanAttackFirst() {
 		return player.getPkCombatting().getCanAttack()
 				&& player.getPkCombatting().getSpeed() > IA.getPkCombatting().getSpeed();
 	}
 
+	// -----------------------------
 	// Handle normal attack sequence
+	// -----------------------------
 	private void handleNormalAttackSequence(Scanner sc) {
 		boolean playerFirst = playerCanAttackFirst();
 
@@ -808,7 +857,9 @@ public class Game {
 		player.getPkCombatting().setHasRetreated(false);
 	}
 
+	// -----------------------------
 	// Check if Pokemon can attack + do retaliation
+	// -----------------------------
 	private boolean attackAndCheckIfTurnEnds(Player attacker, Player defender, Scanner sc) {
 
 		Pokemon pk = attacker.getPkCombatting();
@@ -859,13 +910,17 @@ public class Game {
 		return false; // turn continues
 	}
 
+	// -----------------------------
 	// Handle change sequence
+	// -----------------------------
 	private void handleChangeSequence(Scanner sc) {
 		handleIARetaliation();
 		checkForcedPokemonChange(sc);
 	}
 
+	// -----------------------------
 	// Player handle attack
+	// -----------------------------
 	private void handlePlayerRetaliation() {
 
 		if (player.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
@@ -896,7 +951,9 @@ public class Game {
 		}
 	}
 
+	// -----------------------------
 	// IA handle attack
+	// -----------------------------
 	private void handleIARetaliation() {
 		if (IA.getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 
@@ -928,8 +985,10 @@ public class Game {
 		}
 	}
 
+	// -----------------------------
 	// Check if needed to chose a new Pokemon (ex : combating Pokemon dies from
 	// burning in final turn while flying, etc.)
+	// -----------------------------
 	private void checkForcedPokemonChange(Scanner sc) {
 
 		// Player dies
@@ -967,7 +1026,9 @@ public class Game {
 		}
 	}
 
+	// -----------------------------
 	// Change Pokemon
+	// -----------------------------
 	private boolean changePokemon(Scanner sc) {
 
 		while (true) {
@@ -1026,8 +1087,10 @@ public class Game {
 		}
 	}
 
+	// -----------------------------
 	// Try IA to change Pokemon. Return true if IA changed Pokemon. If return false,
 	// will attack normally
+	// -----------------------------
 	private boolean tryIAChange() {
 		// 15% of probability to change Pokemon
 		int randomNumber = (int) (Math.random() * 100) + 1;
@@ -1061,13 +1124,18 @@ public class Game {
 		return true;
 	}
 
+	// -----------------------------
+	// Put attacks from damage level
+	// -----------------------------
 	private void refreshAttackOrders() {
 		IA.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 	}
 
+	// -----------------------------
 	// Handle if a player has to change to another random Pokemon because of
 	// "Whirlwind"
+	// -----------------------------
 	private void handleForcedSwitchWhirlwind(Player defender) {
 
 		// Get available Pokemon
@@ -1104,8 +1172,10 @@ public class Game {
 		defender.setForceSwitchPokemon(false);
 	}
 
+	// -----------------------------
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
 	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika)
+	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "18,18,18";
@@ -1212,6 +1282,5 @@ public class Game {
 
 		IA.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
 		player.orderAttacksFromDammageLevelPokemon(this.effectPerTypes);
-
 	}
 }

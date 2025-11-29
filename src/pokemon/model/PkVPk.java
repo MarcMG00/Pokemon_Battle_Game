@@ -4,6 +4,10 @@ import pokemon.enums.AttackCategory;
 import pokemon.enums.StatusConditions;
 
 public class PkVPk {
+	
+	// ==================================== FIELDS
+	// ====================================
+	
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
 	private Player attacker;
@@ -17,6 +21,9 @@ public class PkVPk {
 	private static final String ANSI_WHITE = "\u001B[37m";
 	private static final String ANSI_RESET = "\u001B[0m";
 
+	// ==================================== CONSTRCUTORS
+	// ====================================
+	
 	public PkVPk(Player attacker, Player defender) {
 		this.attacker = attacker;
 		this.defender = defender;
@@ -24,6 +31,9 @@ public class PkVPk {
 		this.pkFacing = defender.getPkCombatting();
 	}
 
+	// ==================================== GETTERS/SETTERS
+	// ====================================
+	
 	public Pokemon getPkCombatting() {
 		return pkCombatting;
 	}
@@ -56,8 +66,13 @@ public class PkVPk {
 		this.defender = defender;
 	}
 
+	// ==================================== METHODS
+	// ====================================
+	
+	// -----------------------------
 	// Knows the evasion or accuracy for the Pokemon selected (1 is for accuracy, 2
-	// is for evasion)
+	// is for evasion)	
+	// -----------------------------
 	public float getEvasionOrAccuracy(Pokemon pk, int t) {
 
 		int evAcu = 0;
@@ -114,7 +129,9 @@ public class PkVPk {
 		return resultEvAcu;
 	}
 
+	// -----------------------------
 	// Gets the probability of attacking
+	// -----------------------------
 	public void getProbabilityOfAttacking() {
 
 		boolean isAttackerCharging = this.getPkCombatting().getIsChargingAttackForNextRound();
@@ -247,6 +264,9 @@ public class PkVPk {
 		}
 	}
 
+	// -----------------------------
+	// Handle normal accuracy
+	// -----------------------------
 	private void handleNormalAccuracyCheck(float accuracyFactor, Attack atk, Pokemon attacker, Pokemon defender,
 			String code) {
 
@@ -268,6 +288,9 @@ public class PkVPk {
 		}
 	}
 
+	// -----------------------------
+	// Handle second turn of a charged attack
+	// -----------------------------
 	private void handleChargedAttackExecution(float accuracyFactor, Attack atk, Pokemon attacker, Pokemon defender,
 			String code) {
 
@@ -290,7 +313,9 @@ public class PkVPk {
 		}
 	}
 
+	// -----------------------------
 	// Gets the attack effect and apply damage
+	// -----------------------------
 	public void doAttackEffect() {
 
 		float dmg = 0;
@@ -1078,7 +1103,9 @@ public class PkVPk {
 		}
 	}
 
+	// -----------------------------
 	// Apply damage
+	// -----------------------------
 	public float doDammage() {
 
 		// There is a random variation when attacking (the total damage is not the same
@@ -1119,13 +1146,15 @@ public class PkVPk {
 		return dmg;
 	}
 
+	// -----------------------------
 	// Gets if an attack is critic (x2 of damage)
+	// -----------------------------
 	public boolean getCriticity() {
 		boolean isCritic = false;
 
 		int randomCritic = (int) (Math.random() * 100);
 
-		// 10%of probabilities to have a critic attack
+		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10) {
 
 			isCritic = true;

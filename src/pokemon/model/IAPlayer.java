@@ -8,11 +8,19 @@ import java.util.stream.Collectors;
 
 public class IAPlayer extends Player {
 
+	// ==================================== CONSTRUCTORS
+	// ====================================
+	
 	public IAPlayer() {
 		super();
 	}
 
+	// ==================================== METHODS
+	// ====================================
+	
+	// -----------------------------
 	// Chooses Pokemon by comparing the player's Pokémon list
+	// -----------------------------
 	public void IAPokemonChoice(
 	        ArrayList<Pokemon> playerPokemon,
 	        HashMap<String, ArrayList<Pokemon>> pokemonPerType,

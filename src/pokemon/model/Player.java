@@ -11,11 +11,18 @@ import java.util.stream.Collectors;
 import pokemon.enums.StatusConditions;
 
 public class Player {
+	
+	// ==================================== FIELDS
+	// ====================================
+	
 	private ArrayList<Pokemon> pokemon;
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
 	private boolean forceSwitchPokemon;
 
+	// ==================================== CONSTRUCTORS
+	// ====================================
+	
 	public Player() {
 		super();
 		this.pokemon = new ArrayList<>();
@@ -24,6 +31,9 @@ public class Player {
 		this.forceSwitchPokemon = false;
 	}
 
+	// ==================================== GETTERS/SETTERS
+	// ====================================
+	
 	public ArrayList<Pokemon> getPokemon() {
 		return pokemon;
 	}
@@ -61,7 +71,12 @@ public class Player {
 		this.forceSwitchPokemon = forceSwitchPokemon;
 	}
 
+	// ==================================== METHODS
+	// ====================================
+	
+	// -----------------------------
 	// Adds 4 attacks to each Pokemon from player (1 other, 2 physicals, 1 special)
+	// -----------------------------
 	public void addAttacksForEachPokemon() {
 
 		for (Pokemon pk : this.pokemon) {
@@ -97,7 +112,9 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
 	// Order all the attacks by damage level against the Pokemon facing
+	// -----------------------------
 	public void orderAttacksFromDammageLevelPokemon(
 			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 		// Gets the Pokemon types that player is currently facing
@@ -248,11 +265,9 @@ public class Player {
 		// System.out.println();
 	}
 
-	/* -------------------------- Helper Methods -------------------------- */
-
-	/**
-	 * Returns a list of unique PokemonType from the attacks of the current Pokemon
-	 */
+	// -----------------------------
+	// Returns a list of unique PokemonType from the attacks of the current Pokemon
+	// -----------------------------
 	private ArrayList<PokemonType> getUniqueAttackTypes() {
 		ArrayList<PokemonType> uniquePkType = new ArrayList<>();
 
@@ -268,7 +283,9 @@ public class Player {
 		return uniquePkType;
 	}
 
-	/** Add attacks that hit both types strongly or weakly */
+	// -----------------------------
+	// Add attacks that hit both types strongly or weakly
+	// -----------------------------
 	private boolean addIfDoubleType(Attack attack, Map<String, Long> repeatedTypeMap, ArrayList<Attack> targetList) {
 		for (Map.Entry<String, Long> key : repeatedTypeMap.entrySet()) {
 
@@ -285,10 +302,10 @@ public class Player {
 		return false;
 	}
 
-	/**
-	 * Fill lists of strong, weak, normal and no effect type names based on the
-	 * facing Pokemon
-	 */
+	// -----------------------------
+	// Fill lists of strong, weak, normal and no effect type names based on the
+	// facing Pokemon
+	// -----------------------------
 	private void fillDamageTypeLists(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesCopy,
 			ArrayList<PokemonType> noRepeatedAttackTypes, ArrayList<PokemonType> hasNoEffect,
 			List<String> lotDamageRepeatedTypes, List<String> normalDamageRepeatedTypes,
@@ -347,12 +364,16 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
 	// Puts in a Map the number of times that appears the elements in the list
+	// -----------------------------
 	private Map<String, Long> countDuplicates(List<String> list) {
 		return list.stream().collect(Collectors.groupingBy(e -> e.toString(), Collectors.counting()));
 	}
 
+	// -----------------------------
 	// Chooses the attack from machine
+	// -----------------------------
 	public void prepareBestAttackIA(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 
 		// If Pokemon combating doesn't have PP remaining on his attacks => change
@@ -529,7 +550,9 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
 	// Prints the attacks of current Pokemon
+	// -----------------------------
 	public void printAttacksFromPokemonCombating() {
 		List<Attack> attacksAvailable = this.getPkCombatting().getFourPrincipalAttacks().stream()
 				.filter(a -> a.getPp() > 0).toList();
@@ -541,7 +564,9 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
 	// Prints all the info from all the Pokemon player
+	// -----------------------------
 	public void printPokemonInfo() {
 
 		// Get only Pokemon not debilitated
@@ -566,7 +591,9 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
 	// Prepares best attack for player
+	// -----------------------------
 	public void prepareBestAttackPlayer(int attackId) {
 		Optional<Attack> nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream()
 				.filter(a -> a.getId() == attackId).findFirst();
@@ -650,7 +677,9 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
 	// Decides best Pokemon change against Pokemon facing
+	// -----------------------------
 	public Pokemon decideBestChangePokemon(Pokemon pkPlayerFacing,
 			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 
@@ -710,7 +739,9 @@ public class Player {
 		return null;
 	}
 
+	// -----------------------------
 	// Get damage score from Pokemon candidate
+	// -----------------------------
 	private int getDamageScore(Pokemon pk) {
 		if (!pk.getLotDamageAttacks().isEmpty())
 			return 3; // very high damage
@@ -722,7 +753,9 @@ public class Player {
 		return 0; // no effect
 	}
 
+	// -----------------------------
 	// Check if an attack has STAB super effective
+	// -----------------------------
 	private boolean hasSTABSuperEffective(Pokemon pk) {
 
 		for (Attack atk : pk.getLotDamageAttacks()) {
@@ -736,18 +769,25 @@ public class Player {
 		return false;
 	}
 
+	// -----------------------------
 	// Check if any attack from Pokemon has PP remaining
+	// -----------------------------
 	public boolean hasAnyPPLeft(Pokemon pk) {
 		return pk.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
 	}
 
+	// -----------------------------
 	// If no remaining Pokemon with PP on attacks, set a new attack "Struggle" (used
 	// by all Pokemon)
+	// -----------------------------
 	public void selectStruggle() {
 		this.getPkCombatting().setNextMovement(
 				this.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == 165).findFirst().get());
 	}
 
+	// -----------------------------
+	// Check if player has available Pokemon to change
+	// -----------------------------
 	public boolean hasAvailableSwitch() {
 		// Get available Pokemon from defender
 		List<Pokemon> options = this.getPokemon().stream().filter(pk -> pk != this.getPkCombatting())

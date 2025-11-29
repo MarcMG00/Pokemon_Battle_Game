@@ -18,10 +18,13 @@ import pokemon.model.PokemonType;
 
 public class ReaderData {
 
-	private HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon= new HashMap<>();
+	// ==================================== FIELDS
+	// ====================================
+
+	private HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon = new HashMap<>();
 	private ArrayList<Ability> abilities = new ArrayList<>();
-	private HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon= new HashMap<>();
-	private HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes= new HashMap<>();
+	private HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon = new HashMap<>();
+	private HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes = new HashMap<>();
 	private ArrayList<Attack> attacks = new ArrayList<>();
 	private HashMap<Integer, HashMap<String, ArrayList<Integer>>> attacksPerPokemon = new HashMap<>();
 	private Map<Integer, Attack> attackById = new HashMap<>();
@@ -34,10 +37,16 @@ public class ReaderData {
 	private static final String SAMPLE_CSV_ALL_ATTACKS = "./data/attacksList.txt";
 	private static final String SAMPLE_CSV_ALL_ATTACKS_FOREACH_POKEMON = "./data/attacksForEachPokemon.txt";
 
+	// ==================================== CONSTRUCTORS
+	// ====================================
+
 	public ReaderData() {
 
 	}
 
+	// ==================================== GETTERS/SETTERS
+	// ====================================
+	
 	public ArrayList<Ability> getAbilities() {
 		return abilities;
 	}
@@ -94,8 +103,14 @@ public class ReaderData {
 		this.attackById = attackById;
 	}
 
+	// ==================================== METHODS
+	// ====================================
+
+	// -----------------------------
 	// Reads pokemon.csv file and adds to Pokemon list
-	public void readPokemon(ArrayList<PokemonType> types, ArrayList<Pokemon> pokemon, Map<Integer, Pokemon> pokemonById) {
+	// -----------------------------
+	public void readPokemon(ArrayList<PokemonType> types, ArrayList<Pokemon> pokemon,
+			Map<Integer, Pokemon> pokemonById) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
@@ -177,7 +192,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads habsList.csv file and adds to abilities list
+	// -----------------------------
 	public void readAbilities() {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -221,7 +238,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads pokemon.csv file (for abilities) and adds to Pokemon
+	// -----------------------------
 	public void readAddAbsForEachPokemon(ArrayList<Pokemon> pokemon) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -321,7 +340,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads pokemon.csv file (for types) and adds to Pokemon
+	// -----------------------------
 	public void readAddTypesForEachPokemon(String fileName, ArrayList<PokemonType> types, ArrayList<Pokemon> pokemon) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -399,7 +420,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads typesList.csv file and adds to types list
+	// -----------------------------
 	public void readPkTypes(ArrayList<PokemonType> types, Map<Integer, PokemonType> typeById) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -445,6 +468,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
+	// Reads typesList.csv file and adds the effects against other types
+	// -----------------------------
 	public void readPkTypesEffectsToOtherTypes(Map<Integer, PokemonType> typeById) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(SAMPLE_CSV_ALL_TYPES))) {
 
@@ -501,7 +527,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads typesList.csv file and adds the effects against other types
+	// -----------------------------
 //		public void readPkTypesEffectsToOtherTypes() {
 //			FileReader fileReader = null;
 //			BufferedReader bufferedReader = null;
@@ -656,7 +684,9 @@ public class ReaderData {
 //			}
 //		}
 
+	// -----------------------------
 	// Reads attacksList.csv file and adds to attacks list
+	// -----------------------------
 	public void readAttacks(ArrayList<PokemonType> types) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -727,6 +757,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
+	// Reads attacks for each Pokemon
+	// -----------------------------
 	public void readAttacksForEachPokemon(Map<Integer, Pokemon> pokemonById) {
 		try (BufferedReader bufferedReader = new BufferedReader(
 				new FileReader(SAMPLE_CSV_ALL_ATTACKS_FOREACH_POKEMON))) {
@@ -782,7 +815,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads attacksForeachPokemon.txt file and adds to each Pokemon
+	// -----------------------------
 //		public void readAttacksForEachPokemon() {
 //			FileReader fileReader = null;
 //			BufferedReader bufferedReader = null;
@@ -879,7 +914,9 @@ public class ReaderData {
 //			}
 //		}
 
+	// -----------------------------
 	// Add the attacks that can hit while Pokemon facing is invulnerable
+	// -----------------------------
 	public static void putCanHitInvulnerableAttacks(Attack attack) {
 		List<Integer> canHitWhileInvulnerable = new ArrayList<>();
 
@@ -897,7 +934,9 @@ public class ReaderData {
 		attack.setCanHitWhileInvulnerable(canHitWhileInvulnerable);
 	}
 
+	// -----------------------------
 	// Set the category type of the attack
+	// -----------------------------
 	public void setCategoryAttackType(Attack attack) {
 		switch (attack.getId()) {
 		case 19:
@@ -908,7 +947,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Set is attack has a special behavior
+	// -----------------------------
 	public void setAttackSpecialBehavior(Attack attack) {
 		switch (attack.getId()) {
 		case 19:

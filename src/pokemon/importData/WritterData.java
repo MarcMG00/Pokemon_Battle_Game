@@ -22,6 +22,9 @@ import pokemon.model.PokemonType;
 
 public class WritterData {
 
+	// ==================================== FIELDS
+	// ====================================
+	
 	private ArrayList<Pokemon> pokemon;
 	private HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon;
 	private ArrayList<Ability> abilities;
@@ -38,23 +41,15 @@ public class WritterData {
 	private static final String SAMPLE_CSV_ALL_ATTACKS = "./data/attacksList.txt";
 	private static final String SAMPLE_CSV_ALL_ATTACKS_FOREACH_POKEMON = "./data/attacksForEachPokemon.txt";
 
-	public WritterData() {
-		
-	}
+	// ==================================== CONSTRCUTORS
+	// ====================================
 	
-	public WritterData(ArrayList<Pokemon> pokemon, HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon,
-			ArrayList<Ability> abilities, HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon,
-			ArrayList<PokemonType> types, HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes,
-			ArrayList<Attack> attacks, HashMap<Integer, HashMap<String, ArrayList<Integer>>> attacksPerPokemon) {
-		this.pokemon = pokemon;
-		this.pokemonTypePerPokemon = pokemonTypePerPokemon;
-		this.abilities = abilities;
-		this.abilitiesPerPokemon = abilitiesPerPokemon;
-		this.types = types;
-		this.effectPerTypes = effectPerTypes;
-		this.attacks = attacks;
-		this.attacksPerPokemon = attacksPerPokemon;
+	public WritterData() {
+
 	}
+
+	// ==================================== GETTERS/SETTERS
+	// ====================================
 	
 	public ArrayList<Pokemon> getPokemon() {
 		return pokemon;
@@ -120,10 +115,12 @@ public class WritterData {
 		this.attacksPerPokemon = attacksPerPokemon;
 	}
 
-	// ==================================== WRITTERS
+	// ==================================== METHODS
 	// ====================================
 
+	// -----------------------------
 	// Writes in a CSV all the Pokemon from Pokemon list
+	// -----------------------------
 	@SuppressWarnings("resource")
 	public void writePokemonCSV(ArrayList<Pokemon> pokemonList) {
 		try {
@@ -146,7 +143,9 @@ public class WritterData {
 		}
 	}
 
+	// -----------------------------
 	// Writes in a CSV all the abilities from abilities list
+	// -----------------------------
 	@SuppressWarnings("resource")
 	public void writeAbilitiesCSV(ArrayList<Ability> abilitiesList) {
 		try {
@@ -168,9 +167,11 @@ public class WritterData {
 		}
 	}
 
+	// -----------------------------
 	// This method extends the CSV of pokemonList.csv in a new file
 	// (pokemonList2.csv)
 	// Appends the abilities for each Pokemon in pokemonList2.csv
+	// -----------------------------
 	@SuppressWarnings("resource")
 	public void AppendAbilities() {
 		try {
@@ -256,9 +257,11 @@ public class WritterData {
 		}
 	}
 
+	// -----------------------------
 	// This method extends the CSV of pokemonList2.csv in a new file
 	// (pokemonList3.csv)
 	// Appends the Pokemon types for each Pokemon in pokemonList3.csv
+	// -----------------------------
 	@SuppressWarnings("resource")
 	public void AppendPokemonTypes() {
 		try {
@@ -315,7 +318,9 @@ public class WritterData {
 		}
 	}
 
+	// -----------------------------
 	// Writes in a CSV all the attacks from attacks list
+	// -----------------------------
 	@SuppressWarnings("resource")
 	public void writeAttacksCSV() {
 		try {
@@ -340,7 +345,9 @@ public class WritterData {
 		}
 	}
 
+	// -----------------------------
 	// Writes in a CSV all the attacks from attacks list
+	// -----------------------------
 	@SuppressWarnings("resource")
 	public void writeAttacksCSV2() {
 		try {
@@ -377,7 +384,9 @@ public class WritterData {
 		}
 	}
 
+	// -----------------------------
 	// Writes in a CSV all the attacks for each Pokemon
+	// -----------------------------
 	@SuppressWarnings("resource")
 	public void writeAttacksForEachPokemon() {
 		try {

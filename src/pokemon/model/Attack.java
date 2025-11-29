@@ -7,6 +7,10 @@ import pokemon.enums.AttackCategory;
 import pokemon.interfce.TwoTurnAttackBehavior;
 
 public class Attack {
+	
+	// ==================================== FIELDS
+	// ====================================
+	
 	private int id;
 	private String name;
 	private String type;
@@ -22,6 +26,9 @@ public class Attack {
     private TwoTurnAttackBehavior specialBehavior = null;
     private List<Integer> canHitWhileInvulnerable = new ArrayList<>();
 	
+	// ==================================== CONSTRUCTORS
+	// ====================================
+    
 	public Attack() {
 		super();
 		this.id = 0;
@@ -51,6 +58,9 @@ public class Attack {
 		this.effectivenessAgainstPkFacing = 0;
 		this.bonus = 0;
 	}
+	
+	// ==================================== GETTERS/SETTERS
+	// ====================================
 	
 	public int getId() {
 		return id;
@@ -169,12 +179,19 @@ public class Attack {
 		this.canHitWhileInvulnerable = canHitWhileInvulnerable;
 	}	
 	
+	// ==================================== METHODS
+	// ====================================
+	
+	// -----------------------------
 	// Set the type of the attack to his Pokemon type instead of a string
+	// -----------------------------
 	public void transformStrTypeToPokemonType(ArrayList<PokemonType> types) {
 		this.setStrTypeToPkType(types.stream().filter(pk -> pk.getName().equals(this.getType())).findFirst().get());
 	}
 	
+	// -----------------------------
 	// Check if can hit while target is invulnerable
+	// -----------------------------
 	public boolean canHitWhileTargetInvulnerable(int targetAttackId) {
 	    return canHitWhileInvulnerable != null && canHitWhileInvulnerable.contains(targetAttackId);
 	}

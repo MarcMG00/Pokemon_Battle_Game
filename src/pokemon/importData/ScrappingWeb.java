@@ -19,16 +19,23 @@ import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 
 public class ScrappingWeb {
-	
-	private ArrayList<Ability> abilities;
-	private ArrayList<PokemonType> types;
-	private ArrayList<Attack> attacks;
+
+	// ==================================== FIELDS
+	// ====================================
+
+	private ArrayList<Ability> abilities = new ArrayList<>();
+	private ArrayList<PokemonType> types = new ArrayList<>();
+	private ArrayList<Attack> attacks = new ArrayList<>();
+
+	// ==================================== CONSTRUCTORS
+	// ====================================
 
 	public ScrappingWeb() {
-		this.abilities = new ArrayList<>();
-		this.types = new ArrayList<>();
-		this.attacks = new ArrayList<>();
+
 	}
+
+	// ==================================== GETTERS/SETTERS
+	// ====================================
 
 	public ArrayList<Ability> getAbilities() {
 		return abilities;
@@ -54,15 +61,17 @@ public class ScrappingWeb {
 		this.attacks = attacks;
 	}
 
-	// ==================================== SCRAPPING WEB
+	// ==================================== METHODS
 	// ====================================
 
+	// -----------------------------
 	// Add to Pokemon list all the Pokemon from 1 to 809
+	// -----------------------------
 	public ArrayList<Pokemon> scrappingWebPokemon() {
 		ArrayList<Pokemon> pokemon = new ArrayList<>();
-		
+
 		try {
-			
+
 			// Total nb of Pokemon
 			int nbPk = 809;
 
@@ -126,15 +135,17 @@ public class ScrappingWeb {
 						Integer.parseInt(((Element) pokemonStats.get(5)).text()));
 				pokemon.add(pk);
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return pokemon;
 	}
 
+	// -----------------------------
 	// Add to ability list all the abilities (309)
+	// -----------------------------
 	public ArrayList<Ability> scrappingWebAllAbs() {
 		try {
 			String url = "https://www.wikidex.net/wiki/Lista_de_habilidades";
@@ -169,14 +180,16 @@ public class ScrappingWeb {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return this.abilities;
 	}
 
+	// -----------------------------
 	// Reads all the possible abilities for different Pokemon and put it to dico
+	// -----------------------------
 	public HashMap<String, HashMap<String, ArrayList<Ability>>> scrappingWebReadAbsFromPokemonAllTables() {
 		HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon = new HashMap<>();
-		
+
 		try {
 			String url = "https://www.wikidex.net/wiki/Lista_de_Pok%C3%A9mon_con_sus_habilidades";
 
@@ -434,10 +447,12 @@ public class ScrappingWeb {
 		return abilitiesPerPokemon;
 	}
 
+	// -----------------------------
 	// Read all the possible types for different Pokemon and put it to dico
+	// -----------------------------
 	public HashMap<String, ArrayList<PokemonType>> scrappingWebReadTypeForEachPokemon() {
 		HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon = new HashMap<>();
-		
+
 		try {
 			String url = "https://www.wikidex.net/wiki/Lista_de_Pok%C3%A9mon_con_sus_habilidades";
 
@@ -522,7 +537,9 @@ public class ScrappingWeb {
 		return pokemonTypePerPokemon;
 	}
 
+	// -----------------------------
 	// Gets all the attacks
+	// -----------------------------
 	public ArrayList<Attack> scrappingWebAttacks() {
 		try {
 			String url = "https://www.pokexperto.net/index2.php?seccion=nds/movimientos_pokemon";
@@ -578,15 +595,17 @@ public class ScrappingWeb {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return this.attacks;
 	}
 
+	// -----------------------------
 	// Gets all the attacks for each Pokemon
+	// -----------------------------
 	// TD + TH [1-(235,664,789,790),6-722,7-650,8-494,9-387,10-152,11-1]
 	public HashMap<Integer, HashMap<String, ArrayList<Integer>>> scrappingWebAttacksForEachPokemon() {
 		HashMap<Integer, HashMap<String, ArrayList<Integer>>> attacksPerPokemon = new HashMap<>();
-		
+
 		try {
 
 			for (int iPk = 1; iPk < 808; iPk++) {
@@ -707,7 +726,7 @@ public class ScrappingWeb {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return attacksPerPokemon;
 	}
 }
