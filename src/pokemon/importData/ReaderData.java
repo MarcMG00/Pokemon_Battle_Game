@@ -18,10 +18,13 @@ import pokemon.model.PokemonType;
 
 public class ReaderData {
 
-	private HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon= new HashMap<>();
+	// ==================================== FIELDS
+	// ====================================
+
+	private HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon = new HashMap<>();
 	private ArrayList<Ability> abilities = new ArrayList<>();
-	private HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon= new HashMap<>();
-	private HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes= new HashMap<>();
+	private HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon = new HashMap<>();
+	private HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes = new HashMap<>();
 	private ArrayList<Attack> attacks = new ArrayList<>();
 	private HashMap<Integer, HashMap<String, ArrayList<Integer>>> attacksPerPokemon = new HashMap<>();
 	private Map<Integer, Attack> attackById = new HashMap<>();
@@ -34,10 +37,16 @@ public class ReaderData {
 	private static final String SAMPLE_CSV_ALL_ATTACKS = "./data/attacksList.txt";
 	private static final String SAMPLE_CSV_ALL_ATTACKS_FOREACH_POKEMON = "./data/attacksForEachPokemon.txt";
 
+	// ==================================== CONSTRUCTORS
+	// ====================================
+
 	public ReaderData() {
 
 	}
 
+	// ==================================== GETTERS/SETTERS
+	// ====================================
+	
 	public ArrayList<Ability> getAbilities() {
 		return abilities;
 	}
@@ -94,8 +103,14 @@ public class ReaderData {
 		this.attackById = attackById;
 	}
 
+	// ==================================== METHODS
+	// ====================================
+
+	// -----------------------------
 	// Reads pokemon.csv file and adds to Pokemon list
-	public void readPokemon(ArrayList<PokemonType> types, ArrayList<Pokemon> pokemon, Map<Integer, Pokemon> pokemonById) {
+	// -----------------------------
+	public void readPokemon(ArrayList<PokemonType> types, ArrayList<Pokemon> pokemon,
+			Map<Integer, Pokemon> pokemonById) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
@@ -177,7 +192,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads habsList.csv file and adds to abilities list
+	// -----------------------------
 	public void readAbilities() {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -194,13 +211,13 @@ public class ReaderData {
 
 				String[] ablty = line.split(",");
 
-				if (this.abilities.size() == 309) {
+				if (this.getAbilities().size() == 309) {
 
 					break;
 
 				} else {
 
-					this.abilities.add(new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]));
+					this.getAbilities().add(new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]));
 
 				}
 			}
@@ -221,7 +238,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads pokemon.csv file (for abilities) and adds to Pokemon
+	// -----------------------------
 	public void readAddAbsForEachPokemon(ArrayList<Pokemon> pokemon) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -247,7 +266,7 @@ public class ReaderData {
 					// Gets first ability (all Pokemon have at least one ability)
 					if (!abltysPk[8].isEmpty()) {
 
-						for (Ability ablty : this.abilities) {
+						for (Ability ablty : this.getAbilities()) {
 
 							if (ablty.getId() == Integer.parseInt(abltysPk[8])) {
 
@@ -263,7 +282,7 @@ public class ReaderData {
 						// Gets second ability
 						if (!abltysPk[9].isEmpty()) {
 
-							for (Ability ablty : this.abilities) {
+							for (Ability ablty : this.getAbilities()) {
 
 								if (ablty.getId() == Integer.parseInt(abltysPk[9])) {
 
@@ -276,7 +295,7 @@ public class ReaderData {
 						// Gets hidden ability
 						if (!abltysPk[10].isEmpty()) {
 
-							for (Ability ablty : this.abilities) {
+							for (Ability ablty : this.getAbilities()) {
 
 								if (ablty.getId() == Integer.parseInt(abltysPk[10])) {
 
@@ -291,7 +310,7 @@ public class ReaderData {
 
 							if (!abltysPk[11].isEmpty()) {
 
-								for (Ability ablty : this.abilities) {
+								for (Ability ablty : this.getAbilities()) {
 
 									if (ablty.getId() == Integer.parseInt(abltysPk[11])) {
 
@@ -321,7 +340,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads pokemon.csv file (for types) and adds to Pokemon
+	// -----------------------------
 	public void readAddTypesForEachPokemon(String fileName, ArrayList<PokemonType> types, ArrayList<Pokemon> pokemon) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -399,7 +420,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads typesList.csv file and adds to types list
+	// -----------------------------
 	public void readPkTypes(ArrayList<PokemonType> types, Map<Integer, PokemonType> typeById) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -445,6 +468,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
+	// Reads typesList.csv file and adds the effects against other types
+	// -----------------------------
 	public void readPkTypesEffectsToOtherTypes(Map<Integer, PokemonType> typeById) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(SAMPLE_CSV_ALL_TYPES))) {
 
@@ -491,7 +517,7 @@ public class ReaderData {
 				}
 
 				// Save into main dictionary
-				this.effectPerTypes.put(typeName, types);
+				this.getEffectPerTypes().put(typeName, types);
 			}
 
 			System.out.println("Finished reading readPokeTypeEffectsToOtherTypes");
@@ -501,7 +527,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads typesList.csv file and adds the effects against other types
+	// -----------------------------
 //		public void readPkTypesEffectsToOtherTypes() {
 //			FileReader fileReader = null;
 //			BufferedReader bufferedReader = null;
@@ -656,7 +684,9 @@ public class ReaderData {
 //			}
 //		}
 
+	// -----------------------------
 	// Reads attacksList.csv file and adds to attacks list
+	// -----------------------------
 	public void readAttacks(ArrayList<PokemonType> types) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -707,8 +737,8 @@ public class ReaderData {
 				setAttackSpecialBehavior(attack);
 
 				// Adds the attack to the general var
-				this.attacks.add(attack);
-				attackById.put(attack.getId(), attack);
+				this.getAttacks().add(attack);
+				this.getAttackById().put(attack.getId(), attack);
 			}
 		} catch (IOException e) {
 			System.out.println("Exception reading the file : " + e.getMessage());
@@ -727,6 +757,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
+	// Reads attacks for each Pokemon
+	// -----------------------------
 	public void readAttacksForEachPokemon(Map<Integer, Pokemon> pokemonById) {
 		try (BufferedReader bufferedReader = new BufferedReader(
 				new FileReader(SAMPLE_CSV_ALL_ATTACKS_FOREACH_POKEMON))) {
@@ -747,19 +780,19 @@ public class ReaderData {
 				// Physical
 				if (!cols[1].equals("0")) {
 					for (String idStr : cols[1].split(";")) {
-						Attack a = this.attackById.get(Integer.parseInt(idStr));
+						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
 						if (a != null)
 							pk.addPhysicalAttack(a);
 					}
 				}
 				// Put "Struggle" to all Pokemon (used when has no remaining PP on the principal
 				// attacks)
-				pk.addPhysicalAttack(this.attackById.get(165));
+				pk.addPhysicalAttack(this.getAttackById().get(165));
 
 				// Special
 				if (!cols[2].equals("0")) {
 					for (String idStr : cols[2].split(";")) {
-						Attack a = this.attackById.get(Integer.parseInt(idStr));
+						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
 						if (a != null)
 							pk.addSpecialAttack(a);
 					}
@@ -768,7 +801,7 @@ public class ReaderData {
 				// Other
 				if (!cols[3].equals("0")) {
 					for (String idStr : cols[3].split(";")) {
-						Attack a = this.attackById.get(Integer.parseInt(idStr));
+						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
 						if (a != null)
 							pk.addOtherAttack(a);
 					}
@@ -782,7 +815,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Reads attacksForeachPokemon.txt file and adds to each Pokemon
+	// -----------------------------
 //		public void readAttacksForEachPokemon() {
 //			FileReader fileReader = null;
 //			BufferedReader bufferedReader = null;
@@ -879,7 +914,9 @@ public class ReaderData {
 //			}
 //		}
 
+	// -----------------------------
 	// Add the attacks that can hit while Pokemon facing is invulnerable
+	// -----------------------------
 	public static void putCanHitInvulnerableAttacks(Attack attack) {
 		List<Integer> canHitWhileInvulnerable = new ArrayList<>();
 
@@ -897,7 +934,9 @@ public class ReaderData {
 		attack.setCanHitWhileInvulnerable(canHitWhileInvulnerable);
 	}
 
+	// -----------------------------
 	// Set the category type of the attack
+	// -----------------------------
 	public void setCategoryAttackType(Attack attack) {
 		switch (attack.getId()) {
 		case 19:
@@ -908,7 +947,9 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
 	// Set is attack has a special behavior
+	// -----------------------------
 	public void setAttackSpecialBehavior(Attack attack) {
 		switch (attack.getId()) {
 		case 19:

@@ -19,16 +19,23 @@ import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 
 public class ScrappingWeb {
-	
-	private ArrayList<Ability> abilities;
-	private ArrayList<PokemonType> types;
-	private ArrayList<Attack> attacks;
+
+	// ==================================== FIELDS
+	// ====================================
+
+	private ArrayList<Ability> abilities = new ArrayList<>();
+	private ArrayList<PokemonType> types = new ArrayList<>();
+	private ArrayList<Attack> attacks = new ArrayList<>();
+
+	// ==================================== CONSTRUCTORS
+	// ====================================
 
 	public ScrappingWeb() {
-		this.abilities = new ArrayList<>();
-		this.types = new ArrayList<>();
-		this.attacks = new ArrayList<>();
+
 	}
+
+	// ==================================== GETTERS/SETTERS
+	// ====================================
 
 	public ArrayList<Ability> getAbilities() {
 		return abilities;
@@ -54,15 +61,17 @@ public class ScrappingWeb {
 		this.attacks = attacks;
 	}
 
-	// ==================================== SCRAPPING WEB
+	// ==================================== METHODS
 	// ====================================
 
+	// -----------------------------
 	// Add to Pokemon list all the Pokemon from 1 to 809
+	// -----------------------------
 	public ArrayList<Pokemon> scrappingWebPokemon() {
 		ArrayList<Pokemon> pokemon = new ArrayList<>();
-		
+
 		try {
-			
+
 			// Total nb of Pokemon
 			int nbPk = 809;
 
@@ -126,15 +135,17 @@ public class ScrappingWeb {
 						Integer.parseInt(((Element) pokemonStats.get(5)).text()));
 				pokemon.add(pk);
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return pokemon;
 	}
 
+	// -----------------------------
 	// Add to ability list all the abilities (309)
+	// -----------------------------
 	public ArrayList<Ability> scrappingWebAllAbs() {
 		try {
 			String url = "https://www.wikidex.net/wiki/Lista_de_habilidades";
@@ -162,21 +173,23 @@ public class ScrappingWeb {
 							Normalizer.normalize(tr.select("td").get(2).text(), Normalizer.Form.NFKD)
 									.replaceAll("[^\\p{ASCII}]", ""));
 
-					this.abilities.add(ablty);
+					this.getAbilities().add(ablty);
 
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		return this.abilities;
+
+		return this.getAbilities();
 	}
 
+	// -----------------------------
 	// Reads all the possible abilities for different Pokemon and put it to dico
+	// -----------------------------
 	public HashMap<String, HashMap<String, ArrayList<Ability>>> scrappingWebReadAbsFromPokemonAllTables() {
 		HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon = new HashMap<>();
-		
+
 		try {
 			String url = "https://www.wikidex.net/wiki/Lista_de_Pok%C3%A9mon_con_sus_habilidades";
 
@@ -229,8 +242,8 @@ public class ScrappingWeb {
 							case 6:
 								// We remove all the digits from the ability and we search the ability in our
 								// list of abilities (we compare by name)
-								ablty = this.abilities
-										.stream().filter(
+								ablty = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -255,8 +268,8 @@ public class ScrappingWeb {
 								abs.put("Habilidad", pokemonAbs);
 								break;
 							case 7:
-								ablty = this.abilities
-										.stream().filter(
+								ablty = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -276,8 +289,8 @@ public class ScrappingWeb {
 								}
 								abs.put("Habilidad", pokemonAbs);
 
-								abltyHid = this.abilities
-										.stream().filter(
+								abltyHid = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -298,8 +311,8 @@ public class ScrappingWeb {
 								abs.put("Habilidad oculta", pokemonHiddenAbs);
 								break;
 							case 8:
-								ablty = this.abilities
-										.stream().filter(
+								ablty = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -318,8 +331,8 @@ public class ScrappingWeb {
 
 								}
 
-								ablty = this.abilities
-										.stream().filter(
+								ablty = this
+										.getAbilities().stream().filter(
 												habil -> habil.getName()
 														.equals(Normalizer
 																.normalize(
@@ -347,8 +360,8 @@ public class ScrappingWeb {
 								// ("/")
 								if (tPk.select("td").get(0).text().equals("744")) {
 
-									abltyHid = this.abilities
-											.stream().filter(
+									abltyHid = this
+											.getAbilities().stream().filter(
 													habil -> habil
 															.getName().equals(
 																	Normalizer
@@ -371,8 +384,8 @@ public class ScrappingWeb {
 
 									}
 
-									abltyHid = this.abilities
-											.stream().filter(
+									abltyHid = this
+											.getAbilities().stream().filter(
 													habil -> habil
 															.getName().equals(
 																	Normalizer
@@ -394,7 +407,7 @@ public class ScrappingWeb {
 
 									}
 								} else {
-									abltyHid = this.abilities.stream()
+									abltyHid = this.getAbilities().stream()
 											.filter(habil -> habil.getName()
 													.equals(Normalizer
 															.normalize(
@@ -434,10 +447,12 @@ public class ScrappingWeb {
 		return abilitiesPerPokemon;
 	}
 
+	// -----------------------------
 	// Read all the possible types for different Pokemon and put it to dico
+	// -----------------------------
 	public HashMap<String, ArrayList<PokemonType>> scrappingWebReadTypeForEachPokemon() {
 		HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon = new HashMap<>();
-		
+
 		try {
 			String url = "https://www.wikidex.net/wiki/Lista_de_Pok%C3%A9mon_con_sus_habilidades";
 
@@ -465,7 +480,7 @@ public class ScrappingWeb {
 							Element aAfterTD;
 
 							// Gets first type (there will be one every time at position 3)
-							optPkT1 = this.types.stream()
+							optPkT1 = this.getTypes().stream()
 									.filter(tp -> tp.getName()
 											.equals(Normalizer
 													.normalize(
@@ -489,7 +504,7 @@ public class ScrappingWeb {
 
 							if (aAfterTD != null) {
 
-								optPkT2 = this.types.stream()
+								optPkT2 = this.getTypes().stream()
 										.filter(tp -> tp.getName().equals(Normalizer
 												.normalize(
 														tPk.select("td").get(4).select("a").first().attr("title")
@@ -522,7 +537,9 @@ public class ScrappingWeb {
 		return pokemonTypePerPokemon;
 	}
 
+	// -----------------------------
 	// Gets all the attacks
+	// -----------------------------
 	public ArrayList<Attack> scrappingWebAttacks() {
 		try {
 			String url = "https://www.pokexperto.net/index2.php?seccion=nds/movimientos_pokemon";
@@ -572,21 +589,23 @@ public class ScrappingWeb {
 					}
 
 					// Adds the attack to the general attacks list
-					this.attacks.add(atk);
+					this.getAttacks().add(atk);
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		return this.attacks;
+
+		return this.getAttacks();
 	}
 
+	// -----------------------------
 	// Gets all the attacks for each Pokemon
+	// -----------------------------
 	// TD + TH [1-(235,664,789,790),6-722,7-650,8-494,9-387,10-152,11-1]
 	public HashMap<Integer, HashMap<String, ArrayList<Integer>>> scrappingWebAttacksForEachPokemon() {
 		HashMap<Integer, HashMap<String, ArrayList<Integer>>> attacksPerPokemon = new HashMap<>();
-		
+
 		try {
 
 			for (int iPk = 1; iPk < 808; iPk++) {
@@ -637,7 +656,8 @@ public class ScrappingWeb {
 								String attackName = trPh.select("td").get(0).text();
 
 								// We search the attack on the attacks list by its name
-								atk = this.attacks.stream().filter(at -> at.getName().equals(attackName)).findFirst();
+								atk = this.getAttacks().stream().filter(at -> at.getName().equals(attackName))
+										.findFirst();
 
 								if (atk.isPresent()) {
 
@@ -662,12 +682,12 @@ public class ScrappingWeb {
 
 								String attackName = trSp.select("td").get(0).text();
 
-								atk = this.attacks.stream().filter(at -> at.getName().equals(attackName)).findFirst();
+								atk = this.getAttacks().stream().filter(at -> at.getName().equals(attackName))
+										.findFirst();
 
 								if (atk.isPresent()) {
 
 									specialAttacks.add(atk.get().getId());
-
 								}
 							}
 						}
@@ -687,12 +707,12 @@ public class ScrappingWeb {
 
 								String attackName = trO.select("td").get(0).text();
 
-								atk = this.attacks.stream().filter(at -> at.getName().equals(attackName)).findFirst();
+								atk = this.getAttacks().stream().filter(at -> at.getName().equals(attackName))
+										.findFirst();
 
 								if (atk.isPresent()) {
 
 									otherAttacks.add(atk.get().getId());
-
 								}
 							}
 						}
@@ -707,7 +727,7 @@ public class ScrappingWeb {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return attacksPerPokemon;
 	}
 }
