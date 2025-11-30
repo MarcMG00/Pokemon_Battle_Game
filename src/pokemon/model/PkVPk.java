@@ -285,6 +285,17 @@ public class PkVPk {
 
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName()
 					+ " evitó el ataque jijijija. " + code);
+
+			// Some attacks that can fail, hurts the attacker (Jump kick, etc.)
+			if (attacker.getNextMovement().getCanRecieveDamage()) {
+				float attackerInitialPs = attacker.getInitialPs();
+
+				float recoil = attackerInitialPs / 2f;
+
+				attacker.setPs(attacker.getPs() - recoil);
+				
+				System.out.println(attacker.getName() + " se dañó a si mismo jajajaji. (Patada salto)");
+			}
 		}
 	}
 
@@ -1111,6 +1122,33 @@ public class PkVPk {
 		case 25:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 					+ " usó Megapatada");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Patada salto/Jump kick (TODO >> No Pokemon has actually)
+		case 26:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Patada salto");
 
 			dmg = doDammage();
 

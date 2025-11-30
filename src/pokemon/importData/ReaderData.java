@@ -46,7 +46,7 @@ public class ReaderData {
 
 	// ==================================== GETTERS/SETTERS
 	// ====================================
-	
+
 	public ArrayList<Ability> getAbilities() {
 		return abilities;
 	}
@@ -932,6 +932,17 @@ public class ReaderData {
 		}
 
 		attack.setCanHitWhileInvulnerable(canHitWhileInvulnerable);
+	}
+
+	// -----------------------------
+	// Set attack that can hurt Pokemon owner if fails
+	// -----------------------------
+	public static void putCanRecieveDamageFailAttacks(Attack attack) {
+		switch (attack.getId()) {
+		case 26:
+			attack.setCanRecieveDamage(true);
+			break;
+		}
 	}
 
 	// -----------------------------
