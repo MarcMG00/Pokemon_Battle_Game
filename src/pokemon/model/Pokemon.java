@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import pokemon.enums.StatusConditions;
 
 public class Pokemon {
-	
+
 	// ==================================== FIELDS
 	// ====================================
-	
+
 	private int id;
 	private String name;
 	private float initialPs;
@@ -50,7 +50,7 @@ public class Pokemon {
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
-	
+
 	public Pokemon() {
 		this.id = 0;
 		this.name = "";
@@ -183,7 +183,7 @@ public class Pokemon {
 
 	// ==================================== GETTERS/SETTERS
 	// ====================================
-	
+
 	public int getId() {
 		return id;
 	}
@@ -535,7 +535,7 @@ public class Pokemon {
 
 	// ==================================== METHODS
 	// ====================================
-	
+
 	// -----------------------------
 	// Restart stats after some attacks... (cause not accumulated)
 	// -----------------------------
@@ -576,7 +576,7 @@ public class Pokemon {
 			break;
 
 		}
-		
+
 		this.setCanAttack(true);
 	}
 

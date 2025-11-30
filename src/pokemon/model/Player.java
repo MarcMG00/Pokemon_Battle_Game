@@ -420,7 +420,7 @@ public class Player {
 						Attack atk = nextAttack.get();
 
 						// Set effectiveness & bonus
-						atk.setEffectivenessAgainstPkFacing(2);
+						atk.setEffectivenessAgainstPkFacing(2f);
 						atk.setBonus(1.5f);
 
 						this.getPkCombatting().setNextMovement(atk);
@@ -444,7 +444,7 @@ public class Player {
 					Attack atk = nextAttack.get();
 
 					atk.setEffectivenessAgainstPkFacing(1.5f);
-					atk.setBonus(1);
+					atk.setBonus(1f);
 
 					this.getPkCombatting().setNextMovement(atk);
 					System.out.println(atk.getName() + " - high damage and different type " + atk.getBases());
@@ -468,8 +468,8 @@ public class Player {
 
 					if (!atk.getBases().contains("otros")) {
 
-						atk.setEffectivenessAgainstPkFacing(1);
-						atk.setBonus(1);
+						atk.setEffectivenessAgainstPkFacing(1f);
+						atk.setBonus(1f);
 
 					}
 
@@ -495,17 +495,17 @@ public class Player {
 					if (this.getPkCombatting().getLotDamageAttacks().contains(atk)) {
 
 						atk.setEffectivenessAgainstPkFacing(1.5f);
-						atk.setBonus(1);
+						atk.setBonus(1f);
 
 					} else if (this.getPkCombatting().getNormalAttacks().contains(atk)) {
 
-						atk.setEffectivenessAgainstPkFacing(1);
-						atk.setBonus(1);
+						atk.setEffectivenessAgainstPkFacing(1f);
+						atk.setBonus(1f);
 
 					} else {
 
 						atk.setEffectivenessAgainstPkFacing(0.5f);
-						atk.setBonus(1);
+						atk.setBonus(1f);
 
 					}
 
@@ -546,6 +546,10 @@ public class Player {
 						.filter(a -> a.getPp() > 0).findFirst().get());
 			}
 
+			// Set effectiveness & bonus
+			this.getPkCombatting().getNextMovement().setEffectivenessAgainstPkFacing(21f);
+			this.getPkCombatting().getNextMovement().setBonus(1f);
+			
 			System.out.println(this.getPkCombatting().getNextMovement().getName());
 		}
 	}
@@ -612,7 +616,7 @@ public class Player {
 
 				if (!atk.getBases().contains("otros")) {
 
-					atk.setEffectivenessAgainstPkFacing(2);
+					atk.setEffectivenessAgainstPkFacing(2f);
 					atk.setBonus(1f);
 
 				} else if (!atk.getBases().contains("otros")) {
@@ -631,13 +635,13 @@ public class Player {
 				if (!atk.getBases().contains("otros")
 						&& this.getPkCombatting().getTypes().contains(atk.getStrTypeToPkType())) {
 
-					atk.setEffectivenessAgainstPkFacing(2);
+					atk.setEffectivenessAgainstPkFacing(2f);
 					atk.setBonus(1.5f);
 
 				} else if (!atk.getBases().contains("otros")) {
 
 					atk.setEffectivenessAgainstPkFacing(1.5f);
-					atk.setBonus(1);
+					atk.setBonus(1f);
 
 				}
 				isAttackChoosen = true;
@@ -649,8 +653,8 @@ public class Player {
 
 				if (!atk.getBases().contains("otros")) {
 
-					atk.setEffectivenessAgainstPkFacing(1);
-					atk.setBonus(1);
+					atk.setEffectivenessAgainstPkFacing(1f);
+					atk.setBonus(1f);
 
 				}
 				isAttackChoosen = true;
@@ -663,13 +667,20 @@ public class Player {
 				if (!atk.getBases().contains("otros") && this.getPkCombatting().getLowAttacks().contains(atk)) {
 
 					atk.setEffectivenessAgainstPkFacing(0.5f);
-					atk.setBonus(1);
+					atk.setBonus(1f);
 
+				}
+				// ===============================
+				// 5 Put neutral parameters (otherwise returns 0 on bonus and effectiveness and do 0 on damage calcul)
+				// ===============================
+				else {
+					atk.setEffectivenessAgainstPkFacing(1f);
+					atk.setBonus(1f);
 				}
 				isAttackChoosen = true;
 			}
 			// ===============================
-			// 5️ Attack from "otros"
+			// 6️ Attack from "otros"
 			// ===============================
 			// Else is an attack from "otros", so nothing to do
 
