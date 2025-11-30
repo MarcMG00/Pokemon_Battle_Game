@@ -4,6 +4,9 @@ import pokemon.enums.StatusConditions;
 
 public class State {
 
+	// ==================================== FIELDS
+	// ====================================
+	
 	private StatusConditions statusCondition;
 	private boolean canMoveEphemeralState;
 	private boolean canMoveStatusCondition;
@@ -14,6 +17,9 @@ public class State {
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
 
+	// ==================================== CONSTRUCTORS
+	// ====================================
+	
 	public State() {
 		this.statusCondition = StatusConditions.NO_STATUS;
 		this.canMoveEphemeralState = true;
@@ -40,6 +46,9 @@ public class State {
 		this.percentToBeDefrosted = 10;
 	}
 
+	// ==================================== GETTERS/SETTERS
+	// ====================================
+	
 	public StatusConditions getStatusCondition() {
 		return statusCondition;
 	}
@@ -88,8 +97,13 @@ public class State {
 		this.percentToBeDefrosted = percentToBeDefrosted;
 	}
 
+	// ==================================== METHODS
+	// ====================================
+	
+	// -----------------------------
 	// Sets the amount of damage, mobility and effects at the end/beginning of each
 	// turn
+	// -----------------------------
 	public void doEffectStatusCondition(StatusConditions status) {
 
 		int getRidOfStatusProbability = (int) (Math.random() * 100);

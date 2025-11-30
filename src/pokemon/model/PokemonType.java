@@ -1,11 +1,18 @@
 package pokemon.model;
 
 public class PokemonType {
+	
+	// ==================================== FIELDS
+	// ====================================
+	
 	private int id;
 	private String name;
 	private float xLowDamage;
 	private float xNormalDamage;
 	private float xHighDamage;
+	
+	// ==================================== CONSTRUCTORS
+	// ====================================
 	
 	public PokemonType() {
 		super();
@@ -24,6 +31,9 @@ public class PokemonType {
 		this.xHighDamage = 2f;
 		this.xNormalDamage = 1.5f;
 	}
+	
+	// ==================================== GETTERS/SETTERS
+	// ====================================
 
 	public int getId() {
 		return id;

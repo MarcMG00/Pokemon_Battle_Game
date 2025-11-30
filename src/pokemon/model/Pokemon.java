@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import pokemon.enums.StatusConditions;
 
 public class Pokemon {
+
+	// ==================================== FIELDS
+	// ====================================
+
 	private int id;
 	private String name;
 	private float initialPs;
@@ -43,6 +47,9 @@ public class Pokemon {
 	private boolean hasRetreated;
 	private int attackStage;
 	private int specialAttackStage;
+
+	// ==================================== CONSTRUCTORS
+	// ====================================
 
 	public Pokemon() {
 		this.id = 0;
@@ -173,6 +180,9 @@ public class Pokemon {
 		this.attackStage = pokemon.attackStage;
 		this.specialAttackStage = pokemon.specialAttackStage;
 	}
+
+	// ==================================== GETTERS/SETTERS
+	// ====================================
 
 	public int getId() {
 		return id;
@@ -469,7 +479,7 @@ public class Pokemon {
 	public void setAttackStage(int attackStage) {
 		this.attackStage = attackStage;
 	}
-	
+
 	public int getSpecialAttackStage() {
 		return specialAttackStage;
 	}
@@ -523,7 +533,12 @@ public class Pokemon {
 		this.ephemeralStates.add(ephState);
 	}
 
+	// ==================================== METHODS
+	// ====================================
+
+	// -----------------------------
 	// Restart stats after some attacks... (cause not accumulated)
+	// -----------------------------
 	public void restartParametersEffect() {
 
 		switch (this.getStatusCondition().getStatusCondition()) {
@@ -561,9 +576,13 @@ public class Pokemon {
 			break;
 
 		}
+
+		this.setCanAttack(true);
 	}
 
+	// -----------------------------
 	// Modify conditions of Pokemon depending on States
+	// -----------------------------
 	public void checkEffectsStatusCondition(boolean isStartTurn) {
 		float reducePs = 0;
 
@@ -665,7 +684,10 @@ public class Pokemon {
 			}
 		}
 	}
-	
+
+	// -----------------------------
+	// Get attack stage for normal attack
+	// -----------------------------
 	public float getEffectiveAttack() {
 		int stage = this.getAttackStage();
 		float multiplier;
@@ -677,7 +699,10 @@ public class Pokemon {
 
 		return this.getAttack() * multiplier;
 	}
-	
+
+	// -----------------------------
+	// Get attack stage for special attack
+	// -----------------------------
 	public float getEffectiveSpecialAttack() {
 		int stage = this.getSpecialAttackStage();
 		float multiplier;
@@ -688,5 +713,12 @@ public class Pokemon {
 			multiplier = 2.0f / (2 - stage);
 
 		return this.getSpecialAttack() * multiplier;
+	}
+
+	// -----------------------------
+	// Get Attack by Id
+	// -----------------------------
+	public Attack getNextMovementById(int id) {
+		return this.getFourPrincipalAttacks().stream().filter(a -> a.getId() == id).findFirst().orElse(null);
 	}
 }

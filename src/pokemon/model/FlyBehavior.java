@@ -26,10 +26,10 @@ public class FlyBehavior implements TwoTurnAttackBehavior {
         System.out.println(attacker.getName() + " usó vuelo");
 
         // Execute the attack effect
-        PkVPk engine = new PkVPk(attacker, defender);
+        //PkVPk engine = new PkVPk(attacker, defender);
         
         // Pass to true cause already on the execution phase of charged attack
-        engine.doAttackEffect();
+        //engine.doAttackEffect();
         
         // Clean charging flag
         attacker.setIsChargingAttackForNextRound(false);

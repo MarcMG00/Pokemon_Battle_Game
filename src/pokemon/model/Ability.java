@@ -1,9 +1,16 @@
 package pokemon.model;
 
 public class Ability {
+	
+	// ==================================== FIELDS
+	// ====================================
+	
 	private int id;
 	private String name;
 	private String description;
+	
+	// ==================================== CONSTRUCTORS
+	// ====================================
 	
 	public Ability(int id, String name, String description) {
 		super();
@@ -12,6 +19,9 @@ public class Ability {
 		this.description = description;
 	}
 
+	// ==================================== GETTERS/SETTERS
+	// ====================================
+	
 	public int getId() {
 		return id;
 	}

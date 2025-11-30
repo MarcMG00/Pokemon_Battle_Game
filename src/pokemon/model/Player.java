@@ -11,19 +11,29 @@ import java.util.stream.Collectors;
 import pokemon.enums.StatusConditions;
 
 public class Player {
+	
+	// ==================================== FIELDS
+	// ====================================
+	
 	private ArrayList<Pokemon> pokemon;
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
-	private PkVPk battleVS;
+	private boolean forceSwitchPokemon;
 
+	// ==================================== CONSTRUCTORS
+	// ====================================
+	
 	public Player() {
 		super();
 		this.pokemon = new ArrayList<>();
 		this.pkCombatting = new Pokemon();
 		this.pkFacing = new Pokemon();
-		this.battleVS = new PkVPk(this.pkCombatting, this.pkFacing);
+		this.forceSwitchPokemon = false;
 	}
 
+	// ==================================== GETTERS/SETTERS
+	// ====================================
+	
 	public ArrayList<Pokemon> getPokemon() {
 		return pokemon;
 	}
@@ -53,20 +63,30 @@ public class Player {
 		this.pkFacing = pkFacing;
 	}
 
-	public PkVPk getBattleVS() {
-		return battleVS;
+	public boolean getIsForceSwitchPokemon() {
+		return forceSwitchPokemon;
 	}
 
-	public void setBattleVS(PkVPk battleVS) {
-		this.battleVS = battleVS;
+	public void setForceSwitchPokemon(boolean forceSwitchPokemon) {
+		this.forceSwitchPokemon = forceSwitchPokemon;
 	}
 
+	// ==================================== METHODS
+	// ====================================
+	
+	// -----------------------------
 	// Adds 4 attacks to each Pokemon from player (1 other, 2 physicals, 1 special)
+	// -----------------------------
 	public void addAttacksForEachPokemon() {
 
-		for (Pokemon pk : this.pokemon) {
+		for (Pokemon pk : this.getPokemon()) {
 
 			System.out.println(pk.getName());
+
+			// Struggle attack is only used as savior attack when no remaining PPs on other
+			// attacks from Pokemon combating
+			List<Attack> physicalAttacksWithoutStruggle = pk.getPhysicalAttacks().stream().filter(a -> a.getId() != 165)
+					.toList();
 
 			Random rand = new Random();
 			pk.addAttacks(pk.getOtherAttacks().get(rand.nextInt(pk.getOtherAttacks().size())));
@@ -74,7 +94,7 @@ public class Player {
 			for (int times = 0; times < 2; times++) {
 
 				rand = new Random();
-				pk.addAttacks(pk.getPhysicalAttacks().get(rand.nextInt(pk.getPhysicalAttacks().size())));
+				pk.addAttacks(physicalAttacksWithoutStruggle.get(rand.nextInt(pk.getPhysicalAttacks().size())));
 
 			}
 
@@ -92,11 +112,13 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
 	// Order all the attacks by damage level against the Pokemon facing
+	// -----------------------------
 	public void orderAttacksFromDammageLevelPokemon(
 			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 		// Gets the Pokemon types that player is currently facing
-		ArrayList<PokemonType> pkFacing = this.pkFacing.getTypes();
+		ArrayList<PokemonType> pkFacing = this.getPkFacing().getTypes();
 
 		// Copy all the effects for each type of the current Pokemon player
 		HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesCopy = new HashMap<>();
@@ -243,11 +265,9 @@ public class Player {
 		// System.out.println();
 	}
 
-	/* -------------------------- Helper Methods -------------------------- */
-
-	/**
-	 * Returns a list of unique PokemonType from the attacks of the current Pokemon
-	 */
+	// -----------------------------
+	// Returns a list of unique PokemonType from the attacks of the current Pokemon
+	// -----------------------------
 	private ArrayList<PokemonType> getUniqueAttackTypes() {
 		ArrayList<PokemonType> uniquePkType = new ArrayList<>();
 
@@ -263,7 +283,9 @@ public class Player {
 		return uniquePkType;
 	}
 
-	/** Add attacks that hit both types strongly or weakly */
+	// -----------------------------
+	// Add attacks that hit both types strongly or weakly
+	// -----------------------------
 	private boolean addIfDoubleType(Attack attack, Map<String, Long> repeatedTypeMap, ArrayList<Attack> targetList) {
 		for (Map.Entry<String, Long> key : repeatedTypeMap.entrySet()) {
 
@@ -280,10 +302,10 @@ public class Player {
 		return false;
 	}
 
-	/**
-	 * Fill lists of strong, weak, normal and no effect type names based on the
-	 * facing Pokemon
-	 */
+	// -----------------------------
+	// Fill lists of strong, weak, normal and no effect type names based on the
+	// facing Pokemon
+	// -----------------------------
 	private void fillDamageTypeLists(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypesCopy,
 			ArrayList<PokemonType> noRepeatedAttackTypes, ArrayList<PokemonType> hasNoEffect,
 			List<String> lotDamageRepeatedTypes, List<String> normalDamageRepeatedTypes,
@@ -342,13 +364,33 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
 	// Puts in a Map the number of times that appears the elements in the list
+	// -----------------------------
 	private Map<String, Long> countDuplicates(List<String> list) {
 		return list.stream().collect(Collectors.groupingBy(e -> e.toString(), Collectors.counting()));
 	}
 
-	// Chooses the attack: detects if it's machine or player
-	public void prepareBestAttackIA() {
+	// -----------------------------
+	// Chooses the attack from machine
+	// -----------------------------
+	public void prepareBestAttackIA(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
+
+		// If Pokemon combating doesn't have PP remaining on his attacks => change
+		// Pokemon
+		if (!hasAnyPPLeft(this.getPkCombatting())) {
+			System.out.println("La IA no tiene PP en ningún movimiento. Forzando cambio de Pokémon...");
+			Pokemon newPk = decideBestChangePokemon(this.getPkCombatting(), effectPerTypes);
+
+			if (newPk != null) {
+				this.setPkCombatting(newPk);
+				System.out.println("IA eligió a " + newPk.getName() + " (Id:" + newPk.getId() + ")");
+			} else {
+				System.out.println("No hay Pokémon útiles para cambiar. La IA debe usar Struggle!");
+				selectStruggle();
+			}
+			return;
+		}
 
 		// Gets a random number to choose the attack base (>10 : "others", and if it's
 		// the machine's choice)
@@ -369,8 +411,8 @@ public class Player {
 					Optional<Attack> nextAttack = Optional.empty();
 
 					// Machine: chooses best attack matching type and not "otros"
-					nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
-							.filter(a -> a.getStrTypeToPkType() == pkType && !a.getBases().contains("otros"))
+					nextAttack = this.getPkCombatting().getLotDamageAttacks().stream().filter(
+							a -> a.getStrTypeToPkType() == pkType && !a.getBases().contains("otros") && a.getPp() > 0)
 							.findFirst();
 
 					if (nextAttack.isPresent()) {
@@ -378,7 +420,7 @@ public class Player {
 						Attack atk = nextAttack.get();
 
 						// Set effectiveness & bonus
-						atk.setEffectivenessAgainstPkFacing(2);
+						atk.setEffectivenessAgainstPkFacing(2f);
 						atk.setBonus(1.5f);
 
 						this.getPkCombatting().setNextMovement(atk);
@@ -395,14 +437,14 @@ public class Player {
 			if (!isAttackChosen && !this.getPkCombatting().getLotDamageAttacks().isEmpty()) {
 
 				Optional<Attack> nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
-						.filter(a -> !a.getBases().contains("otros")).findFirst();
+						.filter(a -> !a.getBases().contains("otros") && a.getPp() > 0).findFirst();
 
 				if (nextAttack.isPresent()) {
 
 					Attack atk = nextAttack.get();
 
 					atk.setEffectivenessAgainstPkFacing(1.5f);
-					atk.setBonus(1);
+					atk.setBonus(1f);
 
 					this.getPkCombatting().setNextMovement(atk);
 					System.out.println(atk.getName() + " - high damage and different type " + atk.getBases());
@@ -415,8 +457,9 @@ public class Player {
 			// ===============================
 			if (!isAttackChosen && !this.getPkCombatting().getNormalAttacks().isEmpty()) {
 
-				Optional<Attack> nextAttack = this.getPkCombatting().getNormalAttacks().stream().filter(
-						a -> !a.getBases().contains("otros") && !this.getPkCombatting().getLowAttacks().contains(a))
+				Optional<Attack> nextAttack = this.getPkCombatting().getNormalAttacks().stream()
+						.filter(a -> !a.getBases().contains("otros")
+								&& !this.getPkCombatting().getLowAttacks().contains(a) && a.getPp() > 0)
 						.findFirst();
 
 				if (nextAttack.isPresent()) {
@@ -425,8 +468,8 @@ public class Player {
 
 					if (!atk.getBases().contains("otros")) {
 
-						atk.setEffectivenessAgainstPkFacing(1);
-						atk.setBonus(1);
+						atk.setEffectivenessAgainstPkFacing(1f);
+						atk.setBonus(1f);
 
 					}
 
@@ -443,7 +486,7 @@ public class Player {
 			if (!isAttackChosen) {
 
 				Optional<Attack> nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream()
-						.filter(a -> !a.getBases().contains("otros")).findFirst();
+						.filter(a -> !a.getBases().contains("otros") && a.getPp() > 0).findFirst();
 
 				if (nextAttack.isPresent()) {
 
@@ -452,23 +495,40 @@ public class Player {
 					if (this.getPkCombatting().getLotDamageAttacks().contains(atk)) {
 
 						atk.setEffectivenessAgainstPkFacing(1.5f);
-						atk.setBonus(1);
+						atk.setBonus(1f);
 
 					} else if (this.getPkCombatting().getNormalAttacks().contains(atk)) {
 
-						atk.setEffectivenessAgainstPkFacing(1);
-						atk.setBonus(1);
+						atk.setEffectivenessAgainstPkFacing(1f);
+						atk.setBonus(1f);
 
 					} else {
 
 						atk.setEffectivenessAgainstPkFacing(0.5f);
-						atk.setBonus(1);
+						atk.setBonus(1f);
 
 					}
 
 					this.getPkCombatting().setNextMovement(atk);
 					System.out.println(atk.getName() + " - random without 'otros' " + atk.getBases());
 					isAttackChosen = true;
+				}
+
+				// ===============================
+				// 4️ Random attack ("otros")
+				// ===============================
+				else {
+					nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream().filter(a -> a.getPp() > 0)
+							.findFirst();
+
+					if (nextAttack.isPresent()) {
+
+						Attack atk = nextAttack.get();
+
+						this.getPkCombatting().setNextMovement(atk);
+						System.out.println(atk.getName() + " - random 'otros' " + atk.getBases());
+						isAttackChosen = true;
+					}
 				}
 			}
 
@@ -477,34 +537,46 @@ public class Player {
 			// 5️ Attack from "otros" OR first attack founded
 			// ===============================
 			if (this.getPkCombatting().getFourPrincipalAttacks().stream()
-					.anyMatch(a -> a.getBases().contains("otros"))) {
+					.anyMatch(a -> a.getBases().contains("otros") && a.getPp() > 0)) {
 
 				this.getPkCombatting().setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream()
-						.filter(a -> a.getBases().contains("otros")).findFirst().get());
+						.filter(a -> a.getBases().contains("otros") && a.getPp() > 0).findFirst().get());
 			} else {
-				this.getPkCombatting()
-						.setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream().findFirst().get());
+				this.getPkCombatting().setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream()
+						.filter(a -> a.getPp() > 0).findFirst().get());
 			}
 
+			// Set effectiveness & bonus
+			this.getPkCombatting().getNextMovement().setEffectivenessAgainstPkFacing(21f);
+			this.getPkCombatting().getNextMovement().setBonus(1f);
+			
 			System.out.println(this.getPkCombatting().getNextMovement().getName());
 		}
 	}
 
+	// -----------------------------
 	// Prints the attacks of current Pokemon
+	// -----------------------------
 	public void printAttacksFromPokemonCombating() {
-		for (Attack currentAttack : this.getPkCombatting().getFourPrincipalAttacks()) {
+		List<Attack> attacksAvailable = this.getPkCombatting().getFourPrincipalAttacks().stream()
+				.filter(a -> a.getPp() > 0).toList();
+
+		for (Attack currentAttack : attacksAvailable) {
 
 			System.out
 					.println(currentAttack.getId() + " - " + currentAttack.getName() + " - " + currentAttack.getType());
 		}
 	}
 
+	// -----------------------------
 	// Prints all the info from all the Pokemon player
+	// -----------------------------
 	public void printPokemonInfo() {
-		
+
 		// Get only Pokemon not debilitated
-		List<Pokemon> pokemonAvailable = this.getPokemon().stream().filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
-		
+		List<Pokemon> pokemonAvailable = this.getPokemon().stream()
+				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+
 		for (Pokemon pk : pokemonAvailable) {
 
 			System.out.println(pk.getId() + " - " + pk.getName() + " - tipo(s) : ");
@@ -523,6 +595,9 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
+	// Prepares best attack for player
+	// -----------------------------
 	public void prepareBestAttackPlayer(int attackId) {
 		Optional<Attack> nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream()
 				.filter(a -> a.getId() == attackId).findFirst();
@@ -541,7 +616,7 @@ public class Player {
 
 				if (!atk.getBases().contains("otros")) {
 
-					atk.setEffectivenessAgainstPkFacing(2);
+					atk.setEffectivenessAgainstPkFacing(2f);
 					atk.setBonus(1f);
 
 				} else if (!atk.getBases().contains("otros")) {
@@ -560,13 +635,13 @@ public class Player {
 				if (!atk.getBases().contains("otros")
 						&& this.getPkCombatting().getTypes().contains(atk.getStrTypeToPkType())) {
 
-					atk.setEffectivenessAgainstPkFacing(2);
+					atk.setEffectivenessAgainstPkFacing(2f);
 					atk.setBonus(1.5f);
 
 				} else if (!atk.getBases().contains("otros")) {
 
 					atk.setEffectivenessAgainstPkFacing(1.5f);
-					atk.setBonus(1);
+					atk.setBonus(1f);
 
 				}
 				isAttackChoosen = true;
@@ -578,8 +653,8 @@ public class Player {
 
 				if (!atk.getBases().contains("otros")) {
 
-					atk.setEffectivenessAgainstPkFacing(1);
-					atk.setBonus(1);
+					atk.setEffectivenessAgainstPkFacing(1f);
+					atk.setBonus(1f);
 
 				}
 				isAttackChoosen = true;
@@ -592,13 +667,20 @@ public class Player {
 				if (!atk.getBases().contains("otros") && this.getPkCombatting().getLowAttacks().contains(atk)) {
 
 					atk.setEffectivenessAgainstPkFacing(0.5f);
-					atk.setBonus(1);
+					atk.setBonus(1f);
 
+				}
+				// ===============================
+				// 5 Put neutral parameters (otherwise returns 0 on bonus and effectiveness and do 0 on damage calcul)
+				// ===============================
+				else {
+					atk.setEffectivenessAgainstPkFacing(1f);
+					atk.setBonus(1f);
 				}
 				isAttackChoosen = true;
 			}
 			// ===============================
-			// 5️ Attack from "otros"
+			// 6️ Attack from "otros"
 			// ===============================
 			// Else is an attack from "otros", so nothing to do
 
@@ -606,6 +688,9 @@ public class Player {
 		}
 	}
 
+	// -----------------------------
+	// Decides best Pokemon change against Pokemon facing
+	// -----------------------------
 	public Pokemon decideBestChangePokemon(Pokemon pkPlayerFacing,
 			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 
@@ -626,8 +711,9 @@ public class Player {
 		int bestScore = currentBestDamage;
 
 		// Get only Pokemon not debilitated
-		List<Pokemon> pokemonAvailable = this.getPokemon().stream().filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
-		
+		List<Pokemon> pokemonAvailable = this.getPokemon().stream()
+				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+
 		for (Pokemon candidate : pokemonAvailable) {
 
 			if (candidate == currentPkCombatingBeforeChange)
@@ -664,7 +750,9 @@ public class Player {
 		return null;
 	}
 
+	// -----------------------------
 	// Get damage score from Pokemon candidate
+	// -----------------------------
 	private int getDamageScore(Pokemon pk) {
 		if (!pk.getLotDamageAttacks().isEmpty())
 			return 3; // very high damage
@@ -676,7 +764,9 @@ public class Player {
 		return 0; // no effect
 	}
 
+	// -----------------------------
 	// Check if an attack has STAB super effective
+	// -----------------------------
 	private boolean hasSTABSuperEffective(Pokemon pk) {
 
 		for (Attack atk : pk.getLotDamageAttacks()) {
@@ -690,14 +780,33 @@ public class Player {
 		return false;
 	}
 
-	// Check for evasion/accuracy from Pokemon
-	public void getProbabiltyOfAttacking() {
-		this.getBattleVS().getProbabilityOfAttacking();
+	// -----------------------------
+	// Check if any attack from Pokemon has PP remaining
+	// -----------------------------
+	public boolean hasAnyPPLeft(Pokemon pk) {
+		return pk.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
 	}
 
-	// Apply damage
-	public void applyDamage() {
-		this.getBattleVS().doAttackEffect();
+	// -----------------------------
+	// If no remaining Pokemon with PP on attacks, set a new attack "Struggle" (used
+	// by all Pokemon)
+	// -----------------------------
+	public void selectStruggle() {
+		this.getPkCombatting().setNextMovement(
+				this.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == 165).findFirst().get());
 	}
 
+	// -----------------------------
+	// Check if player has available Pokemon to change
+	// -----------------------------
+	public boolean hasAvailableSwitch() {
+		// Get available Pokemon from defender
+		List<Pokemon> options = this.getPokemon().stream().filter(pk -> pk != this.getPkCombatting())
+				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+
+		if (options.isEmpty()) {
+			return false; // If no more Pokemon remaining, attack fails
+		}
+		return true;
+	}
 }
