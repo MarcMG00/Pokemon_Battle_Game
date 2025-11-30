@@ -293,7 +293,7 @@ public class PkVPk {
 				float recoil = attackerInitialPs / 2f;
 
 				attacker.setPs(attacker.getPs() - recoil);
-				
+
 				System.out.println(attacker.getName() + " se dañó a si mismo jajajaji. (Patada salto)");
 			}
 		}
@@ -337,6 +337,7 @@ public class PkVPk {
 		int probabilityGettingStatus;
 		int highProbabilityCritic;
 		int setBaseDmgFromBegining;
+		int randomRetreat = 0;
 
 		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor/Pound (tested)
@@ -1063,7 +1064,7 @@ public class PkVPk {
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
 
-			int randomRetreat = (int) (Math.random() * 100);
+			randomRetreat = (int) (Math.random() * 100);
 
 			// 30% of probabilities to retreat Pokemon facing
 			if (randomRetreat <= 30) {
@@ -1160,6 +1161,41 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Patada giro/Rolling kick (tested)
+		case 27:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Patada giro");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			randomRetreat = (int) (Math.random() * 100);
+
+			// 30% of probabilities to retreat Pokemon facing
+			if (randomRetreat <= 30) {
+
+				this.getPkFacing().setHasRetreated(true);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);

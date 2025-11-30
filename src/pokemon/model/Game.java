@@ -1183,12 +1183,12 @@ public class Game {
 
 	// -----------------------------
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
-	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika)
+	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee)
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "32,32,32";
-		String allPkIA = "18,18,18";
+		String allPkPlayer = "106,106,106";
+		String allPkIA = "106,106,106";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1235,7 +1235,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 24).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -1274,10 +1274,11 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {
