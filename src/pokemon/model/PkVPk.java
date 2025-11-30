@@ -4,10 +4,10 @@ import pokemon.enums.AttackCategory;
 import pokemon.enums.StatusConditions;
 
 public class PkVPk {
-	
+
 	// ==================================== FIELDS
 	// ====================================
-	
+
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
 	private Player attacker;
@@ -23,7 +23,7 @@ public class PkVPk {
 
 	// ==================================== CONSTRCUTORS
 	// ====================================
-	
+
 	public PkVPk(Player attacker, Player defender) {
 		this.attacker = attacker;
 		this.defender = defender;
@@ -33,7 +33,7 @@ public class PkVPk {
 
 	// ==================================== GETTERS/SETTERS
 	// ====================================
-	
+
 	public Pokemon getPkCombatting() {
 		return pkCombatting;
 	}
@@ -68,10 +68,10 @@ public class PkVPk {
 
 	// ==================================== METHODS
 	// ====================================
-	
+
 	// -----------------------------
 	// Knows the evasion or accuracy for the Pokemon selected (1 is for accuracy, 2
-	// is for evasion)	
+	// is for evasion)
 	// -----------------------------
 	public float getEvasionOrAccuracy(Pokemon pk, int t) {
 
@@ -319,6 +319,7 @@ public class PkVPk {
 	public void doAttackEffect() {
 
 		float dmg = 0;
+		float dmgToSum = 0;
 		boolean isCritic;
 		int nbTimesAttack;
 		int nbTurnsHoldingStatus;
@@ -384,29 +385,32 @@ public class PkVPk {
 
 		// Doble bofetón/Double slap (tested)
 		case 3:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-					+ " usó Doble bofetón");
-
-			dmg = doDammage();
-
 			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
+			
+			for (int i = 0; i < nbTimesAttack; i++) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Doble bofetón");
 
-			System.out.println(" nº de veces : " + nbTimesAttack);
+				dmg = doDammage();
 
-			dmg = dmg * nbTimesAttack;
-			isCritic = getCriticity();
+				isCritic = getCriticity();
 
-			if (isCritic) {
+				if (isCritic) {
 
-				dmg = dmg * 2;
-				System.out.println("Fue un golpe crítico");
-				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+					dmg = dmg * 2;
+					System.out.println("Fue un golpe crítico");
+					System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+				}
+				
+				dmgToSum += dmg;
 			}
+
+			System.out.println("nº de veces que se usó Doble bofetón : " + nbTimesAttack);
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
-			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
 
 			if (this.getPkFacing().getPs() <= 0) {
 
@@ -416,30 +420,32 @@ public class PkVPk {
 
 		// Puño cometa/Comet punch (tested)
 		case 4:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-					+ " usó Puño cometa");
-
-			dmg = doDammage();
-
 			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
 
-			System.out.println(" nº de veces : " + nbTimesAttack);
+			for (int i = 0; i < nbTimesAttack; i++) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Puño cometa");
 
-			dmg = dmg * nbTimesAttack;
+				dmg = doDammage();
 
-			isCritic = getCriticity();
+				isCritic = getCriticity();
 
-			if (isCritic) {
+				if (isCritic) {
 
-				dmg = dmg * 2;
-				System.out.println("Fue un golpe crítico");
-				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+					dmg = dmg * 2;
+					System.out.println("Fue un golpe crítico");
+					System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+				}
+				
+				dmgToSum += dmg;
 			}
 
+			System.out.println("nº de veces que se usó Puño cometa : " + nbTimesAttack);
+			
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
-			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
 
 			if (this.getPkFacing().getPs() <= 0) {
 
@@ -1067,6 +1073,39 @@ public class PkVPk {
 			}
 			break;
 
+		// Doble patada/Double kick (tested)
+		case 24:
+			//Attacks 2 times
+			nbTimesAttack = 2;
+
+			for (int i = 0; i < nbTimesAttack; i++) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Doble patada");
+
+				dmg = doDammage();
+
+				isCritic = getCriticity();
+
+				if (isCritic) {
+
+					dmg = dmg * 2;
+					System.out.println("Fue un golpe crítico");
+					System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+				}
+				
+				dmgToSum += dmg;
+			}
+			
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
