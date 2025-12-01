@@ -981,6 +981,11 @@ public class PkVPk {
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
+			// It removes 12,5% of the initial PS every turn is trapped
+			float defenderInitialPs = this.getPkFacing().getInitialPs();
+			dmg = defenderInitialPs * 0.125f;
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
 			if (this.getPkFacing().getPs() <= 0) {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
