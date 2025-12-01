@@ -89,40 +89,40 @@ public class PkVPk {
 
 		switch (evAcu) {
 		case -6:
-			resultEvAcu = 3 / 9;
+			resultEvAcu = 3f / 9f;
 			break;
 		case -5:
-			resultEvAcu = 3 / 8;
+			resultEvAcu = 3f / 8f;
 			break;
 		case -4:
-			resultEvAcu = 3 / 7;
+			resultEvAcu = 3f / 7f;
 			break;
 		case -3:
-			resultEvAcu = 3 / 6;
+			resultEvAcu = 3f / 6f;
 			break;
 		case -2:
-			resultEvAcu = 3 / 5;
+			resultEvAcu = 3f / 5f;
 			break;
 		case -1:
-			resultEvAcu = 3 / 4;
+			resultEvAcu = 3f / 4f;
 			break;
 		case 1:
-			resultEvAcu = 4 / 3;
+			resultEvAcu = 4f / 3f;
 			break;
 		case 2:
-			resultEvAcu = 5 / 3;
+			resultEvAcu = 5f / 3f;
 			break;
 		case 3:
-			resultEvAcu = 6 / 3;
+			resultEvAcu = 6f / 3f;
 			break;
 		case 4:
-			resultEvAcu = 7 / 3;
+			resultEvAcu = 7f / 3f;
 			break;
 		case 5:
-			resultEvAcu = 8 / 3;
+			resultEvAcu = 8f / 3f;
 			break;
 		case 6:
-			resultEvAcu = 9 / 3;
+			resultEvAcu = 9f / 3f;
 			break;
 		}
 
@@ -179,7 +179,9 @@ public class PkVPk {
 		if (atkAttacker.getId() == 12) {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f); // don't take into account Pokemon levels (cause all
 																	// are on the same lvl)
-		} else if (atkAttacker.getId() == 23 && this.getPkFacing().getHasUsedMinimize()) {
+		}
+		// Pisotón
+		else if (atkAttacker.getId() == 23 && this.getPkFacing().getHasUsedMinimize()) {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f) * (getEvasionOrAccuracy(pkCombatting, 1) / 1f);
 		}
 		// Other attacks
@@ -280,6 +282,7 @@ public class PkVPk {
 		if (rand / 100f <= accuracyFactor) {
 			attacker.setCanAttack(true);
 		} else {
+			System.out.println("accuracy : " + rand / 100f + "(random) => " + accuracyFactor + " (true accuracy)");
 			atk.setPp(atk.getPp() - 1);
 			attacker.setCanAttack(false);
 
@@ -376,7 +379,7 @@ public class PkVPk {
 
 			highProbabilityCritic = (int) (Math.random() * 100);
 
-			// 10/100 of probabilities to have a critic attack
+			// 40/100 of probabilities to have a critic attack
 			if (highProbabilityCritic <= 40) {
 
 				dmg = dmg * 2;
@@ -1206,6 +1209,24 @@ public class PkVPk {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
+			break;
+
+		// Ataque arena /Sand attack (tested)
+		case 28:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Ataque arena");
+
+			if (this.getPkFacing().getPrecisionPoints() <= -6) {
+				System.out.println("La precisión de " + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+			} else {
+				this.getPkFacing().setPrecisionPoints(Math.max(this.getPkFacing().getPrecisionPoints() - 1, -6));
+				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+						+ " bajó su precisión!");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
 			break;
 
 		// Forcejeo/Struggle
