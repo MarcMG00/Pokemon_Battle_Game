@@ -1343,8 +1343,8 @@ public class PkVPk {
 
 		// Placaje/Tackle (tested)
 		case 33:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-					+ " usó Placaje");
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Placaje");
 
 			dmg = doDammage();
 
@@ -1356,6 +1356,55 @@ public class PkVPk {
 				System.out.println("Fue un golpe crítico");
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Golpe cuerpo/Body slam (tested)
+		case 34:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Golpe cuerpo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has
+			// not a Status
+			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
+					&& !(this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED)) {
+
+				probabilityGettingStatus = (int) (Math.random() * 100);
+
+				System.out.println("proba de paralizar : " + probabilityGettingStatus);
+
+				if (probabilityGettingStatus <= 30) {
+
+					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+
+					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
+
+					this.getPkFacing().setStatusCondition(paralyzed);
+
+					System.out.println(
+							this.getPkFacing().getName() + " fue paralizado por " + nbTurnsHoldingStatus + " turnos");
+				}
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
