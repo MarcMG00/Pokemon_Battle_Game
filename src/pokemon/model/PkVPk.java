@@ -1271,8 +1271,8 @@ public class PkVPk {
 
 		// Cornada/Horn attack (tested)
 		case 30:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-					+ " usó Megapatada");
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Cornada");
 
 			dmg = doDammage();
 
@@ -1289,6 +1289,41 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Ataque furia/Fury attack (tested)
+		case 31:
+			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
+
+			for (int i = 0; i < nbTimesAttack; i++) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Ataque furia");
+
+				dmg = doDammage();
+
+				isCritic = getCriticity();
+
+				if (isCritic) {
+
+					dmg = dmg * 2;
+					System.out.println("Fue un golpe crítico");
+					System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+				}
+
+				dmgToSum += dmg;
+			}
+
+			System.out.println("nº de veces que se usó Ataque furia : " + nbTimesAttack);
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
 
 			if (this.getPkFacing().getPs() <= 0) {
 
