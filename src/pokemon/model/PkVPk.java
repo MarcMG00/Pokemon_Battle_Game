@@ -332,8 +332,8 @@ public class PkVPk {
 	// -----------------------------
 	public void doAttackEffect() {
 
-		float dmg = 0;
-		float dmgToSum = 0;
+		float dmg = 0f;
+		float dmgToSum = 0f;
 		boolean isCritic;
 		int nbTimesAttack;
 		int nbTurnsHoldingStatus;
@@ -341,7 +341,8 @@ public class PkVPk {
 		int highProbabilityCritic;
 		int setBaseDmgFromBegining;
 		int randomRetreat = 0;
-		float defenderInitialPs = 0;
+		float defenderInitialPs = 0f;
+		float recoil = 0f;
 
 		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor/Pound (tested)
@@ -1459,6 +1460,47 @@ public class PkVPk {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
+			break;
+
+		// Derribo/Take down (tested)
+		case 36:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Derribo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			
+			// ---- RECOIL ----
+			recoil = dmg * 0.25f;
+
+		    this.getPkCombatting().setPs(this.getPkCombatting().getPs() - recoil);
+
+		    System.out.println(
+		        this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + 
+		        ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+
+		    // Check if attacker debilitated by recoil
+		    if (this.getPkCombatting().getPs() <= 0) {
+		        this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
+		    }
 			break;
 
 		// Forcejeo/Struggle
