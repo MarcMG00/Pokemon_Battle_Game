@@ -175,8 +175,8 @@ public class PkVPk {
 			return;
 		}
 
-		// Guillotina
-		if (atkAttacker.getId() == 12) {
+		// Guillotina/Perforador
+		if (atkAttacker.getId() == 12 || atkAttacker.getId() == 32) {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f); // don't take into account Pokemon levels (cause all
 																	// are on the same lvl)
 		}
@@ -1329,6 +1329,16 @@ public class PkVPk {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
+			break;
+
+		// Perforador/Horn drill (tested)
+		case 32:
+			System.out.println(this.getPkCombatting().getName() + " usó Perforador");
+
+			// One-Hit KO => Pokemon facing dies instantly
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+
 			break;
 
 		// Forcejeo/Struggle
