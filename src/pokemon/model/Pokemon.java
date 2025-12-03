@@ -771,7 +771,8 @@ public class Pokemon {
 									.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK)
 									.findFirst().get());
 
-					int nbTurnsHoldingStatus = (int) ((Math.random() * (3 - 2)) + 2);
+					// Random number between 2 and 3
+					int nbTurnsHoldingStatus = ((int)(Math.random() * 2) + 2);
 
 					System.out.println(this.getName()
 							+ " se siente confuso (a causa de usar el mismo ataque). Estará confuso durante "
