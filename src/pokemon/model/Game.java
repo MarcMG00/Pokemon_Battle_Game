@@ -638,8 +638,17 @@ public class Game {
 
 			boolean isStartTurn = true;
 
-			boolean playerIsCharging = this.getPlayer().getPkCombatting().getIsChargingAttackForNextRound();
-			int attackChoice = playerIsCharging ? 1 : getPlayerChoice(sc);
+			Pokemon pkPlayer = this.getPlayer().getPkCombatting();
+
+			// Get if Pokemon is charging an attack (two turns)
+			boolean playerIsCharging = pkPlayer.getIsChargingAttackForNextRound();
+
+			// Gets if Pokemon is trapped by his own attack (ex : Thrash, etc.)
+			boolean playerIsTrappedByOwnAttack = pkPlayer.getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK && e.getNbTurns() > 0);
+
+			// If charging or trapped by his own attack, cannot do choices
+			int attackChoice = (playerIsCharging || playerIsTrappedByOwnAttack) ? 1 : getPlayerChoice(sc);
 
 			if (attackChoice == 1) {
 				handleAttackTurn(sc, isStartTurn);
@@ -666,17 +675,27 @@ public class Game {
 
 		int attackId = 0;
 
-		if (!this.getPlayer().getPkCombatting().getIsChargingAttackForNextRound()) {
-			Pokemon pk = this.getPlayer().getPkCombatting();
+		Pokemon pk = this.getPlayer().getPkCombatting();
 
-			// Checks that there is no more PPs on attacks from Pokemon combating
+		// Gets if is trapped by his own attack (ex : thrash, etc.)
+		boolean trappedByOwnAttack = pk.getEphemeralStates().stream()
+				.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK && e.getNbTurns() > 0);
+
+		// If not charging or trapped by his own attack => do normal sequence
+		if (!pk.getIsChargingAttackForNextRound() && !trappedByOwnAttack) {
+
 			if (!this.getPlayer().hasAnyPPLeft(pk)) {
 				System.out.println(pk.getName() + " no tiene más PPs en ningún ataque.");
 				System.out.println(pk.getName() + " usó Forcejeo!");
-				attackId = 165; // ID of "Struggle" (default attack when no more attacks remaining)
+				attackId = 165;
 			} else {
 				attackId = getValidAttackId(sc, this.getPlayer());
 			}
+		} else if (trappedByOwnAttack) {
+			// Use the same movement trapped
+			attackId = pk.getNextMovement().getId();
+			System.out.println(
+					pk.getName() + " está furioso y continúa atacando con " + pk.getNextMovement().getName() + "!");
 		}
 
 		printPokemonStates();
@@ -803,17 +822,38 @@ public class Game {
 	// Print Pokemon states (for debug)
 	// -----------------------------
 	private void printPokemonStates() {
-		System.out.println("Estado del Pokémon del jugador : "
-				+ this.getPlayer().getPkCombatting().getStatusCondition().getStatusCondition());
-		System.out.println("Estado del Pokémon de la máquina : "
-				+ this.getIA().getPkCombatting().getStatusCondition().getStatusCondition());
+		// Normal status player
+		System.out.println(ANSI_YELLOW + "Estado normal del Pokémon del jugador : "
+				+ this.getPlayer().getPkCombatting().getStatusCondition().getStatusCondition() + ANSI_RESET);
+
+		// Ephemeral status player
+		System.out.println(ANSI_YELLOW + "Estados efímeros del Pokémon del jugador : " + ANSI_RESET);
+		for (State status : this.getPlayer().getPkCombatting().getEphemeralStates()) {
+			System.out.println(ANSI_YELLOW + status.getStatusCondition() + ANSI_RESET);
+		}
+
+		// Normal status IA
+		System.out.println(ANSI_YELLOW + "Estado normal del Pokémon de la máquina : "
+				+ this.getIA().getPkCombatting().getStatusCondition().getStatusCondition() + ANSI_RESET);
+
+		// Ephemeral status IA
+		System.out.println(ANSI_YELLOW + "Estados efímeros del Pokémon de la máquina : " + ANSI_RESET);
+		for (State status : this.getIA().getPkCombatting().getEphemeralStates()) {
+			System.out.println(ANSI_YELLOW + status.getStatusCondition() + ANSI_RESET);
+		}
 	}
 
 	// -----------------------------
 	// Check if Pokemon combating can attack due to effect from status condition
 	// -----------------------------
 	private void checkCanAttackFromStatusCondition(Pokemon attacker) {
+		// Normal states
 		attacker.getStatusCondition().doEffectStatusCondition(attacker.getStatusCondition().getStatusCondition());
+
+		// Ephemeral states => only check can attack if normal states allow to attack
+		if (attacker.getStatusCondition().getCanMoveStatusCondition()) {
+			attacker.getStatusCondition().doEffectEphemeralsCondition(attacker.getEphemeralStates());
+		}
 	}
 
 	// -----------------------------
@@ -1190,7 +1230,7 @@ public class Game {
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "003,003,003";
-		String allPkIA = "524,524,524";
+		String allPkIA = "006,006,006";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1238,7 +1278,8 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 36).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 37).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -1281,7 +1322,7 @@ public class Game {
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {

@@ -1,12 +1,14 @@
 package pokemon.model;
 
+import java.util.ArrayList;
+
 import pokemon.enums.StatusConditions;
 
 public class State {
 
 	// ==================================== FIELDS
 	// ====================================
-	
+
 	private StatusConditions statusCondition;
 	private boolean canMoveEphemeralState;
 	private boolean canMoveStatusCondition;
@@ -19,7 +21,7 @@ public class State {
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
-	
+
 	public State() {
 		this.statusCondition = StatusConditions.NO_STATUS;
 		this.canMoveEphemeralState = true;
@@ -48,7 +50,7 @@ public class State {
 
 	// ==================================== GETTERS/SETTERS
 	// ====================================
-	
+
 	public StatusConditions getStatusCondition() {
 		return statusCondition;
 	}
@@ -99,7 +101,7 @@ public class State {
 
 	// ==================================== METHODS
 	// ====================================
-	
+
 	// -----------------------------
 	// Sets the amount of damage, mobility and effects at the end/beginning of each
 	// turn
@@ -110,27 +112,13 @@ public class State {
 		int attackProbability = (int) (Math.random() * 100);
 
 		switch (status) {
-		case CONFUSED:
-			break;
-		case TRAPPED:
-			// In all cases, can attack. This is just a reminder in case of problems
-			if (this.getNbTurns() == 0) {
-
-				this.setCanMoveEphemeralState(true);
-
-			} else {
-
-				this.setNbTurns(this.getNbTurns() - 1);
-				this.setCanMoveEphemeralState(true);
-			}
-			break;
 		case PERISH_SONG:
 			break;
 		case FROZEN:
 			if (this.getNbTurns() == 0) {
 
 				this.setStatusCondition(StatusConditions.NO_STATUS);
-				this.setCanMoveEphemeralState(true);
+				this.setCanMoveStatusCondition(true);
 				this.setPercentToBeDefrosted(10);
 
 				System.out.println(
@@ -144,7 +132,7 @@ public class State {
 
 					this.setNbTurns(0);
 					this.setStatusCondition(StatusConditions.NO_STATUS);
-					this.setCanMoveEphemeralState(true);
+					this.setCanMoveStatusCondition(true);
 					this.setPercentToBeDefrosted(10);
 
 					System.out.println(ANSI_CYAN + "Se descongeló (proba inf a " + this.getPercentToBeDefrosted()
@@ -153,7 +141,7 @@ public class State {
 				} else {
 
 					this.setNbTurns(this.getNbTurns() - 1);
-					this.setCanMoveEphemeralState(false);
+					this.setCanMoveStatusCondition(false);
 					this.setPercentToBeDefrosted(this.getPercentToBeDefrosted() + 10);
 
 					System.out.println(ANSI_CYAN + "No se descongeló (proba sup a " + this.getPercentToBeDefrosted()
@@ -179,7 +167,7 @@ public class State {
 			if (this.getNbTurns() == 0) {
 
 				this.setStatusCondition(StatusConditions.NO_STATUS);
-				this.setCanMoveEphemeralState(true);
+				this.setCanMoveStatusCondition(true);
 
 				System.out.println(ANSI_CYAN + "Ya no está paralizado" + ANSI_RESET);
 
@@ -189,7 +177,7 @@ public class State {
 				if (attackProbability <= 25) {
 
 					this.setNbTurns(this.getNbTurns() - 1);
-					this.setCanMoveEphemeralState(true);
+					this.setCanMoveStatusCondition(true);
 
 					System.out.println(ANSI_CYAN + "Faltan " + this.getNbTurns()
 							+ " turnos (paralizado - puede atacar): " + ANSI_RESET);
@@ -197,7 +185,7 @@ public class State {
 				} else {
 
 					this.setNbTurns(this.getNbTurns() - 1);
-					this.setCanMoveEphemeralState(false);
+					this.setCanMoveStatusCondition(false);
 
 					System.out.println(ANSI_CYAN + "Faltan " + this.getNbTurns()
 							+ " turnos (paralizado - no puede atacar): " + ANSI_RESET);
@@ -209,19 +197,102 @@ public class State {
 			if (this.getNbTurns() == 0) {
 
 				this.setStatusCondition(StatusConditions.NO_STATUS);
-				this.setCanMoveEphemeralState(true);
+				this.setCanMoveStatusCondition(true);
 
 			} else {
 
 				this.setNbTurns(this.getNbTurns() - 1);
-				this.setCanMoveEphemeralState(true);
+				this.setCanMoveStatusCondition(true);
 			}
 			break;
 		case NO_STATUS:
-			this.setCanMoveEphemeralState(true);
+			this.setCanMoveStatusCondition(true);
 			break;
 		case DEBILITATED:
 			break;
+		default:
+			break;
+		}
+	}
+
+	public void doEffectEphemeralsCondition(ArrayList<State> statuses) {
+		int attackProbability = (int) (Math.random() * 100);
+
+		for (State status : statuses) {
+
+			switch (status.getStatusCondition()) {
+			case CONFUSED:
+				if (status.getNbTurns() == 0) {
+					
+					status.setCanMoveEphemeralState(true);
+					
+				} else {
+					// Only can attack if proba <= 50%
+					if (attackProbability <= 50) {
+
+						status.setNbTurns(status.getNbTurns() - 1);
+						status.setCanMoveEphemeralState(true);
+
+						System.out.println(ANSI_CYAN + "Faltan " + status.getNbTurns()
+								+ " turnos (confuso - puede atacar): " + ANSI_RESET);
+
+					} else {
+
+						status.setNbTurns(status.getNbTurns() - 1);
+						status.setCanMoveEphemeralState(false);
+
+						System.out.println(ANSI_CYAN + "Faltan " + status.getNbTurns()
+								+ " turnos (confuso - no puede atacar): " + ANSI_RESET);
+					}
+				}
+				break;
+			case TRAPPED:
+				// In all cases, can attack. This is just a reminder in case of problems
+				if (status.getNbTurns() == 0) {
+
+					status.setCanMoveEphemeralState(true);
+
+				} else {
+
+					status.setNbTurns(status.getNbTurns() - 1);
+					status.setCanMoveEphemeralState(true);
+				}
+				break;
+			case PERISH_SONG:
+				break;
+			case ASLEEP:
+				break;
+			case SEEDED:
+				break;
+			case INFATUATED:
+				break;
+			case POISONED:
+				break;
+			case BADLY_POISONED:
+				break;
+			case CURSED:
+				break;
+			case TRAPPEDBYOWNATTACK:
+				if (status.getNbTurns() == 0) {
+
+					// this.setStatusCondition(StatusConditions.NO_STATUS);
+					status.setCanMoveEphemeralState(true);
+
+				} else {
+					status.setNbTurns(status.getNbTurns() - 1);
+					status.setCanMoveEphemeralState(true);
+				}
+				System.out
+						.println(ANSI_CYAN + "Turnos restantes con mismo ataque : " + status.getNbTurns() + ANSI_RESET);
+				break;
+			case NO_STATUS:
+				status.setCanMoveEphemeralState(true);
+				break;
+			case DEBILITATED:
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }

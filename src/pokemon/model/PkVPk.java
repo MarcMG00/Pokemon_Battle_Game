@@ -1487,20 +1487,50 @@ public class PkVPk {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
-			
+
 			// ---- RECOIL ----
 			recoil = dmg * 0.25f;
 
-		    this.getPkCombatting().setPs(this.getPkCombatting().getPs() - recoil);
+			this.getPkCombatting().setPs(this.getPkCombatting().getPs() - recoil);
 
-		    System.out.println(
-		        this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + 
-		        ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId()
+					+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
 
-		    // Check if attacker debilitated by recoil
-		    if (this.getPkCombatting().getPs() <= 0) {
-		        this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
-		    }
+			// Check if attacker debilitated by recoil
+			if (this.getPkCombatting().getPs() <= 0) {
+				this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Saña/Thrash
+		case 37:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Saña");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			if (!(this.getPkCombatting().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
+
+				nbTurnsHoldingStatus = (int) ((Math.random() * (3 - 2)) + 2);
+
+				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
+						+ nbTurnsHoldingStatus + " turnos.");
+
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus);
+
+				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
+			}
 			break;
 
 		// Forcejeo/Struggle

@@ -48,6 +48,11 @@ public class Pokemon {
 	private int attackStage;
 	private int specialAttackStage;
 
+	private static final String ANSI_CYAN = "\u001B[36m";
+	private static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+
 	// ==================================== CONSTRUCTORS
 	// ====================================
 
@@ -584,13 +589,13 @@ public class Pokemon {
 	// Modify conditions of Pokemon depending on States
 	// -----------------------------
 	public void checkEffectsStatusCondition(boolean isStartTurn) {
+
 		float reducePs = 0;
+		int attackProbability = (int) (Math.random() * 100);
 
 		if (!(this.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS)) {
 
 			switch (this.getStatusCondition().getStatusCondition()) {
-			case CONFUSED:
-				break;
 			case PERISH_SONG:
 				break;
 			// Can move or not
@@ -622,7 +627,7 @@ public class Pokemon {
 			// Modifies speed of Pokemon if can attack (reduces by 50%)
 			case PARALYZED:
 				if (isStartTurn) {
-					if (this.getStatusCondition().getCanMoveEphemeralState()) {
+					if (this.getStatusCondition().getCanMoveStatusCondition()) {
 
 						this.setSpeed((this.getSpeed() * 50) / 100);
 
@@ -673,14 +678,111 @@ public class Pokemon {
 		// Trapped
 		if ((this.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 			if (!isStartTurn) {
-				// Reduces 12,5% from his actual PS remaining
-				reducePs = this.getPs() * 0.125f;
+				if (this.getEphemeralStates().stream().filter(e -> e.getStatusCondition() == StatusConditions.TRAPPED)
+						.findFirst().get().getNbTurns() == 0) {
 
-				this.setPs(this.getPs() - reducePs);
+					// Remove TrappedByOwnAttack status
+					this.getEphemeralStates().remove(this.getEphemeralStates().stream()
+							.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPED).findFirst().get());
+				} else {
+
+					// Reduces 12,5% from his actual PS remaining
+					reducePs = this.getPs() * 0.125f;
+
+					this.setPs(this.getPs() - reducePs);
+
+					this.setCanAttack(true);
+
+					System.out.println(this.getName() + " está atado - PS actuales : " + this.getPs());
+				}
+			}
+		}
+
+		// Confused
+		if ((this.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
+			if (isStartTurn) {
+				if (this.getEphemeralStates().stream().filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED)
+						.findFirst().get().getNbTurns() == 0) {
+					this.setCanAttack(true);
+					// Remove TrappedByOwnAttack status
+					this.getEphemeralStates().remove(this.getEphemeralStates().stream()
+							.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().get());
+
+					System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
+							+ ") ya no está confuso. Puede atacar" + ANSI_RESET);
+
+				} else {
+					if (this.getEphemeralStates().stream()
+							.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().get()
+							.getCanMoveEphemeralState()) {
+						if (attackProbability <= 50) {
+							this.setCanAttack(true);
+						} else {
+							this.setCanAttack(false);
+							System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
+									+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 2)" + ANSI_RESET);
+
+							// TODO >> remove PS (looking for calcul damage => the same as an attack, but 40
+							// of power) ?
+						}
+					} else {
+						this.setCanAttack(false);
+						System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
+								+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 2)" + ANSI_RESET);
+
+						// TODO >> remove PS (looking for calcul damage => the same as an attack, but 40
+						// of power) ?
+					}
+				}
+			}
+		}
+
+		// Trapped by own attack
+		if ((this.getEphemeralStates().stream()
+				.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
+			if (isStartTurn) {
+				if (this.getEphemeralStates().stream()
+						.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED)) {
+
+					// Only can attack if proba <= 50%
+					if (attackProbability <= 50) {
+						this.setCanAttack(true);
+					} else {
+						// TODO >> remove some PS because of damage received from confused
+
+						this.setCanAttack(false);
+					}
+				} else {
+
+					this.setCanAttack(true);
+				}
+
+			} else {
+				if (this.getEphemeralStates().stream()
+						.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK).findFirst().get()
+						.getNbTurns() == 0 &&
+
+						!(this.getEphemeralStates().stream()
+								.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
+
+					// Remove TrappedByOwnAttack status
+					this.getEphemeralStates()
+							.remove(this.getEphemeralStates().stream()
+									.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK)
+									.findFirst().get());
+
+					int nbTurnsHoldingStatus = (int) ((Math.random() * (3 - 2)) + 2);
+
+					System.out.println(this.getName()
+							+ " se siente confuso (a causa de usar el mismo ataque). Estará confuso durante "
+							+ nbTurnsHoldingStatus + " turnos.");
+
+					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus);
+
+					this.addEstadoEfimero(confused);
+				}
 
 				this.setCanAttack(true);
-
-				System.out.println(this.getName() + " está atado - PS actuales : " + this.getPs());
 			}
 		}
 	}

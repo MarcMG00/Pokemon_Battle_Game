@@ -9,6 +9,7 @@ public enum StatusConditions {
 	  TRAPPED, // atrapdo
 	  SEEDED, // drenado
 	  PERISH_SONG, // canto mortal
+	  TRAPPEDBYOWNATTACK, // Solo puede usar este ataque durante unos turnos
 	  
 	  // Status conditions / Estados persitentes
 	  PARALYZED, // paralizado
