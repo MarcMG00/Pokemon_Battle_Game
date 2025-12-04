@@ -852,7 +852,7 @@ public class Game {
 
 		// Ephemeral states => only check can attack if normal states allow to attack
 		if (attacker.getStatusCondition().getCanMoveStatusCondition()) {
-			attacker.getStatusCondition().doEffectEphemeralsCondition(attacker.getEphemeralStates());
+			attacker.getStatusCondition().doEffectEphemeralsCondition(attacker.getEphemeralStates(), false);
 		}
 	}
 

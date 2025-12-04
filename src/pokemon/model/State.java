@@ -215,7 +215,10 @@ public class State {
 		}
 	}
 
-	public void doEffectEphemeralsCondition(ArrayList<State> statuses) {
+	public boolean doEffectEphemeralsCondition(ArrayList<State> statuses, boolean alreadyChecked) {
+
+		boolean canAttack = true;
+
 		int attackProbability = (int) (Math.random() * 100);
 
 		for (State status : statuses) {
@@ -223,14 +226,17 @@ public class State {
 			switch (status.getStatusCondition()) {
 			case CONFUSED:
 				if (status.getNbTurns() == 0) {
-					
+
 					status.setCanMoveEphemeralState(true);
-					
+
 				} else {
 					// Only can attack if proba <= 50%
 					if (attackProbability <= 50) {
 
-						status.setNbTurns(status.getNbTurns() - 1);
+						// Only decrease turns if not already checked
+						if (!alreadyChecked) {
+							status.setNbTurns(status.getNbTurns() - 1);
+						}
 						status.setCanMoveEphemeralState(true);
 
 						System.out.println(ANSI_CYAN + "Faltan " + status.getNbTurns()
@@ -238,13 +244,20 @@ public class State {
 
 					} else {
 
-						status.setNbTurns(status.getNbTurns() - 1);
+						if (!alreadyChecked) {
+							status.setNbTurns(status.getNbTurns() - 1);
+						}
 						status.setCanMoveEphemeralState(false);
 
 						System.out.println(ANSI_CYAN + "Faltan " + status.getNbTurns()
 								+ " turnos (confuso - no puede atacar): " + ANSI_RESET);
 					}
 				}
+
+				if (!status.getCanMoveEphemeralState()) {
+					canAttack = false; // If one state prevents movement → false
+				}
+
 				break;
 			case TRAPPED:
 				// In all cases, can attack. This is just a reminder in case of problems
@@ -254,21 +267,17 @@ public class State {
 
 				} else {
 
-					status.setNbTurns(status.getNbTurns() - 1);
+					if (!alreadyChecked) {
+						status.setNbTurns(status.getNbTurns() - 1);
+					}
 					status.setCanMoveEphemeralState(true);
 				}
 				break;
 			case PERISH_SONG:
 				break;
-			case ASLEEP:
-				break;
 			case SEEDED:
 				break;
 			case INFATUATED:
-				break;
-			case POISONED:
-				break;
-			case BADLY_POISONED:
 				break;
 			case CURSED:
 				break;
@@ -279,7 +288,9 @@ public class State {
 					status.setCanMoveEphemeralState(true);
 
 				} else {
-					status.setNbTurns(status.getNbTurns() - 1);
+					if (!alreadyChecked) {
+						status.setNbTurns(status.getNbTurns() - 1);
+					}
 					status.setCanMoveEphemeralState(true);
 				}
 				System.out
@@ -289,10 +300,16 @@ public class State {
 				status.setCanMoveEphemeralState(true);
 				break;
 			case DEBILITATED:
+				// Just in case in future these conditions block attacking
+				if (!status.getCanMoveEphemeralState()) {
+					canAttack = false;
+				}
 				break;
 			default:
 				break;
 			}
 		}
+
+		return canAttack;
 	}
 }

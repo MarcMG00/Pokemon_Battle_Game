@@ -593,6 +593,8 @@ public class Pokemon {
 		float reducePs = 0;
 		int attackProbability = (int) (Math.random() * 100);
 
+		this.setCanAttack(true);
+
 		if (!(this.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS)) {
 
 			switch (this.getStatusCondition().getStatusCondition()) {
@@ -669,10 +671,20 @@ public class Pokemon {
 			case NO_STATUS:
 				break;
 			case DEBILITATED:
+				// Jus in case Pokemon cannot attack
+				this.setCanAttack(false);
 				break;
 			default:
 				break;
 			}
+		}
+
+		boolean ephemeralsAllowAttack = this.getStatusCondition().doEffectEphemeralsCondition(this.getEphemeralStates(),
+				true);
+
+		if (!ephemeralsAllowAttack) {
+			// If any ephemeral state blocks attacking, stop attack
+			this.setCanAttack(false);
 		}
 
 		// Trapped
@@ -691,8 +703,9 @@ public class Pokemon {
 
 					this.setPs(this.getPs() - reducePs);
 
-					this.setCanAttack(true);
-
+					if (this.getCanAttack()) {
+						this.setCanAttack(true);
+					}
 					System.out.println(this.getName() + " está atado - PS actuales : " + this.getPs());
 				}
 			}
@@ -716,23 +729,37 @@ public class Pokemon {
 							.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().get()
 							.getCanMoveEphemeralState()) {
 						if (attackProbability <= 50) {
-							this.setCanAttack(true);
+							if (this.getCanAttack()) {
+								this.setCanAttack(true);
+							}
 						} else {
 							this.setCanAttack(false);
-							System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
-									+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 2)" + ANSI_RESET);
 
-							// TODO >> remove PS (looking for calcul damage => the same as an attack, but 40
-							// of power) ?
+							// Remove PS
+							float confusedDmg = doConfusedDammage();
+							this.setPs(this.getPs() - confusedDmg);
+
+							System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
+									+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 1)"
+									+ " PS restados : " + confusedDmg + ANSI_RESET);
 						}
 					} else {
 						this.setCanAttack(false);
-						System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
-								+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 2)" + ANSI_RESET);
 
-						// TODO >> remove PS (looking for calcul damage => the same as an attack, but 40
-						// of power) ?
+						// Remove PS
+						float confusedDmg = doConfusedDammage();
+						this.setPs(this.getPs() - confusedDmg);
+
+						System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
+								+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 2)"
+								+ " PS restados : " + confusedDmg + ANSI_RESET);
 					}
+				}
+
+				// Get status debilitated for Pokemon combating
+				if (this.getPs() <= 0) {
+
+					this.setStatusCondition(new State(StatusConditions.DEBILITATED));
 				}
 			}
 		}
@@ -746,15 +773,26 @@ public class Pokemon {
 
 					// Only can attack if proba <= 50%
 					if (attackProbability <= 50) {
-						this.setCanAttack(true);
+						if (this.getCanAttack()) {
+							this.setCanAttack(true);
+						}
 					} else {
-						// TODO >> remove some PS because of damage received from confused
 
 						this.setCanAttack(false);
+
+						// Remove PS
+						float confusedDmg = doConfusedDammage();
+						this.setPs(this.getPs() - confusedDmg);
+
+						System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
+								+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 2)"
+								+ " PS restados : " + confusedDmg + ANSI_RESET);
 					}
 				} else {
 
-					this.setCanAttack(true);
+					if (this.getCanAttack()) {
+						this.setCanAttack(true);
+					}
 				}
 
 			} else {
@@ -772,7 +810,7 @@ public class Pokemon {
 									.findFirst().get());
 
 					// Random number between 2 and 3
-					int nbTurnsHoldingStatus = ((int)(Math.random() * 2) + 2);
+					int nbTurnsHoldingStatus = ((int) (Math.random() * 2) + 2);
 
 					System.out.println(this.getName()
 							+ " se siente confuso (a causa de usar el mismo ataque). Estará confuso durante "
@@ -783,7 +821,9 @@ public class Pokemon {
 					this.addEstadoEfimero(confused);
 				}
 
-				this.setCanAttack(true);
+				if (this.getCanAttack()) {
+					this.setCanAttack(true);
+				}
 			}
 		}
 	}
@@ -823,5 +863,22 @@ public class Pokemon {
 	// -----------------------------
 	public Attack getNextMovementById(int id) {
 		return this.getFourPrincipalAttacks().stream().filter(a -> a.getId() == id).findFirst().orElse(null);
+	}
+
+	// -----------------------------
+	// Apply confusion damage
+	// -----------------------------
+	public float doConfusedDammage() {
+
+		// There is a random variation when attacking (the total damage is not the same
+		// every time) 289 - 291
+		int randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
+
+		float dmg = 0;
+
+		// Apply damage
+		dmg = ((((40f + 2f) * (40f * (this.getAttack() / this.getDef()))) / 50f) + 2f) * (randomVariation/100f);
+
+		return dmg;
 	}
 }

@@ -1576,9 +1576,7 @@ public class PkVPk {
 
 		// There is a random variation when attacking (the total damage is not the same
 		// every time)
-		int randomVariation;
-
-		randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
+		int randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
 
 		boolean isSpecialAttack = this.getPkCombatting().getNextMovement().getBases().contains("especial");
 
