@@ -551,7 +551,7 @@ public class PkVPk {
 
 					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
 
-					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
+					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus + 1);
 
 					this.getPkFacing().setStatusCondition(burned);
 
@@ -603,7 +603,7 @@ public class PkVPk {
 
 						nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
 
-						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
+						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus + 1);
 
 						this.getPkFacing().setStatusCondition(frozen);
 
@@ -653,7 +653,7 @@ public class PkVPk {
 
 					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
 
-					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
+					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus + 1);
 
 					this.getPkFacing().setStatusCondition(paralyzed);
 
@@ -976,7 +976,7 @@ public class PkVPk {
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
@@ -1400,7 +1400,7 @@ public class PkVPk {
 
 					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
 
-					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
+					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus + 1);
 
 					this.getPkFacing().setStatusCondition(paralyzed);
 
@@ -1444,7 +1444,7 @@ public class PkVPk {
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
@@ -1527,7 +1527,7 @@ public class PkVPk {
 				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
 						+ nbTurnsHoldingStatus + " turnos.");
 
-				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus);
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
 
 				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
 			}
@@ -1587,9 +1587,9 @@ public class PkVPk {
 			// Apply special damage
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
-					* (((0.2f * 100 + 1) * this.getPkCombatting().getEffectiveSpecialAttack()
+					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveSpecialAttack()
 							* this.getPkCombatting().getNextMovement().getPower())
-							/ (25 * this.getPkFacing().getSpecialDefense()) + 2);
+							/ (25f * this.getPkFacing().getSpecialDefense()) + 2f);
 
 			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
 					+ this.getPkFacing().getId() + ")" + ") : " + dmg);
@@ -1599,9 +1599,9 @@ public class PkVPk {
 
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
-					* (((0.2f * 100 + 1) * this.getPkCombatting().getEffectiveAttack()
-							* this.getPkCombatting().getNextMovement().getPower()) / (25 * this.getPkFacing().getDef())
-							+ 2);
+					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveAttack()
+							* this.getPkCombatting().getNextMovement().getPower()) / (25f * this.getPkFacing().getDef())
+							+ 2f);
 
 			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
 					+ this.getPkFacing().getId() + ")" + ") : " + dmg);

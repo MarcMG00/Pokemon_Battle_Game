@@ -816,7 +816,7 @@ public class Pokemon {
 							+ " se siente confuso (a causa de usar el mismo ataque). Estará confuso durante "
 							+ nbTurnsHoldingStatus + " turnos.");
 
-					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus);
+					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
 
 					this.addEstadoEfimero(confused);
 				}
