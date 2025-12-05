@@ -47,6 +47,7 @@ public class Pokemon {
 	private boolean hasRetreated;
 	private int attackStage;
 	private int specialAttackStage;
+	private boolean canCheckConditions = true;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -493,6 +494,14 @@ public class Pokemon {
 		this.specialAttackStage = specialAttackStage;
 	}
 
+	public boolean getCanCheckConditions() {
+		return canCheckConditions;
+	}
+
+	public void setCanCheckConditions(boolean canCheckConditions) {
+		this.canCheckConditions = canCheckConditions;
+	}
+
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
 		this.normalAbilities.add(ablty);
@@ -629,16 +638,22 @@ public class Pokemon {
 			// Modifies speed of Pokemon if can attack (reduces by 50%)
 			case PARALYZED:
 				if (isStartTurn) {
-					if (this.getStatusCondition().getCanMoveStatusCondition()) {
-
-						this.setSpeed((this.getSpeed() * 50) / 100);
-
-						this.setCanAttack(true);
-
-					} else {
-
+					if (!this.getStatusCondition().getCanMoveStatusCondition()) {
 						this.setCanAttack(false);
+					} else {
+						if (this.getStatusCondition().getCanMoveStatusCondition()) {
+
+							this.setSpeed((this.getSpeed() * 50) / 100);
+
+							this.setCanAttack(true);
+
+						} else {
+
+							this.setCanAttack(false);
+						}
 					}
+				} else {
+					this.setCanAttack(true);
 				}
 				break;
 			// Reduces current PS by 6.25% and damage by 50%
@@ -877,7 +892,7 @@ public class Pokemon {
 		float dmg = 0;
 
 		// Apply damage
-		dmg = ((((40f + 2f) * (40f * (this.getAttack() / this.getDef()))) / 50f) + 2f) * (randomVariation/100f);
+		dmg = ((((40f + 2f) * (40f * (this.getAttack() / this.getDef()))) / 50f) + 2f) * (randomVariation / 100f);
 
 		return dmg;
 	}
