@@ -654,6 +654,7 @@ public class Pokemon {
 					}
 				} else {
 					this.setCanAttack(true);
+					this.getStatusCondition().setCanMoveStatusCondition(true);
 				}
 				break;
 			// Reduces current PS by 6.25% and damage by 50%

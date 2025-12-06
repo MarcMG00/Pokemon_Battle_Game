@@ -1,6 +1,6 @@
 package pokemon.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import pokemon.enums.StatusConditions;
 
@@ -215,96 +215,86 @@ public class State {
 		}
 	}
 
-	public boolean doEffectEphemeralsCondition(ArrayList<State> statuses, boolean alreadyChecked) {
+	public boolean doEffectEphemeralsCondition(List<State> statuses, boolean alreadyChecked) {
 
 		boolean canAttack = true;
 
-		int attackProbability = (int) (Math.random() * 100);
-
 		for (State status : statuses) {
 
-			switch (status.getStatusCondition()) {
-			case CONFUSED:
-				if (status.getNbTurns() == 0) {
+			StatusConditions sc = status.getStatusCondition();
 
+			switch (sc) {
+
+			case CONFUSED: {
+
+				if (status.getNbTurns() <= 0) {
 					status.setCanMoveEphemeralState(true);
-
-				} else {
-					// Only can attack if proba <= 50%
-					if (attackProbability <= 50) {
-
-						// Only decrease turns if not already checked
-						if (!alreadyChecked) {
-							status.setNbTurns(status.getNbTurns() - 1);
-						}
-						status.setCanMoveEphemeralState(true);
-
-						System.out.println(ANSI_CYAN + "Faltan " + status.getNbTurns()
-								+ " turnos (confuso - puede atacar): " + ANSI_RESET);
-
-					} else {
-
-						if (!alreadyChecked) {
-							status.setNbTurns(status.getNbTurns() - 1);
-						}
-						status.setCanMoveEphemeralState(false);
-
-						System.out.println(ANSI_CYAN + "Faltan " + status.getNbTurns()
-								+ " turnos (confuso - no puede atacar): " + ANSI_RESET);
-					}
+					break;
 				}
 
-				if (!status.getCanMoveEphemeralState()) {
-					canAttack = false; // If one state prevents movement → false
+				// Tirada independiente para confusión
+				int roll = (int) (Math.random() * 100);
+
+				boolean willAttack = roll < 50; // 50% probabilidad de atacar
+
+				if (!alreadyChecked) {
+					status.setNbTurns(status.getNbTurns() - 1);
 				}
 
-				break;
-			case TRAPPED:
-				// In all cases, can attack. This is just a reminder in case of problems
-				if (status.getNbTurns() == 0) {
+				status.setCanMoveEphemeralState(willAttack);
 
-					status.setCanMoveEphemeralState(true);
-
+				if (willAttack) {
+					System.out.println(
+							ANSI_CYAN + "[Confusión] Ataca. Turnos restantes: " + status.getNbTurns() + ANSI_RESET);
 				} else {
-
-					if (!alreadyChecked) {
-						status.setNbTurns(status.getNbTurns() - 1);
-					}
-					status.setCanMoveEphemeralState(true);
+					System.out.println(ANSI_CYAN + "[Confusión] Se hiere a sí mismo. Turnos restantes: "
+							+ status.getNbTurns() + ANSI_RESET);
+					canAttack = false;
 				}
 				break;
+			}
+
+			case TRAPPED: {
+
+				if (!alreadyChecked && status.getNbTurns() > 0) {
+					status.setNbTurns(status.getNbTurns() - 1);
+				}
+
+				status.setCanMoveEphemeralState(true);
+				break;
+			}
+
+			case TRAPPEDBYOWNATTACK: {
+
+				if (!alreadyChecked && status.getNbTurns() > 0) {
+					status.setNbTurns(status.getNbTurns() - 1);
+				}
+
+				status.setCanMoveEphemeralState(true);
+				System.out.println(
+						ANSI_CYAN + "Turnos restantes atacando el mismo ataque: " + status.getNbTurns() + ANSI_RESET);
+				break;
+			}
+
 			case PERISH_SONG:
-				break;
 			case SEEDED:
-				break;
 			case INFATUATED:
-				break;
 			case CURSED:
+				// Estos estados no bloquean atacar en tu sistema
+				status.setCanMoveEphemeralState(true);
 				break;
-			case TRAPPEDBYOWNATTACK:
-				if (status.getNbTurns() == 0) {
 
-					// this.setStatusCondition(StatusConditions.NO_STATUS);
-					status.setCanMoveEphemeralState(true);
-
-				} else {
-					if (!alreadyChecked) {
-						status.setNbTurns(status.getNbTurns() - 1);
-					}
-					status.setCanMoveEphemeralState(true);
-				}
-				System.out
-						.println(ANSI_CYAN + "Turnos restantes con mismo ataque : " + status.getNbTurns() + ANSI_RESET);
-				break;
 			case NO_STATUS:
 				status.setCanMoveEphemeralState(true);
 				break;
+
 			case DEBILITATED:
-				// Just in case in future these conditions block attacking
+				// No debería ocurrir aquí, pero lo dejamos por si acaso
 				if (!status.getCanMoveEphemeralState()) {
 					canAttack = false;
 				}
 				break;
+
 			default:
 				break;
 			}
@@ -312,4 +302,5 @@ public class State {
 
 		return canAttack;
 	}
+
 }
