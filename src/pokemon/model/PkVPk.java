@@ -649,7 +649,7 @@ public class PkVPk {
 
 				System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
-				if (probabilityGettingStatus <= 10) {
+				if (probabilityGettingStatus >= 10) {
 
 					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
 
@@ -1582,8 +1582,14 @@ public class PkVPk {
 
 		float dmg = 0;
 
-		if (isSpecialAttack) {
-
+//		System.out.println(ANSI_PURPLE + "Bonus : " + this.getPkCombatting().getNextMovement().getBonus() + ANSI_RESET);
+//		System.out.println(ANSI_PURPLE + "Effectiveness : " + this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() + ANSI_RESET);
+//		System.out.println(ANSI_PURPLE + "Effective attack : " + this.getPkCombatting().getEffectiveAttack() + ANSI_RESET);
+//		System.out.println(ANSI_PURPLE + "Power : " + this.getPkCombatting().getNextMovement().getPower() + ANSI_RESET);
+//		System.out.println(ANSI_PURPLE + "Def Pk facing : " + this.getPkFacing().getDef() + ANSI_RESET);
+//		System.out.println(ANSI_PURPLE + "Variation : " + randomVariation + ANSI_RESET);
+		
+		if (isSpecialAttack) {			
 			// Apply special damage
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation

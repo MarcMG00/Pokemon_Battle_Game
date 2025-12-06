@@ -547,7 +547,7 @@ public class Player {
 			}
 
 			// Set effectiveness & bonus
-			this.getPkCombatting().getNextMovement().setEffectivenessAgainstPkFacing(21f);
+			this.getPkCombatting().getNextMovement().setEffectivenessAgainstPkFacing(2f);
 			this.getPkCombatting().getNextMovement().setBonus(1f);
 			
 			System.out.println(this.getPkCombatting().getNextMovement().getName());
