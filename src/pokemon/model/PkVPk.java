@@ -1553,7 +1553,7 @@ public class PkVPk {
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
 			// Pokemon combating receives 25% of damage from his PS remaining
-			this.getPkCombatting().setPs(this.getPkCombatting().getPs() - (this.getPkCombatting().getPs() * 0.25f));
+			this.getPkCombatting().setPs(this.getPkCombatting().getInitialPs() - (this.getPkCombatting().getInitialPs() * 0.25f));
 
 			if (this.getPkFacing().getPs() <= 0) {
 
