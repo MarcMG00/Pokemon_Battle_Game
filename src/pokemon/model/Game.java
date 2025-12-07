@@ -730,7 +730,7 @@ public class Game {
 
 		boolean IAFirstTurnOfCharged = pkIA.getNextMovement() != null
 				&& pkIA.getNextMovement().getCategory() == AttackCategory.CHARGED
-				&& !pkIA.getIsChargingAttackForNextRound();
+				&& pkIA.getIsChargingAttackForNextRound();
 
 		// 1) Evaluate normal statuses (these set canMoveStatusCondition and other
 		// permanent changes)
@@ -739,36 +739,13 @@ public class Game {
 		// "first turn of a charging attack executes regardless of ephemeral states, the
 		// second turn is checked."
 		if (playerFirstTurnOfCharged) {
-			evaluateNormalStatusForTurn(pkPlayer, isStartTurn);
+			evaluateStatusStartOfTurn(pkPlayer);
+			// canAttackEvaluatingAllStatesToAttack(pkPlayer);
 		}
-		evaluateNormalStatusForTurn(pkIA, isStartTurn);
-
-		// 2) Decide ephemeral checks for order/ability:
-		// - If it's the FIRST TURN of a charged attack we DO NOT call ephemeral checks
-		// for that Pokemon now.
-		// - If it's not first-turn-of-charged, we evaluate ephemerals (with
-		// alreadyChecked=true so we don't double-decrement)
-		boolean playerEphemeralAllows = true;
-		boolean IAEphemeralAllows = true;
-
-		if (playerFirstTurnOfCharged) {
-			playerEphemeralAllows = evaluateEphemeralStatesForOrder(pkPlayer, /* alreadyChecked= */true);
+		if (IAFirstTurnOfCharged) {
+			evaluateStatusStartOfTurn(pkIA);
+			// canAttackEvaluatingAllStatesToAttack(pkIA);
 		}
-		if (!IAFirstTurnOfCharged) {
-			IAEphemeralAllows = evaluateEphemeralStatesForOrder(pkIA, /* alreadyChecked= */true);
-		}
-
-		// Set canAttack according to combined results (normal + ephemeral)
-		pkPlayer.setCanAttack(pkPlayer.getStatusCondition().getCanMoveStatusCondition() && playerEphemeralAllows);
-		pkIA.setCanAttack(pkIA.getStatusCondition().getCanMoveStatusCondition() && IAEphemeralAllows);
-
-		// 3) Now apply start-of-turn effects that should run before the actual attack
-		// execution
-		// (these may decrement ephemeral counters only if we haven't already done it)
-		// For charged-first-turn we must not decrement ephemeral counts yet (we will
-		// decrement later during reset)
-		applyEffectStatusConditionForExecution(pkPlayer, isStartTurn, !playerFirstTurnOfCharged);
-		applyEffectStatusConditionForExecution(pkIA, isStartTurn, !IAFirstTurnOfCharged);
 
 		// Prepare player chosen attack (this sets nextMovement etc.)
 		this.getPlayer().prepareBestAttackPlayer(attackId);
@@ -781,7 +758,7 @@ public class Game {
 		// Prepare IA (select move) only if not charging and only after status
 		// evaluation
 		if (!IAFirstTurnOfCharged) {
-			prepareIAIfPossible();
+			prepareIAIfPossible(pkIA);
 		}
 
 		// 4) Execute the attack sequence (ordering uses current canAttack and speed)
@@ -790,8 +767,11 @@ public class Game {
 		// 5) At the end of the turn we must perform end-of-turn ephemeral effects and
 		// reduce counters.
 		// resetEffectStatusCondition will perform the "end-turn" logic.
-		resetEffectStatusCondition(pkPlayer);
-		resetEffectStatusCondition(pkIA);
+		reduceNumberTurnsEffects(pkPlayer);
+		reduceNumberTurnsEffects(pkIA);
+
+		pkPlayer.restartParametersEffect();
+		pkIA.restartParametersEffect();
 	}
 
 	/*
@@ -799,10 +779,12 @@ public class Game {
 	 * a Pokemon This will call the State logic that modifies
 	 * canMoveStatusCondition, speed adjustments, etc. -------------------------
 	 */
-	private void evaluateNormalStatusForTurn(Pokemon pk, boolean isStartTurn) {
+	private void evaluateStatusStartOfTurn(Pokemon pk) {
 		// This calls State.doEffectStatusCondition which manages normal states
 		// (PARALYZED, FROZEN, etc.)
-		pk.getStatusCondition().doEffectStatusCondition(pk.getStatusCondition().getStatusCondition());
+		pk.doFrozenEffect();
+		pk.doBurnedEffectStartTurn();
+		pk.doParalyzedEffect();
 	}
 
 	/*
@@ -812,40 +794,30 @@ public class Game {
 	 * ephemerals allow attack (no ephemeral prevented movement)
 	 * -------------------------
 	 */
-	private boolean evaluateEphemeralStatesForOrder(Pokemon pk, boolean alreadyChecked) {
+	private void canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
 
-		List<State> orderRelevant = pk.getEphemeralStates().stream()
-				.filter(e -> e.getStatusCondition() == StatusConditions.PARALYZED
-						|| e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK)
-				.collect(Collectors.toList());
+		pk.canAttackFrozen();
+		pk.canAttackParalyzed();
+		boolean canAttackConfused = pk.canAttackConfused();
 
-		return pk.getStatusCondition().doEffectEphemeralsCondition(orderRelevant, alreadyChecked);
+		boolean canAttack = pk.getCanAttack() && canAttackConfused;
+
+		pk.setCanAttack(canAttack);
 	}
 
 	/*
-	 * ------------------------- Helper: applyEffectStatusConditionForExecution This
-	 * wrapper calls the original applyEffectStatusCondition, but controls whether
-	 * ephemeral counters are decremented during the "start of turn" phase. If
-	 * shouldDecrementEphemeral==false then ephemeral counters are left untouched
-	 * now. -------------------------
+	 * ------------------------- Helper: Evaluate ephemeral states BEFORE
+	 * ordering/attack decision alreadyChecked: if true, method should NOT decrement
+	 * nbTurns for ephemeral statuses (we already will do it later) Returns: true if
+	 * ephemerals allow attack (no ephemeral prevented movement)
+	 * -------------------------
 	 */
-	private void applyEffectStatusConditionForExecution(Pokemon pk, boolean isStartTurn,
-			boolean shouldDecrementEphemeral) {
-		// Apply normal start-of-turn effects
-		applyEffectStatusCondition(pk);
+	private void reduceNumberTurnsEffects(Pokemon pk) {
 
-		// If we should decrement ephemeral counters now, call the ephemeral handler
-		// with alreadyChecked = false
-		// so it will decrement counters (this matches the "end-of-turn" style for
-		// ephemerals that you used previously).
-		if (shouldDecrementEphemeral) {
-			pk.getStatusCondition().doEffectEphemeralsCondition(pk.getEphemeralStates(), false);
-		} else {
-			// We still want ephemeral states to be evaluated for side-effects that don't
-			// decrement turns.
-			// For that call with alreadyChecked = true (no decrement).
-			pk.getStatusCondition().doEffectEphemeralsCondition(pk.getEphemeralStates(), true);
-		}
+		pk.doTrappedEffect();
+		pk.reduceBurnedTurn();
+		pk.reduceTrappedTurn();
+		pk.putConfusedStateIfNeeded();
 	}
 
 	// -----------------------------
@@ -860,9 +832,7 @@ public class Game {
 		if (!changed)
 			return false; // player cancelled the change (return to start options)
 
-		checkCanAttackFromStatusCondition(pkIA);
-
-		prepareIAIfPossible();
+		prepareIAIfPossible(pkIA);
 
 		handleChangeSequence(sc); // only IA attacks
 
@@ -875,7 +845,7 @@ public class Game {
 			return true;
 		}
 
-		resetEffectStatusCondition(this.getIA().getPkCombatting());
+		reduceNumberTurnsEffects(pkIA);
 
 		return true;
 	}
@@ -884,10 +854,11 @@ public class Game {
 	// Prepare attack from IA if can attack (after checking status conditions from
 	// the beginning of the turn)
 	// -----------------------------
-	private void prepareIAIfPossible() {
-		applyEffectStatusCondition(this.getIA().getPkCombatting());
+	private void prepareIAIfPossible(Pokemon pkIA) {
+		evaluateStatusStartOfTurn(pkIA);
+		canAttackEvaluatingAllStatesToAttack(pkIA);
 
-		if (this.getIA().getPkCombatting().getIsChargingAttackForNextRound()) {
+		if (pkIA.getIsChargingAttackForNextRound()) {
 			return; // if charging an attack (like fly), cannot choose another attack
 		}
 
@@ -965,41 +936,6 @@ public class Game {
 	}
 
 	// -----------------------------
-	// Check if Pokemon combating can attack due to effect from status condition
-	// -----------------------------
-	private void checkCanAttackFromStatusCondition(Pokemon attacker) {
-		// Evaluate normal status first (this sets canMoveStatusCondition etc in State)
-		attacker.getStatusCondition().doEffectStatusCondition(attacker.getStatusCondition().getStatusCondition());
-
-		// Evaluate ephemeral states but do not decrement here: caller chooses
-		// alreadyChecked flag.
-		// Default behavior: caller will explicitly call doEffectEphemeralsCondition
-		// with the right alreadyChecked flag.
-		// To keep compatibility, if someone calls this method blindly we treat as
-		// "alreadyChecked=true" (no decrement).
-		attacker.getStatusCondition().doEffectEphemeralsCondition(attacker.getEphemeralStates(), true);
-	}
-
-	// -----------------------------
-	// Apply effect of status condition at the beginning of the turn for Pokemon
-	// combating
-	// -----------------------------
-	private void applyEffectStatusCondition(Pokemon attacker) {
-		// Start-of-turn effects: pass true to indicate start of turn
-		attacker.checkEffectsStatusCondition(true);
-	}
-
-	// -----------------------------
-	// Apply effect of status condition at the end of the turn for Pokemon
-	// combating
-	// -----------------------------
-	private void resetEffectStatusCondition(Pokemon attacker) {
-		// End-of-turn effects: pass false to indicate end of turn (this should
-		// decrement where appropriate)
-		attacker.checkEffectsStatusCondition(false);
-	}
-
-	// -----------------------------
 	// Player attack first
 	// -----------------------------
 	private boolean playerCanAttackFirst() {
@@ -1054,12 +990,11 @@ public class Game {
 			return true;
 		}
 
-		if (pk.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED)) {
-			boolean canAttackNow = checkConfusionEffect(pk);
-			if (!canAttackNow) {
-				// Se hirió, termina su turno
-				return false;
-			}
+		canAttackEvaluatingAllStatesToAttack(pk);
+
+		if (!pk.getCanAttack()) {
+			// Maybe he is confused, so he cannot attack, etc. => ends his turn
+			return false;
 		}
 
 		// Execute attack for attacker
@@ -1111,13 +1046,14 @@ public class Game {
 	// -----------------------------
 	private void handlePlayerRetaliation() {
 
-		if (this.getPlayer().getPkCombatting().getStatusCondition()
-				.getStatusCondition() != StatusConditions.DEBILITATED) {
+		Pokemon pkPlayer = this.getPlayer().getPkCombatting();
+
+		if (pkPlayer.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 
 			PkVPk battleVS = new PkVPk(this.getPlayer(), this.getIA());
 			this.setBattleVS(battleVS);
 
-			if (this.getPlayer().getPkCombatting().getCanAttack()) {
+			if (pkPlayer.getCanAttack()) {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
@@ -1125,17 +1061,15 @@ public class Game {
 
 				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
 				// facing is invulnerable, etc.
-				if (this.getPlayer().getPkCombatting().getCanAttack()) {
+				if (pkPlayer.getCanAttack()) {
 
 					System.out.println(ANSI_GREEN + "Pokemon player can attack" + ANSI_RESET);
 					this.getBattleVS().doAttackEffect();
 				}
 			} else {
 				System.out.println(ANSI_RED + "Pokemon player cannot attack" + ANSI_RESET);
-				this.getPlayer().getPkCombatting().setIsChargingAttackForNextRound(false);
+				pkPlayer.setIsChargingAttackForNextRound(false);
 			}
-
-			player.getPkCombatting().restartParametersEffect();
 		} else {
 			System.out.println(ANSI_RED + "Pokemon player is debilitated" + ANSI_RESET);
 		}
@@ -1145,12 +1079,15 @@ public class Game {
 	// IA handle attack
 	// -----------------------------
 	private void handleIARetaliation() {
-		if (this.getIA().getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
+
+		Pokemon pkIA = this.getIA().getPkCombatting();
+
+		if (pkIA.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 
 			PkVPk battleVS = new PkVPk(IA, this.getPlayer());
 			this.setBattleVS(battleVS);
 
-			if (this.getIA().getPkCombatting().getCanAttack()) {
+			if (pkIA.getCanAttack()) {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
@@ -1158,7 +1095,7 @@ public class Game {
 
 				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
 				// facing is invulnerable, etc.
-				if (this.getIA().getPkCombatting().getCanAttack()) {
+				if (pkIA.getCanAttack()) {
 
 					System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
 					this.getBattleVS().doAttackEffect();
@@ -1166,9 +1103,8 @@ public class Game {
 
 			} else {
 				System.out.println(ANSI_RED + "Pokemon IA cannot attack" + ANSI_RESET);
+				pkIA.setIsChargingAttackForNextRound(false);
 			}
-
-			this.getIA().getPkCombatting().restartParametersEffect();
 		} else {
 
 			System.out.println(ANSI_RED + "Pokemon IA is debilitated" + ANSI_RESET);
@@ -1367,86 +1303,14 @@ public class Game {
 		defender.setForceSwitchPokemon(false);
 	}
 
-	/**
-	 * Maneja el efecto de confusión. Devuelve true si el Pokémon puede atacar.
-	 * Devuelve false si se hirió o murió.
-	 */
-	private boolean checkConfusionEffect(Pokemon pk) {
-
-		// Buscar estado de confusión
-		State confusion = pk.getEphemeralStates().stream()
-				.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().orElse(null);
-
-		if (confusion == null)
-			return true; // no confusión => puede atacar
-
-		System.out.println(pk.getName() + " está confundido...");
-
-		// 50% probabilidad de atacar
-		boolean hurtsItself = Math.random() < 0.50;
-
-		if (hurtsItself) {
-			System.out.println(pk.getName() + " está tan confundido que se hace daño a sí mismo!");
-
-			// Daño estándar de confusión (como un golpe físico de potencia 40)
-			float damage = doConfusedDammage(pk);
-
-			pk.setPs(pk.getPs() - damage);
-
-			System.out.println(pk.getName() + " sufrió " + damage + " puntos de daño por confusión.");
-			if (pk.getPs() <= 0) {
-				pk.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
-				System.out.println(pk.getName() + " quedó debilitado por la confusión!");
-				return false; // muere => no puede seguir
-			}
-
-			// Reducir turno de estado
-			confusion.setNbTurns(confusion.getNbTurns() - 1);
-
-			if (confusion.getNbTurns() <= 0) {
-				pk.getEphemeralStates().remove(confusion);
-				System.out.println(pk.getName() + " ya no está confundido.");
-			}
-
-			return false; // se hirió => no ataca este turno
-		}
-
-		System.out.println(pk.getName() + " logró atacar pese a la confusión!");
-		pk.setCanAttack(true);
-
-		// Reducir turno solo si *no* se rompió el turno por muerte
-		confusion.setNbTurns(confusion.getNbTurns() - 1);
-
-		if (confusion.getNbTurns() <= 0) {
-			pk.getEphemeralStates().remove(confusion);
-			System.out.println(pk.getName() + " ya no está confundido.");
-		}
-
-		return true; // puede atacar
-	}
-
-	public float doConfusedDammage(Pokemon pk) {
-
-		// There is a random variation when attacking (the total damage is not the same
-		// every time) 289 - 291
-		int randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
-
-		float dmg = 0;
-
-		// Apply damage
-		dmg = ((((40f + 2f) * (40f * (pk.getAttack() / pk.getDef()))) / 50f) + 2f) * (randomVariation / 100f);
-
-		return dmg;
-	}
-
 	// -----------------------------
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
 	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee)
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "003,003,003";
-		String allPkIA = "006,006,006";
+		String allPkPlayer = "398,398,398";
+		String allPkIA = "466,466,466";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1489,13 +1353,13 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 37).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 37).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -1533,12 +1397,12 @@ public class Game {
 		for (Pokemon pk : this.getIA().getPokemon()) {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {

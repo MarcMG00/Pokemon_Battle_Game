@@ -47,7 +47,6 @@ public class Pokemon {
 	private boolean hasRetreated;
 	private int attackStage;
 	private int specialAttackStage;
-	private boolean canCheckConditions = true;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -494,14 +493,6 @@ public class Pokemon {
 		this.specialAttackStage = specialAttackStage;
 	}
 
-	public boolean getCanCheckConditions() {
-		return canCheckConditions;
-	}
-
-	public void setCanCheckConditions(boolean canCheckConditions) {
-		this.canCheckConditions = canCheckConditions;
-	}
-
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
 		this.normalAbilities.add(ablty);
@@ -591,257 +582,8 @@ public class Pokemon {
 
 		}
 
+		this.getStatusCondition().setCanMoveStatusCondition(true);
 		this.setCanAttack(true);
-	}
-
-	// -----------------------------
-	// Modify conditions of Pokemon depending on States
-	// -----------------------------
-	public void checkEffectsStatusCondition(boolean isStartTurn) {
-
-		float reducePs = 0;
-		int attackProbability = (int) (Math.random() * 100);
-
-		this.setCanAttack(true);
-
-		if (!(this.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS)) {
-
-			switch (this.getStatusCondition().getStatusCondition()) {
-			case PERISH_SONG:
-				break;
-			// Can move or not
-			case FROZEN:
-				if (isStartTurn) {
-					// Can attack at the moment cause he is not frozen anymore
-					if (this.getStatusCondition().getCanMoveStatusCondition()) {
-
-						this.setCanAttack(true);
-
-					} else {
-
-						this.setCanAttack(false);
-					}
-				}
-				break;
-			case ASLEEP:
-				break;
-			case SEEDED:
-				break;
-			case INFATUATED:
-				break;
-			case POISONED:
-				break;
-			case BADLY_POISONED:
-				break;
-			case CURSED:
-				break;
-			// Modifies speed of Pokemon if can attack (reduces by 50%)
-			case PARALYZED:
-				if (isStartTurn) {
-					if (!this.getStatusCondition().getCanMoveStatusCondition()) {
-						this.setCanAttack(false);
-					} else {
-						if (this.getStatusCondition().getCanMoveStatusCondition()) {
-
-							this.setSpeed((this.getSpeed() * 50) / 100);
-
-							this.setCanAttack(true);
-
-						} else {
-
-							this.setCanAttack(false);
-						}
-					}
-				} else {
-					this.setCanAttack(true);
-					this.getStatusCondition().setCanMoveStatusCondition(true);
-				}
-				break;
-			// Reduces current PS by 6.25% and damage by 50%
-			case BURNED:
-				if (isStartTurn) {
-
-					this.setAttack(this.getAttack() / 2);
-
-					this.setCanAttack(true);
-
-				} else {
-
-					reducePs = this.getPs() * 0.0625f;
-
-					this.setPs(this.getPs() - reducePs);
-
-					// Reset parameters (when a Pokemon is burned, at the end of the round, he will
-					// lose PS, so we will pass directly through the method)
-					if (this.getAttack() != this.getInitialAttack()) {
-
-						this.restartParametersEffect();
-					}
-
-					this.setCanAttack(true);
-
-					System.out.println(
-							this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
-				}
-				break;
-			case NO_STATUS:
-				break;
-			case DEBILITATED:
-				// Jus in case Pokemon cannot attack
-				this.setCanAttack(false);
-				break;
-			default:
-				break;
-			}
-		}
-
-		boolean ephemeralsAllowAttack = this.getStatusCondition().doEffectEphemeralsCondition(this.getEphemeralStates(),
-				true);
-
-		if (!ephemeralsAllowAttack) {
-			// If any ephemeral state blocks attacking, stop attack
-			this.setCanAttack(false);
-		}
-
-		// Trapped
-		if ((this.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
-			if (!isStartTurn) {
-				if (this.getEphemeralStates().stream().filter(e -> e.getStatusCondition() == StatusConditions.TRAPPED)
-						.findFirst().get().getNbTurns() == 0) {
-
-					// Remove TrappedByOwnAttack status
-					this.getEphemeralStates().remove(this.getEphemeralStates().stream()
-							.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPED).findFirst().get());
-				} else {
-
-					// Reduces 12,5% from his actual PS remaining
-					reducePs = this.getPs() * 0.125f;
-
-					this.setPs(this.getPs() - reducePs);
-
-					if (this.getCanAttack()) {
-						this.setCanAttack(true);
-					}
-					System.out.println(this.getName() + " está atado - PS actuales : " + this.getPs());
-				}
-			}
-		}
-
-		// Confused
-		if ((this.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
-			if (isStartTurn) {
-				if (this.getEphemeralStates().stream().filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED)
-						.findFirst().get().getNbTurns() == 0) {
-					this.setCanAttack(true);
-					// Remove TrappedByOwnAttack status
-					this.getEphemeralStates().remove(this.getEphemeralStates().stream()
-							.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().get());
-
-					System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
-							+ ") ya no está confuso. Puede atacar" + ANSI_RESET);
-
-				} else {
-					if (this.getEphemeralStates().stream()
-							.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().get()
-							.getCanMoveEphemeralState()) {
-						if (attackProbability <= 50) {
-							if (this.getCanAttack()) {
-								this.setCanAttack(true);
-							}
-						} else {
-							this.setCanAttack(false);
-
-							// Remove PS
-							float confusedDmg = doConfusedDammage();
-							this.setPs(this.getPs() - confusedDmg);
-
-							System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
-									+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 1)"
-									+ " PS restados : " + confusedDmg + ANSI_RESET);
-						}
-					} else {
-						this.setCanAttack(false);
-
-						// Remove PS
-						float confusedDmg = doConfusedDammage();
-						this.setPs(this.getPs() - confusedDmg);
-
-						System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
-								+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 2)"
-								+ " PS restados : " + confusedDmg + ANSI_RESET);
-					}
-				}
-
-				// Get status debilitated for Pokemon combating
-				if (this.getPs() <= 0) {
-
-					this.setStatusCondition(new State(StatusConditions.DEBILITATED));
-				}
-			}
-		}
-
-		// Trapped by own attack
-		if ((this.getEphemeralStates().stream()
-				.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
-			if (isStartTurn) {
-				if (this.getEphemeralStates().stream()
-						.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED)) {
-
-					// Only can attack if proba <= 50%
-					if (attackProbability <= 50) {
-						if (this.getCanAttack()) {
-							this.setCanAttack(true);
-						}
-					} else {
-
-						this.setCanAttack(false);
-
-						// Remove PS
-						float confusedDmg = doConfusedDammage();
-						this.setPs(this.getPs() - confusedDmg);
-
-						System.out.println(ANSI_CYAN + this.getName() + " (" + this.getId()
-								+ ") está confuso. Está tan confuso que se irió a sí mismo. (bloc 2)"
-								+ " PS restados : " + confusedDmg + ANSI_RESET);
-					}
-				} else {
-
-					if (this.getCanAttack()) {
-						this.setCanAttack(true);
-					}
-				}
-
-			} else {
-				if (this.getEphemeralStates().stream()
-						.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK).findFirst().get()
-						.getNbTurns() == 0 &&
-
-						!(this.getEphemeralStates().stream()
-								.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
-
-					// Remove TrappedByOwnAttack status
-					this.getEphemeralStates()
-							.remove(this.getEphemeralStates().stream()
-									.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK)
-									.findFirst().get());
-
-					// Random number between 2 and 3
-					int nbTurnsHoldingStatus = ((int) (Math.random() * 2) + 2);
-
-					System.out.println(this.getName()
-							+ " se siente confuso (a causa de usar el mismo ataque). Estará confuso durante "
-							+ nbTurnsHoldingStatus + " turnos.");
-
-					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
-
-					this.addEstadoEfimero(confused);
-				}
-
-				if (this.getCanAttack()) {
-					this.setCanAttack(true);
-				}
-			}
-		}
 	}
 
 	// -----------------------------
@@ -882,12 +624,192 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Apply confusion damage
+	// Gets if Pokemon can attack because of FROZEN state (check start of the turn
+	// after applying effect of Frozen)
+	// -----------------------------
+	public void canAttackFrozen() {
+
+		if (this.getStatusCondition().getStatusCondition() == StatusConditions.FROZEN) {
+			if (this.getStatusCondition().getCanMoveStatusCondition()) {
+				this.setCanAttack(true);
+			} else {
+				this.setCanAttack(false);
+			}
+		}
+	}
+
+	// -----------------------------
+	// Gets if Pokemon can attack because of PARALYZED state (check start of the
+	// turn)
+	// -----------------------------
+	public void canAttackParalyzed() {
+
+		if (this.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
+
+			State paralyzedState = this.getStatusCondition();
+
+			if (paralyzedState.getCanMoveStatusCondition()) {
+				this.setCanAttack(true);
+
+				System.out.println(ANSI_CYAN + this.getName() + " => paralizado - puede atacar" + ANSI_RESET);
+			} else {
+				this.setCanAttack(false);
+
+				System.out.println(ANSI_CYAN + this.getName() + " => paralizado - no puede atacar" + ANSI_RESET);
+			}
+		}
+	}
+
+	// -----------------------------
+	// Gets if Pokemon can attack because of CONFUSION state (check start of the
+	// turn)
+	// -----------------------------
+	public boolean canAttackConfused() {
+		boolean canAttackConfused = true;
+
+		// Get confused state
+		State confusedState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().orElse(null);
+
+		if (confusedState != null) {
+
+			confusedState.setNbTurns(confusedState.getNbTurns() - 1);
+
+			if (confusedState.getNbTurns() <= 0) {
+				this.getEphemeralStates().remove(confusedState);
+
+				System.out.println(this.getName() + " ya no está confuso!");
+			} else {
+				// 50% of probabilities to attack
+				boolean hurtsItself = Math.random() < 0.50;
+
+				if (hurtsItself) {
+					System.out.println(this.getName() + " está confuso...");
+					System.out.println(this.getName() + " está tan confuso que se hace dañó a sí mismo!");
+
+					// Standard damage with a power of 40 points
+					float damage = doConfusedDammage();
+
+					this.setPs(this.getPs() - damage);
+
+					if (this.getPs() <= 0) {
+						this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
+
+						System.out.println(this.getName() + " quedó debilitado por la confusión!");
+					}
+
+					canAttackConfused = false; // received damage or dies => cannot continue
+				} else {
+					System.out.println(this.getName() + " logró atacar pese a la confusión!");
+				}
+			}
+		}
+		return canAttackConfused;
+	}
+
+	// -----------------------------
+	// Do effect from FROZEN state (start of the turn before checking if can attack)
+	// -----------------------------
+	public void doFrozenEffect() {
+		if (this.getStatusCondition().getStatusCondition() == StatusConditions.FROZEN) {
+
+			State frozenState = this.getStatusCondition();
+
+			// Reduce number of turns
+			frozenState.setNbTurns(frozenState.getNbTurns() - 1);
+
+			if (frozenState.getNbTurns() == 0) {
+				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
+
+				System.out.println(this.getName() + "se descongeló!");
+			} else {
+				int getRidOfStatusProbability = (int) (Math.random() * 100);
+
+				// Only can be thawed if probability <= 10% (at the beginning) => after each
+				// turn, it goes to +10%
+				if (getRidOfStatusProbability <= frozenState.getPercentToBeDefrosted()) {
+					this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
+
+					System.out.println(ANSI_CYAN + this.getName() + " se descongeló! (probabilidad inferior a "
+							+ frozenState.getPercentToBeDefrosted() + ") : " + getRidOfStatusProbability + ANSI_RESET);
+				} else {
+					frozenState.setCanMoveStatusCondition(false);
+
+					// Adds +10% each turn not thawed
+					frozenState.setPercentToBeDefrosted(frozenState.getPercentToBeDefrosted() + 10);
+
+					System.out.println(ANSI_CYAN + this.getName() + " => congelado - no puede atacar)" + ANSI_RESET);
+				}
+			}
+		}
+	}
+
+	// -----------------------------
+	// Do effect from BURNED state (start of the turn)
+	// -----------------------------
+	public void doBurnedEffectStartTurn() {
+		if (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
+			// Reduces current damage by 50%
+			this.setAttack(this.getAttack() / 2);
+			this.getStatusCondition().setCanMoveStatusCondition(true);
+		}
+	}
+
+	// -----------------------------
+	// Do effect from BURNED state (end of the turn)
+	// -----------------------------
+	public void doBurnedEffectEndTurn() {
+		if (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
+
+			// Reduces current PS by 6.25%
+			float reducePs = this.getPs() * 0.0625f;
+
+			this.setPs(this.getPs() - reducePs);
+
+			System.out.println(this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
+
+			if (this.getPs() <= 0) {
+				this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
+			}
+		}
+	}
+
+	// -----------------------------
+	// Do effect from PARALYZED state (only start of the turn)
+	// -----------------------------
+	public void doParalyzedEffect() {
+		if (this.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
+			State paralyzedState = this.getStatusCondition();
+
+			// Reduce number of turns
+			paralyzedState.setNbTurns(paralyzedState.getNbTurns() - 1);
+
+			if (paralyzedState.getNbTurns() == 0) {
+				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
+
+				System.out.println(this.getName() + " ya no está paralizado!");
+			} else {
+				int attackProbability = (int) (Math.random() * 100);
+
+				if (attackProbability <= 25) {
+					// Modifies speed of Pokemon (reduces by 50%)
+					this.setSpeed((this.getSpeed() * 50) / 100);
+
+					this.getStatusCondition().setCanMoveStatusCondition(true);
+				} else {
+					this.getStatusCondition().setCanMoveStatusCondition(false);
+				}
+			}
+		}
+	}
+
+	// -----------------------------
+	// Apply confusion damage (only start of the turn)
 	// -----------------------------
 	public float doConfusedDammage() {
 
 		// There is a random variation when attacking (the total damage is not the same
-		// every time) 289 - 291
+		// every time)
 		int randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
 
 		float dmg = 0;
@@ -897,4 +819,97 @@ public class Pokemon {
 
 		return dmg;
 	}
+
+	// -----------------------------
+	// Do effect from TRAPPED state (only end of the turn)
+	// -----------------------------
+	public void doTrappedEffect() {
+		// Get trapped state
+		State trappedState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPED).findFirst().orElse(null);
+
+		if (trappedState != null) {
+
+			// Reduces 12,5% from his initial PS
+			float reducePs = this.getInitialPs() * 0.125f;
+
+			this.setPs(this.getPs() - reducePs);
+
+			System.out.println(this.getName() + " está atado y recibe daño)");
+		}
+	}
+
+	// -----------------------------
+	// Reduce number of turns of BURNED state (end of the turn)
+	// -----------------------------
+	public void reduceBurnedTurn() {
+		if (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
+
+			State burnedState = this.getStatusCondition();
+
+			// Reduce number of turns
+			burnedState.setNbTurns(burnedState.getNbTurns() - 1);
+
+			if (burnedState.getNbTurns() == 0) {
+				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
+			}
+		}
+	}
+
+	// -----------------------------
+	// Reduce number of turns of TRAPPED state (end of the turn)
+	// -----------------------------
+	public void reduceTrappedTurn() {
+		// Get trapped state
+		State trappedState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPED).findFirst().orElse(null);
+
+		if (trappedState != null) {
+			// Reduce number of turns
+			trappedState.setNbTurns(trappedState.getNbTurns() - 1);
+
+			if (trappedState.getNbTurns() <= 0) {
+				this.getEphemeralStates().remove(trappedState);
+				System.out.println(this.getName() + " ya no está atrapado.");
+			}
+		}
+	}
+
+	// -----------------------------
+	// Check and put CONFUSION state if needed (ex : thrash attack (TRAPPED BY OWN
+	// ATTACK state)) (end of the
+	// turn)
+	// -----------------------------
+	public void putConfusedStateIfNeeded() {
+		State trappedByOwnAttackState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK).findFirst().orElse(null);
+
+		if (trappedByOwnAttackState != null) {
+			trappedByOwnAttackState.setNbTurns(trappedByOwnAttackState.getNbTurns() - 1);
+
+			if (trappedByOwnAttackState.getNbTurns() <= 0) {
+				this.getEphemeralStates().remove(trappedByOwnAttackState);
+				System.out.println(this.getName() + " ya no está atrapado por su propio ataque!");
+
+				// Get confused state
+				State confusedState = this.getEphemeralStates().stream()
+						.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().orElse(null);
+
+				// Puts CONFUSED state because of trapped by his own attack state finished
+				if (confusedState == null) {
+					// Random number between 2 and 3
+					int nbTurnsHoldingStatus = ((int) (Math.random() * 2) + 2);
+
+					System.out.println(this.getName()
+							+ " se siente confuso (a causa de usar el mismo ataque). Estará confuso durante "
+							+ nbTurnsHoldingStatus + " turnos.");
+
+					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
+
+					this.addEstadoEfimero(confused);
+				}
+			}
+		}
+	}
+
 }
