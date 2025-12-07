@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pokemon.enums.AttackCategory;
-import pokemon.interfce.TwoTurnAttackBehavior;
 
 public class Attack {
 	
@@ -23,7 +22,6 @@ public class Attack {
 	private float effectivenessAgainstPkFacing;
 	private float bonus;
 	private AttackCategory category = AttackCategory.NORMAL;
-    private TwoTurnAttackBehavior specialBehavior = null;
     private List<Integer> canHitWhileInvulnerable = new ArrayList<>();
     private boolean canRecieveDamage;
 	
@@ -164,14 +162,6 @@ public class Attack {
 
     public void setCategory(AttackCategory category) {
         this.category = category;
-    }
-
-    public TwoTurnAttackBehavior getSpecialBehavior() {
-        return specialBehavior;
-    }
-
-    public void setSpecialBehavior(TwoTurnAttackBehavior specialBehavior) {
-        this.specialBehavior = specialBehavior;
     }
     
 	public List<Integer> getCanHitWhileInvulnerable() {
