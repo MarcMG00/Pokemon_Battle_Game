@@ -723,50 +723,46 @@ public class Game {
 
 		printPokemonStates();
 
-		// Determine charged-attack first-turn flags (local)
-		boolean playerFirstTurnOfCharged = pkPlayer.getNextMovement() != null
+		// Determine charged-attack second-turn flags (local)
+		boolean playerSecondTurnOfCharged = pkPlayer.getNextMovement() != null
 				&& pkPlayer.getNextMovement().getCategory() == AttackCategory.CHARGED
 				&& pkPlayer.getIsChargingAttackForNextRound();
 
-		boolean IAFirstTurnOfCharged = pkIA.getNextMovement() != null
+		boolean IASecondTurnOfCharged = pkIA.getNextMovement() != null
 				&& pkIA.getNextMovement().getCategory() == AttackCategory.CHARGED
 				&& pkIA.getIsChargingAttackForNextRound();
 
-		// 1) Evaluate normal statuses (these set canMoveStatusCondition and other
+		// Evaluate normal statuses (these set canMoveStatusCondition and other
 		// permanent changes)
-		// For charged attacks *first turn* we intentionally skip ephemeral checks —
+		// For charged attacks *first turn* we intentionally skip statuses checks —
 		// that's the rule:
-		// "first turn of a charging attack executes regardless of ephemeral states, the
-		// second turn is checked."
-		if (playerFirstTurnOfCharged) {
+		// first turn of a charging, executes regardless of states conditions, the
+		// second turn is checked.
+		if (playerSecondTurnOfCharged) {
 			evaluateStatusStartOfTurn(pkPlayer);
-			// canAttackEvaluatingAllStatesToAttack(pkPlayer);
 		}
-		if (IAFirstTurnOfCharged) {
+		if (IASecondTurnOfCharged) {
 			evaluateStatusStartOfTurn(pkIA);
-			// canAttackEvaluatingAllStatesToAttack(pkIA);
 		}
 
 		// Prepare player chosen attack (this sets nextMovement etc.)
 		this.getPlayer().prepareBestAttackPlayer(attackId);
 
-		// IA can decide to change Pokémon only if it's not charging
+		// IA can decide to change Pokemon only if it's not charging
 		if (!pkIA.getIsChargingAttackForNextRound()) {
 			tryIAChange();
 		}
 
-		// Prepare IA (select move) only if not charging and only after status
-		// evaluation
-		if (!IAFirstTurnOfCharged) {
+		// Prepare IA (select move) only if not charging
+		if (!IASecondTurnOfCharged) {
 			prepareIAIfPossible(pkIA);
 		}
 
-		// 4) Execute the attack sequence (ordering uses current canAttack and speed)
+		// Execute the attack sequence (ordering uses current canAttack and speed)
 		handleNormalAttackSequence(sc);
 
-		// 5) At the end of the turn we must perform end-of-turn ephemeral effects and
-		// reduce counters.
-		// resetEffectStatusCondition will perform the "end-turn" logic.
+		// At the end of the turn we must perform end-of-turn ephemeral effects and
+		// reduce counters and parameters
 		reduceNumberTurnsEffects(pkPlayer);
 		reduceNumberTurnsEffects(pkIA);
 
@@ -775,9 +771,10 @@ public class Game {
 	}
 
 	/*
-	 * ------------------------- Helper: Evaluate normal (non-ephemeral) status for
-	 * a Pokemon This will call the State logic that modifies
-	 * canMoveStatusCondition, speed adjustments, etc. -------------------------
+	 * ------------------------- Helper: Evaluate states BEFORE ordering "who should
+	 * attack first" decision. Some states decrease their turn at the beginning of
+	 * the turn and apply effects for example when paralyzed, it reduces speed
+	 * -------------------------
 	 */
 	private void evaluateStatusStartOfTurn(Pokemon pk) {
 		// This calls State.doEffectStatusCondition which manages normal states
@@ -788,10 +785,8 @@ public class Game {
 	}
 
 	/*
-	 * ------------------------- Helper: Evaluate ephemeral states BEFORE
-	 * ordering/attack decision alreadyChecked: if true, method should NOT decrement
-	 * nbTurns for ephemeral statuses (we already will do it later) Returns: true if
-	 * ephemerals allow attack (no ephemeral prevented movement)
+	 * ------------------------- Helper: Evaluate states BEFORE attacking. Some
+	 * states influence the probability of attacking, for example when confused
 	 * -------------------------
 	 */
 	private void canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
@@ -806,10 +801,7 @@ public class Game {
 	}
 
 	/*
-	 * ------------------------- Helper: Evaluate ephemeral states BEFORE
-	 * ordering/attack decision alreadyChecked: if true, method should NOT decrement
-	 * nbTurns for ephemeral statuses (we already will do it later) Returns: true if
-	 * ephemerals allow attack (no ephemeral prevented movement)
+	 * ------------------------- Helper: Reduce number of turns remaining on states
 	 * -------------------------
 	 */
 	private void reduceNumberTurnsEffects(Pokemon pk) {
@@ -832,6 +824,8 @@ public class Game {
 		if (!changed)
 			return false; // player cancelled the change (return to start options)
 
+		evaluateStatusStartOfTurn(pkIA);
+		canAttackEvaluatingAllStatesToAttack(pkIA);
 		prepareIAIfPossible(pkIA);
 
 		handleChangeSequence(sc); // only IA attacks
@@ -845,6 +839,7 @@ public class Game {
 			return true;
 		}
 
+		pkIA.restartParametersEffect();
 		reduceNumberTurnsEffects(pkIA);
 
 		return true;
@@ -855,8 +850,6 @@ public class Game {
 	// the beginning of the turn)
 	// -----------------------------
 	private void prepareIAIfPossible(Pokemon pkIA) {
-		evaluateStatusStartOfTurn(pkIA);
-		canAttackEvaluatingAllStatesToAttack(pkIA);
 
 		if (pkIA.getIsChargingAttackForNextRound()) {
 			return; // if charging an attack (like fly), cannot choose another attack
@@ -993,6 +986,8 @@ public class Game {
 		canAttackEvaluatingAllStatesToAttack(pk);
 
 		if (!pk.getCanAttack()) {
+			// Ensure we don't keep charging state if we were prevented from attacking
+	        pk.setIsChargingAttackForNextRound(false);
 			// Maybe he is confused, so he cannot attack, etc. => ends his turn
 			return false;
 		}
@@ -1309,8 +1304,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "398,398,398";
-		String allPkIA = "466,466,466";
+		String allPkPlayer = "466,466,466";
+		String allPkIA = "398,398,398";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1352,8 +1347,8 @@ public class Game {
 		for (Pokemon pk : this.getPlayer().getPokemon()) {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
@@ -1397,8 +1392,8 @@ public class Game {
 		for (Pokemon pk : this.getIA().getPokemon()) {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
