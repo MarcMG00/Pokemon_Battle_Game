@@ -12,7 +12,6 @@ import java.util.Optional;
 import pokemon.enums.AttackCategory;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
-import pokemon.model.FlyBehavior;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 
@@ -733,9 +732,6 @@ public class ReaderData {
 				// Set the category type of the attack
 				setCategoryAttackType(attack);
 
-				// Set is attack has a special behavior
-				setAttackSpecialBehavior(attack);
-
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
 				this.getAttackById().put(attack.getId(), attack);
@@ -955,17 +951,6 @@ public class ReaderData {
 			break;
 		default:
 			attack.setCategory(AttackCategory.NORMAL);
-		}
-	}
-
-	// -----------------------------
-	// Set is attack has a special behavior
-	// -----------------------------
-	public void setAttackSpecialBehavior(Attack attack) {
-		switch (attack.getId()) {
-		case 19:
-			attack.setSpecialBehavior(new FlyBehavior());
-			break;
 		}
 	}
 
