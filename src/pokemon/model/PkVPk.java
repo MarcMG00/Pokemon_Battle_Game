@@ -1591,6 +1591,53 @@ public class PkVPk {
 
 			break;
 
+		// Picotazo veneno/Poison sting (tested)
+		case 40:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Picotazo veneno");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			probabilityGettingStatus = (int) (Math.random() * 100);
+
+			System.out.println("proba de envenenar : " + probabilityGettingStatus);
+
+			if (probabilityGettingStatus <= 30) {
+
+				// Check if the Pokemon facing isn't without any status
+				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+
+					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus + 1);
+
+					this.getPkFacing().setStatusCondition(poisoned);
+
+					System.out.println(
+							this.getPkFacing().getName() + " fue envenenado por " + nbTurnsHoldingStatus + " turnos");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"

@@ -496,7 +496,7 @@ public class Pokemon {
 	public void setSpecialAttackStage(int specialAttackStage) {
 		this.specialAttackStage = specialAttackStage;
 	}
-	
+
 	public int getDefenseStage() {
 		return defenseStage;
 	}
@@ -627,7 +627,7 @@ public class Pokemon {
 
 		return this.getSpecialAttack() * multiplier;
 	}
-	
+
 	// -----------------------------
 	// Get attack stage for normal attack
 	// -----------------------------
@@ -745,7 +745,7 @@ public class Pokemon {
 			// Reduce number of turns
 			frozenState.setNbTurns(frozenState.getNbTurns() - 1);
 
-			if (frozenState.getNbTurns() == 0) {
+			if (frozenState.getNbTurns() <= 0) {
 				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
 
 				System.out.println(this.getName() + "se descongeló!");
@@ -788,15 +788,25 @@ public class Pokemon {
 	public void doBurnedEffectEndTurn() {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
 
-			// Reduces current PS by 6.25%
-			float reducePs = this.getPs() * 0.0625f;
+			State burnedState = this.getStatusCondition();
 
-			this.setPs(this.getPs() - reducePs);
+			burnedState.setNbTurns(burnedState.getNbTurns() - 1);
 
-			System.out.println(this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
+			if (burnedState.getNbTurns() <= 0) {
+				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
 
-			if (this.getPs() <= 0) {
-				this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
+				System.out.println(this.getName() + " ya no está quemado!");
+			} else {
+				// Reduces current PS by 6.25%
+				float reducePs = this.getPs() * 0.0625f;
+
+				this.setPs(this.getPs() - reducePs);
+
+				System.out.println(this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
+
+				if (this.getPs() <= 0) {
+					this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
+				}
 			}
 		}
 	}
@@ -811,7 +821,7 @@ public class Pokemon {
 			// Reduce number of turns
 			paralyzedState.setNbTurns(paralyzedState.getNbTurns() - 1);
 
-			if (paralyzedState.getNbTurns() == 0) {
+			if (paralyzedState.getNbTurns() <= 0) {
 				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
 
 				System.out.println(this.getName() + " ya no está paralizado!");
@@ -825,6 +835,35 @@ public class Pokemon {
 					this.getStatusCondition().setCanMoveStatusCondition(true);
 				} else {
 					this.getStatusCondition().setCanMoveStatusCondition(false);
+				}
+			}
+		}
+	}
+
+	// -----------------------------
+	// Do effect from POISONED state (end of the turn)
+	// -----------------------------
+	public void doPoisonedEffectEndTurn() {
+		if (this.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
+
+			State poisonedState = this.getStatusCondition();
+
+			poisonedState.setNbTurns(poisonedState.getNbTurns() - 1);
+
+			if (poisonedState.getNbTurns() <= 0) {
+				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
+
+				System.out.println(this.getName() + " ya no está envenenado!");
+			} else {
+				// Reduces current PS by 6.25%
+				float reducePs = this.getPs() * 0.0625f;
+
+				this.setPs(this.getPs() - reducePs);
+
+				System.out.println(this.getName() + " está envenenado - PS actuales : " + this.getPs());
+
+				if (this.getPs() <= 0) {
+					this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
 				}
 			}
 		}
@@ -848,7 +887,7 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Do effect from TRAPPED state (only end of the turn)
+	// Do effect from TRAPPED state (end of the turn)
 	// -----------------------------
 	public void doTrappedEffect() {
 		// Get trapped state
@@ -857,47 +896,18 @@ public class Pokemon {
 
 		if (trappedState != null) {
 
-			// Reduces 12,5% from his initial PS
-			float reducePs = this.getInitialPs() * 0.125f;
-
-			this.setPs(this.getPs() - reducePs);
-
-			System.out.println(this.getName() + " está atado y recibe daño)");
-		}
-	}
-
-	// -----------------------------
-	// Reduce number of turns of BURNED state (end of the turn)
-	// -----------------------------
-	public void reduceBurnedTurn() {
-		if (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
-
-			State burnedState = this.getStatusCondition();
-
-			// Reduce number of turns
-			burnedState.setNbTurns(burnedState.getNbTurns() - 1);
-
-			if (burnedState.getNbTurns() == 0) {
-				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
-			}
-		}
-	}
-
-	// -----------------------------
-	// Reduce number of turns of TRAPPED state (end of the turn)
-	// -----------------------------
-	public void reduceTrappedTurn() {
-		// Get trapped state
-		State trappedState = this.getEphemeralStates().stream()
-				.filter(e -> e.getStatusCondition() == StatusConditions.TRAPPED).findFirst().orElse(null);
-
-		if (trappedState != null) {
-			// Reduce number of turns
 			trappedState.setNbTurns(trappedState.getNbTurns() - 1);
 
 			if (trappedState.getNbTurns() <= 0) {
 				this.getEphemeralStates().remove(trappedState);
-				System.out.println(this.getName() + " ya no está atrapado.");
+				System.out.println(this.getName() + " ya no está atrapado!");
+			} else {
+				// Reduces 12,5% from his initial PS
+				float reducePs = this.getInitialPs() * 0.125f;
+
+				this.setPs(this.getPs() - reducePs);
+
+				System.out.println(this.getName() + " está atado y recibe daño)");
 			}
 		}
 	}

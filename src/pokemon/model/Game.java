@@ -805,9 +805,11 @@ public class Game {
 	 */
 	private void reduceNumberTurnsEffects(Pokemon pk) {
 
+		// Normal status
+		pk.doBurnedEffectEndTurn();
+		pk.doPoisonedEffectEndTurn();
+		// Ephemeral status
 		pk.doTrappedEffect();
-		pk.reduceBurnedTurn();
-		pk.reduceTrappedTurn();
 		pk.putConfusedStateIfNeeded();
 	}
 
