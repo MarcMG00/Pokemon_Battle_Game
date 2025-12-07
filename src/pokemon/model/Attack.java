@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pokemon.enums.AttackCategory;
-import pokemon.interfce.TwoTurnAttackBehavior;
 
 public class Attack {
 	
@@ -23,8 +22,8 @@ public class Attack {
 	private float effectivenessAgainstPkFacing;
 	private float bonus;
 	private AttackCategory category = AttackCategory.NORMAL;
-    private TwoTurnAttackBehavior specialBehavior = null;
     private List<Integer> canHitWhileInvulnerable = new ArrayList<>();
+    private boolean canRecieveDamage;
 	
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -42,6 +41,7 @@ public class Attack {
 		this.strTypeToPkType = new PokemonType();
 		this.effectivenessAgainstPkFacing = 0;
 		this.bonus = 0;
+		this.canRecieveDamage = false;
 	}
 	
 	public Attack(int id, String name, String type, int power, int pp, int precision, String effect) {
@@ -57,6 +57,7 @@ public class Attack {
 		this.strTypeToPkType = new PokemonType();
 		this.effectivenessAgainstPkFacing = 0;
 		this.bonus = 0;
+		this.canRecieveDamage = false;
 	}
 	
 	// ==================================== GETTERS/SETTERS
@@ -162,14 +163,6 @@ public class Attack {
     public void setCategory(AttackCategory category) {
         this.category = category;
     }
-
-    public TwoTurnAttackBehavior getSpecialBehavior() {
-        return specialBehavior;
-    }
-
-    public void setSpecialBehavior(TwoTurnAttackBehavior specialBehavior) {
-        this.specialBehavior = specialBehavior;
-    }
     
 	public List<Integer> getCanHitWhileInvulnerable() {
 		return canHitWhileInvulnerable;
@@ -179,9 +172,17 @@ public class Attack {
 		this.canHitWhileInvulnerable = canHitWhileInvulnerable;
 	}	
 	
+	public boolean getCanRecieveDamage() {
+		return canRecieveDamage;
+	}
+
+	public void setCanRecieveDamage(boolean canRecieveDamage) {
+		this.canRecieveDamage = canRecieveDamage;
+	}
+	
 	// ==================================== METHODS
 	// ====================================
-	
+
 	// -----------------------------
 	// Set the type of the attack to his Pokemon type instead of a string
 	// -----------------------------

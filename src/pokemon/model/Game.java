@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import pokemon.enums.AttackCategory;
 import pokemon.enums.StatusConditions;
 import pokemon.importData.ReaderData;
 import pokemon.importData.ScrappingWeb;
@@ -45,6 +47,8 @@ public class Game {
 	private ScrappingWeb scrappingWeb;
 	private WritterData writterData;
 	private ReaderData readerData;
+	private boolean willUseChargedAttackPlayer = false;
+	private boolean willUseChargedAttackIA = false;
 
 	private Player player;
 	private IAPlayer IA;
@@ -218,6 +222,22 @@ public class Game {
 
 	public void setReaderData(ReaderData readerData) {
 		this.readerData = readerData;
+	}
+
+	public boolean getWillUseChargedAttackPlayer() {
+		return willUseChargedAttackPlayer;
+	}
+
+	public void setWillUseChargedAttackPlayer(boolean willUseChargedAttackPlayer) {
+		this.willUseChargedAttackPlayer = willUseChargedAttackPlayer;
+	}
+
+	public boolean getWillUseChargedAttackIA() {
+		return willUseChargedAttackIA;
+	}
+
+	public void setWillUseChargedAttackIA(boolean willUseChargedAttackIA) {
+		this.willUseChargedAttackIA = willUseChargedAttackIA;
 	}
 
 	// ==================================== METHODS
@@ -638,8 +658,17 @@ public class Game {
 
 			boolean isStartTurn = true;
 
-			boolean playerIsCharging = this.getPlayer().getPkCombatting().getIsChargingAttackForNextRound();
-			int attackChoice = playerIsCharging ? 1 : getPlayerChoice(sc);
+			Pokemon pkPlayer = this.getPlayer().getPkCombatting();
+
+			// Get if Pokemon is charging an attack (two turns)
+			boolean playerIsCharging = pkPlayer.getIsChargingAttackForNextRound();
+
+			// Gets if Pokemon is trapped by his own attack (ex : Thrash, etc.)
+			boolean playerIsTrappedByOwnAttack = pkPlayer.getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK && e.getNbTurns() > 0);
+
+			// If charging or trapped by his own attack, cannot do choices
+			int attackChoice = (playerIsCharging || playerIsTrappedByOwnAttack) ? 1 : getPlayerChoice(sc);
 
 			if (attackChoice == 1) {
 				handleAttackTurn(sc, isStartTurn);
@@ -666,46 +695,121 @@ public class Game {
 
 		int attackId = 0;
 
-		if (!this.getPlayer().getPkCombatting().getIsChargingAttackForNextRound()) {
-			Pokemon pk = this.getPlayer().getPkCombatting();
+		Pokemon pkPlayer = this.getPlayer().getPkCombatting();
+		Pokemon pkIA = this.getIA().getPkCombatting();
 
-			// Checks that there is no more PPs on attacks from Pokemon combating
-			if (!this.getPlayer().hasAnyPPLeft(pk)) {
-				System.out.println(pk.getName() + " no tiene más PPs en ningún ataque.");
-				System.out.println(pk.getName() + " usó Forcejeo!");
-				attackId = 165; // ID of "Struggle" (default attack when no more attacks remaining)
+		// Gets if is trapped by his own attack (ex : thrash, etc.)
+		boolean trappedByOwnAttack = pkPlayer.getEphemeralStates().stream()
+				.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK && e.getNbTurns() > 0);
+
+		// If not charging or trapped by his own attack => normal choice of move
+		if (!pkPlayer.getIsChargingAttackForNextRound() && !trappedByOwnAttack) {
+			if (!this.getPlayer().hasAnyPPLeft(pkPlayer)) {
+				System.out.println(pkPlayer.getName() + " no tiene más PPs en ningún ataque.");
+				System.out.println(pkPlayer.getName() + " usó Forcejeo!");
+				attackId = 165;
 			} else {
 				attackId = getValidAttackId(sc, this.getPlayer());
 			}
+		} else if (trappedByOwnAttack) {
+			// Use the same movement trapped
+			attackId = pkPlayer.getNextMovement().getId();
+			System.out.println(pkPlayer.getName() + " está furioso y continúa atacando con "
+					+ pkPlayer.getNextMovement().getName() + "!");
+		} else if (pkPlayer.getIsChargingAttackForNextRound()) {
+			// charging: respect current nextMovement (first turn was set before)
+			attackId = pkPlayer.getNextMovement().getId();
 		}
 
 		printPokemonStates();
 
-		Pokemon pkPlayer = this.getPlayer().getPkCombatting();
-		Pokemon pkIA = this.getIA().getPkCombatting();
+		// Determine charged-attack second-turn flags (local)
+		boolean playerSecondTurnOfCharged = pkPlayer.getNextMovement() != null
+				&& pkPlayer.getNextMovement().getCategory() == AttackCategory.CHARGED
+				&& pkPlayer.getIsChargingAttackForNextRound();
 
-		checkCanAttackFromStatusCondition(pkPlayer);
-		checkCanAttackFromStatusCondition(pkIA);
+		boolean IASecondTurnOfCharged = pkIA.getNextMovement() != null
+				&& pkIA.getNextMovement().getCategory() == AttackCategory.CHARGED
+				&& pkIA.getIsChargingAttackForNextRound();
 
-		// Apply status effects from beginning of the turn + prepare effectiveness and
-		// bonus from attacks chosen
-		applyEffectStatusCondition(pkPlayer);
+		// Evaluate normal statuses (these set canMoveStatusCondition and other
+		// permanent changes)
+		// For charged attacks *first turn* we intentionally skip statuses checks —
+		// that's the rule:
+		// first turn of a charging, executes regardless of states conditions, the
+		// second turn is checked.
+		if (playerSecondTurnOfCharged) {
+			evaluateStatusStartOfTurn(pkPlayer);
+		}
+		if (IASecondTurnOfCharged) {
+			evaluateStatusStartOfTurn(pkIA);
+		}
+
+		// Prepare player chosen attack (this sets nextMovement etc.)
 		this.getPlayer().prepareBestAttackPlayer(attackId);
 
-		// IA can decide to change Pokemon
-		if (this.getIA().getPkCombatting().getIsChargingAttackForNextRound() == false) {
-			// If change realized => don't attack
+		// IA can decide to change Pokemon only if it's not charging
+		if (!pkIA.getIsChargingAttackForNextRound()) {
 			tryIAChange();
 		}
 
-		prepareIAIfPossible(isStartTurn);
+		// Prepare IA (select move) only if not charging
+		if (!IASecondTurnOfCharged) {
+			prepareIAIfPossible(pkIA);
+		}
 
-		// Handle normal attack sequence
+		// Execute the attack sequence (ordering uses current canAttack and speed)
 		handleNormalAttackSequence(sc);
 
-		// Reset status conditions
-		resetEffectStatusCondition(pkPlayer);
-		resetEffectStatusCondition(this.getIA().getPkCombatting());
+		// At the end of the turn we must perform end-of-turn ephemeral effects and
+		// reduce counters and parameters
+		reduceNumberTurnsEffects(pkPlayer);
+		reduceNumberTurnsEffects(pkIA);
+
+		pkPlayer.restartParametersEffect();
+		pkIA.restartParametersEffect();
+	}
+
+	/*
+	 * ------------------------- Helper: Evaluate states BEFORE ordering "who should
+	 * attack first" decision. Some states decrease their turn at the beginning of
+	 * the turn and apply effects for example when paralyzed, it reduces speed
+	 * -------------------------
+	 */
+	private void evaluateStatusStartOfTurn(Pokemon pk) {
+		// This calls State.doEffectStatusCondition which manages normal states
+		// (PARALYZED, FROZEN, etc.)
+		pk.doFrozenEffect();
+		pk.doBurnedEffectStartTurn();
+		pk.doParalyzedEffect();
+	}
+
+	/*
+	 * ------------------------- Helper: Evaluate states BEFORE attacking. Some
+	 * states influence the probability of attacking, for example when confused
+	 * -------------------------
+	 */
+	private void canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
+
+		pk.canAttackFrozen();
+		pk.canAttackParalyzed();
+		boolean canAttackConfused = pk.canAttackConfused();
+
+		boolean canAttack = pk.getCanAttack() && canAttackConfused;
+
+		pk.setCanAttack(canAttack);
+	}
+
+	/*
+	 * ------------------------- Helper: Reduce number of turns remaining on states
+	 * -------------------------
+	 */
+	private void reduceNumberTurnsEffects(Pokemon pk) {
+
+		pk.doTrappedEffect();
+		pk.reduceBurnedTurn();
+		pk.reduceTrappedTurn();
+		pk.putConfusedStateIfNeeded();
 	}
 
 	// -----------------------------
@@ -720,9 +824,9 @@ public class Game {
 		if (!changed)
 			return false; // player cancelled the change (return to start options)
 
-		checkCanAttackFromStatusCondition(pkIA);
-
-		prepareIAIfPossible(isStartTurn);
+		evaluateStatusStartOfTurn(pkIA);
+		canAttackEvaluatingAllStatesToAttack(pkIA);
+		prepareIAIfPossible(pkIA);
 
 		handleChangeSequence(sc); // only IA attacks
 
@@ -735,7 +839,8 @@ public class Game {
 			return true;
 		}
 
-		resetEffectStatusCondition(this.getIA().getPkCombatting());
+		pkIA.restartParametersEffect();
+		reduceNumberTurnsEffects(pkIA);
 
 		return true;
 	}
@@ -744,10 +849,9 @@ public class Game {
 	// Prepare attack from IA if can attack (after checking status conditions from
 	// the beginning of the turn)
 	// -----------------------------
-	private void prepareIAIfPossible(boolean isStartTurn) {
-		applyEffectStatusCondition(this.getIA().getPkCombatting());
+	private void prepareIAIfPossible(Pokemon pkIA) {
 
-		if (this.getIA().getPkCombatting().getIsChargingAttackForNextRound()) {
+		if (pkIA.getIsChargingAttackForNextRound()) {
 			return; // if charging an attack (like fly), cannot choose another attack
 		}
 
@@ -803,33 +907,25 @@ public class Game {
 	// Print Pokemon states (for debug)
 	// -----------------------------
 	private void printPokemonStates() {
-		System.out.println("Estado del Pokémon del jugador : "
-				+ this.getPlayer().getPkCombatting().getStatusCondition().getStatusCondition());
-		System.out.println("Estado del Pokémon de la máquina : "
-				+ this.getIA().getPkCombatting().getStatusCondition().getStatusCondition());
-	}
+		// Normal status player
+		System.out.println(ANSI_YELLOW + "Estado normal del Pokémon del jugador : "
+				+ this.getPlayer().getPkCombatting().getStatusCondition().getStatusCondition() + ANSI_RESET);
 
-	// -----------------------------
-	// Check if Pokemon combating can attack due to effect from status condition
-	// -----------------------------
-	private void checkCanAttackFromStatusCondition(Pokemon attacker) {
-		attacker.getStatusCondition().doEffectStatusCondition(attacker.getStatusCondition().getStatusCondition());
-	}
+		// Ephemeral status player
+		System.out.println(ANSI_YELLOW + "Estados efímeros del Pokémon del jugador : " + ANSI_RESET);
+		for (State status : this.getPlayer().getPkCombatting().getEphemeralStates()) {
+			System.out.println(ANSI_YELLOW + status.getStatusCondition() + ANSI_RESET);
+		}
 
-	// -----------------------------
-	// Apply effect of status condition at the beginning of the turn for Pokemon
-	// combating
-	// -----------------------------
-	private void applyEffectStatusCondition(Pokemon attacker) {
-		attacker.checkEffectsStatusCondition(true);
-	}
+		// Normal status IA
+		System.out.println(ANSI_YELLOW + "Estado normal del Pokémon de la máquina : "
+				+ this.getIA().getPkCombatting().getStatusCondition().getStatusCondition() + ANSI_RESET);
 
-	// -----------------------------
-	// Apply effect of status condition at the end of the turn for Pokemon
-	// combating
-	// -----------------------------
-	private void resetEffectStatusCondition(Pokemon attacker) {
-		attacker.checkEffectsStatusCondition(false);
+		// Ephemeral status IA
+		System.out.println(ANSI_YELLOW + "Estados efímeros del Pokémon de la máquina : " + ANSI_RESET);
+		for (State status : this.getIA().getPkCombatting().getEphemeralStates()) {
+			System.out.println(ANSI_YELLOW + status.getStatusCondition() + ANSI_RESET);
+		}
 	}
 
 	// -----------------------------
@@ -837,7 +933,7 @@ public class Game {
 	// -----------------------------
 	private boolean playerCanAttackFirst() {
 		return this.getPlayer().getPkCombatting().getCanAttack()
-				&& this.getPlayer().getPkCombatting().getSpeed() > this.getIA().getPkCombatting().getSpeed();
+				&& this.getPlayer().getPkCombatting().getSpeed() >= this.getIA().getPkCombatting().getSpeed();
 	}
 
 	// -----------------------------
@@ -875,7 +971,7 @@ public class Game {
 			return false; // turn continues
 		}
 
-		// If Pokemon facing is debilitated, force change and ends turn
+		// If Pokemon is debilitated, force change and ends turn
 		if (pk.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
 			checkForcedPokemonChange(sc);
 			return true; // turn ends
@@ -883,33 +979,50 @@ public class Game {
 
 		// If attacker forces to change because of "Whirlwind"
 		if (attacker.getIsForceSwitchPokemon()) {
-
 			handleForcedSwitchWhirlwind(attacker);
-
-			// Turn ends because of the change
 			return true;
 		}
 
-		// Execute attack
-		if (attacker == this.getPlayer())
+		canAttackEvaluatingAllStatesToAttack(pk);
+
+		if (!pk.getCanAttack()) {
+			// Ensure we don't keep charging state if we were prevented from attacking
+	        pk.setIsChargingAttackForNextRound(false);
+			// Maybe he is confused, so he cannot attack, etc. => ends his turn
+			return false;
+		}
+
+		// Execute attack for attacker
+		if (attacker == this.getPlayer()) {
 			handlePlayerRetaliation();
-		else
+		} else {
 			handleIARetaliation();
+		}
 
-		// If defender has to change because of "Whirlwind"
+		// After an attack, if defender was charging a charged attack (like Fly) but is
+		// prevented (cannot attack),
+		// we must clear the charging flag so that on the next turn we don't remain
+		// stuck in charge state.
+		// We do this *after* the attack resolution and only if defender cannot attack
+		// now.
+		Pokemon defenderPk = defender.getPkCombatting();
+		if (defenderPk.getIsChargingAttackForNextRound() && defenderPk.getNextMovement() != null
+				&& defenderPk.getNextMovement().getCategory() == AttackCategory.CHARGED && !defenderPk.getCanAttack()) {
+
+			// Cancel the charging state: defender will no longer be invulnerable next turn.
+			defenderPk.setIsChargingAttackForNextRound(false);
+		}
+
+		// If defender must change because of Whirlwind
 		if (defender.getIsForceSwitchPokemon()) {
-
 			handleForcedSwitchWhirlwind(defender);
-
-			// Turn ends because of the change
 			return true;
 		}
 
-		// If defender got Pokemon debilitated during the attack, force change and ends
-		// turn
+		// If defender got debilitated during this attack -> force change and end turn
 		if (defender.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
 			checkForcedPokemonChange(sc);
-			return true; // turn ends
+			return true;
 		}
 
 		return false; // turn continues
@@ -928,13 +1041,14 @@ public class Game {
 	// -----------------------------
 	private void handlePlayerRetaliation() {
 
-		if (this.getPlayer().getPkCombatting().getStatusCondition()
-				.getStatusCondition() != StatusConditions.DEBILITATED) {
+		Pokemon pkPlayer = this.getPlayer().getPkCombatting();
+
+		if (pkPlayer.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 
 			PkVPk battleVS = new PkVPk(this.getPlayer(), this.getIA());
 			this.setBattleVS(battleVS);
 
-			if (this.getPlayer().getPkCombatting().getCanAttack()) {
+			if (pkPlayer.getCanAttack()) {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
@@ -942,16 +1056,15 @@ public class Game {
 
 				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
 				// facing is invulnerable, etc.
-				if (this.getPlayer().getPkCombatting().getCanAttack()) {
+				if (pkPlayer.getCanAttack()) {
 
 					System.out.println(ANSI_GREEN + "Pokemon player can attack" + ANSI_RESET);
 					this.getBattleVS().doAttackEffect();
 				}
 			} else {
 				System.out.println(ANSI_RED + "Pokemon player cannot attack" + ANSI_RESET);
+				pkPlayer.setIsChargingAttackForNextRound(false);
 			}
-
-			player.getPkCombatting().restartParametersEffect();
 		} else {
 			System.out.println(ANSI_RED + "Pokemon player is debilitated" + ANSI_RESET);
 		}
@@ -961,12 +1074,15 @@ public class Game {
 	// IA handle attack
 	// -----------------------------
 	private void handleIARetaliation() {
-		if (this.getIA().getPkCombatting().getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
+
+		Pokemon pkIA = this.getIA().getPkCombatting();
+
+		if (pkIA.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 
 			PkVPk battleVS = new PkVPk(IA, this.getPlayer());
 			this.setBattleVS(battleVS);
 
-			if (this.getIA().getPkCombatting().getCanAttack()) {
+			if (pkIA.getCanAttack()) {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
@@ -974,7 +1090,7 @@ public class Game {
 
 				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
 				// facing is invulnerable, etc.
-				if (this.getIA().getPkCombatting().getCanAttack()) {
+				if (pkIA.getCanAttack()) {
 
 					System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
 					this.getBattleVS().doAttackEffect();
@@ -982,9 +1098,8 @@ public class Game {
 
 			} else {
 				System.out.println(ANSI_RED + "Pokemon IA cannot attack" + ANSI_RESET);
+				pkIA.setIsChargingAttackForNextRound(false);
 			}
-
-			this.getIA().getPkCombatting().restartParametersEffect();
 		} else {
 
 			System.out.println(ANSI_RED + "Pokemon IA is debilitated" + ANSI_RESET);
@@ -1077,6 +1192,7 @@ public class Game {
 			// Reinitialize some stats
 			this.getPlayer().getPkCombatting().setAttackStage(0);
 			this.getPlayer().getPkCombatting().setSpecialAttackStage(0);
+			this.getPlayer().getPkCombatting().setPrecisionPoints(0);
 
 			Pokemon selected = opt.get();
 
@@ -1119,6 +1235,7 @@ public class Game {
 		// Reinitialize some stats
 		this.getIA().getPkCombatting().setAttackStage(0);
 		this.getIA().getPkCombatting().setSpecialAttackStage(0);
+		this.getIA().getPkCombatting().setPrecisionPoints(0);
 
 		// Do Pokemon change => update Pokemon comabting from IA, etc.
 		System.out.println("IA cambió a " + changeTo.getName());
@@ -1183,12 +1300,12 @@ public class Game {
 
 	// -----------------------------
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
-	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika)
+	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee)
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "32,32,32";
-		String allPkIA = "18,18,18";
+		String allPkPlayer = "466,466,466";
+		String allPkIA = "398,398,398";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1230,12 +1347,14 @@ public class Game {
 		for (Pokemon pk : this.getPlayer().getPokemon()) {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 24).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 37).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -1277,7 +1396,8 @@ public class Game {
 			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {
