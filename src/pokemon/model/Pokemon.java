@@ -47,6 +47,7 @@ public class Pokemon {
 	private boolean hasRetreated;
 	private int attackStage;
 	private int specialAttackStage;
+	private int defenseStage;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -95,6 +96,7 @@ public class Pokemon {
 		this.hasRetreated = false;
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
+		this.defenseStage = 0;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -137,6 +139,7 @@ public class Pokemon {
 		this.hasRetreated = false;
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
+		this.defenseStage = 0;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -184,6 +187,7 @@ public class Pokemon {
 		this.hasRetreated = pokemon.hasRetreated;
 		this.attackStage = pokemon.attackStage;
 		this.specialAttackStage = pokemon.specialAttackStage;
+		this.defenseStage = pokemon.defenseStage;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -492,6 +496,14 @@ public class Pokemon {
 	public void setSpecialAttackStage(int specialAttackStage) {
 		this.specialAttackStage = specialAttackStage;
 	}
+	
+	public int getDefenseStage() {
+		return defenseStage;
+	}
+
+	public void setDefenseStage(int defenseStage) {
+		this.defenseStage = defenseStage;
+	}
 
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
@@ -614,6 +626,21 @@ public class Pokemon {
 			multiplier = 2.0f / (2 - stage);
 
 		return this.getSpecialAttack() * multiplier;
+	}
+	
+	// -----------------------------
+	// Get attack stage for normal attack
+	// -----------------------------
+	public float getEffectiveDefense() {
+		int stage = this.getDefenseStage();
+		float multiplier;
+
+		if (stage >= 0)
+			multiplier = (2 + stage) / 2.0f;
+		else
+			multiplier = 2.0f / (2 - stage);
+
+		return this.getDef() * multiplier;
 	}
 
 	// -----------------------------

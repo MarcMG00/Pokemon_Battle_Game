@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -987,7 +986,7 @@ public class Game {
 
 		if (!pk.getCanAttack()) {
 			// Ensure we don't keep charging state if we were prevented from attacking
-	        pk.setIsChargingAttackForNextRound(false);
+			pk.setIsChargingAttackForNextRound(false);
 			// Maybe he is confused, so he cannot attack, etc. => ends his turn
 			return false;
 		}
@@ -1193,6 +1192,7 @@ public class Game {
 			this.getPlayer().getPkCombatting().setAttackStage(0);
 			this.getPlayer().getPkCombatting().setSpecialAttackStage(0);
 			this.getPlayer().getPkCombatting().setPrecisionPoints(0);
+			this.getPlayer().getPkCombatting().setDefenseStage(0);
 
 			Pokemon selected = opt.get();
 
@@ -1236,6 +1236,7 @@ public class Game {
 		this.getIA().getPkCombatting().setAttackStage(0);
 		this.getIA().getPkCombatting().setSpecialAttackStage(0);
 		this.getIA().getPkCombatting().setPrecisionPoints(0);
+		this.getIA().getPkCombatting().setDefenseStage(0);
 
 		// Do Pokemon change => update Pokemon comabting from IA, etc.
 		System.out.println("IA cambió a " + changeTo.getName());

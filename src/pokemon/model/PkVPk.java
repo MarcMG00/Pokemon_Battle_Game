@@ -649,7 +649,7 @@ public class PkVPk {
 
 				System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
-				if (probabilityGettingStatus >= 10) {
+				if (probabilityGettingStatus <= 10) {
 
 					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
 
@@ -1573,6 +1573,24 @@ public class PkVPk {
 			}
 			break;
 
+		// Látigo /Tail Whip (tested)
+		case 39:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Látigo");
+
+			if (this.getPkFacing().getDefenseStage() <= -6) {
+				System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+			} else {
+				this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
+				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+						+ " bajó su defensa!");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -1647,8 +1665,8 @@ public class PkVPk {
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
 					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveAttack()
-							* this.getPkCombatting().getNextMovement().getPower()) / (25f * this.getPkFacing().getDef())
-							+ 2f);
+							* this.getPkCombatting().getNextMovement().getPower())
+							/ (25f * this.getPkFacing().getEffectiveDefense()) + 2f);
 
 			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
 					+ this.getPkFacing().getId() + ")" + ") : " + dmg);
