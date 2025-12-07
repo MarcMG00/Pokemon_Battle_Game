@@ -1533,6 +1533,46 @@ public class PkVPk {
 			}
 			break;
 
+		// Doble filo/Dobule-Edge (tested)
+		case 38:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Doble filo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+
+			// ---- RECOIL ----
+			recoil = dmg * 0.33f;
+
+			this.getPkCombatting().setPs(this.getPkCombatting().getPs() - recoil);
+
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId()
+					+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+
+			// Check if attacker debilitated by recoil
+			if (this.getPkCombatting().getPs() <= 0) {
+				this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -1553,7 +1593,8 @@ public class PkVPk {
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
 			// Pokemon combating receives 25% of damage from his PS remaining
-			this.getPkCombatting().setPs(this.getPkCombatting().getInitialPs() - (this.getPkCombatting().getInitialPs() * 0.25f));
+			this.getPkCombatting()
+					.setPs(this.getPkCombatting().getInitialPs() - (this.getPkCombatting().getInitialPs() * 0.25f));
 
 			if (this.getPkFacing().getPs() <= 0) {
 
@@ -1588,8 +1629,8 @@ public class PkVPk {
 //		System.out.println(ANSI_PURPLE + "Power : " + this.getPkCombatting().getNextMovement().getPower() + ANSI_RESET);
 //		System.out.println(ANSI_PURPLE + "Def Pk facing : " + this.getPkFacing().getDef() + ANSI_RESET);
 //		System.out.println(ANSI_PURPLE + "Variation : " + randomVariation + ANSI_RESET);
-		
-		if (isSpecialAttack) {			
+
+		if (isSpecialAttack) {
 			// Apply special damage
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
