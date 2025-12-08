@@ -145,15 +145,15 @@ public class PkVPk {
 		float accuracyFactor = 0f;
 
 		// -----------------------------
-		// WHIRLWIND / REMOLINO
+		// WHIRLWIND (REMOLINO) / ROAR (RUGIDO)
 		// -----------------------------
-		if (atkAttacker.getId() == 18) {
+		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46) {
 
 			// If Pokemon facing is invulnerable, cannot do the attack
 			if (isDefenderCharging && !canHitInvulnerable) {
 				this.getPkCombatting().setCanAttack(false);
-				System.out.println(pkCombatting.getName() + " usó Remolino, pero " + pkFacing.getName()
-						+ " evitó el ataque (invulnerable).");
+				System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ", pero "
+						+ this.getPkFacing().getName() + " evitó el ataque (invulnerable).");
 			} else {
 				// Acierta siempre
 				this.getPkCombatting().setCanAttack(true);
@@ -163,32 +163,39 @@ public class PkVPk {
 		}
 
 		// For almost all attacks from "otros", it has 100% of accuracy
-		if (atkAttacker.getBases().contains("otros")) {
+		if (atkAttacker.getId() == 14) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
 
+		// -----------------------------
 		// "Struggle" attack has 100% of precision (used when no more PPs remaining on
 		// other attacks, etc.)
+		// -----------------------------
 		if (atkAttacker.getId() == 165) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
 
-		// Guillotina/Perforador
+		// -----------------------------
+		// GUILLOTINE (GUILLOTINA) / HORN DRILL (PERFORADOR)
+		// -----------------------------
 		if (atkAttacker.getId() == 12 || atkAttacker.getId() == 32) {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f); // don't take into account Pokemon levels (cause all
 																	// are on the same lvl)
 		}
-		// Pisotón
+		// -----------------------------
+		// WHIRLWIND (PISOTON)
+		// -----------------------------
 		else if ((atkAttacker.getId() == 23 || atkAttacker.getId() == 27 || atkAttacker.getId() == 29
 				|| atkAttacker.getId() == 44) && this.getPkFacing().getHasUsedMinimize()) {
-			accuracyFactor = (atkAttacker.getPrecision() / 100f) * (getEvasionOrAccuracy(pkCombatting, 1) / 1f);
+			accuracyFactor = (atkAttacker.getPrecision() / 100f)
+					* (getEvasionOrAccuracy(this.getPkCombatting(), 1) / 1f);
 		}
 		// Other attacks
 		else {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f)
-					* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+					* (getEvasionOrAccuracy(this.getPkCombatting(), 1) / getEvasionOrAccuracy(this.getPkFacing(), 2));
 		}
 
 		// Reset CanAttack if doesn't enter in any case
@@ -200,7 +207,8 @@ public class PkVPk {
 		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
 			System.out.println(ANSI_PURPLE + "Probability - Normal attack (defender not charging)" + ANSI_RESET);
 
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bloc 1)");
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
+					"(bloc 1)");
 			return;
 		}
 
@@ -211,7 +219,8 @@ public class PkVPk {
 			System.out
 					.println(ANSI_PURPLE + "Probability - Normal attack can hit while defender charging" + ANSI_RESET);
 
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bloc 2)");
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
+					"(bloc 2)");
 			return;
 		}
 
@@ -222,7 +231,7 @@ public class PkVPk {
 			System.out.println(ANSI_PURPLE + "Probability - Starting a charged attack" + ANSI_RESET);
 
 			pkCombatting.setCanAttack(true);
-			System.out.println(ANSI_PURPLE + pkCombatting.getName() + " utilizará " + atkAttacker.getName()
+			System.out.println(ANSI_PURPLE + this.getPkCombatting().getName() + " utilizará " + atkAttacker.getName()
 					+ " - comienza a cargar el ataque. (bloc 3)" + ANSI_RESET);
 			return;
 		}
@@ -234,7 +243,8 @@ public class PkVPk {
 			System.out.println(
 					ANSI_PURPLE + "Probability - Charged attack execution (defender not charging)" + ANSI_RESET);
 
-			handleChargedAttackExecution(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bloc 4)");
+			handleChargedAttackExecution(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
+					"(bloc 4)");
 			return;
 		}
 
@@ -247,8 +257,8 @@ public class PkVPk {
 			pkCombatting.setCanAttack(false);
 			pkCombatting.setIsChargingAttackForNextRound(false);
 
-			System.out.println(pkCombatting.getName() + " usó " + atkAttacker.getName() + ". " + pkFacing.getName()
-					+ " evitó el ataque jijijija. (bloc 5)");
+			System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
+					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (bloc 5)");
 			return;
 		}
 
@@ -262,8 +272,8 @@ public class PkVPk {
 			pkCombatting.setCanAttack(false);
 			pkCombatting.setIsChargingAttackForNextRound(false);
 
-			System.out.println(pkCombatting.getName() + " usó " + atkAttacker.getName() + ". " + pkFacing.getName()
-					+ " evitó el ataque jijijija. (bloc 6)");
+			System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
+					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (bloc 6)");
 		}
 	}
 
@@ -893,7 +903,7 @@ public class PkVPk {
 
 		// Remolino/Whirlwind
 		case 18:
-			System.out.println(pkCombatting.getName() + " usó Remolino!");
+			System.out.println(pkCombatting.getName() + " usó Remolino");
 
 			// Reducir PP
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1796,6 +1806,25 @@ public class PkVPk {
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Rugido/Roar
+		case 46:
+			System.out.println(pkCombatting.getName() + " usó Rugido");
+
+			// Reducir PP
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Si el rival no tiene más Pokémon -> no pasa nada (pero no falla)
+			if (!this.getDefender().hasAvailableSwitch()) {
+				System.out.println("Pero " + pkFacing.getName() + " no tiene más Pokémon para cambiar.");
+				break;
+			}
+
+			// Force change
+			this.getDefender().setForceSwitchPokemon(true);
+
+			System.out.println("¡" + pkFacing.getName() + " fue arrastrado y obligado a retirarse!");
 			break;
 
 		// Forcejeo/Struggle
