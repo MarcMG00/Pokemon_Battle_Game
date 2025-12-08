@@ -181,7 +181,8 @@ public class PkVPk {
 																	// are on the same lvl)
 		}
 		// Pisotón
-		else if (atkAttacker.getId() == 23 && this.getPkFacing().getHasUsedMinimize()) {
+		else if ((atkAttacker.getId() == 23 || atkAttacker.getId() == 27 || atkAttacker.getId() == 29
+				|| atkAttacker.getId() == 44) && this.getPkFacing().getHasUsedMinimize()) {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f) * (getEvasionOrAccuracy(pkCombatting, 1) / 1f);
 		}
 		// Other attacks
