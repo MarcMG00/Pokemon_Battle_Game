@@ -1727,6 +1727,24 @@ public class PkVPk {
 			}
 			break;
 
+		// Malicioso/Leer (tested)
+		case 43:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Malicioso");
+
+			if (this.getPkFacing().getDefenseStage() <= -6) {
+				System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+			} else {
+				this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
+				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+						+ " bajó su defensa!");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
