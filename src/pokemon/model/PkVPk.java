@@ -599,7 +599,7 @@ public class PkVPk {
 			}
 
 			// Ice Pokemon cannot be frozen
-			if (this.pkFacing.getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			if (this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -608,9 +608,7 @@ public class PkVPk {
 				// 10% of probabilities to be frozen
 				if (probabilityGettingStatus <= 10) {
 
-					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
-							&& !(this.getPkFacing().getStatusCondition()
-									.getStatusCondition() == StatusConditions.FROZEN)) {
+					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
 						nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
 
@@ -653,8 +651,7 @@ public class PkVPk {
 
 			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has
 			// not a Status
-			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
-					&& !(this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED)) {
+			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -903,21 +900,20 @@ public class PkVPk {
 
 		// Remolino/Whirlwind
 		case 18:
-			System.out.println(pkCombatting.getName() + " usó Remolino");
+			System.out.println(this.getPkCombatting().getName() + " usó Remolino");
 
-			// Reducir PP
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			// Si el rival no tiene más Pokémon -> no pasa nada (pero no falla)
 			if (!this.getDefender().hasAvailableSwitch()) {
-				System.out.println("Pero " + pkFacing.getName() + " no tiene más Pokémon para cambiar.");
+				System.out.println("Pero " + this.getPkFacing().getName() + " no tiene más Pokémon para cambiar.");
 				break;
 			}
 
 			// Force change
 			this.getDefender().setForceSwitchPokemon(true);
 
-			System.out.println("¡" + pkFacing.getName() + " fue arrastrado y obligado a retirarse!");
+			System.out.println("¡" + this.getPkFacing().getName() + " fue arrastrado y obligado a retirarse!");
 			break;
 		// Vuelo/Fly (tested)
 		case 19:
@@ -1810,21 +1806,41 @@ public class PkVPk {
 
 		// Rugido/Roar
 		case 46:
-			System.out.println(pkCombatting.getName() + " usó Rugido");
+			System.out.println(this.getPkCombatting().getName() + " usó Rugido");
 
-			// Reducir PP
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			// Si el rival no tiene más Pokémon -> no pasa nada (pero no falla)
 			if (!this.getDefender().hasAvailableSwitch()) {
-				System.out.println("Pero " + pkFacing.getName() + " no tiene más Pokémon para cambiar.");
+				System.out.println("Pero " + this.getPkFacing().getName() + " no tiene más Pokémon para cambiar.");
 				break;
 			}
 
 			// Force change
 			this.getDefender().setForceSwitchPokemon(true);
 
-			System.out.println("¡" + pkFacing.getName() + " fue arrastrado y obligado a retirarse!");
+			System.out.println("¡" + this.getPkFacing().getName() + " fue arrastrado y obligado a retirarse!");
+			break;
+
+		// Canto/Sing
+		case 47:
+			System.out.println(this.getPkCombatting().getName() + " usó Canto");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
+
+				nbTurnsHoldingStatus = (int) (Math.random() * 7) + 1;
+
+				System.out.println(this.getPkFacing().getName() + " cayó en un sueño profundo.");
+
+				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
+
+				this.getPkFacing().addEstadoEfimero(asleep);
+			}
 			break;
 
 		// Forcejeo/Struggle

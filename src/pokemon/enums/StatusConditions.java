@@ -6,7 +6,7 @@ public enum StatusConditions {
 	  CONFUSED, // confuso
 	  CURSED, // maldito
 	  INFATUATED, // enamorado
-	  TRAPPED, // atrapdo
+	  TRAPPED, // atrapado
 	  SEEDED, // drenado
 	  PERISH_SONG, // canto mortal
 	  TRAPPEDBYOWNATTACK, // Solo puede usar este ataque durante unos turnos
