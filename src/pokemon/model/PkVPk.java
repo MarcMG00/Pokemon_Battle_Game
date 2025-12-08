@@ -1573,7 +1573,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Látigo /Tail Whip (tested)
+		// Látigo/Tail Whip (tested)
 		case 39:
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Látigo");
@@ -1743,6 +1743,41 @@ public class PkVPk {
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
+			break;
+
+		// Mordisco/Bite (tested)
+		case 44:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Mordisco");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			randomRetreat = (int) (Math.random() * 100);
+
+			// 30% of probabilities to retreat Pokemon facing
+			if (randomRetreat <= 30) {
+
+				this.getPkFacing().setHasRetreated(true);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Forcejeo/Struggle
