@@ -870,6 +870,39 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Do effect from ASLEEP state (start of the turn)
+	// -----------------------------
+	public boolean doAsleepEffect() {
+		boolean canAttack = true;
+
+		// Get trapped state
+		State asleepState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.ASLEEP).findFirst().orElse(null);
+
+		if (asleepState != null) {
+
+			asleepState.setNbTurns(asleepState.getNbTurns() - 1);
+
+			if (asleepState.getNbTurns() <= 0) {
+				this.getEphemeralStates().remove(asleepState);
+				System.out.println(this.getName() + " se despertó!");
+			} else {
+				// 1/nbTurns probabilities to wake up
+				double wakeUpProbability = Math.random();
+
+				if (wakeUpProbability <= 1 / asleepState.getNbTurns()) {
+					this.getEphemeralStates().remove(asleepState);
+					System.out.println(this.getName() + " se despertó!");
+				} else {
+					System.out.println(this.getName() + " está dormido y no puede atacar");
+					canAttack = false;
+				}
+			}
+		}
+		return canAttack;
+	}
+
+	// -----------------------------
 	// Apply confusion damage (only start of the turn)
 	// -----------------------------
 	public float doConfusedDammage() {

@@ -448,7 +448,7 @@ public class PkVPk {
 
 		// Puño cometa/Comet punch (tested)
 		case 4:
-			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
+			nbTimesAttack = getRandomInt(1, 5);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -560,9 +560,10 @@ public class PkVPk {
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
+					;
 
-					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus + 1);
+					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
 
 					this.getPkFacing().setStatusCondition(burned);
 
@@ -610,9 +611,10 @@ public class PkVPk {
 
 					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-						nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+						nbTurnsHoldingStatus = getRandomInt(2, 5);
+						;
 
-						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus + 1);
+						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
 
 						this.getPkFacing().setStatusCondition(frozen);
 
@@ -659,9 +661,10 @@ public class PkVPk {
 
 				if (probabilityGettingStatus <= 10) {
 
-					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
+					;
 
-					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus + 1);
+					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
 
 					this.getPkFacing().setStatusCondition(paralyzed);
 
@@ -904,7 +907,7 @@ public class PkVPk {
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
-			// Si el rival no tiene más Pokémon -> no pasa nada (pero no falla)
+			// If rival has no more Pokemon => it doesn't matter, but no fail
 			if (!this.getDefender().hasAvailableSwitch()) {
 				System.out.println("Pero " + this.getPkFacing().getName() + " no tiene más Pokémon para cambiar.");
 				break;
@@ -979,11 +982,12 @@ public class PkVPk {
 			if (!(this.getPkFacing().getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 4)) + 4);
+				nbTurnsHoldingStatus = getRandomInt(4, 5);
+				;
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
@@ -1405,9 +1409,10 @@ public class PkVPk {
 
 				if (probabilityGettingStatus <= 30) {
 
-					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
+					;
 
-					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus + 1);
+					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
 
 					this.getPkFacing().setStatusCondition(paralyzed);
 
@@ -1447,11 +1452,12 @@ public class PkVPk {
 			if (!(this.getPkFacing().getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 4)) + 4);
+				nbTurnsHoldingStatus = getRandomInt(4, 5);
+				;
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
@@ -1529,12 +1535,13 @@ public class PkVPk {
 			if (!(this.getPkCombatting().getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
 
-				nbTurnsHoldingStatus = (int) ((Math.random() * (3 - 2)) + 2);
+				nbTurnsHoldingStatus = getRandomInt(2, 5);
+				;
 
 				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
 						+ nbTurnsHoldingStatus + " turnos.");
 
-				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus);
 
 				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
 			}
@@ -1624,9 +1631,10 @@ public class PkVPk {
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
+					;
 
-					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus + 1);
+					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus);
 
 					this.getPkFacing().setStatusCondition(poisoned);
 
@@ -1682,9 +1690,10 @@ public class PkVPk {
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
+					;
 
-					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus + 1);
+					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus);
 
 					this.getPkFacing().setStatusCondition(poisoned);
 
@@ -1701,7 +1710,8 @@ public class PkVPk {
 
 		// Pin misil/Pin missile (tested)
 		case 42:
-			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
+			nbTimesAttack = getRandomInt(1, 5);
+			;
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -1833,13 +1843,16 @@ public class PkVPk {
 			if (!(this.getPkFacing().getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
 
-				nbTurnsHoldingStatus = (int) (Math.random() * 7) + 1;
+				nbTurnsHoldingStatus = getRandomInt(1, 7);
+				;
 
-				System.out.println(this.getPkFacing().getName() + " cayó en un sueño profundo.");
+				System.out.println(this.getPkFacing().getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
 
 				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
 
 				this.getPkFacing().addEstadoEfimero(asleep);
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está dormido!");
 			}
 			break;
 
@@ -1942,5 +1955,12 @@ public class PkVPk {
 		}
 
 		return isCritic;
+	}
+
+	// -----------------------------
+	// Gets number of turns in a state or number of attacks
+	// -----------------------------
+	public static int getRandomInt(int min, int max) {
+		return min + (int) (Math.random() * (max - min + 1));
 	}
 }
