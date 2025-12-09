@@ -1872,13 +1872,40 @@ public class PkVPk {
 				nbTurnsHoldingStatus = getRandomInt(1, 7);
 				;
 
-				System.out.println(this.getPkFacing().getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
+				System.out.println(
+						this.getPkFacing().getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
 
 				State asleep = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
 
 				this.getPkFacing().addEstadoEfimero(asleep);
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está confuso!");
+			}
+			break;
+
+		// Bomba sónica/Sonic boom
+		case 49:
+			System.out.println(this.getPkCombatting().getName() + " usó Bomba sónica");
+
+			dmg = 20f;
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
 			break;
 
