@@ -1846,13 +1846,39 @@ public class PkVPk {
 				nbTurnsHoldingStatus = getRandomInt(1, 7);
 				;
 
-				System.out.println(this.getPkFacing().getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
+				System.out.println(this.getPkFacing().getName() + " cayó en un sueño profundo por "
+						+ nbTurnsHoldingStatus + " turnos");
 
 				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
 
 				this.getPkFacing().addEstadoEfimero(asleep);
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está dormido!");
+			}
+			break;
+
+		// Supersónico/Supersonic
+		case 48:
+			System.out.println(this.getPkCombatting().getName() + " usó Supersónico");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Check if the Pokemon facing doesn't have the status Confused (is a status
+			// that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
+
+				nbTurnsHoldingStatus = getRandomInt(1, 7);
+				;
+
+				System.out.println(this.getPkFacing().getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
+
+				State asleep = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
+
+				this.getPkFacing().addEstadoEfimero(asleep);
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está confuso!");
 			}
 			break;
 
