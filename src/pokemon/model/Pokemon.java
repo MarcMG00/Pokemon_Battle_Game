@@ -48,6 +48,7 @@ public class Pokemon {
 	private int attackStage;
 	private int specialAttackStage;
 	private int defenseStage;
+	private Attack lastUsedAttack;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -97,6 +98,7 @@ public class Pokemon {
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
 		this.defenseStage = 0;
+		this.lastUsedAttack = new Attack();
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -140,6 +142,7 @@ public class Pokemon {
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
 		this.defenseStage = 0;
+		this.lastUsedAttack = new Attack();
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -188,6 +191,7 @@ public class Pokemon {
 		this.attackStage = pokemon.attackStage;
 		this.specialAttackStage = pokemon.specialAttackStage;
 		this.defenseStage = pokemon.defenseStage;
+		this.lastUsedAttack = pokemon.lastUsedAttack;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -503,6 +507,14 @@ public class Pokemon {
 
 	public void setDefenseStage(int defenseStage) {
 		this.defenseStage = defenseStage;
+	}
+
+	public Attack getLastUsedAttack() {
+		return lastUsedAttack;
+	}
+
+	public void setLastUsedAttack(Attack lastUsedAttack) {
+		this.lastUsedAttack = lastUsedAttack;
 	}
 
 	// Adds abilities to Pokemon
@@ -941,6 +953,30 @@ public class Pokemon {
 				this.setPs(this.getPs() - reducePs);
 
 				System.out.println(this.getName() + " está atado y recibe daño)");
+			}
+		}
+	}
+
+	// -----------------------------
+	// Reduce turn from DISABLE state (end of the turn)
+	// -----------------------------
+	public void reduceDisabledAttackTurn() {
+		// Get trapped state
+		State disableState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
+
+		if (disableState != null) {
+
+			disableState.setNbTurns(disableState.getNbTurns() - 1);
+
+			if (disableState.getNbTurns() <= 0) {
+				this.getEphemeralStates().remove(disableState);
+				System.out.println(
+						this.getName() + " ya puede volver a usar " + disableState.getAttackDisabled().getName());
+			} else {
+
+				System.out.println(
+						this.getName() + " no puede usar todavía " + disableState.getAttackDisabled().getName());
 			}
 		}
 	}
