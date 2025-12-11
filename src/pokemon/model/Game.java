@@ -1142,6 +1142,13 @@ public class Game {
 						.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED)
 						.findFirst().get();
 			}
+			
+			// Reinitialize some stats before changing
+			this.getIA().getPkCombatting().setAttackStage(0);
+			this.getIA().getPkCombatting().setSpecialAttackStage(0);
+			this.getIA().getPkCombatting().setPrecisionPoints(0);
+			this.getIA().getPkCombatting().setDefenseStage(0);
+			this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
 
 			System.out.println("IA eligió a " + newIA.getName() + " (Id:" + newIA.getId() + ")");
 
@@ -1199,7 +1206,7 @@ public class Game {
 			this.getPlayer().getPkCombatting().setSpecialAttackStage(0);
 			this.getPlayer().getPkCombatting().setPrecisionPoints(0);
 			this.getPlayer().getPkCombatting().setDefenseStage(0);
-
+			this.getPlayer().getPkCombatting().setLastUsedAttack(new Attack());
 			Pokemon selected = opt.get();
 
 			System.out.println("Jugador eligió a " + selected.getName());
@@ -1243,6 +1250,7 @@ public class Game {
 		this.getIA().getPkCombatting().setSpecialAttackStage(0);
 		this.getIA().getPkCombatting().setPrecisionPoints(0);
 		this.getIA().getPkCombatting().setDefenseStage(0);
+		this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
 
 		// Do Pokemon change => update Pokemon comabting from IA, etc.
 		System.out.println("IA cambió a " + changeTo.getName());
@@ -1288,6 +1296,13 @@ public class Game {
 		System.out.println(defender.getPkCombatting().getName() + " fue expulsado por "
 				+ defender.getPkFacing().getNextMovement().getName() + ".");
 
+		// Reinitialize some stats
+		defender.getPkCombatting().setAttackStage(0);
+		defender.getPkCombatting().setSpecialAttackStage(0);
+		defender.getPkCombatting().setPrecisionPoints(0);
+		defender.getPkCombatting().setDefenseStage(0);
+		defender.getPkCombatting().setLastUsedAttack(new Attack());
+		
 		boolean isPlayer = defender == this.getPlayer();
 		System.out
 				.println((isPlayer ? "Jugador" : "IA") + " envía a " + newPk.getName() + " (Id:" + newPk.getId() + ")");
