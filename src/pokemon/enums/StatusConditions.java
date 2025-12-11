@@ -18,6 +18,7 @@ public enum StatusConditions {
 	  FROZEN, // congelado
 	  ASLEEP, // dormido
 	  BURNED, // quemado
+	  DISABLE, // anula el útlimo ataque usado por el rival durante unos turnos
 	  
 	  // No status
 	  NO_STATUS, // sin estado

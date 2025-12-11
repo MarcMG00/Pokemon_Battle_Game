@@ -812,6 +812,7 @@ public class Game {
 		// Ephemeral status
 		pk.doTrappedEffect();
 		pk.putConfusedStateIfNeeded();
+		pk.reduceDisabledAttackTurn();
 	}
 
 	// -----------------------------
@@ -1062,6 +1063,7 @@ public class Game {
 
 					System.out.println(ANSI_GREEN + "Pokemon player can attack" + ANSI_RESET);
 					this.getBattleVS().doAttackEffect();
+					pkPlayer.setLastUsedAttack(pkPlayer.getNextMovement());
 				}
 			} else {
 				System.out.println(ANSI_RED + "Pokemon player cannot attack" + ANSI_RESET);
@@ -1096,6 +1098,7 @@ public class Game {
 
 					System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
 					this.getBattleVS().doAttackEffect();
+					pkIA.setLastUsedAttack(pkIA.getNextMovement());
 				}
 
 			} else {
@@ -1139,6 +1142,13 @@ public class Game {
 						.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED)
 						.findFirst().get();
 			}
+			
+			// Reinitialize some stats before changing
+			this.getIA().getPkCombatting().setAttackStage(0);
+			this.getIA().getPkCombatting().setSpecialAttackStage(0);
+			this.getIA().getPkCombatting().setPrecisionPoints(0);
+			this.getIA().getPkCombatting().setDefenseStage(0);
+			this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
 
 			System.out.println("IA eligió a " + newIA.getName() + " (Id:" + newIA.getId() + ")");
 
@@ -1196,7 +1206,7 @@ public class Game {
 			this.getPlayer().getPkCombatting().setSpecialAttackStage(0);
 			this.getPlayer().getPkCombatting().setPrecisionPoints(0);
 			this.getPlayer().getPkCombatting().setDefenseStage(0);
-
+			this.getPlayer().getPkCombatting().setLastUsedAttack(new Attack());
 			Pokemon selected = opt.get();
 
 			System.out.println("Jugador eligió a " + selected.getName());
@@ -1240,6 +1250,7 @@ public class Game {
 		this.getIA().getPkCombatting().setSpecialAttackStage(0);
 		this.getIA().getPkCombatting().setPrecisionPoints(0);
 		this.getIA().getPkCombatting().setDefenseStage(0);
+		this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
 
 		// Do Pokemon change => update Pokemon comabting from IA, etc.
 		System.out.println("IA cambió a " + changeTo.getName());
@@ -1285,6 +1296,13 @@ public class Game {
 		System.out.println(defender.getPkCombatting().getName() + " fue expulsado por "
 				+ defender.getPkFacing().getNextMovement().getName() + ".");
 
+		// Reinitialize some stats
+		defender.getPkCombatting().setAttackStage(0);
+		defender.getPkCombatting().setSpecialAttackStage(0);
+		defender.getPkCombatting().setPrecisionPoints(0);
+		defender.getPkCombatting().setDefenseStage(0);
+		defender.getPkCombatting().setLastUsedAttack(new Attack());
+		
 		boolean isPlayer = defender == this.getPlayer();
 		System.out
 				.println((isPlayer ? "Jugador" : "IA") + " envía a " + newPk.getName() + " (Id:" + newPk.getId() + ")");
@@ -1309,8 +1327,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "25,25,25";
-		String allPkIA = "30,30,30";
+		String allPkPlayer = "24,24,24";
+		String allPkIA = "398,398,398";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1356,12 +1374,13 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 50).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 37).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 21).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -1400,13 +1419,16 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 48).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 48).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {

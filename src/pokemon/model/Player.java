@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 import pokemon.enums.StatusConditions;
 
 public class Player {
-	
+
 	// ==================================== FIELDS
 	// ====================================
-	
+
 	private ArrayList<Pokemon> pokemon;
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
@@ -22,7 +22,7 @@ public class Player {
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
-	
+
 	public Player() {
 		super();
 		this.pokemon = new ArrayList<>();
@@ -33,7 +33,7 @@ public class Player {
 
 	// ==================================== GETTERS/SETTERS
 	// ====================================
-	
+
 	public ArrayList<Pokemon> getPokemon() {
 		return pokemon;
 	}
@@ -73,7 +73,7 @@ public class Player {
 
 	// ==================================== METHODS
 	// ====================================
-	
+
 	// -----------------------------
 	// Adds 4 attacks to each Pokemon from player (1 other, 2 physicals, 1 special)
 	// -----------------------------
@@ -392,6 +392,16 @@ public class Player {
 			return;
 		}
 
+		// Check if all available attacks are disabled => use Struggle
+		boolean allDisabled = this.getPkCombatting().getFourPrincipalAttacks().stream().filter(a -> a.getPp() > 0)
+				.allMatch(a -> isAttackDisabled(this.getPkCombatting(), a));
+
+		if (allDisabled) {
+			System.out.println("IA: Todos los ataques están anulados. Usará Forcejeo (Struggle).");
+			selectStruggle();
+			return;
+		}
+
 		// Gets a random number to choose the attack base (>10 : "others", and if it's
 		// the machine's choice)
 		int randomNumber = (int) (Math.random() * 100) + 1;
@@ -411,8 +421,9 @@ public class Player {
 					Optional<Attack> nextAttack = Optional.empty();
 
 					// Machine: chooses best attack matching type and not "otros"
-					nextAttack = this.getPkCombatting().getLotDamageAttacks().stream().filter(
-							a -> a.getStrTypeToPkType() == pkType && !a.getBases().contains("otros") && a.getPp() > 0)
+					nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
+							.filter(a -> a.getStrTypeToPkType() == pkType && !a.getBases().contains("otros")
+									&& a.getPp() > 0 && !isAttackDisabled(this.getPkCombatting(), a))
 							.findFirst();
 
 					if (nextAttack.isPresent()) {
@@ -437,7 +448,9 @@ public class Player {
 			if (!isAttackChosen && !this.getPkCombatting().getLotDamageAttacks().isEmpty()) {
 
 				Optional<Attack> nextAttack = this.getPkCombatting().getLotDamageAttacks().stream()
-						.filter(a -> !a.getBases().contains("otros") && a.getPp() > 0).findFirst();
+						.filter(a -> !a.getBases().contains("otros") && a.getPp() > 0
+								&& !isAttackDisabled(this.getPkCombatting(), a))
+						.findFirst();
 
 				if (nextAttack.isPresent()) {
 
@@ -459,7 +472,8 @@ public class Player {
 
 				Optional<Attack> nextAttack = this.getPkCombatting().getNormalAttacks().stream()
 						.filter(a -> !a.getBases().contains("otros")
-								&& !this.getPkCombatting().getLowAttacks().contains(a) && a.getPp() > 0)
+								&& !this.getPkCombatting().getLowAttacks().contains(a) && a.getPp() > 0
+								&& !isAttackDisabled(this.getPkCombatting(), a))
 						.findFirst();
 
 				if (nextAttack.isPresent()) {
@@ -486,7 +500,9 @@ public class Player {
 			if (!isAttackChosen) {
 
 				Optional<Attack> nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream()
-						.filter(a -> !a.getBases().contains("otros") && a.getPp() > 0).findFirst();
+						.filter(a -> !a.getBases().contains("otros") && a.getPp() > 0
+								&& !isAttackDisabled(this.getPkCombatting(), a))
+						.findFirst();
 
 				if (nextAttack.isPresent()) {
 
@@ -518,8 +534,8 @@ public class Player {
 				// 4️ Random attack ("otros")
 				// ===============================
 				else {
-					nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream().filter(a -> a.getPp() > 0)
-							.findFirst();
+					nextAttack = this.getPkCombatting().getFourPrincipalAttacks().stream()
+							.filter(a -> a.getPp() > 0 && !isAttackDisabled(this.getPkCombatting(), a)).findFirst();
 
 					if (nextAttack.isPresent()) {
 
@@ -536,20 +552,23 @@ public class Player {
 			// ===============================
 			// 5️ Attack from "otros" OR first attack founded
 			// ===============================
-			if (this.getPkCombatting().getFourPrincipalAttacks().stream()
-					.anyMatch(a -> a.getBases().contains("otros") && a.getPp() > 0)) {
+			if (this.getPkCombatting().getFourPrincipalAttacks().stream().anyMatch(a -> a.getBases().contains("otros")
+					&& a.getPp() > 0 && !isAttackDisabled(this.getPkCombatting(), a))) {
 
-				this.getPkCombatting().setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream()
-						.filter(a -> a.getBases().contains("otros") && a.getPp() > 0).findFirst().get());
+				this.getPkCombatting()
+						.setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream()
+								.filter(a -> a.getBases().contains("otros") && a.getPp() > 0
+										&& !isAttackDisabled(this.getPkCombatting(), a))
+								.findFirst().get());
 			} else {
 				this.getPkCombatting().setNextMovement(this.getPkCombatting().getFourPrincipalAttacks().stream()
-						.filter(a -> a.getPp() > 0).findFirst().get());
+						.filter(a -> a.getPp() > 0 && !isAttackDisabled(this.getPkCombatting(), a)).findFirst().get());
 			}
 
 			// Set effectiveness & bonus
 			this.getPkCombatting().getNextMovement().setEffectivenessAgainstPkFacing(2f);
 			this.getPkCombatting().getNextMovement().setBonus(1f);
-			
+
 			System.out.println(this.getPkCombatting().getNextMovement().getName());
 		}
 	}
@@ -671,7 +690,8 @@ public class Player {
 
 				}
 				// ===============================
-				// 5 Put neutral parameters (otherwise returns 0 on bonus and effectiveness and do 0 on damage calcul)
+				// 5 Put neutral parameters (otherwise returns 0 on bonus and effectiveness and
+				// do 0 on damage calcul)
 				// ===============================
 				else {
 					atk.setEffectivenessAgainstPkFacing(1f);
@@ -808,5 +828,20 @@ public class Player {
 			return false; // If no more Pokemon remaining, attack fails
 		}
 		return true;
+	}
+
+	// -----------------------------
+	// Returns true if the given attack is currently disabled for this Pokemon
+	// -----------------------------
+	private boolean isAttackDisabled(Pokemon pk, Attack atk) {
+		// Get trapped state
+		State disableState = pk.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
+
+		if (disableState != null) {
+			return disableState.getAttackDisabled().getId() == atk.getId();
+		}
+
+		return false;
 	}
 }

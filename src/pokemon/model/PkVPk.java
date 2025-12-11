@@ -145,6 +145,18 @@ public class PkVPk {
 		float accuracyFactor = 0f;
 
 		// -----------------------------
+		// Check if an attack is not disabled (attacks disabled cannot be used, even for
+		// charged attacks, they are instantly disabled)
+		// -----------------------------
+		if (isAttackDisabled(this.getPkCombatting(), this.getPkCombatting().getNextMovement())) {
+			System.out.println(this.getPkCombatting().getName() + " intentó usar "
+					+ this.getPkCombatting().getNextMovement().getName() + ", pero está anulado!");
+
+			this.getPkCombatting().setCanAttack(false);
+			return;
+		}
+
+		// -----------------------------
 		// WHIRLWIND (REMOLINO) / ROAR (RUGIDO)
 		// -----------------------------
 		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46) {
@@ -561,7 +573,6 @@ public class PkVPk {
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
 					nbTurnsHoldingStatus = getRandomInt(2, 5);
-					;
 
 					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
 
@@ -612,7 +623,6 @@ public class PkVPk {
 					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
 						nbTurnsHoldingStatus = getRandomInt(2, 5);
-						;
 
 						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
 
@@ -662,7 +672,6 @@ public class PkVPk {
 				if (probabilityGettingStatus <= 10) {
 
 					nbTurnsHoldingStatus = getRandomInt(2, 5);
-					;
 
 					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
 
@@ -983,7 +992,6 @@ public class PkVPk {
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
 				nbTurnsHoldingStatus = getRandomInt(4, 5);
-				;
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
@@ -1410,7 +1418,6 @@ public class PkVPk {
 				if (probabilityGettingStatus <= 30) {
 
 					nbTurnsHoldingStatus = getRandomInt(2, 5);
-					;
 
 					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
 
@@ -1453,7 +1460,6 @@ public class PkVPk {
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
 				nbTurnsHoldingStatus = getRandomInt(4, 5);
-				;
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
@@ -1536,7 +1542,6 @@ public class PkVPk {
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
 
 				nbTurnsHoldingStatus = getRandomInt(2, 5);
-				;
 
 				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
 						+ nbTurnsHoldingStatus + " turnos.");
@@ -1632,7 +1637,6 @@ public class PkVPk {
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
 					nbTurnsHoldingStatus = getRandomInt(2, 5);
-					;
 
 					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus);
 
@@ -1844,7 +1848,6 @@ public class PkVPk {
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
 
 				nbTurnsHoldingStatus = getRandomInt(1, 7);
-				;
 
 				System.out.println(this.getPkFacing().getName() + " cayó en un sueño profundo por "
 						+ nbTurnsHoldingStatus + " turnos");
@@ -1870,7 +1873,6 @@ public class PkVPk {
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
 
 				nbTurnsHoldingStatus = getRandomInt(1, 7);
-				;
 
 				System.out.println(
 						this.getPkFacing().getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
@@ -1907,6 +1909,40 @@ public class PkVPk {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
+			break;
+
+		// Anulación/Disable
+		case 50:
+			System.out.println(this.getPkCombatting().getName() + " usó Anulación");
+
+			Attack disable = this.getPkCombatting().getNextMovement();
+			Attack lastAttack = this.getPkFacing().getLastUsedAttack();
+
+			disable.setPp(disable.getPp() - 1);
+
+			// If rival hasn't yet used an attack => fails
+			if (lastAttack == null || lastAttack.getId() == 0) {
+				System.out.println("¡Pero no surtió efecto!");
+				break;
+			}
+
+			// Gets if existing a disable state (cause needs to be replaced)
+			State previousDisableState = this.getPkFacing().getEphemeralStates().stream()
+					.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
+
+			if (previousDisableState != null) {
+				this.getPkFacing().getEphemeralStates().remove(previousDisableState);
+			}
+
+			nbTurnsHoldingStatus = getRandomInt(4, 7);
+
+			State attackDisabled = new State(StatusConditions.DISABLE, nbTurnsHoldingStatus + 1);
+			attackDisabled.setAttackDisabled(lastAttack);
+
+			this.getPkFacing().addEstadoEfimero(attackDisabled);
+
+			System.out.println(this.getPkFacing().getName() + " no podrá usar " + lastAttack.getName() + " por "
+					+ nbTurnsHoldingStatus + " turnos");
 			break;
 
 		// Forcejeo/Struggle
@@ -2015,5 +2051,21 @@ public class PkVPk {
 	// -----------------------------
 	public static int getRandomInt(int min, int max) {
 		return min + (int) (Math.random() * (max - min + 1));
+	}
+
+	// -----------------------------
+	// Gets if last attack from Pokemon combating used is disabled
+	// -----------------------------
+	public boolean isAttackDisabled(Pokemon pk, Attack selectedAttack) {
+
+		State disableState = pk.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
+
+		if (disableState != null) {
+			if (disableState.getAttackDisabled() == pk.getNextMovement()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
