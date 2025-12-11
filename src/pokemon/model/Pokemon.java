@@ -961,7 +961,7 @@ public class Pokemon {
 	// Reduce turn from DISABLE state (end of the turn)
 	// -----------------------------
 	public void reduceDisabledAttackTurn() {
-		// Get trapped state
+		// Get disabled state
 		State disableState = this.getEphemeralStates().stream()
 				.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
 
