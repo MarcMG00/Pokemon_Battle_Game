@@ -145,15 +145,27 @@ public class PkVPk {
 		float accuracyFactor = 0f;
 
 		// -----------------------------
-		// WHIRLWIND / REMOLINO
+		// Check if an attack is not disabled (attacks disabled cannot be used, even for
+		// charged attacks, they are instantly disabled)
 		// -----------------------------
-		if (atkAttacker.getId() == 18) {
+		if (isAttackDisabled(this.getPkCombatting(), this.getPkCombatting().getNextMovement())) {
+			System.out.println(this.getPkCombatting().getName() + " intentó usar "
+					+ this.getPkCombatting().getNextMovement().getName() + ", pero está anulado!");
+
+			this.getPkCombatting().setCanAttack(false);
+			return;
+		}
+
+		// -----------------------------
+		// WHIRLWIND (REMOLINO) / ROAR (RUGIDO)
+		// -----------------------------
+		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46) {
 
 			// If Pokemon facing is invulnerable, cannot do the attack
 			if (isDefenderCharging && !canHitInvulnerable) {
 				this.getPkCombatting().setCanAttack(false);
-				System.out.println(pkCombatting.getName() + " usó Remolino, pero " + pkFacing.getName()
-						+ " evitó el ataque (invulnerable).");
+				System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ", pero "
+						+ this.getPkFacing().getName() + " evitó el ataque (invulnerable).");
 			} else {
 				// Acierta siempre
 				this.getPkCombatting().setCanAttack(true);
@@ -163,31 +175,39 @@ public class PkVPk {
 		}
 
 		// For almost all attacks from "otros", it has 100% of accuracy
-		if (atkAttacker.getBases().contains("otros")) {
+		if (atkAttacker.getId() == 14) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
 
+		// -----------------------------
 		// "Struggle" attack has 100% of precision (used when no more PPs remaining on
 		// other attacks, etc.)
+		// -----------------------------
 		if (atkAttacker.getId() == 165) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
 
-		// Guillotina/Perforador
+		// -----------------------------
+		// GUILLOTINE (GUILLOTINA) / HORN DRILL (PERFORADOR)
+		// -----------------------------
 		if (atkAttacker.getId() == 12 || atkAttacker.getId() == 32) {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f); // don't take into account Pokemon levels (cause all
 																	// are on the same lvl)
 		}
-		// Pisotón
-		else if (atkAttacker.getId() == 23 && this.getPkFacing().getHasUsedMinimize()) {
-			accuracyFactor = (atkAttacker.getPrecision() / 100f) * (getEvasionOrAccuracy(pkCombatting, 1) / 1f);
+		// -----------------------------
+		// WHIRLWIND (PISOTON)
+		// -----------------------------
+		else if ((atkAttacker.getId() == 23 || atkAttacker.getId() == 27 || atkAttacker.getId() == 29
+				|| atkAttacker.getId() == 44) && this.getPkFacing().getHasUsedMinimize()) {
+			accuracyFactor = (atkAttacker.getPrecision() / 100f)
+					* (getEvasionOrAccuracy(this.getPkCombatting(), 1) / 1f);
 		}
 		// Other attacks
 		else {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f)
-					* (getEvasionOrAccuracy(pkCombatting, 1) / getEvasionOrAccuracy(pkFacing, 2));
+					* (getEvasionOrAccuracy(this.getPkCombatting(), 1) / getEvasionOrAccuracy(this.getPkFacing(), 2));
 		}
 
 		// Reset CanAttack if doesn't enter in any case
@@ -199,7 +219,8 @@ public class PkVPk {
 		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
 			System.out.println(ANSI_PURPLE + "Probability - Normal attack (defender not charging)" + ANSI_RESET);
 
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bloc 1)");
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
+					"(bloc 1)");
 			return;
 		}
 
@@ -210,7 +231,8 @@ public class PkVPk {
 			System.out
 					.println(ANSI_PURPLE + "Probability - Normal attack can hit while defender charging" + ANSI_RESET);
 
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bloc 2)");
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
+					"(bloc 2)");
 			return;
 		}
 
@@ -221,7 +243,7 @@ public class PkVPk {
 			System.out.println(ANSI_PURPLE + "Probability - Starting a charged attack" + ANSI_RESET);
 
 			pkCombatting.setCanAttack(true);
-			System.out.println(ANSI_PURPLE + pkCombatting.getName() + " utilizará " + atkAttacker.getName()
+			System.out.println(ANSI_PURPLE + this.getPkCombatting().getName() + " utilizará " + atkAttacker.getName()
 					+ " - comienza a cargar el ataque. (bloc 3)" + ANSI_RESET);
 			return;
 		}
@@ -233,7 +255,8 @@ public class PkVPk {
 			System.out.println(
 					ANSI_PURPLE + "Probability - Charged attack execution (defender not charging)" + ANSI_RESET);
 
-			handleChargedAttackExecution(accuracyFactor, atkAttacker, pkCombatting, pkFacing, "(bloc 4)");
+			handleChargedAttackExecution(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
+					"(bloc 4)");
 			return;
 		}
 
@@ -246,8 +269,8 @@ public class PkVPk {
 			pkCombatting.setCanAttack(false);
 			pkCombatting.setIsChargingAttackForNextRound(false);
 
-			System.out.println(pkCombatting.getName() + " usó " + atkAttacker.getName() + ". " + pkFacing.getName()
-					+ " evitó el ataque jijijija. (bloc 5)");
+			System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
+					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (bloc 5)");
 			return;
 		}
 
@@ -261,8 +284,8 @@ public class PkVPk {
 			pkCombatting.setCanAttack(false);
 			pkCombatting.setIsChargingAttackForNextRound(false);
 
-			System.out.println(pkCombatting.getName() + " usó " + atkAttacker.getName() + ". " + pkFacing.getName()
-					+ " evitó el ataque jijijija. (bloc 6)");
+			System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
+					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (bloc 6)");
 		}
 	}
 
@@ -437,7 +460,7 @@ public class PkVPk {
 
 		// Puño cometa/Comet punch (tested)
 		case 4:
-			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
+			nbTimesAttack = getRandomInt(1, 5);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -546,12 +569,12 @@ public class PkVPk {
 
 			if (probabilityGettingStatus <= 10) {
 
-				// Check if the Pokemon facing isn't without any status
+				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
 
-					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus + 1);
+					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
 
 					this.getPkFacing().setStatusCondition(burned);
 
@@ -588,7 +611,7 @@ public class PkVPk {
 			}
 
 			// Ice Pokemon cannot be frozen
-			if (this.pkFacing.getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			if (this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -597,13 +620,11 @@ public class PkVPk {
 				// 10% of probabilities to be frozen
 				if (probabilityGettingStatus <= 10) {
 
-					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
-							&& !(this.getPkFacing().getStatusCondition()
-									.getStatusCondition() == StatusConditions.FROZEN)) {
+					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-						nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+						nbTurnsHoldingStatus = getRandomInt(2, 5);
 
-						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus + 1);
+						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
 
 						this.getPkFacing().setStatusCondition(frozen);
 
@@ -642,8 +663,7 @@ public class PkVPk {
 
 			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has
 			// not a Status
-			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
-					&& !(this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED)) {
+			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -651,9 +671,9 @@ public class PkVPk {
 
 				if (probabilityGettingStatus <= 10) {
 
-					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
 
-					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus + 1);
+					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
 
 					this.getPkFacing().setStatusCondition(paralyzed);
 
@@ -780,7 +800,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Danza espada/Swords dance
+		// Danza espada/Swords dance (tested)
 		case 14:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 					+ " usó Danza espada");
@@ -892,21 +912,20 @@ public class PkVPk {
 
 		// Remolino/Whirlwind
 		case 18:
-			System.out.println(pkCombatting.getName() + " usó Remolino!");
+			System.out.println(this.getPkCombatting().getName() + " usó Remolino");
 
-			// Reducir PP
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
-			// Si el rival no tiene más Pokémon -> no pasa nada (pero no falla)
+			// If rival has no more Pokemon => it doesn't matter, but no fail
 			if (!this.getDefender().hasAvailableSwitch()) {
-				System.out.println("Pero " + pkFacing.getName() + " no tiene más Pokémon para cambiar.");
+				System.out.println("Pero " + this.getPkFacing().getName() + " no tiene más Pokémon para cambiar.");
 				break;
 			}
 
 			// Force change
 			this.getDefender().setForceSwitchPokemon(true);
 
-			System.out.println("¡" + pkFacing.getName() + " fue arrastrado y obligado a retirarse!");
+			System.out.println("¡" + this.getPkFacing().getName() + " fue arrastrado y obligado a retirarse!");
 			break;
 		// Vuelo/Fly (tested)
 		case 19:
@@ -972,11 +991,11 @@ public class PkVPk {
 			if (!(this.getPkFacing().getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 4)) + 4);
+				nbTurnsHoldingStatus = getRandomInt(4, 5);
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
@@ -1398,9 +1417,9 @@ public class PkVPk {
 
 				if (probabilityGettingStatus <= 30) {
 
-					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
 
-					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus + 1);
+					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
 
 					this.getPkFacing().setStatusCondition(paralyzed);
 
@@ -1440,11 +1459,11 @@ public class PkVPk {
 			if (!(this.getPkFacing().getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 4)) + 4);
+				nbTurnsHoldingStatus = getRandomInt(4, 5);
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
@@ -1522,12 +1541,12 @@ public class PkVPk {
 			if (!(this.getPkCombatting().getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
 
-				nbTurnsHoldingStatus = (int) ((Math.random() * (3 - 2)) + 2);
+				nbTurnsHoldingStatus = getRandomInt(2, 5);
 
 				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
 						+ nbTurnsHoldingStatus + " turnos.");
 
-				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus);
 
 				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
 			}
@@ -1573,7 +1592,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Látigo /Tail Whip (tested)
+		// Látigo/Tail Whip (tested)
 		case 39:
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Látigo");
@@ -1614,17 +1633,435 @@ public class PkVPk {
 
 			if (probabilityGettingStatus <= 30) {
 
-				// Check if the Pokemon facing isn't without any status
+				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = (int) ((Math.random() * (5 - 2)) + 2);
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
 
-					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus + 1);
+					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus);
 
 					this.getPkFacing().setStatusCondition(poisoned);
 
 					System.out.println(
 							this.getPkFacing().getName() + " fue envenenado por " + nbTurnsHoldingStatus + " turnos");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Doble ataque/Twineedle (tested)
+		case 41:
+			// Attacks 2 times
+			nbTimesAttack = 2;
+
+			for (int i = 0; i < nbTimesAttack; i++) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Doble ataque");
+
+				dmg = doDammage();
+
+				isCritic = getCriticity();
+
+				if (isCritic) {
+
+					dmg = dmg * 2;
+					System.out.println("Fue un golpe crítico");
+					System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+				}
+
+				dmgToSum += dmg;
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
+
+			probabilityGettingStatus = (int) (Math.random() * 100);
+
+			System.out.println("proba de envenenar : " + probabilityGettingStatus);
+
+			if (probabilityGettingStatus <= 20) {
+
+				// Check if the Pokemon facing has no status
+				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
+					;
+
+					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus);
+
+					this.getPkFacing().setStatusCondition(poisoned);
+
+					System.out.println(
+							this.getPkFacing().getName() + " fue envenenado por " + nbTurnsHoldingStatus + " turnos");
+				}
+			}
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Pin misil/Pin missile (tested)
+		case 42:
+			nbTimesAttack = getRandomInt(1, 5);
+			;
+
+			for (int i = 0; i < nbTimesAttack; i++) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Pin misil");
+
+				dmg = doDammage();
+
+				isCritic = getCriticity();
+
+				if (isCritic) {
+
+					dmg = dmg * 2;
+					System.out.println("Fue un golpe crítico");
+					System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+				}
+
+				dmgToSum += dmg;
+			}
+
+			System.out.println("nº de veces que se usó Pin misil : " + nbTimesAttack);
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Malicioso/Leer (tested)
+		case 43:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Malicioso");
+
+			if (this.getPkFacing().getDefenseStage() <= -6) {
+				System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+			} else {
+				this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
+				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+						+ " bajó su defensa!");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			break;
+
+		// Mordisco/Bite (tested)
+		case 44:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Mordisco");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			randomRetreat = (int) (Math.random() * 100);
+
+			// 30% of probabilities to retreat Pokemon facing
+			if (randomRetreat <= 30) {
+
+				this.getPkFacing().setHasRetreated(true);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Gruñido/Growl (tested)
+		case 45:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Gruñido");
+
+			if (this.getPkFacing().getAttackStage() <= -6) {
+				System.out.println("El ataque de " + this.getPkCombatting().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+			} else {
+				this.getPkFacing().setAttackStage(Math.min(this.getPkFacing().getAttackStage() - 1, -6));
+				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+						+ " bajó su defensa!");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Rugido/Roar (tested)
+		case 46:
+			System.out.println(this.getPkCombatting().getName() + " usó Rugido");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Si el rival no tiene más Pokémon -> no pasa nada (pero no falla)
+			if (!this.getDefender().hasAvailableSwitch()) {
+				System.out.println("Pero " + this.getPkFacing().getName() + " no tiene más Pokémon para cambiar.");
+				break;
+			}
+
+			// Force change
+			this.getDefender().setForceSwitchPokemon(true);
+
+			System.out.println("¡" + this.getPkFacing().getName() + " fue arrastrado y obligado a retirarse!");
+			break;
+
+		// Canto/Sing (tested)
+		case 47:
+			System.out.println(this.getPkCombatting().getName() + " usó Canto");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
+
+				nbTurnsHoldingStatus = getRandomInt(1, 7);
+
+				System.out.println(this.getPkFacing().getName() + " cayó en un sueño profundo por "
+						+ nbTurnsHoldingStatus + " turnos");
+
+				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
+
+				this.getPkFacing().addEstadoEfimero(asleep);
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está dormido!");
+			}
+			break;
+
+		// Supersónico/Supersonic (tested)
+		case 48:
+			System.out.println(this.getPkCombatting().getName() + " usó Supersónico");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Check if the Pokemon facing doesn't have the status Confused (is a status
+			// that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
+
+				nbTurnsHoldingStatus = getRandomInt(1, 7);
+
+				System.out.println(
+						this.getPkFacing().getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
+
+				State asleep = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
+
+				this.getPkFacing().addEstadoEfimero(asleep);
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está confuso!");
+			}
+			break;
+
+		// Bomba sónica/Sonic boom (tested)
+		case 49:
+			System.out.println(this.getPkCombatting().getName() + " usó Bomba sónica");
+
+			dmg = 20f;
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Anulación/Disable (tested)
+		case 50:
+			System.out.println(this.getPkCombatting().getName() + " usó Anulación");
+
+			Attack disable = this.getPkCombatting().getNextMovement();
+			Attack lastAttack = this.getPkFacing().getLastUsedAttack();
+
+			disable.setPp(disable.getPp() - 1);
+
+			// If rival hasn't yet used an attack => fails
+			if (lastAttack == null || lastAttack.getId() == 0) {
+				System.out.println("¡Pero no surtió efecto!");
+				break;
+			}
+
+			// Gets if existing a disable state (cause needs to be replaced)
+			State previousDisableState = this.getPkFacing().getEphemeralStates().stream()
+					.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
+
+			if (previousDisableState != null) {
+				this.getPkFacing().getEphemeralStates().remove(previousDisableState);
+			}
+
+			nbTurnsHoldingStatus = getRandomInt(4, 7);
+
+			State attackDisabled = new State(StatusConditions.DISABLE, nbTurnsHoldingStatus + 1);
+			attackDisabled.setAttackDisabled(lastAttack);
+
+			this.getPkFacing().addEstadoEfimero(attackDisabled);
+
+			System.out.println(this.getPkFacing().getName() + " no podrá usar " + lastAttack.getName() + " por "
+					+ nbTurnsHoldingStatus + " turnos");
+			break;
+
+		// Acido/Acid (tested)
+		case 51:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Ácido");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// 10% of probabilities to reduce the special defense
+			boolean reduceDefRival = Math.random() <= 0.10;
+
+			if (reduceDefRival) {
+				if (this.getPkFacing().getSpecialDefenseStage() <= -6) {
+					System.out.println("La defensa especial de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing()
+							.setSpecialDefenseStage(Math.max(this.getPkFacing().getSpecialDefenseStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su defensa especial!");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			break;
+
+		// Ascuas/Ember (tested)
+		case 52:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Ascuas");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			probabilityGettingStatus = (int) (Math.random() * 100);
+
+			System.out.println("proba de quemar : " + probabilityGettingStatus);
+
+			if (probabilityGettingStatus <= 10) {
+
+				// Check if the Pokemon facing has no status
+				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
+
+					this.getPkFacing().setStatusCondition(burned);
+
+					System.out.println(
+							this.getPkFacing().getName() + " fue quemado por " + nbTurnsHoldingStatus + " turnos");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Lanzallamas/FlameThrower (tested)
+		case 53:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Lanzallamas");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			probabilityGettingStatus = (int) (Math.random() * 100);
+
+			System.out.println("proba de quemar : " + probabilityGettingStatus);
+
+			if (probabilityGettingStatus <= 10) {
+
+				// Check if the Pokemon facing has no status
+				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
+
+					this.getPkFacing().setStatusCondition(burned);
+
+					System.out.println(
+							this.getPkFacing().getName() + " fue quemado por " + nbTurnsHoldingStatus + " turnos");
 				}
 			}
 
@@ -1688,20 +2125,13 @@ public class PkVPk {
 
 		float dmg = 0;
 
-//		System.out.println(ANSI_PURPLE + "Bonus : " + this.getPkCombatting().getNextMovement().getBonus() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Effectiveness : " + this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Effective attack : " + this.getPkCombatting().getEffectiveAttack() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Power : " + this.getPkCombatting().getNextMovement().getPower() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Def Pk facing : " + this.getPkFacing().getDef() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Variation : " + randomVariation + ANSI_RESET);
-
 		if (isSpecialAttack) {
 			// Apply special damage
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
 					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveSpecialAttack()
 							* this.getPkCombatting().getNextMovement().getPower())
-							/ (25f * this.getPkFacing().getSpecialDefense()) + 2f);
+							/ (25f * this.getPkFacing().getEffectiveSpecialDefense()) + 2f);
 
 			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
 					+ this.getPkFacing().getId() + ")" + ") : " + dmg);
@@ -1737,5 +2167,28 @@ public class PkVPk {
 		}
 
 		return isCritic;
+	}
+
+	// -----------------------------
+	// Gets number of turns in a state or number of attacks
+	// -----------------------------
+	public static int getRandomInt(int min, int max) {
+		return min + (int) (Math.random() * (max - min + 1));
+	}
+
+	// -----------------------------
+	// Gets if last attack from Pokemon combating used is disabled
+	// -----------------------------
+	public boolean isAttackDisabled(Pokemon pk, Attack selectedAttack) {
+
+		State disableState = pk.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
+
+		if (disableState != null) {
+			if (disableState.getAttackDisabled() == pk.getNextMovement()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

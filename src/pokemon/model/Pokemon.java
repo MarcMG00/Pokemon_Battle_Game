@@ -48,6 +48,8 @@ public class Pokemon {
 	private int attackStage;
 	private int specialAttackStage;
 	private int defenseStage;
+	private int specialDefenseStage;
+	private Attack lastUsedAttack;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -97,6 +99,8 @@ public class Pokemon {
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
 		this.defenseStage = 0;
+		this.specialDefenseStage = 0;
+		this.lastUsedAttack = new Attack();
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -140,6 +144,8 @@ public class Pokemon {
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
 		this.defenseStage = 0;
+		this.specialDefenseStage = 0;
+		this.lastUsedAttack = new Attack();
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -188,6 +194,8 @@ public class Pokemon {
 		this.attackStage = pokemon.attackStage;
 		this.specialAttackStage = pokemon.specialAttackStage;
 		this.defenseStage = pokemon.defenseStage;
+		this.specialDefenseStage = pokemon.specialDefenseStage;
+		this.lastUsedAttack = pokemon.lastUsedAttack;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -504,6 +512,22 @@ public class Pokemon {
 	public void setDefenseStage(int defenseStage) {
 		this.defenseStage = defenseStage;
 	}
+	
+	public int getSpecialDefenseStage() {
+		return specialDefenseStage;
+	}
+
+	public void setSpecialDefenseStage(int specialDefenseStage) {
+		this.specialDefenseStage = specialDefenseStage;
+	}
+
+	public Attack getLastUsedAttack() {
+		return lastUsedAttack;
+	}
+
+	public void setLastUsedAttack(Attack lastUsedAttack) {
+		this.lastUsedAttack = lastUsedAttack;
+	}
 
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
@@ -629,7 +653,7 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Get attack stage for normal attack
+	// Get defense stage for normal defense
 	// -----------------------------
 	public float getEffectiveDefense() {
 		int stage = this.getDefenseStage();
@@ -641,6 +665,21 @@ public class Pokemon {
 			multiplier = 2.0f / (2 - stage);
 
 		return this.getDef() * multiplier;
+	}
+	
+	// -----------------------------
+	// Get defense stage for special defense
+	// -----------------------------
+	public float getEffectiveSpecialDefense() {
+		int stage = this.getSpecialDefenseStage();
+		float multiplier;
+
+		if (stage >= 0)
+			multiplier = (2 + stage) / 2.0f;
+		else
+			multiplier = 2.0f / (2 - stage);
+
+		return this.getSpecialDefense() * multiplier;
 	}
 
 	// -----------------------------
@@ -870,6 +909,39 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Do effect from ASLEEP state (start of the turn)
+	// -----------------------------
+	public boolean doAsleepEffect() {
+		boolean canAttack = true;
+
+		// Get trapped state
+		State asleepState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.ASLEEP).findFirst().orElse(null);
+
+		if (asleepState != null) {
+
+			asleepState.setNbTurns(asleepState.getNbTurns() - 1);
+
+			if (asleepState.getNbTurns() <= 0) {
+				this.getEphemeralStates().remove(asleepState);
+				System.out.println(this.getName() + " se despertó!");
+			} else {
+				// 1/nbTurns probabilities to wake up
+				double wakeUpProbability = Math.random();
+
+				if (wakeUpProbability <= 1 / asleepState.getNbTurns()) {
+					this.getEphemeralStates().remove(asleepState);
+					System.out.println(this.getName() + " se despertó!");
+				} else {
+					System.out.println(this.getName() + " está dormido y no puede atacar");
+					canAttack = false;
+				}
+			}
+		}
+		return canAttack;
+	}
+
+	// -----------------------------
 	// Apply confusion damage (only start of the turn)
 	// -----------------------------
 	public float doConfusedDammage() {
@@ -908,6 +980,30 @@ public class Pokemon {
 				this.setPs(this.getPs() - reducePs);
 
 				System.out.println(this.getName() + " está atado y recibe daño)");
+			}
+		}
+	}
+
+	// -----------------------------
+	// Reduce turn from DISABLE state (end of the turn)
+	// -----------------------------
+	public void reduceDisabledAttackTurn() {
+		// Get disabled state
+		State disableState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
+
+		if (disableState != null) {
+
+			disableState.setNbTurns(disableState.getNbTurns() - 1);
+
+			if (disableState.getNbTurns() <= 0) {
+				this.getEphemeralStates().remove(disableState);
+				System.out.println(
+						this.getName() + " ya puede volver a usar " + disableState.getAttackDisabled().getName());
+			} else {
+
+				System.out.println(
+						this.getName() + " no puede usar todavía " + disableState.getAttackDisabled().getName());
 			}
 		}
 	}
