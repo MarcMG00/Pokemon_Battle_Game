@@ -48,6 +48,7 @@ public class Pokemon {
 	private int attackStage;
 	private int specialAttackStage;
 	private int defenseStage;
+	private int specialDefenseStage;
 	private Attack lastUsedAttack;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
@@ -98,6 +99,7 @@ public class Pokemon {
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
 		this.defenseStage = 0;
+		this.specialDefenseStage = 0;
 		this.lastUsedAttack = new Attack();
 	}
 
@@ -142,6 +144,7 @@ public class Pokemon {
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
 		this.defenseStage = 0;
+		this.specialDefenseStage = 0;
 		this.lastUsedAttack = new Attack();
 	}
 
@@ -191,6 +194,7 @@ public class Pokemon {
 		this.attackStage = pokemon.attackStage;
 		this.specialAttackStage = pokemon.specialAttackStage;
 		this.defenseStage = pokemon.defenseStage;
+		this.specialDefenseStage = pokemon.specialDefenseStage;
 		this.lastUsedAttack = pokemon.lastUsedAttack;
 	}
 
@@ -508,6 +512,14 @@ public class Pokemon {
 	public void setDefenseStage(int defenseStage) {
 		this.defenseStage = defenseStage;
 	}
+	
+	public int getSpecialDefenseStage() {
+		return specialDefenseStage;
+	}
+
+	public void setSpecialDefenseStage(int specialDefenseStage) {
+		this.specialDefenseStage = specialDefenseStage;
+	}
 
 	public Attack getLastUsedAttack() {
 		return lastUsedAttack;
@@ -641,7 +653,7 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Get attack stage for normal attack
+	// Get defense stage for normal defense
 	// -----------------------------
 	public float getEffectiveDefense() {
 		int stage = this.getDefenseStage();
@@ -653,6 +665,21 @@ public class Pokemon {
 			multiplier = 2.0f / (2 - stage);
 
 		return this.getDef() * multiplier;
+	}
+	
+	// -----------------------------
+	// Get defense stage for special defense
+	// -----------------------------
+	public float getEffectiveSpecialDefense() {
+		int stage = this.getSpecialDefenseStage();
+		float multiplier;
+
+		if (stage >= 0)
+			multiplier = (2 + stage) / 2.0f;
+		else
+			multiplier = 2.0f / (2 - stage);
+
+		return this.getSpecialDefense() * multiplier;
 	}
 
 	// -----------------------------

@@ -1945,6 +1945,42 @@ public class PkVPk {
 					+ nbTurnsHoldingStatus + " turnos");
 			break;
 
+		// Acido/Acid (tested)
+		case 51:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Ácido");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// 10% of probabilities to reduce the special defense
+			boolean reduceDefRival = Math.random() <= 0.10;
+
+			if (reduceDefRival) {
+				if (this.getPkFacing().getSpecialDefenseStage() <= -6) {
+					System.out.println("La defensa especial de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing()
+							.setSpecialDefenseStage(Math.max(this.getPkFacing().getSpecialDefenseStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su defensa especial!");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -1995,20 +2031,13 @@ public class PkVPk {
 
 		float dmg = 0;
 
-//		System.out.println(ANSI_PURPLE + "Bonus : " + this.getPkCombatting().getNextMovement().getBonus() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Effectiveness : " + this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Effective attack : " + this.getPkCombatting().getEffectiveAttack() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Power : " + this.getPkCombatting().getNextMovement().getPower() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Def Pk facing : " + this.getPkFacing().getDef() + ANSI_RESET);
-//		System.out.println(ANSI_PURPLE + "Variation : " + randomVariation + ANSI_RESET);
-
 		if (isSpecialAttack) {
 			// Apply special damage
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
 					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
 					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveSpecialAttack()
 							* this.getPkCombatting().getNextMovement().getPower())
-							/ (25f * this.getPkFacing().getSpecialDefense()) + 2f);
+							/ (25f * this.getPkFacing().getEffectiveSpecialDefense()) + 2f);
 
 			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
 					+ this.getPkFacing().getId() + ")" + ") : " + dmg);

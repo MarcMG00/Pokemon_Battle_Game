@@ -1148,6 +1148,7 @@ public class Game {
 			this.getIA().getPkCombatting().setSpecialAttackStage(0);
 			this.getIA().getPkCombatting().setPrecisionPoints(0);
 			this.getIA().getPkCombatting().setDefenseStage(0);
+			this.getIA().getPkCombatting().setSpecialDefenseStage(0);
 			this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
 
 			System.out.println("IA eligió a " + newIA.getName() + " (Id:" + newIA.getId() + ")");
@@ -1206,6 +1207,7 @@ public class Game {
 			this.getPlayer().getPkCombatting().setSpecialAttackStage(0);
 			this.getPlayer().getPkCombatting().setPrecisionPoints(0);
 			this.getPlayer().getPkCombatting().setDefenseStage(0);
+			this.getPlayer().getPkCombatting().setSpecialDefenseStage(0);
 			this.getPlayer().getPkCombatting().setLastUsedAttack(new Attack());
 			Pokemon selected = opt.get();
 
@@ -1250,6 +1252,7 @@ public class Game {
 		this.getIA().getPkCombatting().setSpecialAttackStage(0);
 		this.getIA().getPkCombatting().setPrecisionPoints(0);
 		this.getIA().getPkCombatting().setDefenseStage(0);
+		this.getIA().getPkCombatting().setSpecialDefenseStage(0);
 		this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
 
 		// Do Pokemon change => update Pokemon comabting from IA, etc.
@@ -1301,6 +1304,7 @@ public class Game {
 		defender.getPkCombatting().setSpecialAttackStage(0);
 		defender.getPkCombatting().setPrecisionPoints(0);
 		defender.getPkCombatting().setDefenseStage(0);
+		defender.getPkCombatting().setSpecialDefenseStage(0);
 		defender.getPkCombatting().setLastUsedAttack(new Attack());
 		
 		boolean isPlayer = defender == this.getPlayer();
