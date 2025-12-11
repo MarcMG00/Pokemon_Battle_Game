@@ -1818,7 +1818,7 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			break;
 
-		// Rugido/Roar
+		// Rugido/Roar (tested)
 		case 46:
 			System.out.println(this.getPkCombatting().getName() + " usó Rugido");
 
@@ -1836,7 +1836,7 @@ public class PkVPk {
 			System.out.println("¡" + this.getPkFacing().getName() + " fue arrastrado y obligado a retirarse!");
 			break;
 
-		// Canto/Sing
+		// Canto/Sing (tested)
 		case 47:
 			System.out.println(this.getPkCombatting().getName() + " usó Canto");
 
@@ -1860,7 +1860,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Supersónico/Supersonic
+		// Supersónico/Supersonic (tested)
 		case 48:
 			System.out.println(this.getPkCombatting().getName() + " usó Supersónico");
 
@@ -1885,7 +1885,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Bomba sónica/Sonic boom
+		// Bomba sónica/Sonic boom (tested)
 		case 49:
 			System.out.println(this.getPkCombatting().getName() + " usó Bomba sónica");
 
@@ -1911,7 +1911,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Anulación/Disable
+		// Anulación/Disable (tested)
 		case 50:
 			System.out.println(this.getPkCombatting().getName() + " usó Anulación");
 
@@ -1979,6 +1979,53 @@ public class PkVPk {
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
+			break;
+
+		// Ascuas/Ember (tested)
+		case 52:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Ascuas");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			probabilityGettingStatus = (int) (Math.random() * 100);
+
+			System.out.println("proba de quemar : " + probabilityGettingStatus);
+
+			if (probabilityGettingStatus <= 10) {
+
+				// Check if the Pokemon facing has no status
+				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+					nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
+
+					this.getPkFacing().setStatusCondition(burned);
+
+					System.out.println(
+							this.getPkFacing().getName() + " fue quemado por " + nbTurnsHoldingStatus + " turnos");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Forcejeo/Struggle
