@@ -769,7 +769,7 @@ public class Game {
 
 		pkPlayer.restartParametersEffect();
 		pkIA.restartParametersEffect();
-		
+
 		reduceNbTurnsMistActive();
 	}
 
@@ -1109,7 +1109,7 @@ public class Game {
 					System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
 					this.getBattleVS().doAttackEffect(this.getMistIsActivated());
 					pkIA.setLastUsedAttack(pkIA.getNextMovement());
-					
+
 					// Sets Mist effect activated
 					if (pkIA.getNextMovement().getId() == 54 && !this.getMistIsActivated()) {
 						this.setMistIsActivated(true);
@@ -1340,16 +1340,19 @@ public class Game {
 
 		defender.setForceSwitchPokemon(false);
 	}
-	
+
 	// -----------------------------
 	// Reduce number of turns of Mist effect
 	// -----------------------------
 	private void reduceNbTurnsMistActive() {
-		if(this.getMistIsActivated()) {
+		if (this.getMistIsActivated()) {
 			this.setNbTurnsMistActive(this.getNbTurnsMistActive() - 1);
-			
-			if(this.getNbTurnsMistActive() <= 0) {
+
+			if (this.getNbTurnsMistActive() <= 0) {
 				this.setMistIsActivated(false);
+				System.out.println("La niebla se disipó!");
+			} else {
+				System.out.println("Faltan " + this.getNbTurnsMistActive() + " turnos para que la niebla se fuerara XD");
 			}
 		}
 	}
@@ -1360,8 +1363,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "24,24,24";
-		String allPkIA = "398,398,398";
+		String allPkPlayer = "62,62,62";
+		String allPkIA = "17,17,17";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1407,13 +1410,13 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 50).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 54).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 37).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 21).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 34).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -1452,14 +1455,14 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 16).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 48).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 
