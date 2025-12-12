@@ -353,7 +353,7 @@ public class PkVPk {
 	// -----------------------------
 	// Gets the attack effect and apply damage
 	// -----------------------------
-	public void doAttackEffect() {
+	public void doAttackEffect(boolean isMistEffectActivated) {
 
 		float dmg = 0f;
 		float dmgToSum = 0f;

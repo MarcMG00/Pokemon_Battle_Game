@@ -46,8 +46,8 @@ public class Game {
 	private ScrappingWeb scrappingWeb;
 	private WritterData writterData;
 	private ReaderData readerData;
-	private boolean willUseChargedAttackPlayer = false;
-	private boolean willUseChargedAttackIA = false;
+	private boolean mistIsActivated;
+	private int nbTurnsMistActive;
 
 	private Player player;
 	private IAPlayer IA;
@@ -74,6 +74,8 @@ public class Game {
 		this.scrappingWeb = new ScrappingWeb();
 		this.writterData = new WritterData();
 		this.readerData = new ReaderData();
+		this.mistIsActivated = false;
+		this.nbTurnsMistActive = 0;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -223,20 +225,20 @@ public class Game {
 		this.readerData = readerData;
 	}
 
-	public boolean getWillUseChargedAttackPlayer() {
-		return willUseChargedAttackPlayer;
+	public boolean getMistIsActivated() {
+		return mistIsActivated;
 	}
 
-	public void setWillUseChargedAttackPlayer(boolean willUseChargedAttackPlayer) {
-		this.willUseChargedAttackPlayer = willUseChargedAttackPlayer;
+	public void setMistIsActivated(boolean mistIsActivated) {
+		this.mistIsActivated = mistIsActivated;
 	}
 
-	public boolean getWillUseChargedAttackIA() {
-		return willUseChargedAttackIA;
+	public int getNbTurnsMistActive() {
+		return nbTurnsMistActive;
 	}
 
-	public void setWillUseChargedAttackIA(boolean willUseChargedAttackIA) {
-		this.willUseChargedAttackIA = willUseChargedAttackIA;
+	public void setNbTurnsMistActive(int nbTurnsMistActive) {
+		this.nbTurnsMistActive = nbTurnsMistActive;
 	}
 
 	// ==================================== METHODS
@@ -767,6 +769,8 @@ public class Game {
 
 		pkPlayer.restartParametersEffect();
 		pkIA.restartParametersEffect();
+		
+		reduceNbTurnsMistActive();
 	}
 
 	/*
@@ -1062,8 +1066,14 @@ public class Game {
 				if (pkPlayer.getCanAttack()) {
 
 					System.out.println(ANSI_GREEN + "Pokemon player can attack" + ANSI_RESET);
-					this.getBattleVS().doAttackEffect();
+					this.getBattleVS().doAttackEffect(this.getMistIsActivated());
 					pkPlayer.setLastUsedAttack(pkPlayer.getNextMovement());
+
+					// Sets Mist effect activated
+					if (pkPlayer.getNextMovement().getId() == 54 && !this.getMistIsActivated()) {
+						this.setMistIsActivated(true);
+						this.setNbTurnsMistActive(5);
+					}
 				}
 			} else {
 				System.out.println(ANSI_RED + "Pokemon player cannot attack" + ANSI_RESET);
@@ -1097,8 +1107,14 @@ public class Game {
 				if (pkIA.getCanAttack()) {
 
 					System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
-					this.getBattleVS().doAttackEffect();
+					this.getBattleVS().doAttackEffect(this.getMistIsActivated());
 					pkIA.setLastUsedAttack(pkIA.getNextMovement());
+					
+					// Sets Mist effect activated
+					if (pkIA.getNextMovement().getId() == 54 && !this.getMistIsActivated()) {
+						this.setMistIsActivated(true);
+						this.setNbTurnsMistActive(5);
+					}
 				}
 
 			} else {
@@ -1142,7 +1158,7 @@ public class Game {
 						.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED)
 						.findFirst().get();
 			}
-			
+
 			// Reinitialize some stats before changing
 			this.getIA().getPkCombatting().setAttackStage(0);
 			this.getIA().getPkCombatting().setSpecialAttackStage(0);
@@ -1306,7 +1322,7 @@ public class Game {
 		defender.getPkCombatting().setDefenseStage(0);
 		defender.getPkCombatting().setSpecialDefenseStage(0);
 		defender.getPkCombatting().setLastUsedAttack(new Attack());
-		
+
 		boolean isPlayer = defender == this.getPlayer();
 		System.out
 				.println((isPlayer ? "Jugador" : "IA") + " envía a " + newPk.getName() + " (Id:" + newPk.getId() + ")");
@@ -1323,6 +1339,19 @@ public class Game {
 		}
 
 		defender.setForceSwitchPokemon(false);
+	}
+	
+	// -----------------------------
+	// Reduce number of turns of Mist effect
+	// -----------------------------
+	private void reduceNbTurnsMistActive() {
+		if(this.getMistIsActivated()) {
+			this.setNbTurnsMistActive(this.getNbTurnsMistActive() - 1);
+			
+			if(this.getNbTurnsMistActive() <= 0) {
+				this.setMistIsActivated(false);
+			}
+		}
 	}
 
 	// -----------------------------
