@@ -2200,6 +2200,56 @@ public class PkVPk {
 			}
 			break;
 
+		// Rayo hielo/Ice beam (tested)
+		case 58:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Rayo hielo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// Ice Pokemon cannot be frozen
+			if (this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+
+				probabilityGettingStatus = (int) (Math.random() * 100);
+
+				System.out.println("proba de congelar : " + probabilityGettingStatus);
+
+				// 10% of probabilities to be frozen
+				if (probabilityGettingStatus <= 10) {
+
+					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+						nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
+
+						this.getPkFacing().setStatusCondition(frozen);
+
+						System.out.println(this.getPkCombatting().getName() + " fue congelado por "
+								+ nbTurnsHoldingStatus + " turnos");
+					}
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
