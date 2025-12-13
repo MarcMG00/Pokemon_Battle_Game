@@ -197,7 +197,7 @@ public class PkVPk {
 																	// are on the same lvl)
 		}
 		// -----------------------------
-		// WHIRLWIND (PISOTON)
+		// RETREAT POKEMON (STOMP/ ROLLING KICK/ HEADBUTT/ BITE)
 		// -----------------------------
 		else if ((atkAttacker.getId() == 23 || atkAttacker.getId() == 27 || atkAttacker.getId() == 29
 				|| atkAttacker.getId() == 44) && this.getPkFacing().getHasUsedMinimize()) {
@@ -2149,6 +2149,46 @@ public class PkVPk {
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Surf/Surf (tested)
+		case 57:
+			// Gets the power from the beginning (to avoid variations after attacking)
+			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
+
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Surf");
+
+			// If Pokemon facing has used Dive, set power base of the attack x2
+			if (this.getPkFacing().getIsChargingAttackForNextRound()
+					&& this.getPkFacing().getNextMovement().getId() == 291) {
+				this.getPkCombatting().getNextMovement()
+						.setPower(this.getPkCombatting().getNextMovement().getPower() * 2);
+			}
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// Puts again the same power base as the beginning
+			this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
