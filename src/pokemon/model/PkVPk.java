@@ -1895,9 +1895,9 @@ public class PkVPk {
 				System.out.println(
 						this.getPkFacing().getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
 
-				State asleep = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
+				State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
 
-				this.getPkFacing().addEstadoEfimero(asleep);
+				this.getPkFacing().addEstadoEfimero(confused);
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está confuso!");
 			}
@@ -2299,6 +2299,34 @@ public class PkVPk {
 			if (this.getPkFacing().getPs() <= 0) {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Psicorrayo/Psybeam (tested)
+		case 60:
+			System.out.println(this.getPkCombatting().getName() + " usó Psicorrayo");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Check if the Pokemon facing doesn't have the status Confused (is a status
+			// that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
+
+				probabilityGettingStatus = (int) (Math.random() * 100);
+
+				// 10% of probabilities to be confused
+				if (probabilityGettingStatus <= 10) {
+					nbTurnsHoldingStatus = getRandomInt(1, 7);
+
+					System.out.println(
+							this.getPkFacing().getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
+
+					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
+
+					this.getPkFacing().addEstadoEfimero(confused);
+				}
 			}
 			break;
 
