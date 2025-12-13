@@ -366,6 +366,8 @@ public class PkVPk {
 		int randomRetreat = 0;
 		float defenderInitialPs = 0f;
 		float recoil = 0f;
+		boolean reduceDefRival = false;
+		boolean reduceSpeedRival = false;
 
 		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor/Pound (tested)
@@ -1981,7 +1983,7 @@ public class PkVPk {
 			}
 
 			// 10% of probabilities to reduce the special defense
-			boolean reduceDefRival = Math.random() <= 0.10;
+			reduceDefRival = Math.random() <= 0.10;
 
 			if (reduceDefRival) {
 				if (!isMistEffectActivated) {
@@ -2002,7 +2004,6 @@ public class PkVPk {
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-
 			break;
 
 		// Ascuas/Ember (tested)
@@ -2328,6 +2329,45 @@ public class PkVPk {
 					this.getPkFacing().addEstadoEfimero(confused);
 				}
 			}
+			break;
+
+		// Rayo burbuja/Bubble beam (tested)
+		case 61:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Rayo burbuja");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// 10% of probabilities to reduce the speed
+			reduceSpeedRival = Math.random() <= 0.10;
+
+			if (reduceSpeedRival) {
+				if (!isMistEffectActivated) {
+					if (this.getPkFacing().getSpeedStage() <= -6) {
+						System.out.println("La velocidad de " + this.getPkFacing().getName() + " (Id:"
+								+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+					} else {
+						this.getPkFacing().setSpeedStage(Math.max(this.getPkFacing().getSpeedStage() - 1, -6));
+						System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+								+ " bajó su velocidad!");
+					}
+				} else {
+					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+							+ " no pudo bajar las estadísticas a causa de Niebla");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			break;
 
 		// Forcejeo/Struggle

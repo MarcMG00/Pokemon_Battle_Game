@@ -940,7 +940,7 @@ public class Game {
 	// -----------------------------
 	private boolean playerCanAttackFirst() {
 		return this.getPlayer().getPkCombatting().getCanAttack()
-				&& this.getPlayer().getPkCombatting().getSpeed() >= this.getIA().getPkCombatting().getSpeed();
+				&& this.getPlayer().getPkCombatting().getEffectiveSpeed() >= this.getIA().getPkCombatting().getEffectiveSpeed();
 	}
 
 	// -----------------------------
