@@ -159,7 +159,7 @@ public class PkVPk {
 		// -----------------------------
 		// WHIRLWIND (REMOLINO) / ROAR (RUGIDO)
 		// -----------------------------
-		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46) {
+		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46 || atkAttacker.getId() == 54) {
 
 			// If Pokemon facing is invulnerable, cannot do the attack
 			if (isDefenderCharging && !canHitInvulnerable) {
@@ -353,7 +353,7 @@ public class PkVPk {
 	// -----------------------------
 	// Gets the attack effect and apply damage
 	// -----------------------------
-	public void doAttackEffect() {
+	public void doAttackEffect(boolean isMistEffectActivated) {
 
 		float dmg = 0f;
 		float dmgToSum = 0f;
@@ -1239,16 +1239,21 @@ public class PkVPk {
 
 		// Ataque arena /Sand attack (tested)
 		case 28:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-					+ " usó Ataque arena");
+			if (!isMistEffectActivated) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Ataque arena");
 
-			if (this.getPkFacing().getPrecisionPoints() <= -6) {
-				System.out.println("La precisión de " + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (this.getPkFacing().getPrecisionPoints() <= -6) {
+					System.out.println("La precisión de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setPrecisionPoints(Math.max(this.getPkFacing().getPrecisionPoints() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su precisión!");
+				}
 			} else {
-				this.getPkFacing().setPrecisionPoints(Math.max(this.getPkFacing().getPrecisionPoints() - 1, -6));
-				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-						+ " bajó su precisión!");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Niebla");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1594,20 +1599,24 @@ public class PkVPk {
 
 		// Látigo/Tail Whip (tested)
 		case 39:
-			System.out.println(
-					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Látigo");
+			if (!isMistEffectActivated) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Látigo");
 
-			if (this.getPkFacing().getDefenseStage() <= -6) {
-				System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (this.getPkFacing().getDefenseStage() <= -6) {
+					System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su defensa!");
+				}
 			} else {
-				this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
-				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-						+ " bajó su defensa!");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Niebla");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-
 			break;
 
 		// Picotazo veneno/Poison sting (tested)
@@ -1750,20 +1759,24 @@ public class PkVPk {
 
 		// Malicioso/Leer (tested)
 		case 43:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-					+ " usó Malicioso");
+			if (!isMistEffectActivated) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Malicioso");
 
-			if (this.getPkFacing().getDefenseStage() <= -6) {
-				System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (this.getPkFacing().getDefenseStage() <= -6) {
+					System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su defensa!");
+				}
 			} else {
-				this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
-				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-						+ " bajó su defensa!");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Niebla");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-
 			break;
 
 		// Mordisco/Bite (tested)
@@ -1803,16 +1816,21 @@ public class PkVPk {
 
 		// Gruñido/Growl (tested)
 		case 45:
-			System.out.println(
-					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Gruñido");
+			if (!isMistEffectActivated) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Gruñido");
 
-			if (this.getPkFacing().getAttackStage() <= -6) {
-				System.out.println("El ataque de " + this.getPkCombatting().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (this.getPkFacing().getAttackStage() <= -6) {
+					System.out.println("El ataque de " + this.getPkCombatting().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setAttackStage(Math.min(this.getPkFacing().getAttackStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su defensa!");
+				}
 			} else {
-				this.getPkFacing().setAttackStage(Math.min(this.getPkFacing().getAttackStage() - 1, -6));
-				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-						+ " bajó su defensa!");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Niebla");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1966,15 +1984,21 @@ public class PkVPk {
 			boolean reduceDefRival = Math.random() <= 0.10;
 
 			if (reduceDefRival) {
-				if (this.getPkFacing().getSpecialDefenseStage() <= -6) {
-					System.out.println("La defensa especial de " + this.getPkFacing().getName() + " (Id:"
-							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (!isMistEffectActivated) {
+					if (this.getPkFacing().getSpecialDefenseStage() <= -6) {
+						System.out.println("La defensa especial de " + this.getPkFacing().getName() + " (Id:"
+								+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+					} else {
+						this.getPkFacing()
+								.setSpecialDefenseStage(Math.max(this.getPkFacing().getSpecialDefenseStage() - 1, -6));
+						System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+								+ " bajó su defensa especial!");
+					}
 				} else {
-					this.getPkFacing()
-							.setSpecialDefenseStage(Math.max(this.getPkFacing().getSpecialDefenseStage() - 1, -6));
-					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-							+ " bajó su defensa especial!");
+					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+							+ " no pudo bajar las estadísticas a causa de Niebla");
 				}
+
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
