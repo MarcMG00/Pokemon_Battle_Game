@@ -368,6 +368,7 @@ public class PkVPk {
 		float recoil = 0f;
 		boolean reduceDefRival = false;
 		boolean reduceSpeedRival = false;
+		boolean reduceAttackRival = false;
 
 		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor/Pound (tested)
@@ -2360,6 +2361,45 @@ public class PkVPk {
 						this.getPkFacing().setSpeedStage(Math.max(this.getPkFacing().getSpeedStage() - 1, -6));
 						System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
 								+ " bajó su velocidad!");
+					}
+				} else {
+					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+							+ " no pudo bajar las estadísticas a causa de Niebla");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Rayo aurora/Aurora beam (tested)
+		case 62:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Rayo aurora");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// 10% of probabilities to reduce the attack
+			reduceAttackRival = Math.random() <= 0.10;
+
+			if (reduceAttackRival) {
+				if (!isMistEffectActivated) {
+					if (this.getPkFacing().getAttackStage() <= -6) {
+						System.out.println("El ataque de " + this.getPkFacing().getName() + " (Id:"
+								+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+					} else {
+						this.getPkFacing().setAttackStage(Math.max(this.getPkFacing().getAttackStage() - 1, -6));
+						System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+								+ " bajó su ataque!");
 					}
 				} else {
 					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
