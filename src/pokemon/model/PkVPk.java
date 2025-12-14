@@ -159,7 +159,7 @@ public class PkVPk {
 		// -----------------------------
 		// WHIRLWIND (REMOLINO) / ROAR (RUGIDO)
 		// -----------------------------
-		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46) {
+		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46 || atkAttacker.getId() == 54) {
 
 			// If Pokemon facing is invulnerable, cannot do the attack
 			if (isDefenderCharging && !canHitInvulnerable) {
@@ -197,7 +197,7 @@ public class PkVPk {
 																	// are on the same lvl)
 		}
 		// -----------------------------
-		// WHIRLWIND (PISOTON)
+		// RETREAT POKEMON (STOMP/ ROLLING KICK/ HEADBUTT/ BITE)
 		// -----------------------------
 		else if ((atkAttacker.getId() == 23 || atkAttacker.getId() == 27 || atkAttacker.getId() == 29
 				|| atkAttacker.getId() == 44) && this.getPkFacing().getHasUsedMinimize()) {
@@ -353,7 +353,7 @@ public class PkVPk {
 	// -----------------------------
 	// Gets the attack effect and apply damage
 	// -----------------------------
-	public void doAttackEffect() {
+	public void doAttackEffect(boolean isMistEffectActivated) {
 
 		float dmg = 0f;
 		float dmgToSum = 0f;
@@ -366,6 +366,9 @@ public class PkVPk {
 		int randomRetreat = 0;
 		float defenderInitialPs = 0f;
 		float recoil = 0f;
+		boolean reduceDefRival = false;
+		boolean reduceSpeedRival = false;
+		boolean reduceAttackRival = false;
 
 		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor/Pound (tested)
@@ -1239,16 +1242,21 @@ public class PkVPk {
 
 		// Ataque arena /Sand attack (tested)
 		case 28:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-					+ " usó Ataque arena");
+			if (!isMistEffectActivated) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Ataque arena");
 
-			if (this.getPkFacing().getPrecisionPoints() <= -6) {
-				System.out.println("La precisión de " + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (this.getPkFacing().getPrecisionPoints() <= -6) {
+					System.out.println("La precisión de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setPrecisionPoints(Math.max(this.getPkFacing().getPrecisionPoints() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su precisión!");
+				}
 			} else {
-				this.getPkFacing().setPrecisionPoints(Math.max(this.getPkFacing().getPrecisionPoints() - 1, -6));
-				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-						+ " bajó su precisión!");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Niebla");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1594,20 +1602,24 @@ public class PkVPk {
 
 		// Látigo/Tail Whip (tested)
 		case 39:
-			System.out.println(
-					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Látigo");
+			if (!isMistEffectActivated) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Látigo");
 
-			if (this.getPkFacing().getDefenseStage() <= -6) {
-				System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (this.getPkFacing().getDefenseStage() <= -6) {
+					System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su defensa!");
+				}
 			} else {
-				this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
-				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-						+ " bajó su defensa!");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Niebla");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-
 			break;
 
 		// Picotazo veneno/Poison sting (tested)
@@ -1750,20 +1762,24 @@ public class PkVPk {
 
 		// Malicioso/Leer (tested)
 		case 43:
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-					+ " usó Malicioso");
+			if (!isMistEffectActivated) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Malicioso");
 
-			if (this.getPkFacing().getDefenseStage() <= -6) {
-				System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (this.getPkFacing().getDefenseStage() <= -6) {
+					System.out.println("La defensa de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su defensa!");
+				}
 			} else {
-				this.getPkFacing().setDefenseStage(Math.max(this.getPkFacing().getDefenseStage() - 1, -6));
-				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-						+ " bajó su defensa!");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Niebla");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-
 			break;
 
 		// Mordisco/Bite (tested)
@@ -1803,16 +1819,21 @@ public class PkVPk {
 
 		// Gruñido/Growl (tested)
 		case 45:
-			System.out.println(
-					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Gruñido");
+			if (!isMistEffectActivated) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Gruñido");
 
-			if (this.getPkFacing().getAttackStage() <= -6) {
-				System.out.println("El ataque de " + this.getPkCombatting().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (this.getPkFacing().getAttackStage() <= -6) {
+					System.out.println("El ataque de " + this.getPkCombatting().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setAttackStage(Math.min(this.getPkFacing().getAttackStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su defensa!");
+				}
 			} else {
-				this.getPkFacing().setAttackStage(Math.min(this.getPkFacing().getAttackStage() - 1, -6));
-				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-						+ " bajó su defensa!");
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Niebla");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1877,9 +1898,9 @@ public class PkVPk {
 				System.out.println(
 						this.getPkFacing().getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
 
-				State asleep = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
+				State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
 
-				this.getPkFacing().addEstadoEfimero(asleep);
+				this.getPkFacing().addEstadoEfimero(confused);
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está confuso!");
 			}
@@ -1963,22 +1984,27 @@ public class PkVPk {
 			}
 
 			// 10% of probabilities to reduce the special defense
-			boolean reduceDefRival = Math.random() <= 0.10;
+			reduceDefRival = Math.random() <= 0.10;
 
 			if (reduceDefRival) {
-				if (this.getPkFacing().getSpecialDefenseStage() <= -6) {
-					System.out.println("La defensa especial de " + this.getPkFacing().getName() + " (Id:"
-							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				if (!isMistEffectActivated) {
+					if (this.getPkFacing().getSpecialDefenseStage() <= -6) {
+						System.out.println("La defensa especial de " + this.getPkFacing().getName() + " (Id:"
+								+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+					} else {
+						this.getPkFacing()
+								.setSpecialDefenseStage(Math.max(this.getPkFacing().getSpecialDefenseStage() - 1, -6));
+						System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+								+ " bajó su defensa especial!");
+					}
 				} else {
-					this.getPkFacing()
-							.setSpecialDefenseStage(Math.max(this.getPkFacing().getSpecialDefenseStage() - 1, -6));
-					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
-							+ " bajó su defensa especial!");
+					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+							+ " no pudo bajar las estadísticas a causa de Niebla");
 				}
+
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-
 			break;
 
 		// Ascuas/Ember (tested)
@@ -2073,6 +2099,346 @@ public class PkVPk {
 
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
+			break;
+
+		// Niebla/Mist (tested)
+		case 54:
+			System.out.println(this.getPkCombatting().getName() + " usó Niebla");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Pistola agua/Water gun (tested)
+		case 55:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Pistola agua");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Hidrobomba/Hydro Pump (tested)
+		case 56:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Hidrobomba");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Surf/Surf (tested)
+		case 57:
+			// Gets the power from the beginning (to avoid variations after attacking)
+			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
+
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Surf");
+
+			// If Pokemon facing has used Dive, set power base of the attack x2
+			if (this.getPkFacing().getIsChargingAttackForNextRound()
+					&& this.getPkFacing().getNextMovement().getId() == 291) {
+				this.getPkCombatting().getNextMovement()
+						.setPower(this.getPkCombatting().getNextMovement().getPower() * 2);
+			}
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// Puts again the same power base as the beginning
+			this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Rayo hielo/Ice beam (tested)
+		case 58:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Rayo hielo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// Ice Pokemon cannot be frozen
+			if (this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+
+				probabilityGettingStatus = (int) (Math.random() * 100);
+
+				System.out.println("proba de congelar : " + probabilityGettingStatus);
+
+				// 10% of probabilities to be frozen
+				if (probabilityGettingStatus <= 10) {
+
+					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+						nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
+
+						this.getPkFacing().setStatusCondition(frozen);
+
+						System.out.println(this.getPkCombatting().getName() + " fue congelado por "
+								+ nbTurnsHoldingStatus + " turnos");
+					}
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Ventisca/Blizzard (tested)
+		case 59:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Ventisca");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// Ice Pokemon cannot be frozen
+			if (this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+
+				probabilityGettingStatus = (int) (Math.random() * 100);
+
+				System.out.println("proba de congelar : " + probabilityGettingStatus);
+
+				// 10% of probabilities to be frozen
+				if (probabilityGettingStatus <= 10) {
+
+					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+						nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
+
+						this.getPkFacing().setStatusCondition(frozen);
+
+						System.out.println(this.getPkCombatting().getName() + " fue congelado por "
+								+ nbTurnsHoldingStatus + " turnos");
+					}
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Psicorrayo/Psybeam (tested)
+		case 60:
+			System.out.println(this.getPkCombatting().getName() + " usó Psicorrayo");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Check if the Pokemon facing doesn't have the status Confused (is a status
+			// that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
+
+				probabilityGettingStatus = (int) (Math.random() * 100);
+
+				// 10% of probabilities to be confused
+				if (probabilityGettingStatus <= 10) {
+					nbTurnsHoldingStatus = getRandomInt(1, 7);
+
+					System.out.println(
+							this.getPkFacing().getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
+
+					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
+
+					this.getPkFacing().addEstadoEfimero(confused);
+				}
+			}
+			break;
+
+		// Rayo burbuja/Bubble beam (tested)
+		case 61:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Rayo burbuja");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// 10% of probabilities to reduce the speed
+			reduceSpeedRival = Math.random() <= 0.10;
+
+			if (reduceSpeedRival) {
+				if (!isMistEffectActivated) {
+					if (this.getPkFacing().getSpeedStage() <= -6) {
+						System.out.println("La velocidad de " + this.getPkFacing().getName() + " (Id:"
+								+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+					} else {
+						this.getPkFacing().setSpeedStage(Math.max(this.getPkFacing().getSpeedStage() - 1, -6));
+						System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+								+ " bajó su velocidad!");
+					}
+				} else {
+					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+							+ " no pudo bajar las estadísticas a causa de Niebla");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Rayo aurora/Aurora beam (tested)
+		case 62:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Rayo aurora");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// 10% of probabilities to reduce the attack
+			reduceAttackRival = Math.random() <= 0.10;
+
+			if (reduceAttackRival) {
+				if (!isMistEffectActivated) {
+					if (this.getPkFacing().getAttackStage() <= -6) {
+						System.out.println("El ataque de " + this.getPkFacing().getName() + " (Id:"
+								+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+					} else {
+						this.getPkFacing().setAttackStage(Math.max(this.getPkFacing().getAttackStage() - 1, -6));
+						System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+								+ " bajó su ataque!");
+					}
+				} else {
+					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+							+ " no pudo bajar las estadísticas a causa de Niebla");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Hiperrayo/Hyper beam (tested)
+		case 63:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Hiperrayo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+
+			// Pokemon combating cannot do anything next round
+			this.getPkCombatting().setCanDonAnythingNextRound(false);
+
 			break;
 
 		// Forcejeo/Struggle

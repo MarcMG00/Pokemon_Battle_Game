@@ -42,14 +42,15 @@ public class Pokemon {
 	private ArrayList<State> ephemeralStates;
 	private boolean isChargingAttackForNextRound;
 	private boolean canAttack;
-	private boolean alreadyUsedTwoTurnAttackBehavior;
 	private boolean hasUsedMinimize;
 	private boolean hasRetreated;
 	private int attackStage;
 	private int specialAttackStage;
 	private int defenseStage;
 	private int specialDefenseStage;
+	private int speedStage;
 	private Attack lastUsedAttack;
+	private boolean canDonAnythingNextRound;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -93,14 +94,15 @@ public class Pokemon {
 		this.ephemeralStates = new ArrayList<>();
 		this.isChargingAttackForNextRound = false;
 		this.canAttack = true;
-		this.alreadyUsedTwoTurnAttackBehavior = false;
 		this.hasUsedMinimize = false;
 		this.hasRetreated = false;
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
 		this.defenseStage = 0;
 		this.specialDefenseStage = 0;
+		this.speedStage = 0;
 		this.lastUsedAttack = new Attack();
+		this.canDonAnythingNextRound = true;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -138,14 +140,15 @@ public class Pokemon {
 		this.ephemeralStates = new ArrayList<>();
 		this.isChargingAttackForNextRound = false;
 		this.canAttack = true;
-		this.alreadyUsedTwoTurnAttackBehavior = false;
 		this.hasUsedMinimize = false;
 		this.hasRetreated = false;
 		this.attackStage = 0;
 		this.specialAttackStage = 0;
 		this.defenseStage = 0;
 		this.specialDefenseStage = 0;
+		this.speedStage = 0;
 		this.lastUsedAttack = new Attack();
+		this.canDonAnythingNextRound = true;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -188,14 +191,15 @@ public class Pokemon {
 
 		this.isChargingAttackForNextRound = pokemon.isChargingAttackForNextRound;
 		this.canAttack = pokemon.canAttack;
-		this.alreadyUsedTwoTurnAttackBehavior = pokemon.alreadyUsedTwoTurnAttackBehavior;
 		this.hasUsedMinimize = pokemon.hasUsedMinimize;
 		this.hasRetreated = pokemon.hasRetreated;
 		this.attackStage = pokemon.attackStage;
 		this.specialAttackStage = pokemon.specialAttackStage;
 		this.defenseStage = pokemon.defenseStage;
 		this.specialDefenseStage = pokemon.specialDefenseStage;
+		this.speedStage = pokemon.speedStage;
 		this.lastUsedAttack = pokemon.lastUsedAttack;
+		this.canDonAnythingNextRound = pokemon.canDonAnythingNextRound;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -465,14 +469,6 @@ public class Pokemon {
 		this.canAttack = canAttack;
 	}
 
-	public boolean getAlreadyUsedTwoTurnAttackBehavior() {
-		return alreadyUsedTwoTurnAttackBehavior;
-	}
-
-	public void setAlreadyUsedTwoTurnAttackBehavior(boolean alreadyUsedTwoTurnAttackBehavior) {
-		this.alreadyUsedTwoTurnAttackBehavior = alreadyUsedTwoTurnAttackBehavior;
-	}
-
 	public boolean getHasUsedMinimize() {
 		return hasUsedMinimize;
 	}
@@ -512,7 +508,7 @@ public class Pokemon {
 	public void setDefenseStage(int defenseStage) {
 		this.defenseStage = defenseStage;
 	}
-	
+
 	public int getSpecialDefenseStage() {
 		return specialDefenseStage;
 	}
@@ -521,12 +517,28 @@ public class Pokemon {
 		this.specialDefenseStage = specialDefenseStage;
 	}
 
+	public int getSpeedStage() {
+		return speedStage;
+	}
+
+	public void setSpeedStage(int speedStage) {
+		this.speedStage = speedStage;
+	}
+
 	public Attack getLastUsedAttack() {
 		return lastUsedAttack;
 	}
 
 	public void setLastUsedAttack(Attack lastUsedAttack) {
 		this.lastUsedAttack = lastUsedAttack;
+	}
+
+	public boolean getCanDonAnythingNextRound() {
+		return canDonAnythingNextRound;
+	}
+
+	public void setCanDonAnythingNextRound(boolean canDonAnythingNextRound) {
+		this.canDonAnythingNextRound = canDonAnythingNextRound;
 	}
 
 	// Adds abilities to Pokemon
@@ -666,7 +678,7 @@ public class Pokemon {
 
 		return this.getDef() * multiplier;
 	}
-	
+
 	// -----------------------------
 	// Get defense stage for special defense
 	// -----------------------------
@@ -680,6 +692,21 @@ public class Pokemon {
 			multiplier = 2.0f / (2 - stage);
 
 		return this.getSpecialDefense() * multiplier;
+	}
+
+	// -----------------------------
+	// Get speed stage
+	// -----------------------------
+	public float getEffectiveSpeed() {
+		int stage = this.getSpeedStage();
+		float multiplier;
+
+		if (stage >= 0)
+			multiplier = (2 + stage) / 2.0f;
+		else
+			multiplier = 2.0f / (2 - stage);
+
+		return this.getSpeed() * multiplier;
 	}
 
 	// -----------------------------
