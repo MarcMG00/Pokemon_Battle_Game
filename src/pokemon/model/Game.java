@@ -659,38 +659,27 @@ public class Game {
 
 			Pokemon pkPlayer = this.getPlayer().getPkCombatting();
 
-			// Get if Pokemon can attack or change next round
-			if (pkPlayer.getCanDonAnythingNextRound()) {
+			// Get if Pokemon is charging an attack (two turns)
+			boolean playerIsCharging = pkPlayer.getIsChargingAttackForNextRound();
 
-				// Get if Pokemon is charging an attack (two turns)
-				boolean playerIsCharging = pkPlayer.getIsChargingAttackForNextRound();
+			// Gets if Pokemon is trapped by his own attack (ex : Thrash, etc.)
+			boolean playerIsTrappedByOwnAttack = pkPlayer.getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK && e.getNbTurns() > 0);
 
-				// Gets if Pokemon is trapped by his own attack (ex : Thrash, etc.)
-				boolean playerIsTrappedByOwnAttack = pkPlayer.getEphemeralStates().stream().anyMatch(
-						e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK && e.getNbTurns() > 0);
+			// If charging or trapped by his own attack, cannot do choices
+			int attackChoice = (playerIsCharging || playerIsTrappedByOwnAttack) ? 1 : getPlayerChoice(sc);
 
-				// If charging or trapped by his own attack, cannot do choices
-				int attackChoice = (playerIsCharging || playerIsTrappedByOwnAttack) ? 1 : getPlayerChoice(sc);
-
-				if (attackChoice == 1) {
-					handleAttackTurn(sc);
-				} else {
-					boolean cancelled = !handleChangeTurn(sc);
-
-					if (cancelled) {
-						System.out.println("Cambio cancelado. Regresando al menú principal...");
-						attackChoice = -1; // show again options : attack/change
-						// Stay in the same round
-						nbRound--;
-					}
-				}
+			if (attackChoice == 1) {
+				handleAttackTurn(sc);
 			} else {
-				System.out.println(pkPlayer.getName() + " (" + pkPlayer.getId() + ") " + "debe recupararse a causa de "
-						+ pkPlayer.getLastUsedAttack().getName());
+				boolean cancelled = !handleChangeTurn(sc);
 
-				handleLoosingTurn(sc);
-
-				pkPlayer.setCanDonAnythingNextRound(true);
+				if (cancelled) {
+					System.out.println("Cambio cancelado. Regresando al menú principal...");
+					attackChoice = -1; // show again options : attack/change
+					// Stay in the same round
+					nbRound--;
+				}
 			}
 
 			// Get next round
@@ -748,23 +737,25 @@ public class Game {
 		// that's the rule:
 		// first turn of a charging, executes regardless of states conditions, the
 		// second turn is checked.
-		if (playerSecondTurnOfCharged) {
+		if (playerSecondTurnOfCharged && pkPlayer.getCanDonAnythingNextRound()) {
 			evaluateStatusStartOfTurn(pkPlayer);
 		}
-		if (IASecondTurnOfCharged && pkPlayer.getCanDonAnythingNextRound()) {
+		if (IASecondTurnOfCharged && pkIA.getCanDonAnythingNextRound()) {
 			evaluateStatusStartOfTurn(pkIA);
 		}
 
 		// Prepare player chosen attack (this sets nextMovement etc.)
-		this.getPlayer().prepareBestAttackPlayer(attackId);
+		if (pkPlayer.getCanDonAnythingNextRound()) {
+			this.getPlayer().prepareBestAttackPlayer(attackId);
+		}
 
 		// IA can decide to change Pokemon only if it's not charging
-		if (!pkIA.getIsChargingAttackForNextRound()) {
+		if (!pkIA.getIsChargingAttackForNextRound() && pkIA.getCanDonAnythingNextRound()) {
 			tryIAChange();
 		}
 
 		// Prepare IA (select move) only if not charging
-		if (!IASecondTurnOfCharged && pkPlayer.getCanDonAnythingNextRound()) {
+		if (!IASecondTurnOfCharged && pkIA.getCanDonAnythingNextRound()) {
 			prepareIAIfPossible(pkIA);
 		}
 
@@ -835,10 +826,17 @@ public class Game {
 
 		Pokemon pkIA = this.getIA().getPkCombatting();
 
-		boolean changed = changePokemon(sc);
+		if (this.getPlayer().getPkCombatting().getCanDonAnythingNextRound()) {
+			boolean changed = changePokemon(sc);
 
-		if (!changed)
-			return false; // player cancelled the change (return to start options)
+			if (!changed)
+				return false; // player cancelled the change (return to start options)
+		} else {
+			System.out.println(
+					this.getPlayer().getPkCombatting().getName() + " (" + this.getPlayer().getPkCombatting().getId()
+							+ ") " + "no puede cambiarse  este turno a causa de algún ataque o estado");
+			this.getPlayer().getPkCombatting().setCanDonAnythingNextRound(true);
+		}
 
 		evaluateStatusStartOfTurn(pkIA);
 		canAttackEvaluatingAllStatesToAttack(pkIA);
@@ -848,7 +846,7 @@ public class Game {
 
 			handleChangeSequence(sc); // only IA attacks
 		} else {
-			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recupararse a causa de "
+			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recuperarse a causa de "
 					+ pkIA.getLastUsedAttack().getName());
 
 			pkIA.setCanDonAnythingNextRound(true);
@@ -887,7 +885,7 @@ public class Game {
 				handleForcedSwitch(this.getPlayer());
 			}
 		} else {
-			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recupararse a causa de "
+			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recuperarse a causa de "
 					+ pkIA.getLastUsedAttack().getName());
 
 			pkIA.setCanDonAnythingNextRound(true);
@@ -926,34 +924,43 @@ public class Game {
 	// Check validity of attack id from player Pokemon
 	// -----------------------------
 	private int getValidAttackId(Scanner sc, Player player) {
-		System.out.println("Escoge un ataque :");
-		this.getPlayer().printAttacksFromPokemonCombating();
 
-		int attackId = sc.nextInt();
-		sc.useDelimiter(";|\r?\n|\r");
+		// Only choose if not recovering from an attack
+		if (player.getPkCombatting().getCanDonAnythingNextRound()) {
 
-		// While it's not a valid attack or doesn't have PP
-		while (true) {
+			System.out.println("Escoge un ataque :");
+			this.getPlayer().printAttacksFromPokemonCombating();
 
-			// 1. Checks that the Pokemon has the attack chosen
-			if (!player.getPkCombatting().getFourIdAttacks().contains(attackId)) {
-				System.out.println("Escoge un ataque que tenga el Pokémon.");
-			} else {
-
-				// 2. Get the attack
-				Attack atk = this.getPlayer().getPkCombatting().getNextMovementById(attackId);
-
-				// 3. Verifies that the attack has PP
-				if (atk.getPp() > 0) {
-					return attackId; // valid
-				} else {
-					System.out.println("No tienes más PP para este ataque. Escoge otro.");
-				}
-			}
-
-			// New reading
-			attackId = sc.nextInt();
+			int attackId = sc.nextInt();
 			sc.useDelimiter(";|\r?\n|\r");
+
+			// While it's not a valid attack or doesn't have PP
+			while (true) {
+
+				// 1. Checks that the Pokemon has the attack chosen
+				if (!player.getPkCombatting().getFourIdAttacks().contains(attackId)) {
+					System.out.println("Escoge un ataque que tenga el Pokémon.");
+				} else {
+
+					// 2. Get the attack
+					Attack atk = this.getPlayer().getPkCombatting().getNextMovementById(attackId);
+
+					// 3. Verifies that the attack has PP
+					if (atk.getPp() > 0) {
+						return attackId; // valid
+					} else {
+						System.out.println("No tienes más PP para este ataque. Escoge otro.");
+					}
+				}
+
+				// New reading
+				attackId = sc.nextInt();
+				sc.useDelimiter(";|\r?\n|\r");
+			}
+		}
+		// Sets the same last attack
+		else {
+			return this.getPlayer().getPkCombatting().getLastUsedAttack().getId();
 		}
 	}
 
@@ -1054,7 +1061,7 @@ public class Game {
 				handleIARetaliation();
 			}
 		} else {
-			System.out.println(pk.getName() + " (" + pk.getId() + ") " + "debe recupararse a causa de "
+			System.out.println(pk.getName() + " (" + pk.getId() + ") " + "debe recuperarse a causa de "
 					+ pk.getLastUsedAttack().getName());
 
 			pk.setCanDonAnythingNextRound(true);
@@ -1418,8 +1425,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "227,227,227";
-		String allPkIA = "101,101,101";
+		String allPkPlayer = "101,101,101";
+		String allPkIA = "227,227,227";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1471,9 +1478,9 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
-//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 63).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
+			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 63).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -1517,14 +1524,14 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 48).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
-			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 63).findFirst().get());
+//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 63).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {
