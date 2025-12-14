@@ -842,9 +842,17 @@ public class Game {
 
 		evaluateStatusStartOfTurn(pkIA);
 		canAttackEvaluatingAllStatesToAttack(pkIA);
-		prepareIAIfPossible(pkIA);
 
-		handleChangeSequence(sc); // only IA attacks
+		if (pkIA.getCanDonAnythingNextRound()) {
+			prepareIAIfPossible(pkIA);
+
+			handleChangeSequence(sc); // only IA attacks
+		} else {
+			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recupararse a causa de "
+					+ pkIA.getLastUsedAttack().getName());
+
+			pkIA.setCanDonAnythingNextRound(true);
+		}
 
 		// If defender has to change because of "Whirlwind" or "Roar", etc.
 		if (this.getPlayer().getIsForceSwitchPokemon()) {
