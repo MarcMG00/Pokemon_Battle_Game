@@ -2495,6 +2495,46 @@ public class PkVPk {
 			}
 			break;
 
+		// Sumisión/Submission (tested)
+		case 66:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Sumisión");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+
+			// ---- RECOIL ----
+			recoil = dmg * 0.25f;
+
+			this.getPkCombatting().setPs(this.getPkCombatting().getPs() - recoil);
+
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId()
+					+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+
+			// Check if attacker debilitated by recoil
+			if (this.getPkCombatting().getPs() <= 0) {
+				this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
