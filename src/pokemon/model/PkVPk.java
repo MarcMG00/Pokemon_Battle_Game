@@ -2535,6 +2535,53 @@ public class PkVPk {
 			}
 			break;
 
+		// Patada baja/Low kick (tested)
+		case 67:
+			// Gets the power from the beginning (to avoid variations after attacking)
+			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
+
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Patada baja");
+
+			// Set power of the attack depending on the weight of the Pokemon facing
+			if (this.getPkFacing().getWeight() < 10) {
+				this.getPkCombatting().getNextMovement().setPower(20);
+			} else if (this.getPkFacing().getWeight() >= 10 && this.getPkFacing().getWeight() < 25) {
+				this.getPkCombatting().getNextMovement().setPower(40);
+			} else if (this.getPkFacing().getWeight() >= 25 && this.getPkFacing().getWeight() < 50) {
+				this.getPkCombatting().getNextMovement().setPower(60);
+			} else if (this.getPkFacing().getWeight() >= 50 && this.getPkFacing().getWeight() < 100) {
+				this.getPkCombatting().getNextMovement().setPower(80);
+			} else if (this.getPkFacing().getWeight() >= 100 && this.getPkFacing().getWeight() < 200) {
+				this.getPkCombatting().getNextMovement().setPower(100);
+			} else {
+				this.getPkCombatting().getNextMovement().setPower(120);
+			}
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			// Puts again the same power base as the beginning
+			this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
