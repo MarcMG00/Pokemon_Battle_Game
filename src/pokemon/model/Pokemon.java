@@ -51,6 +51,7 @@ public class Pokemon {
 	private int speedStage;
 	private Attack lastUsedAttack;
 	private boolean canDonAnythingNextRound;
+	private int weight;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -103,6 +104,7 @@ public class Pokemon {
 		this.speedStage = 0;
 		this.lastUsedAttack = new Attack();
 		this.canDonAnythingNextRound = true;
+		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -149,6 +151,7 @@ public class Pokemon {
 		this.speedStage = 0;
 		this.lastUsedAttack = new Attack();
 		this.canDonAnythingNextRound = true;
+		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -200,6 +203,7 @@ public class Pokemon {
 		this.speedStage = pokemon.speedStage;
 		this.lastUsedAttack = pokemon.lastUsedAttack;
 		this.canDonAnythingNextRound = pokemon.canDonAnythingNextRound;
+		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -539,6 +543,14 @@ public class Pokemon {
 
 	public void setCanDonAnythingNextRound(boolean canDonAnythingNextRound) {
 		this.canDonAnythingNextRound = canDonAnythingNextRound;
+	}
+	
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
 	}
 
 	// Adds abilities to Pokemon
