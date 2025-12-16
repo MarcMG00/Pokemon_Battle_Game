@@ -2591,8 +2591,6 @@ public class PkVPk {
 
 				dmg = this.getPkCombatting().getDamageReceived() * 2f;
 
-				isCritic = getCriticity();
-
 				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 				this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
@@ -2609,6 +2607,28 @@ public class PkVPk {
 						+ " no puede usar Contraataque ya que no recibió ningún ataque físico este turno");
 			}
 
+			break;
+
+		// Sísmico/Seismic toss (tested)
+		case 69:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Sísmico");
+
+			// This attack only apply the same amount on damage points as the level of the
+			// pokemon using it (all the Pokemon in the game are on the level 100)
+			dmg = 100f;
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
+					+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Forcejeo/Struggle
