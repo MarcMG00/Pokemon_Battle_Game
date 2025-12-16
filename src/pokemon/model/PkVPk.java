@@ -2582,6 +2582,35 @@ public class PkVPk {
 				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
 			break;
+
+		// Contraataque/Counter (tested)
+		case 68:
+			if (this.getPkCombatting().getHasReceivedDamage()) {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Contraataque");
+
+				dmg = this.getPkCombatting().getDamageReceived() * 2f;
+
+				isCritic = getCriticity();
+
+				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+				this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+				System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+
+				if (this.getPkFacing().getPs() <= 0) {
+
+					this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				}
+			} else {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no puede usar Contraataque ya que no recibió ningún ataque físico este turno");
+			}
+
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -2617,6 +2646,13 @@ public class PkVPk {
 			}
 			break;
 		}
+
+		// Set damage from physical attack => used for attacks like "Counter", etc.
+		if (dmg != 0 && this.getPkCombatting().getPhysicalAttacks().stream()
+				.filter(a -> a.getId() == this.getPkCombatting().getNextMovement().getId()).findAny().get() != null) {
+			this.getPkFacing().setHasReceivedDamage(true);
+			this.getPkFacing().setDamageReceived(dmg);
+		}
 	}
 
 	// -----------------------------
@@ -2640,9 +2676,6 @@ public class PkVPk {
 							* this.getPkCombatting().getNextMovement().getPower())
 							/ (25f * this.getPkFacing().getEffectiveSpecialDefense()) + 2f);
 
-			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
-					+ this.getPkFacing().getId() + ")" + ") : " + dmg);
-
 			// Apply normal damage
 		} else {
 
@@ -2651,10 +2684,10 @@ public class PkVPk {
 					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveAttack()
 							* this.getPkCombatting().getNextMovement().getPower())
 							/ (25f * this.getPkFacing().getEffectiveDefense()) + 2f);
-
-			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
-					+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 		}
+
+		System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
+				+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 
 		return dmg;
 	}

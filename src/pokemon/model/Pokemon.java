@@ -52,6 +52,8 @@ public class Pokemon {
 	private Attack lastUsedAttack;
 	private boolean canDonAnythingNextRound;
 	private int weight;
+	private boolean hasReceivedDamage;
+	private float damageReceived;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -105,6 +107,8 @@ public class Pokemon {
 		this.lastUsedAttack = new Attack();
 		this.canDonAnythingNextRound = true;
 		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
+		this.hasReceivedDamage = false;
+		this.damageReceived = 0;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -152,6 +156,8 @@ public class Pokemon {
 		this.lastUsedAttack = new Attack();
 		this.canDonAnythingNextRound = true;
 		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
+		this.hasReceivedDamage = false;
+		this.damageReceived = 0;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -204,6 +210,8 @@ public class Pokemon {
 		this.lastUsedAttack = pokemon.lastUsedAttack;
 		this.canDonAnythingNextRound = pokemon.canDonAnythingNextRound;
 		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
+		this.hasReceivedDamage = pokemon.hasReceivedDamage;
+		this.damageReceived = pokemon.damageReceived;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -552,6 +560,22 @@ public class Pokemon {
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
+	
+	public boolean getHasReceivedDamage() {
+		return hasReceivedDamage;
+	}
+
+	public void setHasReceivedDamage(boolean hasReceivedDamage) {
+		this.hasReceivedDamage = hasReceivedDamage;
+	}
+	
+	public float getDamageReceived() {
+		return damageReceived;
+	}
+
+	public void setDamageReceived(float damageReceived) {
+		this.damageReceived = damageReceived;
+	}
 
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
@@ -642,8 +666,13 @@ public class Pokemon {
 
 		}
 
+		// Can move and attack
 		this.getStatusCondition().setCanMoveStatusCondition(true);
 		this.setCanAttack(true);
+		
+		// Reset damage received
+		this.setHasReceivedDamage(false);
+		this.setDamageReceived(0f);
 	}
 
 	// -----------------------------
