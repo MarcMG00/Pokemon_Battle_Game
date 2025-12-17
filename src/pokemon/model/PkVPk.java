@@ -2697,6 +2697,46 @@ public class PkVPk {
 
 			break;
 
+		// Megaagotar/Mega drain (tested)
+		case 72:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Megaagotar");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+
+			// Pokemon combating gets health
+			if (this.getPkCombatting().getPs() != this.getPkCombatting().getInitialPs()) {
+
+				// The half of damage done
+				this.getPkCombatting().setPs(this.getPkCombatting().getPs() + (dmg / 2f));
+
+				// If more PS received than initial PS, put the max limit at initial PS
+				if (this.getPkCombatting().getPs() >= this.getPkCombatting().getInitialPs()) {
+					this.getPkCombatting().setPs(this.getPkCombatting().getInitialPs());
+				}
+			}
+
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
