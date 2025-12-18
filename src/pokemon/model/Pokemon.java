@@ -54,6 +54,7 @@ public class Pokemon {
 	private int weight;
 	private boolean hasReceivedDamage;
 	private float damageReceived;
+	private boolean isDraining;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -109,6 +110,7 @@ public class Pokemon {
 		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
 		this.hasReceivedDamage = false;
 		this.damageReceived = 0;
+		this.isDraining = false;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -158,6 +160,7 @@ public class Pokemon {
 		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
 		this.hasReceivedDamage = false;
 		this.damageReceived = 0;
+		this.isDraining = false;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -212,6 +215,7 @@ public class Pokemon {
 		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
 		this.hasReceivedDamage = pokemon.hasReceivedDamage;
 		this.damageReceived = pokemon.damageReceived;
+		this.isDraining = pokemon.isDraining;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -552,7 +556,7 @@ public class Pokemon {
 	public void setCanDonAnythingNextRound(boolean canDonAnythingNextRound) {
 		this.canDonAnythingNextRound = canDonAnythingNextRound;
 	}
-	
+
 	public int getWeight() {
 		return weight;
 	}
@@ -560,7 +564,7 @@ public class Pokemon {
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
-	
+
 	public boolean getHasReceivedDamage() {
 		return hasReceivedDamage;
 	}
@@ -568,13 +572,21 @@ public class Pokemon {
 	public void setHasReceivedDamage(boolean hasReceivedDamage) {
 		this.hasReceivedDamage = hasReceivedDamage;
 	}
-	
+
 	public float getDamageReceived() {
 		return damageReceived;
 	}
 
 	public void setDamageReceived(float damageReceived) {
 		this.damageReceived = damageReceived;
+	}
+	
+	public boolean getIsDraining() {
+		return isDraining;
+	}
+
+	public void setIsDraining(boolean isDraining) {
+		this.isDraining = isDraining;
 	}
 
 	// Adds abilities to Pokemon
@@ -669,7 +681,7 @@ public class Pokemon {
 		// Can move and attack
 		this.getStatusCondition().setCanMoveStatusCondition(true);
 		this.setCanAttack(true);
-		
+
 		// Reset damage received
 		this.setHasReceivedDamage(false);
 		this.setDamageReceived(0f);
@@ -1053,6 +1065,51 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Do effect from DRAINED ALL TURNS state (end of the turn) => affects to enemy
+	// -----------------------------
+	public void doDrainedAllTurnsEffect() {
+		// Get drained all turns state
+		State drainedAllTurnsState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
+
+		if (drainedAllTurnsState != null) {
+			// Reduces 12,5% from his initial PS
+			float reducePs = this.getInitialPs() * 0.125f;
+
+			this.setPs(this.getPs() - reducePs);
+
+			System.out.println(this.getName() + " está drenado y recibe daño)");
+		}
+	}
+
+	// -----------------------------
+	// Do effect from DRAINED ALL TURNS state (end of the turn) => benefits to
+	// Pokemon doing the attack
+	// -----------------------------
+	public void doDrainedAllTurnsBeneficiaryEffect() {
+		// Increases 12,5% from his initial PS
+		float increasePS = this.getInitialPs() * 0.125f;
+
+		this.setPs(this.getPs() + increasePS);
+
+		System.out.println(this.getName() + " se curó gracias al efecto activo de Drenadoras");
+	}
+
+	// -----------------------------
+	// Remove DRAINED ALL TURNS state
+	// -----------------------------
+	private void removeDrainedAllTurns() {
+		// Get drained all turns state
+		State drainedAllTurnsState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
+
+		if (drainedAllTurnsState != null) {
+			this.setIsDraining(false);
+			this.getEphemeralStates().remove(drainedAllTurnsState);
+		}
+	}
+
+	// -----------------------------
 	// Reduce turn from DISABLE state (end of the turn)
 	// -----------------------------
 	public void reduceDisabledAttackTurn() {
@@ -1111,6 +1168,13 @@ public class Pokemon {
 				}
 			}
 		}
+	}
+	
+	// -----------------------------
+	// Remove states when changing or dying a Pokemon
+	// -----------------------------
+	public void removeStates() {
+		removeDrainedAllTurns();
 	}
 
 }

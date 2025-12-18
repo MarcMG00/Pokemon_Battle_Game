@@ -817,6 +817,12 @@ public class Game {
 		pk.doTrappedEffect();
 		pk.putConfusedStateIfNeeded();
 		pk.reduceDisabledAttackTurn();
+		pk.doDrainedAllTurnsEffect();
+
+		// Get PS from drained rival Pokemon
+		if (pk.getIsDraining()) {
+			pk.doDrainedAllTurnsBeneficiaryEffect();
+		}
 	}
 
 	// -----------------------------
@@ -825,6 +831,7 @@ public class Game {
 	private boolean handleChangeTurn(Scanner sc) {
 
 		Pokemon pkIA = this.getIA().getPkCombatting();
+		Pokemon pkPlayer = this.getPlayer().getPkCombatting();
 
 		if (this.getPlayer().getPkCombatting().getCanDonAnythingNextRound()) {
 			boolean changed = changePokemon(sc);
@@ -857,39 +864,8 @@ public class Game {
 			handleForcedSwitch(this.getPlayer());
 		}
 
-		pkIA.restartParametersEffect();
-		reduceNumberTurnsEffects(pkIA);
-
-		return true;
-	}
-
-	// -----------------------------
-	// Handle attack from IA when player cannot do anything with the Pokemon (attack
-	// OR change)
-	// -----------------------------
-	private boolean handleLoosingTurn(Scanner sc) {
-
-		Pokemon pkIA = this.getIA().getPkCombatting();
-
-		// Get if Pokemon can attack or change next round
-		if (pkIA.getCanDonAnythingNextRound()) {
-
-			evaluateStatusStartOfTurn(pkIA);
-			canAttackEvaluatingAllStatesToAttack(pkIA);
-			prepareIAIfPossible(pkIA);
-
-			handleChangeSequence(sc); // only IA attacks
-
-			// If defender has to change because of "Whirlwind" or "Roar", etc.
-			if (this.getPlayer().getIsForceSwitchPokemon()) {
-				handleForcedSwitch(this.getPlayer());
-			}
-		} else {
-			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recuperarse a causa de "
-					+ pkIA.getLastUsedAttack().getName());
-
-			pkIA.setCanDonAnythingNextRound(true);
-		}
+		// Remove drained ALL SATUS state (cause player changed)
+		clearDrainEffects(pkPlayer, pkIA);
 
 		pkIA.restartParametersEffect();
 		reduceNumberTurnsEffects(pkIA);
@@ -1034,6 +1010,7 @@ public class Game {
 
 		// If Pokemon is debilitated, force change and ends turn
 		if (pk.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			clearDrainEffects(pk, defender.getPkCombatting());
 			checkForcedPokemonChange(sc);
 			return true; // turn ends
 		}
@@ -1089,6 +1066,7 @@ public class Game {
 
 		// If defender got debilitated during this attack -> force change and end turn
 		if (defender.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			clearDrainEffects(pk, defender.getPkCombatting());
 			checkForcedPokemonChange(sc);
 			return true;
 		}
@@ -1141,6 +1119,7 @@ public class Game {
 				pkPlayer.setIsChargingAttackForNextRound(false);
 			}
 		} else {
+			pkPlayer.removeStates();
 			System.out.println(ANSI_RED + "Pokemon player is debilitated" + ANSI_RESET);
 		}
 	}
@@ -1183,7 +1162,7 @@ public class Game {
 				pkIA.setIsChargingAttackForNextRound(false);
 			}
 		} else {
-
+			pkIA.removeStates();
 			System.out.println(ANSI_RED + "Pokemon IA is debilitated" + ANSI_RESET);
 		}
 	}
@@ -1208,6 +1187,7 @@ public class Game {
 
 		// IA dies
 		if (this.getIA().getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			this.getIA().getPkCombatting().removeStates();
 			System.out.println(this.getIA().getPkCombatting().getName() + " fue derrotado.");
 
 			Pokemon newIA = this.getIA().decideBestChangePokemon(this.getPlayer().getPkCombatting(),
@@ -1359,6 +1339,10 @@ public class Game {
 	// -----------------------------
 	private void handleForcedSwitch(Player defender) {
 
+		Pokemon pkCombating = defender.getPkCombatting();
+		Pokemon pkFacing = defender.getPkFacing();
+
+		clearDrainEffects(pkCombating, pkFacing);
 		// Get available Pokemon
 		List<Pokemon> alive = defender.getPokemon().stream()
 				.filter(p -> p.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED
@@ -1417,6 +1401,16 @@ public class Game {
 						.println("Faltan " + this.getNbTurnsMistActive() + " turnos para que la niebla se fuerara XD");
 			}
 		}
+	}
+	
+	// -----------------------------
+	// helper method => clear DRAINED ALL TURNS effects for both Pokemon
+	// -----------------------------
+	private void clearDrainEffects(Pokemon pkA, Pokemon pkB) {
+		pkA.setIsDraining(false);
+		pkB.setIsDraining(false);
+	    pkA.removeStates();
+	    pkB.removeStates();
 	}
 
 	// -----------------------------

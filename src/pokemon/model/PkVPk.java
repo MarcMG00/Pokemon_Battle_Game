@@ -2734,6 +2734,34 @@ public class PkVPk {
 					this.getPkCombatting().setPs(this.getPkCombatting().getInitialPs());
 				}
 			}
+			break;
+
+		// Drenadoras/Leech seed (tested)
+		case 73:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Drenadoras");
+
+			// Doesn't affect to grass type
+			if (!this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 12).findAny().isPresent()) {
+
+				this.getPkCombatting().setIsDraining(true);
+
+				if (!(this.getPkFacing().getEphemeralStates().stream()
+						.anyMatch(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS))) {
+
+					System.out.println(this.getPkFacing().getName() + " fue drenado");
+
+					State drainedAllTurns = new State(StatusConditions.DRAINEDALLTURNS);
+
+					this.getPkFacing().addEstadoEfimero(drainedAllTurns);
+				} else {
+					System.out.println(this.getPkFacing().getName() + " ya está drenado");
+				}
+			} else {
+				System.out.println(this.getPkFacing().getName() + "no puede estar drenado ya que es de tipo planta");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			break;
 
