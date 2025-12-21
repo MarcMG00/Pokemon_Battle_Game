@@ -157,7 +157,7 @@ public class PkVPk {
 		}
 
 		// -----------------------------
-		// WHIRLWIND (REMOLINO) / ROAR (RUGIDO)
+		// WHIRLWIND (REMOLINO) / ROAR (RUGIDO) / MIST (NEBLINA)
 		// -----------------------------
 		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46 || atkAttacker.getId() == 54) {
 
@@ -167,7 +167,7 @@ public class PkVPk {
 				System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ", pero "
 						+ this.getPkFacing().getName() + " evitó el ataque (invulnerable).");
 			} else {
-				// Acierta siempre
+				// Asserts all the time
 				this.getPkCombatting().setCanAttack(true);
 			}
 
@@ -175,7 +175,7 @@ public class PkVPk {
 		}
 
 		// For almost all attacks from "otros", it has 100% of accuracy
-		if (atkAttacker.getId() == 14) {
+		if (atkAttacker.getId() == 14 || atkAttacker.getId() == 74) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
@@ -2763,6 +2763,35 @@ public class PkVPk {
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
+			break;
+
+		// Desarrollo/Growth (tested)
+		case 74:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Desarrollo");
+
+			// Normal attack
+			if (this.getPkCombatting().getAttackStage() >= 6) {
+				System.out.println("El ataque de " + this.getPkCombatting().getName() + " (Id:"
+						+ this.getPkCombatting().getId() + ")" + " no puede subir más!");
+			} else {
+				this.getPkCombatting().setAttackStage(Math.min(this.getPkCombatting().getAttackStage() + 1, 6));
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " aumentó su Ataque!");
+			}
+
+			// Special attack
+			if (this.getPkCombatting().getSpecialAttackStage() >= 6) {
+				System.out.println("El ataque especial de " + this.getPkCombatting().getName() + " (Id:"
+						+ this.getPkCombatting().getId() + ")" + " no puede subir más!");
+			} else {
+				this.getPkCombatting()
+						.setSpecialAttackStage(Math.min(this.getPkCombatting().getSpecialAttackStage() + 1, 6));
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " aumentó su Ataque especial!");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			break;
 
 		// Forcejeo/Struggle
