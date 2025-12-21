@@ -2751,7 +2751,7 @@ public class PkVPk {
 
 					System.out.println(this.getPkFacing().getName() + " fue drenado");
 
-					State drainedAllTurns = new State(StatusConditions.DRAINEDALLTURNS);
+					State drainedAllTurns = new State(StatusConditions.DRAINEDALLTURNS, 0);
 
 					this.getPkFacing().addEstadoEfimero(drainedAllTurns);
 				} else {

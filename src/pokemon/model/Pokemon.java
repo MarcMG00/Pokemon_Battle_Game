@@ -580,7 +580,7 @@ public class Pokemon {
 	public void setDamageReceived(float damageReceived) {
 		this.damageReceived = damageReceived;
 	}
-	
+
 	public boolean getIsDraining() {
 		return isDraining;
 	}
@@ -1072,13 +1072,22 @@ public class Pokemon {
 		State drainedAllTurnsState = this.getEphemeralStates().stream()
 				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
 
-		if (drainedAllTurnsState != null) {
+		if (drainedAllTurnsState != null && drainedAllTurnsState.getNbTurns() != 0) {
 			// Reduces 12,5% from his initial PS
 			float reducePs = this.getInitialPs() * 0.125f;
 
 			this.setPs(this.getPs() - reducePs);
 
-			System.out.println(this.getName() + " está drenado y recibe daño)");
+			System.out.println(this.getName() + " está drenado y recibe daño; PS restantes : " + this.getPs());
+
+			if (this.getPs() <= 0) {
+				this.setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+		} else {
+			if (drainedAllTurnsState != null) {
+				System.out.println(this.getName() + " será drenado a partir del próximo turno");
+				drainedAllTurnsState.setNbTurns(1);
+			}
 		}
 	}
 
@@ -1169,7 +1178,7 @@ public class Pokemon {
 			}
 		}
 	}
-	
+
 	// -----------------------------
 	// Remove states when changing or dying a Pokemon
 	// -----------------------------
