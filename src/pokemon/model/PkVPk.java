@@ -2794,6 +2794,34 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			break;
 
+		// Hoja afilada/Razor leaf (tested)
+		case 75:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó hoja afilada");
+
+			dmg = doDammage();
+
+			highProbabilityCritic = (int) (Math.random() * 100);
+
+			// 40/100 of probabilities to have a critic attack
+			if (highProbabilityCritic <= 40) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
