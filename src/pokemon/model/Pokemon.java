@@ -695,9 +695,9 @@ public class Pokemon {
 		float multiplier;
 
 		if (stage >= 0)
-			multiplier = (2 + stage) / 2.0f;
+			multiplier = (2f + stage) / 2.0f;
 		else
-			multiplier = 2.0f / (2 - stage);
+			multiplier = 2.0f / (2f - stage);
 
 		return this.getAttack() * multiplier;
 	}
@@ -710,9 +710,9 @@ public class Pokemon {
 		float multiplier;
 
 		if (stage >= 0)
-			multiplier = (2 + stage) / 2.0f;
+			multiplier = (2f + stage) / 2.0f;
 		else
-			multiplier = 2.0f / (2 - stage);
+			multiplier = 2.0f / (2f - stage);
 
 		return this.getSpecialAttack() * multiplier;
 	}
@@ -725,9 +725,9 @@ public class Pokemon {
 		float multiplier;
 
 		if (stage >= 0)
-			multiplier = (2 + stage) / 2.0f;
+			multiplier = (2f + stage) / 2.0f;
 		else
-			multiplier = 2.0f / (2 - stage);
+			multiplier = 2.0f / (2f - stage);
 
 		return this.getDef() * multiplier;
 	}
@@ -740,9 +740,9 @@ public class Pokemon {
 		float multiplier;
 
 		if (stage >= 0)
-			multiplier = (2 + stage) / 2.0f;
+			multiplier = (2f + stage) / 2.0f;
 		else
-			multiplier = 2.0f / (2 - stage);
+			multiplier = 2.0f / (2f - stage);
 
 		return this.getSpecialDefense() * multiplier;
 	}
@@ -755,9 +755,9 @@ public class Pokemon {
 		float multiplier;
 
 		if (stage >= 0)
-			multiplier = (2 + stage) / 2.0f;
+			multiplier = (2f + stage) / 2.0f;
 		else
-			multiplier = 2.0f / (2 - stage);
+			multiplier = 2.0f / (2f - stage);
 
 		return this.getSpeed() * multiplier;
 	}
@@ -887,7 +887,7 @@ public class Pokemon {
 	public void doBurnedEffectStartTurn() {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
 			// Reduces current damage by 50%
-			this.setAttack(this.getAttack() / 2);
+			this.setAttack(this.getAttack() / 2f);
 			this.getStatusCondition().setCanMoveStatusCondition(true);
 		}
 	}
@@ -916,13 +916,20 @@ public class Pokemon {
 	// -----------------------------
 	public void doParalyzedEffect() {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
+			// Modifies speed of Pokemon (reduces by 50%)
+			this.setSpeed((this.getSpeed() * 50f) / 100f);
+		}
+	}
+
+	// -----------------------------
+	// Check can move from PARALYZED state (only before attacking)
+	// -----------------------------
+	public void checkCanMoveParalyzed() {
+		if (this.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
 
 			int attackProbability = (int) (Math.random() * 100);
 
 			if (attackProbability <= 25) {
-				// Modifies speed of Pokemon (reduces by 50%)
-				this.setSpeed((this.getSpeed() * 50) / 100);
-
 				this.getStatusCondition().setCanMoveStatusCondition(true);
 			} else {
 				this.getStatusCondition().setCanMoveStatusCondition(false);
