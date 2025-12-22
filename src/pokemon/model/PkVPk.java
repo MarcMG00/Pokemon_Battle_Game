@@ -2822,6 +2822,42 @@ public class PkVPk {
 			}
 			break;
 
+		// Rayo solar/Solar beam(tested)
+		case 76:
+			// If not charging => first turn charge the attack
+			if (!this.getPkCombatting().getIsChargingAttackForNextRound()) {
+
+				// This attack requires to charge first time for one round
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " se prepara para Rayo solar");
+
+				this.getPkCombatting().setIsChargingAttackForNextRound(true);
+
+				// Apply damage => second turn
+			} else {
+
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " usó Rayo solar");
+
+				dmg = doDammage();
+
+				isCritic = getCriticity();
+
+				if (isCritic) {
+
+					dmg = dmg * 2;
+					System.out.println("Fue un golpe crítico");
+					System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+				}
+
+				// Pokemon is no more charging an attack
+				this.getPkCombatting().setIsChargingAttackForNextRound(false);
+
+				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			}
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -2859,8 +2895,9 @@ public class PkVPk {
 		}
 
 		// Set damage from physical attack => used for attacks like "Counter", etc.
-		if (dmg != 0 && this.getPkCombatting().getPhysicalAttacks().stream()
-				.filter(a -> a.getId() == this.getPkCombatting().getNextMovement().getId()).findAny().get() != null) {
+		if (dmg != 0 && this.getPkCombatting().getPhysicalAttacks() != null
+				&& this.getPkCombatting().getPhysicalAttacks().stream()
+						.anyMatch(a -> a.getId() == this.getPkCombatting().getNextMovement().getId())) {
 			this.getPkFacing().setHasReceivedDamage(true);
 			this.getPkFacing().setDamageReceived(dmg);
 		}
