@@ -745,12 +745,12 @@ public class Game {
 		}
 
 		// Prepare player chosen attack (this sets nextMovement etc.)
-		if (pkPlayer.getCanDonAnythingNextRound()) {
+		if (pkPlayer.getCanDonAnythingNextRound() && !pkPlayer.getIsChargingAttackForNextRound()) {
 			this.getPlayer().prepareBestAttackPlayer(attackId);
 		}
 
 		// IA can decide to change Pokemon only if it's not charging
-		if (!pkIA.getIsChargingAttackForNextRound() && pkIA.getCanDonAnythingNextRound()) {
+		if (pkIA.getCanDonAnythingNextRound() && !pkIA.getIsChargingAttackForNextRound()) {
 			tryIAChange();
 		}
 
@@ -764,8 +764,8 @@ public class Game {
 
 		// At the end of the turn we must perform end-of-turn ephemeral effects and
 		// reduce counters and parameters
-		reduceNumberTurnsEffects(pkPlayer);
-		reduceNumberTurnsEffects(pkIA);
+		reduceNumberTurnsEffects(this.getPlayer(), this.getIA());
+		reduceNumberTurnsEffects(this.getIA(), this.getPlayer());
 
 		pkPlayer.restartParametersEffect();
 		pkIA.restartParametersEffect();
@@ -808,15 +808,35 @@ public class Game {
 	 * ------------------------- Helper: Reduce number of turns remaining on states
 	 * -------------------------
 	 */
-	private void reduceNumberTurnsEffects(Pokemon pk) {
+	private void reduceNumberTurnsEffects(Player playerAttacker, Player playerDefender) {
 
 		// Normal status
-		pk.doBurnedEffectEndTurn();
-		pk.doPoisonedEffectEndTurn();
+		playerAttacker.getPkCombatting().doBurnedEffectEndTurn();
+		playerAttacker.getPkCombatting().doPoisonedEffectEndTurn();
 		// Ephemeral status
-		pk.doTrappedEffect();
-		pk.putConfusedStateIfNeeded();
-		pk.reduceDisabledAttackTurn();
+		playerAttacker.getPkCombatting().doTrappedEffect();
+		playerAttacker.getPkCombatting().putConfusedStateIfNeeded();
+		playerAttacker.getPkCombatting().reduceDisabledAttackTurn();
+		playerAttacker.getPkCombatting().doDrainedAllTurnsEffect();
+
+		// Get PS from drained rival Pokemon
+		if (playerAttacker.getPkCombatting().getIsDraining()) {
+			// Get drained all turns state from defender
+			State drainedAllTurnsState = playerDefender.getPkCombatting().getEphemeralStates().stream()
+					.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
+
+			// Only can drain if it's not the same turn attacking with the draining attack
+			// (Leech seed..)
+			if (drainedAllTurnsState.getNbTurns() != 0) {
+				playerAttacker.getPkCombatting().doDrainedAllTurnsBeneficiaryEffect();
+
+			}
+		}
+		// Force switch if (for example), after getting drained, has no more PS
+		if (playerAttacker.getPkCombatting().getStatusCondition()
+				.getStatusCondition() == StatusConditions.DEBILITATED) {
+			handleForcedSwitch(playerAttacker);
+		}
 	}
 
 	// -----------------------------
@@ -825,6 +845,7 @@ public class Game {
 	private boolean handleChangeTurn(Scanner sc) {
 
 		Pokemon pkIA = this.getIA().getPkCombatting();
+		Pokemon pkPlayer = this.getPlayer().getPkCombatting();
 
 		if (this.getPlayer().getPkCombatting().getCanDonAnythingNextRound()) {
 			boolean changed = changePokemon(sc);
@@ -857,42 +878,11 @@ public class Game {
 			handleForcedSwitch(this.getPlayer());
 		}
 
-		pkIA.restartParametersEffect();
-		reduceNumberTurnsEffects(pkIA);
-
-		return true;
-	}
-
-	// -----------------------------
-	// Handle attack from IA when player cannot do anything with the Pokemon (attack
-	// OR change)
-	// -----------------------------
-	private boolean handleLoosingTurn(Scanner sc) {
-
-		Pokemon pkIA = this.getIA().getPkCombatting();
-
-		// Get if Pokemon can attack or change next round
-		if (pkIA.getCanDonAnythingNextRound()) {
-
-			evaluateStatusStartOfTurn(pkIA);
-			canAttackEvaluatingAllStatesToAttack(pkIA);
-			prepareIAIfPossible(pkIA);
-
-			handleChangeSequence(sc); // only IA attacks
-
-			// If defender has to change because of "Whirlwind" or "Roar", etc.
-			if (this.getPlayer().getIsForceSwitchPokemon()) {
-				handleForcedSwitch(this.getPlayer());
-			}
-		} else {
-			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recuperarse a causa de "
-					+ pkIA.getLastUsedAttack().getName());
-
-			pkIA.setCanDonAnythingNextRound(true);
-		}
+		// Remove drained ALL SATUS state (cause player changed)
+		clearDrainEffects(pkPlayer, pkIA);
 
 		pkIA.restartParametersEffect();
-		reduceNumberTurnsEffects(pkIA);
+		reduceNumberTurnsEffects(this.getIA(), this.getPlayer());
 
 		return true;
 	}
@@ -1034,6 +1024,7 @@ public class Game {
 
 		// If Pokemon is debilitated, force change and ends turn
 		if (pk.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			clearDrainEffects(pk, defender.getPkCombatting());
 			checkForcedPokemonChange(sc);
 			return true; // turn ends
 		}
@@ -1089,6 +1080,7 @@ public class Game {
 
 		// If defender got debilitated during this attack -> force change and end turn
 		if (defender.getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			clearDrainEffects(pk, defender.getPkCombatting());
 			checkForcedPokemonChange(sc);
 			return true;
 		}
@@ -1141,6 +1133,7 @@ public class Game {
 				pkPlayer.setIsChargingAttackForNextRound(false);
 			}
 		} else {
+			pkPlayer.removeStates();
 			System.out.println(ANSI_RED + "Pokemon player is debilitated" + ANSI_RESET);
 		}
 	}
@@ -1183,7 +1176,7 @@ public class Game {
 				pkIA.setIsChargingAttackForNextRound(false);
 			}
 		} else {
-
+			pkIA.removeStates();
 			System.out.println(ANSI_RED + "Pokemon IA is debilitated" + ANSI_RESET);
 		}
 	}
@@ -1208,6 +1201,7 @@ public class Game {
 
 		// IA dies
 		if (this.getIA().getPkCombatting().getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED) {
+			this.getIA().getPkCombatting().removeStates();
 			System.out.println(this.getIA().getPkCombatting().getName() + " fue derrotado.");
 
 			Pokemon newIA = this.getIA().decideBestChangePokemon(this.getPlayer().getPkCombatting(),
@@ -1359,6 +1353,10 @@ public class Game {
 	// -----------------------------
 	private void handleForcedSwitch(Player defender) {
 
+		Pokemon pkCombating = defender.getPkCombatting();
+		Pokemon pkFacing = defender.getPkFacing();
+
+		clearDrainEffects(pkCombating, pkFacing);
 		// Get available Pokemon
 		List<Pokemon> alive = defender.getPokemon().stream()
 				.filter(p -> p.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED
@@ -1420,13 +1418,23 @@ public class Game {
 	}
 
 	// -----------------------------
+	// helper method => clear DRAINED ALL TURNS effects for both Pokemon
+	// -----------------------------
+	private void clearDrainEffects(Pokemon pkA, Pokemon pkB) {
+		pkA.setIsDraining(false);
+		pkB.setIsDraining(false);
+		pkA.removeStates();
+		pkB.removeStates();
+	}
+
+	// -----------------------------
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
 	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee)
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "101,101,101";
-		String allPkIA = "227,227,227";
+		String allPkPlayer = "22,22,22";
+		String allPkIA = "6,6,6";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1469,7 +1477,7 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 54).findFirst().get());
@@ -1478,9 +1486,9 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
-			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 63).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 68).findFirst().get());
+			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 13).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -1526,7 +1534,7 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 48).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());

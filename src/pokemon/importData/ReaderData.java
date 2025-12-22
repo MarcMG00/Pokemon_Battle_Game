@@ -926,6 +926,10 @@ public class ReaderData {
 			canHitWhileInvulnerable.add(19);
 			break;
 		}
+		
+		// Some charged attacks can be hit by all the movements (13_Razor_Wind / 76_Solar_Beam)
+		canHitWhileInvulnerable.add(13);
+		canHitWhileInvulnerable.add(76);
 
 		attack.setCanHitWhileInvulnerable(canHitWhileInvulnerable);
 	}

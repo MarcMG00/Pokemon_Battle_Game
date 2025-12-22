@@ -51,6 +51,10 @@ public class Pokemon {
 	private int speedStage;
 	private Attack lastUsedAttack;
 	private boolean canDonAnythingNextRound;
+	private int weight;
+	private boolean hasReceivedDamage;
+	private float damageReceived;
+	private boolean isDraining;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -103,6 +107,10 @@ public class Pokemon {
 		this.speedStage = 0;
 		this.lastUsedAttack = new Attack();
 		this.canDonAnythingNextRound = true;
+		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
+		this.hasReceivedDamage = false;
+		this.damageReceived = 0;
+		this.isDraining = false;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -149,6 +157,10 @@ public class Pokemon {
 		this.speedStage = 0;
 		this.lastUsedAttack = new Attack();
 		this.canDonAnythingNextRound = true;
+		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
+		this.hasReceivedDamage = false;
+		this.damageReceived = 0;
+		this.isDraining = false;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -200,6 +212,10 @@ public class Pokemon {
 		this.speedStage = pokemon.speedStage;
 		this.lastUsedAttack = pokemon.lastUsedAttack;
 		this.canDonAnythingNextRound = pokemon.canDonAnythingNextRound;
+		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
+		this.hasReceivedDamage = pokemon.hasReceivedDamage;
+		this.damageReceived = pokemon.damageReceived;
+		this.isDraining = pokemon.isDraining;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -541,6 +557,38 @@ public class Pokemon {
 		this.canDonAnythingNextRound = canDonAnythingNextRound;
 	}
 
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
+	public boolean getHasReceivedDamage() {
+		return hasReceivedDamage;
+	}
+
+	public void setHasReceivedDamage(boolean hasReceivedDamage) {
+		this.hasReceivedDamage = hasReceivedDamage;
+	}
+
+	public float getDamageReceived() {
+		return damageReceived;
+	}
+
+	public void setDamageReceived(float damageReceived) {
+		this.damageReceived = damageReceived;
+	}
+
+	public boolean getIsDraining() {
+		return isDraining;
+	}
+
+	public void setIsDraining(boolean isDraining) {
+		this.isDraining = isDraining;
+	}
+
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
 		this.normalAbilities.add(ablty);
@@ -630,8 +678,13 @@ public class Pokemon {
 
 		}
 
+		// Can move and attack
 		this.getStatusCondition().setCanMoveStatusCondition(true);
 		this.setCanAttack(true);
+
+		// Reset damage received
+		this.setHasReceivedDamage(false);
+		this.setDamageReceived(0f);
 	}
 
 	// -----------------------------
@@ -808,31 +861,22 @@ public class Pokemon {
 
 			State frozenState = this.getStatusCondition();
 
-			// Reduce number of turns
-			frozenState.setNbTurns(frozenState.getNbTurns() - 1);
+			int getRidOfStatusProbability = (int) (Math.random() * 100);
 
-			if (frozenState.getNbTurns() <= 0) {
+			// Only can be thawed if probability <= 10% (at the beginning) => after each
+			// turn, it goes to +10%
+			if (getRidOfStatusProbability <= frozenState.getPercentToBeDefrosted()) {
 				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
 
-				System.out.println(this.getName() + "se descongeló!");
+				System.out.println(ANSI_CYAN + this.getName() + " se descongeló! (probabilidad inferior a "
+						+ frozenState.getPercentToBeDefrosted() + ") : " + getRidOfStatusProbability + ANSI_RESET);
 			} else {
-				int getRidOfStatusProbability = (int) (Math.random() * 100);
+				frozenState.setCanMoveStatusCondition(false);
 
-				// Only can be thawed if probability <= 10% (at the beginning) => after each
-				// turn, it goes to +10%
-				if (getRidOfStatusProbability <= frozenState.getPercentToBeDefrosted()) {
-					this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
+				// Adds +10% each turn not thawed
+				frozenState.setPercentToBeDefrosted(frozenState.getPercentToBeDefrosted() + 10);
 
-					System.out.println(ANSI_CYAN + this.getName() + " se descongeló! (probabilidad inferior a "
-							+ frozenState.getPercentToBeDefrosted() + ") : " + getRidOfStatusProbability + ANSI_RESET);
-				} else {
-					frozenState.setCanMoveStatusCondition(false);
-
-					// Adds +10% each turn not thawed
-					frozenState.setPercentToBeDefrosted(frozenState.getPercentToBeDefrosted() + 10);
-
-					System.out.println(ANSI_CYAN + this.getName() + " => congelado - no puede atacar)" + ANSI_RESET);
-				}
+				System.out.println(ANSI_CYAN + this.getName() + " => congelado - no puede atacar)" + ANSI_RESET);
 			}
 		}
 	}
@@ -854,25 +898,15 @@ public class Pokemon {
 	public void doBurnedEffectEndTurn() {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
 
-			State burnedState = this.getStatusCondition();
+			// Reduces current PS by 6.25%
+			float reducePs = this.getPs() * 0.0625f;
 
-			burnedState.setNbTurns(burnedState.getNbTurns() - 1);
+			this.setPs(this.getPs() - reducePs);
 
-			if (burnedState.getNbTurns() <= 0) {
-				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
+			System.out.println(this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
 
-				System.out.println(this.getName() + " ya no está quemado!");
-			} else {
-				// Reduces current PS by 6.25%
-				float reducePs = this.getPs() * 0.0625f;
-
-				this.setPs(this.getPs() - reducePs);
-
-				System.out.println(this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
-
-				if (this.getPs() <= 0) {
-					this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
-				}
+			if (this.getPs() <= 0) {
+				this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
 			}
 		}
 	}
@@ -882,26 +916,16 @@ public class Pokemon {
 	// -----------------------------
 	public void doParalyzedEffect() {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
-			State paralyzedState = this.getStatusCondition();
 
-			// Reduce number of turns
-			paralyzedState.setNbTurns(paralyzedState.getNbTurns() - 1);
+			int attackProbability = (int) (Math.random() * 100);
 
-			if (paralyzedState.getNbTurns() <= 0) {
-				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
+			if (attackProbability <= 25) {
+				// Modifies speed of Pokemon (reduces by 50%)
+				this.setSpeed((this.getSpeed() * 50) / 100);
 
-				System.out.println(this.getName() + " ya no está paralizado!");
+				this.getStatusCondition().setCanMoveStatusCondition(true);
 			} else {
-				int attackProbability = (int) (Math.random() * 100);
-
-				if (attackProbability <= 25) {
-					// Modifies speed of Pokemon (reduces by 50%)
-					this.setSpeed((this.getSpeed() * 50) / 100);
-
-					this.getStatusCondition().setCanMoveStatusCondition(true);
-				} else {
-					this.getStatusCondition().setCanMoveStatusCondition(false);
-				}
+				this.getStatusCondition().setCanMoveStatusCondition(false);
 			}
 		}
 	}
@@ -912,25 +936,15 @@ public class Pokemon {
 	public void doPoisonedEffectEndTurn() {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
 
-			State poisonedState = this.getStatusCondition();
+			// Reduces current PS by 6.25%
+			float reducePs = this.getPs() * 0.0625f;
 
-			poisonedState.setNbTurns(poisonedState.getNbTurns() - 1);
+			this.setPs(this.getPs() - reducePs);
 
-			if (poisonedState.getNbTurns() <= 0) {
-				this.getStatusCondition().setStatusCondition(StatusConditions.NO_STATUS);
+			System.out.println(this.getName() + " está envenenado - PS actuales : " + this.getPs());
 
-				System.out.println(this.getName() + " ya no está envenenado!");
-			} else {
-				// Reduces current PS by 6.25%
-				float reducePs = this.getPs() * 0.0625f;
-
-				this.setPs(this.getPs() - reducePs);
-
-				System.out.println(this.getName() + " está envenenado - PS actuales : " + this.getPs());
-
-				if (this.getPs() <= 0) {
-					this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
-				}
+			if (this.getPs() <= 0) {
+				this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
 			}
 		}
 	}
@@ -1012,6 +1026,61 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Do effect from DRAINED ALL TURNS state (end of the turn) => affects to enemy
+	// -----------------------------
+	public void doDrainedAllTurnsEffect() {
+		// Get drained all turns state
+		State drainedAllTurnsState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
+
+		// Turn number "0" allows to avoid applying effect the first turn
+		if (drainedAllTurnsState != null && drainedAllTurnsState.getNbTurns() != 0) {
+			// Reduces 12,5% from his initial PS
+			float reducePs = this.getInitialPs() * 0.125f;
+
+			this.setPs(this.getPs() - reducePs);
+
+			System.out.println(this.getName() + " está drenado y recibe daño; PS restantes : " + this.getPs());
+
+			if (this.getPs() <= 0) {
+				this.setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+		} else {
+			if (drainedAllTurnsState != null) {
+				System.out.println(this.getName() + " será drenado a partir del próximo turno");
+				drainedAllTurnsState.setNbTurns(1);
+			}
+		}
+	}
+
+	// -----------------------------
+	// Do effect from DRAINED ALL TURNS state (end of the turn) => benefits to
+	// Pokemon doing the attack
+	// -----------------------------
+	public void doDrainedAllTurnsBeneficiaryEffect() {
+		// Increases 12,5% from his initial PS
+		float increasePS = this.getInitialPs() * 0.125f;
+
+		this.setPs(this.getPs() + increasePS);
+
+		System.out.println(this.getName() + " se curó gracias al efecto activo de Drenadoras");
+	}
+
+	// -----------------------------
+	// Remove DRAINED ALL TURNS state
+	// -----------------------------
+	private void removeDrainedAllTurns() {
+		// Get drained all turns state
+		State drainedAllTurnsState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
+
+		if (drainedAllTurnsState != null) {
+			this.setIsDraining(false);
+			this.getEphemeralStates().remove(drainedAllTurnsState);
+		}
+	}
+
+	// -----------------------------
 	// Reduce turn from DISABLE state (end of the turn)
 	// -----------------------------
 	public void reduceDisabledAttackTurn() {
@@ -1070,6 +1139,13 @@ public class Pokemon {
 				}
 			}
 		}
+	}
+
+	// -----------------------------
+	// Remove states when changing or dying a Pokemon
+	// -----------------------------
+	public void removeStates() {
+		removeDrainedAllTurns();
 	}
 
 }
