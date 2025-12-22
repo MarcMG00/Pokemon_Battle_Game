@@ -2858,6 +2858,27 @@ public class PkVPk {
 			}
 			break;
 
+		// Polvo veneno/Poison powder (tested)
+		case 77:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Polvo veneno");
+
+			// Possibility of poisoning Pokemon facing if is not already poisoned and has
+			// not a Status
+			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+				State poisoned = new State(StatusConditions.POISONED, 1);
+
+				this.getPkFacing().setStatusCondition(poisoned);
+
+				System.out.println(this.getPkFacing().getName() + " fue envenenado");
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está envenenado");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -2897,7 +2918,9 @@ public class PkVPk {
 		// Set damage from physical attack => used for attacks like "Counter", etc.
 		if (dmg != 0 && this.getPkCombatting().getPhysicalAttacks() != null
 				&& this.getPkCombatting().getPhysicalAttacks().stream()
-						.anyMatch(a -> a.getId() == this.getPkCombatting().getNextMovement().getId())) {
+						.anyMatch(a -> a.getId() == this.getPkCombatting().getNextMovement().getId()))
+
+		{
 			this.getPkFacing().setHasReceivedDamage(true);
 			this.getPkFacing().setDamageReceived(dmg);
 		}
