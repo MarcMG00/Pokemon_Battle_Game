@@ -575,14 +575,11 @@ public class PkVPk {
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
+					State burned = new State(StatusConditions.BURNED);
 
 					this.getPkFacing().setStatusCondition(burned);
 
-					System.out.println(
-							this.getPkFacing().getName() + " fue quemado por " + nbTurnsHoldingStatus + " turnos");
+					System.out.println(this.getPkFacing().getName() + " fue quemado");
 				}
 			}
 
@@ -625,14 +622,11 @@ public class PkVPk {
 
 					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-						nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
+						State frozen = new State(StatusConditions.FROZEN);
 
 						this.getPkFacing().setStatusCondition(frozen);
 
-						System.out.println(this.getPkCombatting().getName() + " fue congelado por "
-								+ nbTurnsHoldingStatus + " turnos");
+						System.out.println(this.getPkCombatting().getName() + " fue congelado");
 					}
 				}
 			}
@@ -674,14 +668,11 @@ public class PkVPk {
 
 				if (probabilityGettingStatus <= 10) {
 
-					nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
+					State paralyzed = new State(StatusConditions.PARALYZED);
 
 					this.getPkFacing().setStatusCondition(paralyzed);
 
-					System.out.println(
-							this.getPkFacing().getName() + " fue paralizado por " + nbTurnsHoldingStatus + " turnos");
+					System.out.println(this.getPkFacing().getName() + " fue paralizado");
 				}
 			}
 
@@ -1425,14 +1416,11 @@ public class PkVPk {
 
 				if (probabilityGettingStatus <= 30) {
 
-					nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-					State paralyzed = new State(StatusConditions.PARALYZED, nbTurnsHoldingStatus);
+					State paralyzed = new State(StatusConditions.PARALYZED);
 
 					this.getPkFacing().setStatusCondition(paralyzed);
 
-					System.out.println(
-							this.getPkFacing().getName() + " fue paralizado por " + nbTurnsHoldingStatus + " turnos");
+					System.out.println(this.getPkFacing().getName() + " fue paralizado");
 				}
 			}
 
@@ -1648,14 +1636,11 @@ public class PkVPk {
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus);
+					State poisoned = new State(StatusConditions.POISONED);
 
 					this.getPkFacing().setStatusCondition(poisoned);
 
-					System.out.println(
-							this.getPkFacing().getName() + " fue envenenado por " + nbTurnsHoldingStatus + " turnos");
+					System.out.println(this.getPkFacing().getName() + " fue envenenado");
 				}
 			}
 
@@ -1706,15 +1691,11 @@ public class PkVPk {
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = getRandomInt(2, 5);
-					;
-
-					State poisoned = new State(StatusConditions.POISONED, nbTurnsHoldingStatus);
+					State poisoned = new State(StatusConditions.POISONED);
 
 					this.getPkFacing().setStatusCondition(poisoned);
 
-					System.out.println(
-							this.getPkFacing().getName() + " fue envenenado por " + nbTurnsHoldingStatus + " turnos");
+					System.out.println(this.getPkFacing().getName() + " fue envenenado");
 				}
 			}
 
@@ -2033,14 +2014,11 @@ public class PkVPk {
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
+					State burned = new State(StatusConditions.BURNED);
 
 					this.getPkFacing().setStatusCondition(burned);
 
-					System.out.println(
-							this.getPkFacing().getName() + " fue quemado por " + nbTurnsHoldingStatus + " turnos");
+					System.out.println(this.getPkFacing().getName() + " fue quemado");
 				}
 			}
 
@@ -2080,14 +2058,11 @@ public class PkVPk {
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-					nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-					State burned = new State(StatusConditions.BURNED, nbTurnsHoldingStatus);
+					State burned = new State(StatusConditions.BURNED);
 
 					this.getPkFacing().setStatusCondition(burned);
 
-					System.out.println(
-							this.getPkFacing().getName() + " fue quemado por " + nbTurnsHoldingStatus + " turnos");
+					System.out.println(this.getPkFacing().getName() + " fue quemado");
 				}
 			}
 
@@ -2231,14 +2206,11 @@ public class PkVPk {
 
 					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-						nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
+						State frozen = new State(StatusConditions.FROZEN);
 
 						this.getPkFacing().setStatusCondition(frozen);
 
-						System.out.println(this.getPkCombatting().getName() + " fue congelado por "
-								+ nbTurnsHoldingStatus + " turnos");
+						System.out.println(this.getPkCombatting().getName() + " fue congelado");
 					}
 				}
 			}
@@ -2282,14 +2254,11 @@ public class PkVPk {
 
 					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-						nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-						State frozen = new State(StatusConditions.FROZEN, nbTurnsHoldingStatus);
+						State frozen = new State(StatusConditions.FROZEN);
 
 						this.getPkFacing().setStatusCondition(frozen);
 
-						System.out.println(this.getPkCombatting().getName() + " fue congelado por "
-								+ nbTurnsHoldingStatus + " turnos");
+						System.out.println(this.getPkCombatting().getName() + " fue congelado");
 					}
 				}
 			}
@@ -2867,7 +2836,7 @@ public class PkVPk {
 			// not a Status
 			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
-				State poisoned = new State(StatusConditions.POISONED, 1);
+				State poisoned = new State(StatusConditions.POISONED);
 
 				this.getPkFacing().setStatusCondition(poisoned);
 
