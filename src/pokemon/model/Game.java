@@ -1414,10 +1414,10 @@ public class Game {
 
 			if (this.getNbTurnsMistActive() <= 0) {
 				this.setMistIsActivated(false);
-				System.out.println("La niebla se disipó!");
+				System.out.println("La neblina se disipó!");
 			} else {
 				System.out
-						.println("Faltan " + this.getNbTurnsMistActive() + " turnos para que la niebla se fuerara XD");
+						.println("Faltan " + this.getNbTurnsMistActive() + " turnos para que la neblina se fuerara XD");
 			}
 		}
 	}
@@ -1438,7 +1438,7 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "44,44,44";
+		String allPkPlayer = "53,53,53";
 		String allPkIA = "6,6,6";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
@@ -1493,7 +1493,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 68).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 78).findFirst().get());
+			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 80).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {

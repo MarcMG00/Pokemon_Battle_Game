@@ -1247,7 +1247,7 @@ public class PkVPk {
 				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " no pudo bajar las estadísticas a causa de Niebla");
+						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1615,7 +1615,7 @@ public class PkVPk {
 				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " no pudo bajar las estadísticas a causa de Niebla");
+						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1767,7 +1767,7 @@ public class PkVPk {
 				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " no pudo bajar las estadísticas a causa de Niebla");
+						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1824,7 +1824,7 @@ public class PkVPk {
 				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " no pudo bajar las estadísticas a causa de Niebla");
+						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1991,7 +1991,7 @@ public class PkVPk {
 					}
 				} else {
 					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-							+ " no pudo bajar las estadísticas a causa de Niebla");
+							+ " no pudo bajar las estadísticas a causa de Neblina");
 				}
 			}
 
@@ -2093,9 +2093,9 @@ public class PkVPk {
 			}
 			break;
 
-		// Niebla/Mist (tested)
+		// Neblina/Mist (tested)
 		case 54:
-			System.out.println(this.getPkCombatting().getName() + " usó Niebla");
+			System.out.println(this.getPkCombatting().getName() + " usó Neblina");
 
 			if (isMistEffectActivated) {
 				System.out.println("No tuvoo ningún efecto ya que está en uso");
@@ -2354,7 +2354,7 @@ public class PkVPk {
 					}
 				} else {
 					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-							+ " no pudo bajar las estadísticas a causa de Niebla");
+							+ " no pudo bajar las estadísticas a causa de Neblina");
 				}
 			}
 
@@ -2400,12 +2400,12 @@ public class PkVPk {
 					}
 				} else {
 					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-							+ " no pudo bajar las estadísticas a causa de Niebla");
+							+ " no pudo bajar las estadísticas a causa de Neblina");
 				}
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-			
+
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
 			if (this.getPkFacing().getPs() <= 0) {
@@ -2859,7 +2859,7 @@ public class PkVPk {
 				this.getPkCombatting().setIsChargingAttackForNextRound(false);
 
 				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-				
+
 				this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
 				if (this.getPkFacing().getPs() <= 0) {
@@ -2991,7 +2991,7 @@ public class PkVPk {
 				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " no pudo bajar las estadísticas a causa de Niebla");
+						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
