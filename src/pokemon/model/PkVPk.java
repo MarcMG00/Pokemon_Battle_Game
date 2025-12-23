@@ -2924,6 +2924,28 @@ public class PkVPk {
 			}
 			break;
 
+		// Disparo démora/String shot (tested)
+		case 81:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Diapro démora");
+
+			if (!isMistEffectActivated) {
+				if (this.getPkFacing().getSpeedStage() <= -6) {
+					System.out.println("La velocidad de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setSpeedStage(Math.max(this.getPkFacing().getSpeedStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su velocidad!");
+				}
+			} else {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Niebla");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
