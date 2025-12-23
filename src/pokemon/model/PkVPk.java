@@ -2869,6 +2869,30 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			break;
 
+		// Somnífero/Sleep powder (tested)
+		case 79:
+			System.out.println(this.getPkCombatting().getName() + " usó Somnífero");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
+
+				nbTurnsHoldingStatus = getRandomInt(1, 7);
+
+				System.out.println(this.getPkFacing().getName() + " cayó en un sueño profundo por "
+						+ nbTurnsHoldingStatus + " turnos");
+
+				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
+
+				this.getPkFacing().addEstadoEfimero(asleep);
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está dormido!");
+			}
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
