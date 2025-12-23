@@ -3150,6 +3150,27 @@ public class PkVPk {
 			}
 			break;
 
+		// Onda trueno/Thunder wave (tested)
+		case 86:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Onda trueno");
+
+			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
+			// has not a Status
+			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+				State paralyzed = new State(StatusConditions.PARALYZED);
+
+				this.getPkFacing().setStatusCondition(paralyzed);
+
+				System.out.println(this.getPkFacing().getName() + " fue paralizado");
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está paralizado");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
 		// Forcejeo/Struggle
 		case 165:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
