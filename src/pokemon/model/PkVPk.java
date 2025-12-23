@@ -1719,7 +1719,6 @@ public class PkVPk {
 		// Pin misil/Pin missile (tested)
 		case 42:
 			nbTimesAttack = getRandomInt(1, 5);
-			;
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -1837,7 +1836,8 @@ public class PkVPk {
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
-			// Si el rival no tiene más Pokémon -> no pasa nada (pero no falla)
+			// If rival has no more Pokemon remaining, it doesn't matter => only fails the
+			// attack
 			if (!this.getDefender().hasAvailableSwitch()) {
 				System.out.println("Pero " + this.getPkFacing().getName() + " no tiene más Pokémon para cambiar.");
 				break;
@@ -1993,10 +1993,16 @@ public class PkVPk {
 					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 							+ " no pudo bajar las estadísticas a causa de Niebla");
 				}
-
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Ascuas/Ember (tested)
@@ -2090,6 +2096,10 @@ public class PkVPk {
 		// Niebla/Mist (tested)
 		case 54:
 			System.out.println(this.getPkCombatting().getName() + " usó Niebla");
+
+			if (isMistEffectActivated) {
+				System.out.println("No tuvoo ningún efecto ya que está en uso");
+			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			break;
@@ -2349,6 +2359,13 @@ public class PkVPk {
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Rayo aurora/Aurora beam (tested)
@@ -2388,6 +2405,13 @@ public class PkVPk {
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Hiperrayo/Hyper beam (tested)
@@ -2835,6 +2859,13 @@ public class PkVPk {
 				this.getPkCombatting().setIsChargingAttackForNextRound(false);
 
 				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+				
+				this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+				if (this.getPkFacing().getPs() <= 0) {
+
+					this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				}
 			}
 			break;
 
