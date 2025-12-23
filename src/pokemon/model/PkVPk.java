@@ -989,7 +989,7 @@ public class PkVPk {
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
@@ -1459,7 +1459,7 @@ public class PkVPk {
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
@@ -1517,7 +1517,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Saña/Thrash
+		// Saña/Thrash (tested)
 		case 37:
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Saña");
@@ -1542,7 +1542,7 @@ public class PkVPk {
 				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
 						+ nbTurnsHoldingStatus + " turnos.");
 
-				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus);
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
 
 				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
 			}
@@ -2890,6 +2890,37 @@ public class PkVPk {
 				this.getPkFacing().addEstadoEfimero(asleep);
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está dormido!");
+			}
+			break;
+
+		// Danza pétalo/Petal dance (tested)
+		case 80:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Danza pétalo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			if (!(this.getPkCombatting().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
+
+				nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
+						+ nbTurnsHoldingStatus + " turnos.");
+
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
+
+				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
 			}
 			break;
 
