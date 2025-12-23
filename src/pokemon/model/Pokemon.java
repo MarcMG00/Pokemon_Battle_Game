@@ -962,7 +962,7 @@ public class Pokemon {
 	public boolean doAsleepEffect() {
 		boolean canAttack = true;
 
-		// Get trapped state
+		// Get asleep state
 		State asleepState = this.getEphemeralStates().stream()
 				.filter(e -> e.getStatusCondition() == StatusConditions.ASLEEP).findFirst().orElse(null);
 

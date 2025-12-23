@@ -996,10 +996,7 @@ public class PkVPk {
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
-			// It removes 12,5% of the initial PS every turn is trapped
-			defenderInitialPs = this.getPkFacing().getInitialPs();
-			dmg = defenderInitialPs * 0.125f;
-			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			if (this.getPkFacing().getPs() <= 0) {
 
@@ -1466,10 +1463,7 @@ public class PkVPk {
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
-			// It removes 12,5% of the initial PS every turn is trapped
-			defenderInitialPs = this.getPkFacing().getInitialPs();
-			dmg = defenderInitialPs * 0.125f;
-			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			if (this.getPkFacing().getPs() <= 0) {
 
@@ -3021,6 +3015,46 @@ public class PkVPk {
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Giro fuego/Fire spin (tested)
+		case 83:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Giro fuego");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+			// Check if the Pokemon facing doesn't have the status Trapped (is a status that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
+
+				nbTurnsHoldingStatus = getRandomInt(4, 5);
+
+				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
+
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
+
+				this.getPkFacing().addEstadoEfimero(trapped);
+			}
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			if (this.getPkFacing().getPs() <= 0) {
 
