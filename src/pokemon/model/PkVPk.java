@@ -1545,7 +1545,18 @@ public class PkVPk {
 				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
 
 				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
+
+				// Only removes PP when choosing the attack
+				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			}
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+
 			break;
 
 		// Doble filo/Dobule-Edge (tested)
@@ -2922,6 +2933,15 @@ public class PkVPk {
 
 				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
 			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Disparo démora/String shot (tested)
@@ -2944,6 +2964,37 @@ public class PkVPk {
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Furia dragón/Dragon rage (tested)
+		case 82:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Furia dragón");
+
+			dmg = 40f;
+
+			if (!(this.getPkCombatting().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
+
+				nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
+						+ nbTurnsHoldingStatus + " turnos.");
+
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
+
+				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
+
+				// Only removes PP when choosing the attack
+				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			}
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Forcejeo/Struggle
