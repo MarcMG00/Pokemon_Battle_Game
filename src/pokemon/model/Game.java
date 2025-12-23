@@ -737,10 +737,12 @@ public class Game {
 		// that's the rule:
 		// first turn of a charging, executes regardless of states conditions, the
 		// second turn is checked.
-		if (playerSecondTurnOfCharged && pkPlayer.getCanDonAnythingNextRound()) {
+		if ((playerSecondTurnOfCharged || pkPlayer.getNextMovement().getCategory() != AttackCategory.CHARGED)
+				&& pkPlayer.getCanDonAnythingNextRound()) {
 			evaluateStatusStartOfTurn(pkPlayer);
 		}
-		if (IASecondTurnOfCharged && pkIA.getCanDonAnythingNextRound()) {
+		if ((IASecondTurnOfCharged || pkIA.getNextMovement().getCategory() != AttackCategory.CHARGED)
+				&& pkIA.getCanDonAnythingNextRound()) {
 			evaluateStatusStartOfTurn(pkIA);
 		}
 
@@ -780,8 +782,6 @@ public class Game {
 	 * -------------------------
 	 */
 	private void evaluateStatusStartOfTurn(Pokemon pk) {
-		// This calls State.doEffectStatusCondition which manages normal states
-		// (PARALYZED, FROZEN, etc.)
 		pk.doFrozenEffect();
 		pk.doBurnedEffectStartTurn();
 		pk.doParalyzedEffect();
@@ -789,12 +789,12 @@ public class Game {
 
 	/*
 	 * ------------------------- Helper: Evaluate states BEFORE attacking. Some
-	 * states influence the probability of attacking, for example when confused
-	 * -------------------------
+	 * states influence the probability of attacking, for example when confused,
+	 * paralyzed, etc. -------------------------
 	 */
 	private void canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
-
 		pk.canAttackFrozen();
+		pk.checkCanMoveParalyzed();
 		pk.canAttackParalyzed();
 		boolean canAttackConfused = pk.canAttackConfused();
 		boolean canAttackAsleep = pk.doAsleepEffect();
@@ -992,6 +992,11 @@ public class Game {
 	// -----------------------------
 	private void handleNormalAttackSequence(Scanner sc) {
 		boolean playerFirst = playerCanAttackFirst();
+
+		System.out.println(ANSI_RED + "Velocidad normal jugador : " + this.getPlayer().getPkCombatting().getSpeed()
+				+ " / Velocidad efectiva : " + this.getPlayer().getPkCombatting().getEffectiveSpeed() + ANSI_RESET);
+		System.out.println(ANSI_RED + "Velocidad normal IA : " + this.getIA().getPkCombatting().getSpeed()
+				+ " / Velocidad efectiva : " + this.getIA().getPkCombatting().getEffectiveSpeed() + ANSI_RESET);
 
 		Player first = playerFirst ? this.getPlayer() : this.getIA();
 		Player second = playerFirst ? this.getIA() : this.getPlayer();
@@ -1433,7 +1438,7 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "22,22,22";
+		String allPkPlayer = "44,44,44";
 		String allPkIA = "6,6,6";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
@@ -1477,7 +1482,7 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 54).findFirst().get());
@@ -1488,7 +1493,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 68).findFirst().get());
-			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 13).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 78).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
