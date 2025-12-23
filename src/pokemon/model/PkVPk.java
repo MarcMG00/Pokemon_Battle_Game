@@ -989,17 +989,14 @@ public class PkVPk {
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
-			// It removes 12,5% of the initial PS every turn is trapped
-			defenderInitialPs = this.getPkFacing().getInitialPs();
-			dmg = defenderInitialPs * 0.125f;
-			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			if (this.getPkFacing().getPs() <= 0) {
 
@@ -1247,7 +1244,7 @@ public class PkVPk {
 				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " no pudo bajar las estadísticas a causa de Niebla");
+						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1459,17 +1456,14 @@ public class PkVPk {
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
-				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus);
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
 
 				this.getPkFacing().addEstadoEfimero(trapped);
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
-			// It removes 12,5% of the initial PS every turn is trapped
-			defenderInitialPs = this.getPkFacing().getInitialPs();
-			dmg = defenderInitialPs * 0.125f;
-			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			if (this.getPkFacing().getPs() <= 0) {
 
@@ -1517,7 +1511,7 @@ public class PkVPk {
 			}
 			break;
 
-		// Saña/Thrash
+		// Saña/Thrash (tested)
 		case 37:
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Saña");
@@ -1542,10 +1536,21 @@ public class PkVPk {
 				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
 						+ nbTurnsHoldingStatus + " turnos.");
 
-				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus);
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
 
 				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
+
+				// Only removes PP when choosing the attack
+				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			}
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+
 			break;
 
 		// Doble filo/Dobule-Edge (tested)
@@ -1604,7 +1609,7 @@ public class PkVPk {
 				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " no pudo bajar las estadísticas a causa de Niebla");
+						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1708,7 +1713,6 @@ public class PkVPk {
 		// Pin misil/Pin missile (tested)
 		case 42:
 			nbTimesAttack = getRandomInt(1, 5);
-			;
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
@@ -1757,7 +1761,7 @@ public class PkVPk {
 				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " no pudo bajar las estadísticas a causa de Niebla");
+						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1814,7 +1818,7 @@ public class PkVPk {
 				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " no pudo bajar las estadísticas a causa de Niebla");
+						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1826,7 +1830,8 @@ public class PkVPk {
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
-			// Si el rival no tiene más Pokémon -> no pasa nada (pero no falla)
+			// If rival has no more Pokemon remaining, it doesn't matter => only fails the
+			// attack
 			if (!this.getDefender().hasAvailableSwitch()) {
 				System.out.println("Pero " + this.getPkFacing().getName() + " no tiene más Pokémon para cambiar.");
 				break;
@@ -1980,12 +1985,18 @@ public class PkVPk {
 					}
 				} else {
 					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-							+ " no pudo bajar las estadísticas a causa de Niebla");
+							+ " no pudo bajar las estadísticas a causa de Neblina");
 				}
-
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Ascuas/Ember (tested)
@@ -2076,9 +2087,13 @@ public class PkVPk {
 			}
 			break;
 
-		// Niebla/Mist (tested)
+		// Neblina/Mist (tested)
 		case 54:
-			System.out.println(this.getPkCombatting().getName() + " usó Niebla");
+			System.out.println(this.getPkCombatting().getName() + " usó Neblina");
+
+			if (isMistEffectActivated) {
+				System.out.println("No tuvoo ningún efecto ya que está en uso");
+			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 			break;
@@ -2333,11 +2348,18 @@ public class PkVPk {
 					}
 				} else {
 					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-							+ " no pudo bajar las estadísticas a causa de Niebla");
+							+ " no pudo bajar las estadísticas a causa de Neblina");
 				}
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Rayo aurora/Aurora beam (tested)
@@ -2372,11 +2394,18 @@ public class PkVPk {
 					}
 				} else {
 					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-							+ " no pudo bajar las estadísticas a causa de Niebla");
+							+ " no pudo bajar las estadísticas a causa de Neblina");
 				}
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
 			break;
 
 		// Hiperrayo/Hyper beam (tested)
@@ -2824,6 +2853,13 @@ public class PkVPk {
 				this.getPkCombatting().setIsChargingAttackForNextRound(false);
 
 				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+				this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+				if (this.getPkFacing().getPs() <= 0) {
+
+					this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				}
 			}
 			break;
 
@@ -2843,6 +2879,293 @@ public class PkVPk {
 				System.out.println(this.getPkFacing().getName() + " fue envenenado");
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está envenenado");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Paralizador/Stun spore (tested)
+		case 78:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Paralizador");
+
+			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
+			// has not a Status
+			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+				State paralyzed = new State(StatusConditions.PARALYZED);
+
+				this.getPkFacing().setStatusCondition(paralyzed);
+
+				System.out.println(this.getPkFacing().getName() + " fue paralizado");
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está paralizado");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Somnífero/Sleep powder (tested)
+		case 79:
+			System.out.println(this.getPkCombatting().getName() + " usó Somnífero");
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
+
+				nbTurnsHoldingStatus = getRandomInt(1, 7);
+
+				System.out.println(this.getPkFacing().getName() + " cayó en un sueño profundo por "
+						+ nbTurnsHoldingStatus + " turnos");
+
+				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
+
+				this.getPkFacing().addEstadoEfimero(asleep);
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está dormido!");
+			}
+			break;
+
+		// Danza pétalo/Petal dance (tested)
+		case 80:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Danza pétalo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			if (!(this.getPkCombatting().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
+
+				nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
+						+ nbTurnsHoldingStatus + " turnos.");
+
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
+
+				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Disparo démora/String shot (tested)
+		case 81:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Diapro démora");
+
+			if (!isMistEffectActivated) {
+				if (this.getPkFacing().getSpeedStage() <= -6) {
+					System.out.println("La velocidad de " + this.getPkFacing().getName() + " (Id:"
+							+ this.getPkFacing().getId() + ")" + " no puede bajar más!");
+				} else {
+					this.getPkFacing().setSpeedStage(Math.max(this.getPkFacing().getSpeedStage() - 1, -6));
+					System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId() + ")"
+							+ " bajó su velocidad!");
+				}
+			} else {
+				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no pudo bajar las estadísticas a causa de Neblina");
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			break;
+
+		// Furia dragón/Dragon rage (tested)
+		case 82:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Furia dragón");
+
+			dmg = 40f;
+
+			if (!(this.getPkCombatting().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
+
+				nbTurnsHoldingStatus = getRandomInt(2, 5);
+
+				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
+						+ nbTurnsHoldingStatus + " turnos.");
+
+				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
+
+				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
+
+				// Only removes PP when choosing the attack
+				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			}
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Giro fuego/Fire spin (tested)
+		case 83:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Giro fuego");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+			// Check if the Pokemon facing doesn't have the status Trapped (is a status that
+			// can be accumulated with other ephemeral status)
+			if (!(this.getPkFacing().getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
+
+				nbTurnsHoldingStatus = getRandomInt(4, 5);
+
+				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
+
+				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
+
+				this.getPkFacing().addEstadoEfimero(trapped);
+			}
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Impactrueno/Thunder shock (tested)
+		case 84:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Impactrueno");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			probabilityGettingStatus = (int) (Math.random() * 100);
+
+			System.out.println("proba de paralizar : " + probabilityGettingStatus);
+
+			if (probabilityGettingStatus <= 10) {
+
+				// Check if the Pokemon facing has no status
+				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+					State paralyzed = new State(StatusConditions.PARALYZED);
+
+					this.getPkFacing().setStatusCondition(paralyzed);
+
+					System.out.println(this.getPkFacing().getName() + " fue paralizado");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Rayo/Thunderbolt (tested)
+		case 85:
+			System.out.println(
+					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Rayo");
+
+			dmg = doDammage();
+
+			isCritic = getCriticity();
+
+			if (isCritic) {
+
+				dmg = dmg * 2;
+				System.out.println("Fue un golpe crítico");
+				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
+						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
+			}
+
+			probabilityGettingStatus = (int) (Math.random() * 100);
+
+			System.out.println("proba de paralizar : " + probabilityGettingStatus);
+
+			if (probabilityGettingStatus <= 10) {
+
+				// Check if the Pokemon facing has no status
+				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+					State paralyzed = new State(StatusConditions.PARALYZED);
+
+					this.getPkFacing().setStatusCondition(paralyzed);
+
+					System.out.println(this.getPkFacing().getName() + " fue paralizado");
+				}
+			}
+
+			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+			if (this.getPkFacing().getPs() <= 0) {
+
+				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+			}
+			break;
+
+		// Onda trueno/Thunder wave (tested)
+		case 86:
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " usó Onda trueno");
+
+			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
+			// has not a Status
+			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+
+				State paralyzed = new State(StatusConditions.PARALYZED);
+
+				this.getPkFacing().setStatusCondition(paralyzed);
+
+				System.out.println(this.getPkFacing().getName() + " fue paralizado");
+			} else {
+				System.out.println(this.getPkFacing().getName() + " ya está paralizado");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
