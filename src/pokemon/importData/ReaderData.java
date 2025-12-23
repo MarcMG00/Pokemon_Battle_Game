@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import pokemon.enums.AttackCategory;
+import pokemon.interfce.StenchAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.Pokemon;
@@ -216,8 +217,11 @@ public class ReaderData {
 
 				} else {
 
-					this.getAbilities().add(new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]));
-					abilities.add(new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]));
+					Ability abilityToAdd = new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]);
+					setAbilityEffect(abilityToAdd);
+					
+					this.getAbilities().add(abilityToAdd);
+					abilities.add(abilityToAdd);
 				}
 			}
 		} catch (IOException e) {
@@ -947,6 +951,22 @@ public class ReaderData {
 	}
 
 	// -----------------------------
+	// Set attack that can flinch/retreat Pokemon
+	// -----------------------------
+	public void putCanFlinchAttacks(Attack attack) {
+		switch (attack.getId()) {
+		case 23:
+		case 27:
+		case 29:
+		case 44:
+			attack.setCanBeFlinched(true);
+			break;
+		default:
+			attack.setCanBeFlinched(false);
+		}
+	}
+
+	// -----------------------------
 	// Set the category type of the attack
 	// -----------------------------
 	public void setCategoryAttackType(Attack attack) {
@@ -959,4 +979,16 @@ public class ReaderData {
 		}
 	}
 
+	// -----------------------------
+	// Set the category type of the attack
+	// -----------------------------
+	public void setAbilityEffect(Ability ability) {
+		switch (ability.getId()) {
+		case 1:
+			ability.setEffect(new StenchAbility());
+			break;
+		default:
+			ability.setEffect(new StenchAbility());
+		}
+	}
 }
