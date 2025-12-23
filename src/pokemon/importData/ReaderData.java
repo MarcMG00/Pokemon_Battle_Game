@@ -194,7 +194,7 @@ public class ReaderData {
 	// -----------------------------
 	// Reads habsList.csv file and adds to abilities list
 	// -----------------------------
-	public void readAbilities() {
+	public void readAbilities(ArrayList<Ability> abilities) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
@@ -217,7 +217,7 @@ public class ReaderData {
 				} else {
 
 					this.getAbilities().add(new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]));
-
+					abilities.add(new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]));
 				}
 			}
 		} catch (IOException e) {
@@ -926,8 +926,9 @@ public class ReaderData {
 			canHitWhileInvulnerable.add(19);
 			break;
 		}
-		
-		// Some charged attacks can be hit by all the movements (13_Razor_Wind / 76_Solar_Beam)
+
+		// Some charged attacks can be hit by all the movements (13_Razor_Wind /
+		// 76_Solar_Beam)
 		canHitWhileInvulnerable.add(13);
 		canHitWhileInvulnerable.add(76);
 

@@ -12,6 +12,13 @@ public class Ability {
 	// ==================================== CONSTRUCTORS
 	// ====================================
 	
+	public Ability() {
+		super();
+		this.id = 5000;
+		this.name = "";
+		this.description = "";
+	}
+	
 	public Ability(int id, String name, String description) {
 		super();
 		this.id = id;

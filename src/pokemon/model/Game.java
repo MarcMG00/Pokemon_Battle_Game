@@ -450,7 +450,7 @@ public class Game {
 		this.getReaderData().readPkTypes(this.types, this.typeById);
 //		this.getReaderData().readPokemon(SAMPLE_CSV_ALL_POKEMON, this.types, this.pokemon, this.pokemonById);
 		this.getReaderData().readPokemon(this.types, this.pokemon, this.pokemonById);
-		this.getReaderData().readAbilities();
+		this.getReaderData().readAbilities(this.abilities);
 		this.getReaderData().readAttacks(this.types);
 
 		// Adds the abilities for different Pokemon (on the general list)
@@ -569,6 +569,10 @@ public class Game {
 		// Add attacks to each Pokemon list
 		this.getPlayer().addAttacksForEachPokemon();
 		this.getIA().addAttacksForEachPokemon();
+
+		// Select an ability for each Pokemon list
+		this.getPlayer().selectAbilityForEachPokemon(this.getAbilities());
+		this.getIA().selectAbilityForEachPokemon(this.getAbilities());
 
 		// Sets first Pokemon chosen for the combat
 		this.getPlayer().setPkCombatting(this.getPlayer().getPokemon().get(0));
@@ -1552,6 +1556,10 @@ public class Game {
 				this.getIA().getPkCombatting().addIdAttack(ataChosed.getId());
 			}
 		}
+
+		// Select an ability for each Pokemon list
+		this.getPlayer().selectAbilityForEachPokemon(this.getAbilities());
+		this.getIA().selectAbilityForEachPokemon(this.getAbilities());
 
 		// Sets Pokemon facing to each other
 		this.getPlayer().setPkFacing(this.getIA().getPokemon().get(0));

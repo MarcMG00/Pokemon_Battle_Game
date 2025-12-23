@@ -3190,7 +3190,7 @@ public class PkVPk {
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
-			// Pokemon combating receives 25% of damage from his PS remaining
+			// Pokemon combating receives 25% of damage from his initial PS
 			this.getPkCombatting()
 					.setPs(this.getPkCombatting().getInitialPs() - (this.getPkCombatting().getInitialPs() * 0.25f));
 
@@ -3273,7 +3273,7 @@ public class PkVPk {
 	}
 
 	// -----------------------------
-	// Gets number of turns in a state or number of attacks
+	// Gets number of turns for a state or number of attacks
 	// -----------------------------
 	public static int getRandomInt(int min, int max) {
 		return min + (int) (Math.random() * (max - min + 1));
