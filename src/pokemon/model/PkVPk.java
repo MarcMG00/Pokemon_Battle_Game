@@ -193,12 +193,18 @@ public class PkVPk {
 			return;
 		}
 
-		// For almost all attacks from "otros", it has 100% of accuracy
+		// For almost all the attacks from "otros", it has 100% of accuracy
 		if (atkAttacker.getId() == 14 || atkAttacker.getId() == 74) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
-
+		
+		// Some attacks with adequate weather hit all the time (Thunder, etc.)
+		if (this.getWeather() == Weather.RAIN && atkAttacker.getId() == 87) {
+			this.getPkCombatting().setCanAttack(true);
+			return;
+		}
+		
 		// -----------------------------
 		// "Struggle" attack has 100% of precision (used when no more PPs remaining on
 		// other attacks, etc.)
@@ -382,8 +388,7 @@ public class PkVPk {
 		int probabilityGettingStatus;
 		int highProbabilityCritic;
 		int setBaseDmgFromBegining;
-		double randomRetreat = 0;
-		float defenderInitialPs = 0f;
+		double randomRetreat = 0d;
 		float recoil = 0f;
 		boolean reduceDefRival = false;
 		boolean reduceSpeedRival = false;
