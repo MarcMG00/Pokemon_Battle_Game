@@ -1467,17 +1467,28 @@ public class Game {
 		Ability a1 = p1.getAbilitySelected();
 		Ability a2 = p2.getAbilitySelected();
 
-		if ((a1 == null && a2 == null) || (a1.getId() == 5000 && a2.getId() == 5000))
+		// If abilities are null OR are not weather type =< nothing applied for Game on
+		// general
+		if ((a1 == null && a2 == null) || (a1.getId() == 5000 && a2.getId() == 5000)
+				|| (!a1.getIsWeatherType() && !a2.getIsWeatherType()))
 			return;
 
-		if ((a1 != null && a1.getId() != 5000) && (a2 == null || a2.getId() == 5000)) {
+		// If only one ability is not null and is weather type => apply tihs ability
+		if ((a1 != null && a1.getId() != 5000 && a1.getIsWeatherType()) && (a2 == null || a2.getId() == 5000)) {
 			a1.getEffect().onBattleStart(this, p1);
-		} else if ((a2 != null && a2.getId() != 5000) && (a1 == null || a1.getId() == 5000)) {
+		} else if ((a2 != null && a2.getId() != 5000 && a2.getIsWeatherType()) && (a1 == null || a1.getId() == 5000)) {
 			a2.getEffect().onBattleStart(this, p2);
-		} else {
-			// If both havce abilities => compare speed (the lowlier one wins)
+		}
+		// If both abilities are not null and are weather type => compare speed (the
+		// lowlier one wins)
+		else if ((a1 != null && a1.getId() != 5000 && a1.getIsWeatherType())
+				&& (a2 != null && a2.getId() != 5000 && a2.getIsWeatherType())) {
 			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
 			slower.getAbilitySelected().getEffect().onBattleStart(this, slower);
+		}
+		// TODO >> Don't know other cases ?
+		else {
+
 		}
 	}
 
@@ -1486,10 +1497,12 @@ public class Game {
 	// -----------------------------
 	private void applyEntryAbilityOnSwitch(Pokemon entering) {
 		Ability ability = entering.getAbilitySelected();
-		if (ability == null)
+		if (ability == null || ability.getId() == 5000 || !ability.getIsWeatherType())
 			return;
 
-		ability.getEffect().onBattleStart(this, entering);
+		if (ability.getIsWeatherType()) {
+			ability.getEffect().onBattleStart(this, entering);
+		}
 	}
 
 	// -----------------------------

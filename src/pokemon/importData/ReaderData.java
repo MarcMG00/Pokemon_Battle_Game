@@ -994,6 +994,7 @@ public class ReaderData {
 		// Llovizna/Drizzle
 		case 2:
 			ability.setEffect(new DrizzleAbility());
+			ability.setIsWeatherType(true);
 			break;
 		default:
 			ability.setEffect(new StenchAbility());

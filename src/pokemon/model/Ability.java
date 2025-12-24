@@ -11,6 +11,7 @@ public class Ability {
 	private String name;
 	private String description;
 	private AbilityEffect effect;
+	private boolean isWeatherType;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -22,6 +23,7 @@ public class Ability {
 		this.description = "";
 		this.effect = new AbilityEffect() {
 		};
+		this.isWeatherType = false;
 	}
 
 	public Ability(int id, String name, String description) {
@@ -31,6 +33,7 @@ public class Ability {
 		this.description = description;
 		this.effect = new AbilityEffect() {
 		};
+		this.isWeatherType = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -66,5 +69,13 @@ public class Ability {
 
 	public void setEffect(AbilityEffect effect) {
 		this.effect = effect;
+	}
+
+	public boolean getIsWeatherType() {
+		return isWeatherType;
+	}
+
+	public void setIsWeatherType(boolean isWeatherType) {
+		this.isWeatherType = isWeatherType;
 	}
 }
