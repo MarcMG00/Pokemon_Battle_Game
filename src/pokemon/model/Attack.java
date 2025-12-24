@@ -24,7 +24,7 @@ public class Attack {
 	private AttackCategory category = AttackCategory.NORMAL;
 	private List<Integer> canHitWhileInvulnerable = new ArrayList<>();
 	private boolean canRecieveDamage;
-	private boolean canBeFlinched;
+	private double percentageFlinch;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -43,7 +43,7 @@ public class Attack {
 		this.effectivenessAgainstPkFacing = 0;
 		this.bonus = 0;
 		this.canRecieveDamage = false;
-		this.canBeFlinched = false;
+		this.percentageFlinch = 0d;
 	}
 
 	public Attack(int id, String name, String type, int power, int pp, int precision, String effect) {
@@ -60,7 +60,7 @@ public class Attack {
 		this.effectivenessAgainstPkFacing = 0;
 		this.bonus = 0;
 		this.canRecieveDamage = false;
-		this.canBeFlinched = false;
+		this.percentageFlinch = 0d;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -182,13 +182,13 @@ public class Attack {
 	public void setCanRecieveDamage(boolean canRecieveDamage) {
 		this.canRecieveDamage = canRecieveDamage;
 	}
-	
-	public boolean getCanBeFlinched() {
-		return canBeFlinched;
+
+	public double getPercentageFlinched() {
+		return percentageFlinch;
 	}
 
-	public void setCanBeFlinched(boolean canBeFlinched) {
-		this.canBeFlinched = canBeFlinched;
+	public void setPercentageFlinched(double percentageFlinch) {
+		this.percentageFlinch = percentageFlinch;
 	}
 
 	// ==================================== METHODS

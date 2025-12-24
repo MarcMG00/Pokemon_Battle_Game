@@ -363,12 +363,14 @@ public class PkVPk {
 		int probabilityGettingStatus;
 		int highProbabilityCritic;
 		int setBaseDmgFromBegining;
-		int randomRetreat = 0;
+		double randomRetreat = 0;
 		float defenderInitialPs = 0f;
 		float recoil = 0f;
 		boolean reduceDefRival = false;
 		boolean reduceSpeedRival = false;
 		boolean reduceAttackRival = false;
+		Ability abilityAttacker = this.getPkCombatting().getAbilitySelected();
+		Ability abilityDefender = this.getPkFacing().getAbilitySelected();
 
 		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor/Pound (tested)
@@ -1084,12 +1086,25 @@ public class PkVPk {
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
 
-			randomRetreat = (int) (Math.random() * 100);
+			randomRetreat = Math.random();
 
-			// 30% of probabilities to retreat Pokemon facing
-			if (randomRetreat <= 30) {
-
-				this.getPkFacing().setHasRetreated(true);
+			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
+			// flinch probability
+			// But Pokemon facing doesn't have to have a counter ability
+			if (abilityAttacker != null && abilityAttacker.getId() == 1 && abilityDefender.getId() != 39) {
+				abilityAttacker.getEffect().afterAttack(null, this.getPkCombatting(), this.getPkFacing(),
+						this.getPkCombatting().getNextMovement(), dmg,
+						this.getPkCombatting().getNextMovement().getPercentageFlinched());
+			}
+			// Otherwise applies flinch from the attack
+			else if (abilityDefender.getId() != 39) {
+				// 30% of probabilities to retreat Pokemon facing
+				if (randomRetreat <= this.getPkCombatting().getNextMovement().getPercentageFlinched()) {
+					this.getPkFacing().setHasRetreated(true);
+				}
+			} else {
+				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no puedo retroceder dada su habilidad (u otro factor)");
 			}
 
 			// Puts again the same power base as the beginning
@@ -1210,12 +1225,25 @@ public class PkVPk {
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
 
-			randomRetreat = (int) (Math.random() * 100);
+			randomRetreat = Math.random();
 
-			// 30% of probabilities to retreat Pokemon facing
-			if (randomRetreat <= 30) {
-
-				this.getPkFacing().setHasRetreated(true);
+			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
+			// flinch probability
+			// But Pokemon facing doesn't have to have a counter ability
+			if (abilityAttacker != null && abilityAttacker.getId() == 1 && abilityDefender.getId() != 39) {
+				abilityAttacker.getEffect().afterAttack(null, this.getPkCombatting(), this.getPkFacing(),
+						this.getPkCombatting().getNextMovement(), dmg,
+						this.getPkCombatting().getNextMovement().getPercentageFlinched());
+			}
+			// Otherwise applies flinch from the attack
+			else if (abilityDefender.getId() != 39) {
+				// 30% of probabilities to retreat Pokemon facing
+				if (randomRetreat <= this.getPkCombatting().getNextMovement().getPercentageFlinched()) {
+					this.getPkFacing().setHasRetreated(true);
+				}
+			} else {
+				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no puedo retroceder dada su habilidad (u otro factor)");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1268,12 +1296,25 @@ public class PkVPk {
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
 
-			randomRetreat = (int) (Math.random() * 100);
+			randomRetreat = Math.random();
 
-			// 30% of probabilities to retreat Pokemon facing
-			if (randomRetreat <= 30) {
-
-				this.getPkFacing().setHasRetreated(true);
+			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
+			// flinch probability
+			// But Pokemon facing doesn't have to have a counter ability
+			if (abilityAttacker != null && abilityAttacker.getId() == 1 && abilityDefender.getId() != 39) {
+				abilityAttacker.getEffect().afterAttack(null, this.getPkCombatting(), this.getPkFacing(),
+						this.getPkCombatting().getNextMovement(), dmg,
+						this.getPkCombatting().getNextMovement().getPercentageFlinched());
+			}
+			// Otherwise applies flinch from the attack
+			else if (abilityDefender.getId() != 39) {
+				// 30% of probabilities to retreat Pokemon facing
+				if (randomRetreat <= this.getPkCombatting().getNextMovement().getPercentageFlinched()) {
+					this.getPkFacing().setHasRetreated(true);
+				}
+			} else {
+				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no puedo retroceder dada su habilidad (u otro factor)");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1784,12 +1825,25 @@ public class PkVPk {
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
 
-			randomRetreat = (int) (Math.random() * 100);
+			randomRetreat = Math.random();
 
-			// 30% of probabilities to retreat Pokemon facing
-			if (randomRetreat <= 30) {
-
-				this.getPkFacing().setHasRetreated(true);
+			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
+			// flinch probability
+			// But Pokemon facing doesn't have to have a counter ability
+			if (abilityAttacker != null && abilityAttacker.getId() == 1 && abilityDefender.getId() != 39) {
+				abilityAttacker.getEffect().afterAttack(null, this.getPkCombatting(), this.getPkFacing(),
+						this.getPkCombatting().getNextMovement(), dmg,
+						this.getPkCombatting().getNextMovement().getPercentageFlinched());
+			}
+			// Otherwise applies flinch from the attack
+			else if (abilityDefender.getId() != 39) {
+				// 30% of probabilities to retreat Pokemon facing
+				if (randomRetreat <= this.getPkCombatting().getNextMovement().getPercentageFlinched()) {
+					this.getPkFacing().setHasRetreated(true);
+				}
+			} else {
+				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+						+ " no puedo retroceder dada su habilidad (u otro factor)");
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);

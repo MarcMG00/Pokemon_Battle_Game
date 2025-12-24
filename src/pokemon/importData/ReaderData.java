@@ -219,7 +219,7 @@ public class ReaderData {
 
 					Ability abilityToAdd = new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]);
 					setAbilityEffect(abilityToAdd);
-					
+
 					this.getAbilities().add(abilityToAdd);
 					abilities.add(abilityToAdd);
 				}
@@ -709,6 +709,8 @@ public class ReaderData {
 				Attack attack = new Attack(Integer.parseInt(attacks[0]), attacks[1], attacks[2].toUpperCase(),
 						Integer.parseInt(attacks[3]), Integer.parseInt(attacks[4]), Integer.parseInt(attacks[5]),
 						attacks[6]);
+				
+				putPercentageFlinchAttacks(attack);
 
 				// Some attacks can have 2 bases (so we split with ";")
 				String[] bs = attacks[7].split(";");
@@ -951,18 +953,18 @@ public class ReaderData {
 	}
 
 	// -----------------------------
-	// Set attack that can flinch/retreat Pokemon
+	// Set percentage of flinch/retreat to attack
 	// -----------------------------
-	public void putCanFlinchAttacks(Attack attack) {
+	public void putPercentageFlinchAttacks(Attack attack) {
 		switch (attack.getId()) {
 		case 23:
 		case 27:
 		case 29:
 		case 44:
-			attack.setCanBeFlinched(true);
+			attack.setPercentageFlinched(0.30d);
 			break;
 		default:
-			attack.setCanBeFlinched(false);
+			attack.setPercentageFlinched(0d);
 		}
 	}
 
@@ -980,7 +982,7 @@ public class ReaderData {
 	}
 
 	// -----------------------------
-	// Set the category type of the attack
+	// Set the ability effect of the attack
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {

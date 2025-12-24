@@ -6,32 +6,30 @@ import pokemon.model.Pokemon;
 
 public class StenchAbility implements AbilityEffect {
 
-	private static final double FLINCH_CHANCE = 0.10;
+	private static final double FLINCH_CHANCE = 0.10d;
 
 	@Override
-	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack) {
+	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
+			double percentageFlinch) {
 
 		// 1️ - The attack has to do damage
-		if (!defender.getHasReceivedDamage() && defender.getDamageReceived() != 0)
+		if (dmg == 0f)
 			return;
 
-		// 2 - The attack has not to have already flinch
-		if (attack.getCanBeFlinched())
+		// 2 - Adds probability to flinch if attack already can flinch
+		if (attack.getPercentageFlinched() == 0)
 			return;
 
 		// 3 - The defender can be flinched TODO >> when ability or some attack
 		// forbidden to defender to be flinched
-		// if (!defender.canBeFlinched())
-		// return;
-
-		// 4 - The defender has to attack in second place
-		if (defender.getEffectiveSpeed() <= attacker.getEffectiveSpeed())
+		if (defender.getAbilitySelected().getId() == 39)
 			return;
 
 		// 5 - Probability to be flinched
-		if (Math.random() < FLINCH_CHANCE) {
+		if (Math.random() < percentageFlinch + FLINCH_CHANCE) {
 			defender.setHasRetreated(true);
-			System.out.println(defender.getName() + " retrocedió por el 'Hedor'!");
+			System.out.println(defender.getName() + " retrocedió por el 'Hedor'! (sumado) : "
+					+ (percentageFlinch + FLINCH_CHANCE) + " prob");
 		}
 	}
 }
