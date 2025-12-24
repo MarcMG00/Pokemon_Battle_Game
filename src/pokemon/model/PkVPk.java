@@ -33,7 +33,7 @@ public class PkVPk {
 		this.pkFacing = defender.getPkCombatting();
 		this.weather = weather;
 	}
-	
+
 	public PkVPk() {
 		this.attacker = new Player();
 		this.defender = new Player();
@@ -2907,8 +2907,17 @@ public class PkVPk {
 				// Apply damage => second turn
 			} else {
 
+				// Gets the power from the beginning (to avoid variations after attacking)
+				setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
+
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 						+ " usó Rayo solar");
+
+				// Depending on weather it has less power
+				if (this.getWeather() == Weather.RAIN) {
+					this.getPkCombatting().getNextMovement()
+							.setPower(this.getPkCombatting().getNextMovement().getPower() / 2);
+				}
 
 				dmg = doDammage();
 
@@ -2921,6 +2930,9 @@ public class PkVPk {
 					System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 							+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 				}
+
+				// Puts again the same power base as the beginning
+				this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
 
 				// Pokemon is no more charging an attack
 				this.getPkCombatting().setIsChargingAttackForNextRound(false);
