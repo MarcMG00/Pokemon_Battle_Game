@@ -2,6 +2,7 @@ package pokemon.model;
 
 import pokemon.enums.AttackCategory;
 import pokemon.enums.StatusConditions;
+import pokemon.enums.Weather;
 
 public class PkVPk {
 
@@ -12,6 +13,7 @@ public class PkVPk {
 	private Pokemon pkFacing;
 	private Player attacker;
 	private Player defender;
+	private Weather weather;
 
 	private static final String ANSI_RED = "\u001B[31m";
 	private static final String ANSI_GREEN = "\u001B[32m";
@@ -24,11 +26,20 @@ public class PkVPk {
 	// ==================================== CONSTRCUTORS
 	// ====================================
 
-	public PkVPk(Player attacker, Player defender) {
+	public PkVPk(Player attacker, Player defender, Weather weather) {
 		this.attacker = attacker;
 		this.defender = defender;
 		this.pkCombatting = attacker.getPkCombatting();
 		this.pkFacing = defender.getPkCombatting();
+		this.weather = weather;
+	}
+	
+	public PkVPk() {
+		this.attacker = new Player();
+		this.defender = new Player();
+		this.pkCombatting = new Pokemon();
+		this.pkFacing = new Pokemon();
+		this.weather = Weather.NONE;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -64,6 +75,14 @@ public class PkVPk {
 
 	public void setDefender(Player defender) {
 		this.defender = defender;
+	}
+
+	public Weather getWeather() {
+		return weather;
+	}
+
+	public void setWeather(Weather weather) {
+		this.weather = weather;
 	}
 
 	// ==================================== METHODS
@@ -353,7 +372,7 @@ public class PkVPk {
 	// -----------------------------
 	// Gets the attack effect and apply damage
 	// -----------------------------
-	public void doAttackEffect(boolean isMistEffectActivated) {
+	public void doAttackEffect(Weather weather, boolean isMistEffectActivated) {
 
 		float dmg = 0f;
 		float dmgToSum = 0f;
@@ -3281,6 +3300,8 @@ public class PkVPk {
 		// every time)
 		int randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
 
+		float weatherModifier = getWeatherModifier(this.getPkCombatting().getNextMovement());
+
 		boolean isSpecialAttack = this.getPkCombatting().getNextMovement().getBases().contains("especial");
 
 		float dmg = 0;
@@ -3288,7 +3309,8 @@ public class PkVPk {
 		if (isSpecialAttack) {
 			// Apply special damage
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
-					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
+					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * weatherModifier
+					* randomVariation
 					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveSpecialAttack()
 							* this.getPkCombatting().getNextMovement().getPower())
 							/ (25f * this.getPkFacing().getEffectiveSpecialDefense()) + 2f);
@@ -3297,7 +3319,8 @@ public class PkVPk {
 		} else {
 
 			dmg = 0.01f * this.getPkCombatting().getNextMovement().getBonus()
-					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * randomVariation
+					* this.getPkCombatting().getNextMovement().getEffectivenessAgainstPkFacing() * weatherModifier
+					* randomVariation
 					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveAttack()
 							* this.getPkCombatting().getNextMovement().getPower())
 							/ (25f * this.getPkFacing().getEffectiveDefense()) + 2f);
@@ -3348,4 +3371,20 @@ public class PkVPk {
 		}
 		return false;
 	}
+
+	// -----------------------------
+	// Adds multiplier depending on weather of the game
+	// -----------------------------
+	public float getWeatherModifier(Attack attack) {
+
+		if (this.getWeather() == Weather.RAIN) {
+			if (attack.getStrTypeToPkType().getId() == 2)
+				return 1.5f;
+			if (attack.getStrTypeToPkType().getId() == 7)
+				return 0.5f;
+		}
+
+		return 1.0f;
+	}
+
 }

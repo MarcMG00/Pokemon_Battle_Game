@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import pokemon.enums.AttackCategory;
+import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.StenchAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
@@ -709,7 +710,7 @@ public class ReaderData {
 				Attack attack = new Attack(Integer.parseInt(attacks[0]), attacks[1], attacks[2].toUpperCase(),
 						Integer.parseInt(attacks[3]), Integer.parseInt(attacks[4]), Integer.parseInt(attacks[5]),
 						attacks[6]);
-				
+
 				putPercentageFlinchAttacks(attack);
 
 				// Some attacks can have 2 bases (so we split with ";")
@@ -986,8 +987,13 @@ public class ReaderData {
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
+		// Hedor/Stench
 		case 1:
 			ability.setEffect(new StenchAbility());
+			break;
+		// Llovizna/Drizzle
+		case 2:
+			ability.setEffect(new DrizzleAbility());
 			break;
 		default:
 			ability.setEffect(new StenchAbility());
