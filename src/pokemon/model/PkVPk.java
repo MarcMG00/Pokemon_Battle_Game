@@ -389,7 +389,7 @@ public class PkVPk {
 		int nbTurnsHoldingStatus;
 		int probabilityGettingStatus;
 		int highProbabilityCritic;
-		double randomRetreat = 0d;
+		double randomRetreat = Math.random();
 		float recoil = 0f;
 		boolean reduceDefRival = false;
 		boolean reduceSpeedRival = false;
@@ -397,7 +397,6 @@ public class PkVPk {
 		Ability abilityAttacker = this.getPkCombatting().getAbilitySelected();
 		Ability abilityDefender = this.getPkFacing().getAbilitySelected();
 		int modifierWeather = 1;
-
 		boolean canBeFrozen = weather != Weather.SUN;
 
 		switch (this.getPkCombatting().getNextMovement().getId()) {
@@ -1106,8 +1105,6 @@ public class PkVPk {
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
 
-			randomRetreat = Math.random();
-
 			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
 			// flinch probability
 			// But Pokemon facing doesn't have to have a counter ability
@@ -1242,8 +1239,6 @@ public class PkVPk {
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
 
-			randomRetreat = Math.random();
-
 			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
 			// flinch probability
 			// But Pokemon facing doesn't have to have a counter ability
@@ -1312,8 +1307,6 @@ public class PkVPk {
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
-
-			randomRetreat = Math.random();
 
 			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
 			// flinch probability
@@ -1841,8 +1834,6 @@ public class PkVPk {
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
-
-			randomRetreat = Math.random();
 
 			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
 			// flinch probability
