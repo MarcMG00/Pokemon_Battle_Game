@@ -399,6 +399,8 @@ public class PkVPk {
 		Ability abilityDefender = this.getPkFacing().getAbilitySelected();
 		int modifierWeather = 1;
 
+		boolean canBeFrozen = weather != Weather.SUN;
+
 		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor/Pound (tested)
 		case 1:
@@ -640,7 +642,7 @@ public class PkVPk {
 			}
 
 			// Ice Pokemon cannot be frozen
-			if (this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			if (canBeFrozen && this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -2291,7 +2293,7 @@ public class PkVPk {
 			}
 
 			// Ice Pokemon cannot be frozen
-			if (this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			if (canBeFrozen && this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -2339,7 +2341,7 @@ public class PkVPk {
 			}
 
 			// Ice Pokemon cannot be frozen
-			if (this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			if (canBeFrozen && this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
