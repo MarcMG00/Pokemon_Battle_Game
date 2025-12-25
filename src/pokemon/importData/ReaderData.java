@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import pokemon.enums.AttackCategory;
 import pokemon.interfce.DrizzleAbility;
+import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.StenchAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
@@ -994,6 +995,11 @@ public class ReaderData {
 		// Llovizna/Drizzle
 		case 2:
 			ability.setEffect(new DrizzleAbility());
+			ability.setIsWeatherType(true);
+			break;
+		// Sequía/Drought
+		case 70:
+			ability.setEffect(new DroughtAbility());
 			ability.setIsWeatherType(true);
 			break;
 		default:

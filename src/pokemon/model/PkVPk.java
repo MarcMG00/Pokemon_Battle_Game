@@ -198,13 +198,13 @@ public class PkVPk {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
-		
+
 		// Some attacks with adequate weather hit all the time (Thunder, etc.)
 		if (this.getWeather() == Weather.RAIN && atkAttacker.getId() == 87) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
-		
+
 		// -----------------------------
 		// "Struggle" attack has 100% of precision (used when no more PPs remaining on
 		// other attacks, etc.)
@@ -3439,9 +3439,16 @@ public class PkVPk {
 	public float getWeatherModifier(Attack attack) {
 
 		if (this.getWeather() == Weather.RAIN) {
-			if (attack.getStrTypeToPkType().getId() == 2)
+			if (attack.getStrTypeToPkType().getId() == 2) // Water
 				return 1.5f;
-			if (attack.getStrTypeToPkType().getId() == 7)
+			if (attack.getStrTypeToPkType().getId() == 7) // Fire
+				return 0.5f;
+		}
+
+		if (this.getWeather() == Weather.SUN) {
+			if (attack.getStrTypeToPkType().getId() == 7) // Fire
+				return 1.5f;
+			if (attack.getStrTypeToPkType().getId() == 2) // Water
 				return 0.5f;
 		}
 
