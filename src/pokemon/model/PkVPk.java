@@ -2902,29 +2902,9 @@ public class PkVPk {
 
 		// Rayo solar/Solar beam(tested)
 		case 76:
-			// If not charging => first turn charge the attack
-			if (!this.getPkCombatting().getIsChargingAttackForNextRound()) {
-
-				// This attack requires to charge first time for one round
-				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-						+ " se prepara para Rayo solar");
-
-				this.getPkCombatting().setIsChargingAttackForNextRound(true);
-
-				// Apply damage => second turn
-			} else {
-
-				// Gets the power from the beginning (to avoid variations after attacking)
-				setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
-
+			if (weather == Weather.SUN) {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 						+ " usó Rayo solar");
-
-				// Depending on weather it has less power
-				if (weather == Weather.RAIN) {
-					this.getPkCombatting().getNextMovement()
-							.setPower(this.getPkCombatting().getNextMovement().getPower() / 2);
-				}
 
 				dmg = doDammage();
 
@@ -2938,9 +2918,6 @@ public class PkVPk {
 							+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 				}
 
-				// Puts again the same power base as the beginning
-				this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
-
 				// Pokemon is no more charging an attack
 				this.getPkCombatting().setIsChargingAttackForNextRound(false);
 
@@ -2951,6 +2928,59 @@ public class PkVPk {
 				if (this.getPkFacing().getPs() <= 0) {
 
 					this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+				}
+			} else {
+				// If not charging => first turn charge the attack
+				if (!this.getPkCombatting().getIsChargingAttackForNextRound()) {
+
+					// This attack requires to charge first time for one round
+					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+							+ " se prepara para Rayo solar");
+
+					this.getPkCombatting().setIsChargingAttackForNextRound(true);
+
+					// Apply damage => second turn
+				} else {
+
+					// Gets the power from the beginning (to avoid variations after attacking)
+					setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
+
+					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+							+ " usó Rayo solar");
+
+					// Depending on weather it has less power
+					if (weather == Weather.RAIN || weather == Weather.HAIL || weather == Weather.SANDSTORM) {
+						this.getPkCombatting().getNextMovement()
+								.setPower(this.getPkCombatting().getNextMovement().getPower() / 2);
+					}
+
+					dmg = doDammage();
+
+					isCritic = getCriticity();
+
+					if (isCritic) {
+
+						dmg = dmg * 2;
+						System.out.println("Fue un golpe crítico");
+						System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName()
+								+ " (Id:" + this.getPkFacing().getId() + ")" + ") : " + dmg);
+					}
+
+					// Puts again the same power base as the beginning
+					this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
+
+					// Pokemon is no more charging an attack
+					this.getPkCombatting().setIsChargingAttackForNextRound(false);
+
+					this.getPkCombatting().getNextMovement()
+							.setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+
+					this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
+
+					if (this.getPkFacing().getPs() <= 0) {
+
+						this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+					}
 				}
 			}
 			break;
