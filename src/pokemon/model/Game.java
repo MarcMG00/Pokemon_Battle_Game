@@ -1133,7 +1133,7 @@ public class Game {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
-				this.getBattleVS().getProbabilityOfAttacking();
+				this.getBattleVS().getProbabilityOfAttacking(this.getCurrentWeather());
 
 				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
 				// facing is invulnerable, etc.
@@ -1175,7 +1175,7 @@ public class Game {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
-				this.getBattleVS().getProbabilityOfAttacking();
+				this.getBattleVS().getProbabilityOfAttacking(this.getCurrentWeather());
 
 				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
 				// facing is invulnerable, etc.

@@ -151,7 +151,7 @@ public class PkVPk {
 	// -----------------------------
 	// Gets the probability of attacking
 	// -----------------------------
-	public void getProbabilityOfAttacking() {
+	public void getProbabilityOfAttacking(Weather weather) {
 
 		boolean isAttackerCharging = this.getPkCombatting().getIsChargingAttackForNextRound();
 		boolean isDefenderCharging = this.getPkFacing().getIsChargingAttackForNextRound();
@@ -162,6 +162,8 @@ public class PkVPk {
 		boolean canHitInvulnerable = atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
 
 		float accuracyFactor = 0f;
+
+		checkAbilitiesEffectsForAttacks(weather, atkAttacker);
 
 		// -----------------------------
 		// Check if an attack is not disabled (attacks disabled cannot be used, even for
@@ -200,7 +202,7 @@ public class PkVPk {
 		}
 
 		// Some attacks with adequate weather hit all the time (Thunder, etc.)
-		if (this.getWeather() == Weather.RAIN && atkAttacker.getId() == 87) {
+		if (weather == Weather.RAIN && atkAttacker.getId() == 87) {
 			this.getPkCombatting().setCanAttack(true);
 			return;
 		}
@@ -2919,7 +2921,7 @@ public class PkVPk {
 						+ " usó Rayo solar");
 
 				// Depending on weather it has less power
-				if (this.getWeather() == Weather.RAIN) {
+				if (weather == Weather.RAIN) {
 					this.getPkCombatting().getNextMovement()
 							.setPower(this.getPkCombatting().getNextMovement().getPower() / 2);
 				}
@@ -3438,14 +3440,16 @@ public class PkVPk {
 	// -----------------------------
 	public float getWeatherModifier(Attack attack) {
 
-		if (this.getWeather() == Weather.RAIN) {
+		Weather weather = this.getWeather();
+
+		if (weather == Weather.RAIN) {
 			if (attack.getStrTypeToPkType().getId() == 2) // Water
 				return 1.5f;
 			if (attack.getStrTypeToPkType().getId() == 7) // Fire
 				return 0.5f;
 		}
 
-		if (this.getWeather() == Weather.SUN) {
+		if (weather == Weather.SUN) {
 			if (attack.getStrTypeToPkType().getId() == 7) // Fire
 				return 1.5f;
 			if (attack.getStrTypeToPkType().getId() == 2) // Water
@@ -3455,4 +3459,11 @@ public class PkVPk {
 		return 1.0f;
 	}
 
+	private void checkAbilitiesEffectsForAttacks(Weather weather, Attack attack) {
+		if (weather == Weather.SUN) {
+			if (attack.getId() == 87) {
+				attack.setPrecision(50);
+			}
+		}
+	}
 }
