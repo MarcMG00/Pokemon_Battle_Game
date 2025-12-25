@@ -15,8 +15,10 @@ public class Attack {
 	private String type;
 	private ArrayList<String> bases;
 	private int power;
+	private int initialPower;
 	private int pp;
 	private int precision;
+	private int initialPrecision;
 	private String effect;
 	private PokemonType strTypeToPkType;
 	private float effectivenessAgainstPkFacing;
@@ -36,8 +38,10 @@ public class Attack {
 		this.type = "";
 		this.bases = new ArrayList<>();
 		this.power = 0;
+		this.initialPower = 0;
 		this.pp = 0;
 		this.precision = 0;
+		this.initialPrecision = 0;
 		this.effect = "";
 		this.strTypeToPkType = new PokemonType();
 		this.effectivenessAgainstPkFacing = 0;
@@ -53,8 +57,10 @@ public class Attack {
 		this.type = type;
 		this.bases = new ArrayList<>();
 		this.power = power;
+		this.initialPower = power;
 		this.pp = pp;
 		this.precision = precision;
+		this.initialPrecision = precision;
 		this.effect = effect;
 		this.strTypeToPkType = new PokemonType();
 		this.effectivenessAgainstPkFacing = 0;
@@ -189,6 +195,22 @@ public class Attack {
 
 	public void setPercentageFlinched(double percentageFlinch) {
 		this.percentageFlinch = percentageFlinch;
+	}
+	
+	public int getInitialPower() {
+		return initialPower;
+	}
+
+	public void setInitialPower(int initialPower) {
+		this.initialPower = initialPower;
+	}
+
+	public int getInitialPrecision() {
+		return initialPrecision;
+	}
+
+	public void setInitialPrecision(int initialPrecision) {
+		this.initialPrecision = initialPrecision;
 	}
 
 	// ==================================== METHODS

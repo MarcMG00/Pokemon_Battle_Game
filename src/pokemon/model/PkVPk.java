@@ -389,7 +389,6 @@ public class PkVPk {
 		int nbTurnsHoldingStatus;
 		int probabilityGettingStatus;
 		int highProbabilityCritic;
-		int setBaseDmgFromBegining;
 		double randomRetreat = 0d;
 		float recoil = 0f;
 		boolean reduceDefRival = false;
@@ -642,7 +641,8 @@ public class PkVPk {
 			}
 
 			// Ice Pokemon cannot be frozen
-			if (canBeFrozen && this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			if (canBeFrozen
+					&& this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -871,9 +871,6 @@ public class PkVPk {
 
 		// Tornado/Gust (tested)
 		case 16:
-			// Gets the power from the beginning (to avoid variations after attacking)
-			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
-
 			if (this.getPkCombatting().getNextMovement().getCanHitWhileInvulnerable()
 					.contains(this.getPkFacing().getNextMovement().getId())) {
 				this.getPkCombatting().getNextMovement()
@@ -894,9 +891,6 @@ public class PkVPk {
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
-
-			// Puts again the same power base as the beginning
-			this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
@@ -1091,9 +1085,6 @@ public class PkVPk {
 
 		// Pisotón/Stomp (tested)
 		case 23:
-			// Gets the power from the beginning (to avoid variations after attacking)
-			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
-
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Pisotón");
 
@@ -1135,9 +1126,6 @@ public class PkVPk {
 				System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 						+ " no puedo retroceder dada su habilidad (u otro factor)");
 			}
-
-			// Puts again the same power base as the beginning
-			this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
@@ -2237,9 +2225,6 @@ public class PkVPk {
 
 		// Surf/Surf (tested)
 		case 57:
-			// Gets the power from the beginning (to avoid variations after attacking)
-			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
-
 			System.out.println(
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Surf");
 
@@ -2261,9 +2246,6 @@ public class PkVPk {
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
-
-			// Puts again the same power base as the beginning
-			this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
@@ -2293,7 +2275,8 @@ public class PkVPk {
 			}
 
 			// Ice Pokemon cannot be frozen
-			if (canBeFrozen && this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			if (canBeFrozen
+					&& this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -2341,7 +2324,8 @@ public class PkVPk {
 			}
 
 			// Ice Pokemon cannot be frozen
-			if (canBeFrozen && this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			if (canBeFrozen
+					&& this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -2618,9 +2602,6 @@ public class PkVPk {
 
 		// Patada baja/Low kick (tested)
 		case 67:
-			// Gets the power from the beginning (to avoid variations after attacking)
-			setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
-
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 					+ " usó Patada baja");
 
@@ -2650,9 +2631,6 @@ public class PkVPk {
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
 			}
-
-			// Puts again the same power base as the beginning
-			this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
@@ -2951,9 +2929,6 @@ public class PkVPk {
 					// Apply damage => second turn
 				} else {
 
-					// Gets the power from the beginning (to avoid variations after attacking)
-					setBaseDmgFromBegining = this.getPkCombatting().getNextMovement().getPower();
-
 					System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 							+ " usó Rayo solar");
 
@@ -2974,9 +2949,6 @@ public class PkVPk {
 						System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName()
 								+ " (Id:" + this.getPkFacing().getId() + ")" + ") : " + dmg);
 					}
-
-					// Puts again the same power base as the beginning
-					this.getPkCombatting().getNextMovement().setPower(setBaseDmgFromBegining);
 
 					// Pokemon is no more charging an attack
 					this.getPkCombatting().setIsChargingAttackForNextRound(false);
@@ -3391,6 +3363,8 @@ public class PkVPk {
 			this.getPkFacing().setHasReceivedDamage(true);
 			this.getPkFacing().setDamageReceived(dmg);
 		}
+
+		reinitializeAttackStats(this.getPkCombatting().getNextMovement());
 	}
 
 	// -----------------------------
@@ -3498,11 +3472,22 @@ public class PkVPk {
 		return 1.0f;
 	}
 
+	// -----------------------------
+	// Change attacks depending on abilities
+	// -----------------------------
 	private void checkAbilitiesEffectsForAttacks(Weather weather, Attack attack) {
 		if (weather == Weather.SUN) {
 			if (attack.getId() == 87) {
 				attack.setPrecision(50);
 			}
 		}
+	}
+
+	// -----------------------------
+	// Reset parameters from attacks (to avoid problems each turn)
+	// -----------------------------
+	private void reinitializeAttackStats(Attack attack) {
+		attack.setPrecision(attack.getInitialPrecision());
+		attack.setPower(attack.getInitialPower());
 	}
 }
