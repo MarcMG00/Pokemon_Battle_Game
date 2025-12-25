@@ -397,6 +397,7 @@ public class PkVPk {
 		boolean reduceAttackRival = false;
 		Ability abilityAttacker = this.getPkCombatting().getAbilitySelected();
 		Ability abilityDefender = this.getPkFacing().getAbilitySelected();
+		int modifierWeather = 1;
 
 		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor/Pound (tested)
@@ -2848,12 +2849,18 @@ public class PkVPk {
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 					+ " usó Desarrollo");
 
+			// Add +2 if adequate weather
+			if (weather == Weather.SUN) {
+				modifierWeather = 2;
+			}
+
 			// Normal attack
 			if (this.getPkCombatting().getAttackStage() >= 6) {
 				System.out.println("El ataque de " + this.getPkCombatting().getName() + " (Id:"
 						+ this.getPkCombatting().getId() + ")" + " no puede subir más!");
 			} else {
-				this.getPkCombatting().setAttackStage(Math.min(this.getPkCombatting().getAttackStage() + 1, 6));
+				this.getPkCombatting()
+						.setAttackStage(Math.min(this.getPkCombatting().getAttackStage() + modifierWeather, 6));
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 						+ " aumentó su Ataque!");
 			}
@@ -2863,8 +2870,8 @@ public class PkVPk {
 				System.out.println("El ataque especial de " + this.getPkCombatting().getName() + " (Id:"
 						+ this.getPkCombatting().getId() + ")" + " no puede subir más!");
 			} else {
-				this.getPkCombatting()
-						.setSpecialAttackStage(Math.min(this.getPkCombatting().getSpecialAttackStage() + 1, 6));
+				this.getPkCombatting().setSpecialAttackStage(
+						Math.min(this.getPkCombatting().getSpecialAttackStage() + modifierWeather, 6));
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 						+ " aumentó su Ataque especial!");
 			}
