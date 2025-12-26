@@ -12,6 +12,8 @@ import java.util.Optional;
 import pokemon.enums.AttackCategory;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
+import pokemon.interfce.EmptyAbility;
+import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StenchAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
@@ -997,13 +999,17 @@ public class ReaderData {
 			ability.setEffect(new DrizzleAbility());
 			ability.setIsWeatherType(true);
 			break;
+		// Impulso/Speed boost
+		case 3:
+			ability.setEffect(new SpeedBoostAbility());
+			break;
 		// Sequía/Drought
 		case 70:
 			ability.setEffect(new DroughtAbility());
 			ability.setIsWeatherType(true);
 			break;
 		default:
-			ability.setEffect(new StenchAbility());
+			ability.setEffect(new EmptyAbility());
 		}
 	}
 }

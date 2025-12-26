@@ -56,6 +56,7 @@ public class Pokemon {
 	private float damageReceived;
 	private boolean isDraining;
 	private Ability AbilitySelected;
+	private boolean justEnteredBattle;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -113,6 +114,7 @@ public class Pokemon {
 		this.damageReceived = 0;
 		this.isDraining = false;
 		this.AbilitySelected = new Ability();
+		this.justEnteredBattle = false;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -164,6 +166,7 @@ public class Pokemon {
 		this.damageReceived = 0;
 		this.isDraining = false;
 		this.AbilitySelected = new Ability();
+		this.justEnteredBattle = false;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -220,6 +223,7 @@ public class Pokemon {
 		this.damageReceived = pokemon.damageReceived;
 		this.isDraining = pokemon.isDraining;
 		this.AbilitySelected = pokemon.AbilitySelected;
+		this.justEnteredBattle = pokemon.justEnteredBattle;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -601,6 +605,14 @@ public class Pokemon {
 		AbilitySelected = abilitySelected;
 	}
 
+	public boolean getJustEnteredBattle() {
+		return justEnteredBattle;
+	}
+
+	public void setJustEnteredBattle(boolean justEnteredBattle) {
+		this.justEnteredBattle = justEnteredBattle;
+	}
+
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
 		this.normalAbilities.add(ablty);
@@ -697,6 +709,7 @@ public class Pokemon {
 		// Reset damage received
 		this.setHasReceivedDamage(false);
 		this.setDamageReceived(0f);
+		this.setJustEnteredBattle(false);
 	}
 
 	// -----------------------------

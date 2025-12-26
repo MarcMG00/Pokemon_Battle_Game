@@ -156,7 +156,8 @@ public class Player {
 
 			pk.setAbilitySelected(finalAbility);
 
-			System.out.println(pk.getName() + " obtuvo la habilidad: " + finalAbility.getName());
+			System.out.println(
+					pk.getName() + " (Id:" + pk.getId() + ")" + " obtuvo la habilidad: " + finalAbility.getName());
 		}
 	}
 
