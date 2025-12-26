@@ -384,11 +384,11 @@ public class PkVPk {
 
 		float dmg = 0f;
 		float dmgToSum = 0f;
-		boolean isCritic;
+		boolean isCritic = getCriticity();
+		int highProbabilityCritic = (int) (Math.random() * 100);
 		int nbTimesAttack;
 		int nbTurnsHoldingStatus;
 		int probabilityGettingStatus;
-		int highProbabilityCritic;
 		double randomRetreat = Math.random();
 		float recoil = 0f;
 		boolean reduceDefRival = false;
@@ -407,8 +407,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -420,11 +418,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Golpe kárate/Karate chop (tested)
@@ -433,8 +426,6 @@ public class PkVPk {
 					+ " usó Golpe kárate");
 
 			dmg = doDammage();
-
-			highProbabilityCritic = (int) (Math.random() * 100);
 
 			// 40/100 of probabilities to have a critic attack
 			if (highProbabilityCritic <= 40) {
@@ -448,11 +439,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Doble bofetón/Double slap (tested)
@@ -483,11 +469,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Puño cometa/Comet punch (tested)
@@ -518,11 +499,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Megapuño/Mega punch (tested)
@@ -532,8 +508,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -545,11 +519,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Día de pago/Pay day (tested)
@@ -559,8 +528,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -571,11 +538,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Puño fuego/Fire punch (tested)
@@ -584,8 +546,6 @@ public class PkVPk {
 					+ " usó Puño fuego");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -615,11 +575,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Puño hielo/Ice punch (tested)
@@ -628,8 +583,6 @@ public class PkVPk {
 					+ " usó Puño hielo");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -664,11 +617,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Puño trueno/Thunder punch (tested)
@@ -677,8 +625,6 @@ public class PkVPk {
 					+ " usó Puño trueno");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -709,11 +655,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Arañazo/Scratch (tested)
@@ -723,8 +664,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -736,11 +675,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Agarre/Vise grip (tested)
@@ -750,8 +684,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -763,11 +695,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Guillotina/Guillotine (tested)
@@ -776,6 +703,7 @@ public class PkVPk {
 
 			// One-Hit KO => Pokemon facing dies instantly
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
+			this.getPkFacing().setPs(0f);
 			this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 
 			break;
@@ -799,8 +727,6 @@ public class PkVPk {
 
 				dmg = doDammage();
 
-				highProbabilityCritic = (int) (Math.random() * 100);
-
 				// 30/100 of probabilities to have a critic attack
 				if (highProbabilityCritic <= 30) {
 
@@ -817,11 +743,6 @@ public class PkVPk {
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Danza espada/Swords dance (tested)
@@ -848,8 +769,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -861,11 +780,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Tornado/Gust (tested)
@@ -881,8 +795,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -894,11 +806,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Ataque ala/Wing attack (tested)
@@ -908,8 +815,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -921,11 +826,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Remolino/Whirlwind
@@ -964,8 +864,6 @@ public class PkVPk {
 
 				dmg = doDammage();
 
-				isCritic = getCriticity();
-
 				if (isCritic) {
 
 					dmg = dmg * 2;
@@ -980,11 +878,6 @@ public class PkVPk {
 				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 				this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-				if (this.getPkFacing().getPs() <= 0) {
-
-					this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-				}
 			}
 			break;
 
@@ -994,8 +887,6 @@ public class PkVPk {
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Atadura");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -1021,11 +912,6 @@ public class PkVPk {
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Atizar/Slam (tested)
@@ -1035,8 +921,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -1048,11 +932,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Látigo cepa/Vine whip (tested)
@@ -1062,8 +941,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -1075,11 +952,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Pisotón/Stomp (tested)
@@ -1094,8 +966,6 @@ public class PkVPk {
 			}
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -1127,11 +997,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Doble patada/Double kick (tested)
@@ -1161,11 +1026,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Megapatada/Mega kick (tested)
@@ -1175,8 +1035,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -1188,22 +1046,15 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
-		// Patada salto/Jump kick (TODO >> No Pokemon has actually)
+		// Patada salto/Jump kick (tested)
 		case 26:
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 					+ " usó Patada salto");
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -1215,11 +1066,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Patada giro/Rolling kick (tested)
@@ -1228,8 +1074,6 @@ public class PkVPk {
 					+ " usó Patada giro");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -1261,11 +1105,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Ataque arena /Sand attack (tested)
@@ -1298,8 +1137,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -1330,11 +1167,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Cornada/Horn attack (tested)
@@ -1343,8 +1175,6 @@ public class PkVPk {
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Cornada");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -1357,11 +1187,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Ataque furia/Fury attack (tested)
@@ -1392,11 +1217,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Perforador/Horn drill (tested)
@@ -1416,8 +1236,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -1429,11 +1247,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Golpe cuerpo/Body slam (tested)
@@ -1442,8 +1255,6 @@ public class PkVPk {
 					+ " usó Golpe cuerpo");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -1475,11 +1286,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Constricción/Wrap (tested)
@@ -1488,8 +1294,6 @@ public class PkVPk {
 					+ " usó Constricción");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -1515,11 +1319,6 @@ public class PkVPk {
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Derribo/Take down (tested)
@@ -1528,8 +1327,6 @@ public class PkVPk {
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Derribo");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -1543,11 +1340,6 @@ public class PkVPk {
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
-
 			// ---- RECOIL ----
 			recoil = dmg * 0.25f;
 
@@ -1555,11 +1347,6 @@ public class PkVPk {
 
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId()
 					+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
-
-			// Check if attacker debilitated by recoil
-			if (this.getPkCombatting().getPs() <= 0) {
-				this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Saña/Thrash (tested)
@@ -1568,8 +1355,6 @@ public class PkVPk {
 					this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")" + " usó Saña");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -1596,12 +1381,6 @@ public class PkVPk {
 			}
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
-
 			break;
 
 		// Doble filo/Dobule-Edge (tested)
@@ -1610,8 +1389,6 @@ public class PkVPk {
 					+ " usó Doble filo");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -1625,11 +1402,6 @@ public class PkVPk {
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
-
 			// ---- RECOIL ----
 			recoil = dmg * 0.33f;
 
@@ -1637,11 +1409,6 @@ public class PkVPk {
 
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId()
 					+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
-
-			// Check if attacker debilitated by recoil
-			if (this.getPkCombatting().getPs() <= 0) {
-				this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Látigo/Tail Whip (tested)
@@ -1673,8 +1440,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -1703,11 +1468,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Doble ataque/Twineedle (tested)
@@ -1720,8 +1480,6 @@ public class PkVPk {
 						+ " usó Doble ataque");
 
 				dmg = doDammage();
-
-				isCritic = getCriticity();
 
 				if (isCritic) {
 
@@ -1754,11 +1512,6 @@ public class PkVPk {
 					System.out.println(this.getPkFacing().getName() + " fue envenenado");
 				}
 			}
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Pin misil/Pin missile (tested)
@@ -1789,11 +1542,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmgToSum);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Malicioso/Leer (tested)
@@ -1825,8 +1573,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -1857,11 +1603,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Gruñido/Growl (tested)
@@ -1960,24 +1701,9 @@ public class PkVPk {
 
 			dmg = 20f;
 
-			isCritic = getCriticity();
-
-			if (isCritic) {
-
-				dmg = dmg * 2;
-				System.out.println("Fue un golpe crítico");
-				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
-			}
-
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Anulación/Disable (tested)
@@ -2021,8 +1747,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2054,11 +1778,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Ascuas/Ember (tested)
@@ -2068,8 +1787,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2098,11 +1815,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Lanzallamas/FlameThrower (tested)
@@ -2112,8 +1824,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2142,11 +1852,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Neblina/Mist (tested)
@@ -2167,8 +1872,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2180,11 +1883,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Hidrobomba/Hydro Pump (tested)
@@ -2194,8 +1892,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2207,11 +1903,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Surf/Surf (tested)
@@ -2228,8 +1919,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2241,11 +1930,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Rayo hielo/Ice beam (tested)
@@ -2255,8 +1939,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2290,11 +1972,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Ventisca/Blizzard (tested)
@@ -2304,8 +1981,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2339,11 +2014,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Psicorrayo/Psybeam (tested)
@@ -2381,8 +2051,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2413,11 +2081,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Rayo aurora/Aurora beam (tested)
@@ -2426,8 +2089,6 @@ public class PkVPk {
 					+ " usó Rayo aurora");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -2459,11 +2120,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Hiperrayo/Hyper beam (tested)
@@ -2472,8 +2128,6 @@ public class PkVPk {
 					+ " usó Hiperrayo");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -2486,11 +2140,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 
 			// Pokemon combating cannot do anything next round
 			this.getPkCombatting().setCanDonAnythingNextRound(false);
@@ -2504,8 +2153,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2517,11 +2164,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Pico taladro/Drill peck (tested)
@@ -2531,8 +2173,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2544,11 +2184,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Sumisión/Submission (tested)
@@ -2558,8 +2193,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2572,11 +2205,6 @@ public class PkVPk {
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
-
 			// ---- RECOIL ----
 			recoil = dmg * 0.25f;
 
@@ -2584,11 +2212,6 @@ public class PkVPk {
 
 			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId()
 					+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
-
-			// Check if attacker debilitated by recoil
-			if (this.getPkCombatting().getPs() <= 0) {
-				this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Patada baja/Low kick (tested)
@@ -2613,8 +2236,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2626,11 +2247,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Contraataque/Counter (tested)
@@ -2647,11 +2263,6 @@ public class PkVPk {
 
 				System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
-
-				if (this.getPkFacing().getPs() <= 0) {
-
-					this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-				}
 			} else {
 				System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
 						+ " no puede usar Contraataque ya que no recibió ningún ataque físico este turno");
@@ -2673,11 +2284,6 @@ public class PkVPk {
 
 			System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
 					+ this.getPkFacing().getId() + ")" + ") : " + dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Fuerza/Strength (tested)
@@ -2687,8 +2293,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2700,11 +2304,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Absorber/Absorb (tested)
@@ -2714,8 +2313,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2727,11 +2324,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 
 			// Pokemon combating gets health
 			if (this.getPkCombatting().getPs() != this.getPkCombatting().getInitialPs()) {
@@ -2754,8 +2346,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -2767,11 +2357,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 
 			// Pokemon combating gets health
 			if (this.getPkCombatting().getPs() != this.getPkCombatting().getInitialPs()) {
@@ -2857,8 +2442,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			highProbabilityCritic = (int) (Math.random() * 100);
-
 			// 40/100 of probabilities to have a critic attack
 			if (highProbabilityCritic <= 40) {
 
@@ -2871,11 +2454,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Rayo solar/Solar beam(tested)
@@ -2885,8 +2463,6 @@ public class PkVPk {
 						+ " usó Rayo solar");
 
 				dmg = doDammage();
-
-				isCritic = getCriticity();
 
 				if (isCritic) {
 
@@ -2902,11 +2478,6 @@ public class PkVPk {
 				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 				this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-				if (this.getPkFacing().getPs() <= 0) {
-
-					this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-				}
 			} else {
 				// If not charging => first turn charge the attack
 				if (!this.getPkCombatting().getIsChargingAttackForNextRound()) {
@@ -2931,8 +2502,6 @@ public class PkVPk {
 
 					dmg = doDammage();
 
-					isCritic = getCriticity();
-
 					if (isCritic) {
 
 						dmg = dmg * 2;
@@ -2948,11 +2517,6 @@ public class PkVPk {
 							.setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 					this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-					if (this.getPkFacing().getPs() <= 0) {
-
-						this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-					}
 				}
 			}
 			break;
@@ -3030,8 +2594,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -3056,11 +2618,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Disparo démora/String shot (tested)
@@ -3092,28 +2649,7 @@ public class PkVPk {
 
 			dmg = 40f;
 
-			if (!(this.getPkCombatting().getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
-
-				nbTurnsHoldingStatus = getRandomInt(2, 5);
-
-				System.out.println(this.getPkCombatting().getName() + " usará el mismo ataque durante "
-						+ nbTurnsHoldingStatus + " turnos.");
-
-				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
-
-				this.getPkCombatting().addEstadoEfimero(trappedByOwnAttack);
-
-				// Only removes PP when choosing the attack
-				this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-			}
-
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Giro fuego/Fire spin (tested)
@@ -3122,8 +2658,6 @@ public class PkVPk {
 					+ " usó Giro fuego");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -3149,11 +2683,6 @@ public class PkVPk {
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Impactrueno/Thunder shock (tested)
@@ -3163,8 +2692,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -3193,11 +2720,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Rayo/Thunderbolt (tested)
@@ -3207,8 +2729,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -3237,11 +2757,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Onda trueno/Thunder wave (tested)
@@ -3272,8 +2787,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			isCritic = getCriticity();
-
 			if (isCritic) {
 
 				dmg = dmg * 2;
@@ -3302,11 +2815,6 @@ public class PkVPk {
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
 
 			this.getPkFacing().setPs(this.getPkFacing().getPs() - dmg);
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 
 		// Forcejeo/Struggle
@@ -3315,8 +2823,6 @@ public class PkVPk {
 					+ " usó Forcejeo");
 
 			dmg = doDammage();
-
-			isCritic = getCriticity();
 
 			if (isCritic) {
 
@@ -3331,31 +2837,37 @@ public class PkVPk {
 			// Pokemon combating receives 25% of damage from his initial PS
 			this.getPkCombatting()
 					.setPs(this.getPkCombatting().getInitialPs() - (this.getPkCombatting().getInitialPs() * 0.25f));
-
-			if (this.getPkFacing().getPs() <= 0) {
-
-				this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
-
-			// Get status debilitated for Pokemon combating
-			if (this.getPkCombatting().getPs() <= 0) {
-
-				this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
-			}
 			break;
 		}
 
-		// Set damage from physical attack => used for attacks like "Counter", etc.
-		if (dmg != 0 && this.getPkCombatting().getPhysicalAttacks() != null
-				&& this.getPkCombatting().getPhysicalAttacks().stream()
-						.anyMatch(a -> a.getId() == this.getPkCombatting().getNextMovement().getId()))
+		if (dmg != 0f || dmgToSum != 0f) {
+			// Set damage from physical attack => used for attacks like "Counter", etc.
+			if (dmg != 0 && this.getPkCombatting().getPhysicalAttacks() != null
+					&& this.getPkCombatting().getPhysicalAttacks().stream()
+							.anyMatch(a -> a.getId() == this.getPkCombatting().getNextMovement().getId()))
 
-		{
+			{
+				this.getPkFacing().setDamageReceived(dmg);
+			} else if (this.getPkCombatting().getPhysicalAttacks() != null
+					&& this.getPkCombatting().getPhysicalAttacks().stream()
+							.anyMatch(a -> a.getId() == this.getPkCombatting().getNextMovement().getId())) {
+				this.getPkFacing().setDamageReceived(dmgToSum);
+			}
 			this.getPkFacing().setHasReceivedDamage(true);
-			this.getPkFacing().setDamageReceived(dmg);
 		}
 
 		reinitializeAttackStats(this.getPkCombatting().getNextMovement());
+
+		if (this.getPkFacing().getPs() <= 0) {
+
+			this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
+		}
+
+		// Get status debilitated for Pokemon combating
+		if (this.getPkCombatting().getPs() <= 0) {
+
+			this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
+		}
 	}
 
 	// -----------------------------
