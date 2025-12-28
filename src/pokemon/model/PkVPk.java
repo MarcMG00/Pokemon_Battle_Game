@@ -385,7 +385,8 @@ public class PkVPk {
 		float dmg = 0f;
 		float dmgToSum = 0f;
 		boolean isCritic = getCriticity();
-		int highProbabilityCritic = (int) (Math.random() * 100);
+		boolean isHighCritic30 = getHighCriticity30();
+		boolean isHighCritic40 = getHighCriticity40();
 		int nbTimesAttack;
 		int nbTurnsHoldingStatus;
 		int probabilityGettingStatus;
@@ -428,7 +429,7 @@ public class PkVPk {
 			dmg = doDammage();
 
 			// 40/100 of probabilities to have a critic attack
-			if (highProbabilityCritic <= 40) {
+			if (isHighCritic40) {
 
 				dmg = dmg * 2;
 				System.out.println("Fue un golpe crítico");
@@ -728,7 +729,7 @@ public class PkVPk {
 				dmg = doDammage();
 
 				// 30/100 of probabilities to have a critic attack
-				if (highProbabilityCritic <= 30) {
+				if (isHighCritic30) {
 
 					dmg = dmg * 2;
 					System.out.println("Fue un golpe crítico");
@@ -2443,7 +2444,7 @@ public class PkVPk {
 			dmg = doDammage();
 
 			// 40/100 of probabilities to have a critic attack
-			if (highProbabilityCritic <= 40) {
+			if (isHighCritic40) {
 
 				dmg = dmg * 2;
 				System.out.println("Fue un golpe crítico");
@@ -2919,6 +2920,46 @@ public class PkVPk {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10) {
+			// Cannot recieve critic damage because of ability "Battle armor"
+			if (this.getPkFacing().getAbilitySelected().getId() == 4) {
+				this.getPkFacing().getAbilitySelected().getEffect().onAttack(this.getPkCombatting(),
+						this.getPkFacing());
+				return false;
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	// -----------------------------
+	// Gets if an attack is critic (x2 of damage)
+	// -----------------------------
+	public boolean getHighCriticity30() {
+		int randomCritic = (int) (Math.random() * 100);
+
+		// 10% of probabilities to have a critic attack
+		if (randomCritic <= 30) {
+			// Cannot recieve critic damage because of ability "Battle armor"
+			if (this.getPkFacing().getAbilitySelected().getId() == 4) {
+				this.getPkFacing().getAbilitySelected().getEffect().onAttack(this.getPkCombatting(),
+						this.getPkFacing());
+				return false;
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	// -----------------------------
+	// Gets if an attack is critic (x2 of damage)
+	// -----------------------------
+	public boolean getHighCriticity40() {
+		int randomCritic = (int) (Math.random() * 100);
+
+		// 10% of probabilities to have a critic attack
+		if (randomCritic <= 40) {
 			// Cannot recieve critic damage because of ability "Battle armor"
 			if (this.getPkFacing().getAbilitySelected().getId() == 4) {
 				this.getPkFacing().getAbilitySelected().getEffect().onAttack(this.getPkCombatting(),
