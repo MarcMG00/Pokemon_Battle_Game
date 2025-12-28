@@ -13,6 +13,9 @@ public interface AbilityEffect {
 
 	default void beforeAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack) {
 	}
+	
+	default void onAttack(Pokemon attacker, Pokemon defender) {
+	}
 
 	default void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double precentageFlinch) {

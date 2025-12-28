@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import pokemon.enums.AttackCategory;
+import pokemon.interfce.BattleArmorAbility;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
@@ -1002,6 +1003,10 @@ public class ReaderData {
 		// Impulso/Speed boost
 		case 3:
 			ability.setEffect(new SpeedBoostAbility());
+			break;
+		// Armadura batalla/Battle armor
+		case 4:
+			ability.setEffect(new BattleArmorAbility());
 			break;
 		// Sequía/Drought
 		case 70:

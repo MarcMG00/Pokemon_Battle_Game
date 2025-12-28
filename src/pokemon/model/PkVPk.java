@@ -2915,17 +2915,20 @@ public class PkVPk {
 	// Gets if an attack is critic (x2 of damage)
 	// -----------------------------
 	public boolean getCriticity() {
-		boolean isCritic = false;
-
 		int randomCritic = (int) (Math.random() * 100);
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10) {
-
-			isCritic = true;
+			// Cannot recieve critic damage because of ability "Battle armor"
+			if (this.getPkFacing().getAbilitySelected().getId() == 4) {
+				this.getPkFacing().getAbilitySelected().getEffect().onAttack(this.getPkCombatting(),
+						this.getPkFacing());
+				return false;
+			}
+			return true;
 		}
 
-		return isCritic;
+		return false;
 	}
 
 	// -----------------------------
