@@ -540,15 +540,12 @@ public class PkVPk {
 
 			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has
 			// not a Status
-			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+			probabilityGettingStatus = (int) (Math.random() * 100);
 
-				probabilityGettingStatus = (int) (Math.random() * 100);
+			System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
-				System.out.println("proba de paralizar : " + probabilityGettingStatus);
-
-				if (probabilityGettingStatus <= 10) {
-					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
-				}
+			if (probabilityGettingStatus <= 10) {
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1023,15 +1020,12 @@ public class PkVPk {
 
 			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has
 			// not a Status
-			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
+			probabilityGettingStatus = (int) (Math.random() * 100);
 
-				probabilityGettingStatus = (int) (Math.random() * 100);
+			System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
-				System.out.println("proba de paralizar : " + probabilityGettingStatus);
-
-				if (probabilityGettingStatus <= 30) {
-					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
-				}
+			if (probabilityGettingStatus <= 30) {
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
