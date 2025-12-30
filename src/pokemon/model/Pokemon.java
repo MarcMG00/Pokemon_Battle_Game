@@ -3,6 +3,7 @@ package pokemon.model;
 import java.util.ArrayList;
 
 import pokemon.enums.StatusConditions;
+import pokemon.enums.Weather;
 
 public class Pokemon {
 
@@ -1180,29 +1181,41 @@ public class Pokemon {
 		removeDrainedAllTurns();
 	}
 
-	public boolean trySetStatus(State newState) {
+	public boolean trySetStatus(State newState, Weather weather) {
+
+		boolean canBeFrozen = weather != Weather.SUN;
 
 		// Already has a status
 		if (this.statusCondition.getStatusCondition() != StatusConditions.NO_STATUS)
 			return false;
 
+		// PARALYZED
 		// Limber ability prevents paralysis
 		if (newState.getStatusCondition() == StatusConditions.PARALYZED && this.getAbilitySelected().getId() == 7) {
-
 			System.out.println(this.getName() + " evitó la parálisis gracias a Flexibilidad");
 			return false;
 		} else if (newState.getStatusCondition() == StatusConditions.PARALYZED) {
 			System.out.println(this.getName() + " fue paralizado");
 		}
 
+		// BURNED
 		// Fire Pokemon cannot be burned
 		if (newState.getStatusCondition() == StatusConditions.BURNED
 				&& this.getTypes().stream().anyMatch(t -> t.getId() == 7)) {
-
 			System.out.println(this.getName() + " no puede ser quemado ya que es de tipo fuego");
 			return false;
 		} else if (newState.getStatusCondition() == StatusConditions.BURNED) {
 			System.out.println(this.getName() + " fue quemado");
+		}
+
+		// FROZEN
+		// Ice Pokemon cannot be frozen
+		if (newState.getStatusCondition() == StatusConditions.FROZEN && canBeFrozen
+				&& this.getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			System.out.println(this.getName() + " fue congelado");
+		} else if (newState.getStatusCondition() == StatusConditions.FROZEN) {
+			System.out.println(
+					this.getName() + " no puede ser congelado dado el tiempo (soleado) o es un Pokemon de tipo hielo");
 		}
 
 		this.setStatusCondition(newState);

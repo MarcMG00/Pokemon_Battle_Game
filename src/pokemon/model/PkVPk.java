@@ -396,7 +396,6 @@ public class PkVPk {
 		Ability abilityAttacker = this.getPkCombatting().getAbilitySelected();
 		Ability abilityDefender = this.getPkFacing().getAbilitySelected();
 		int modifierWeather = 1;
-		boolean canBeFrozen = weather != Weather.SUN;
 
 		switch (this.getPkCombatting().getNextMovement().getId()) {
 		// Destructor/Pound (tested)
@@ -501,7 +500,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 100) {
 
 				// Check if the Pokemon facing has no status
-				this.getPkFacing().trySetStatus(new State(StatusConditions.BURNED));
+				this.getPkFacing().trySetStatus(new State(StatusConditions.BURNED), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -516,26 +515,15 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			// Ice Pokemon cannot be frozen
-			if (canBeFrozen
-					&& this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			probabilityGettingStatus = (int) (Math.random() * 100);
 
-				probabilityGettingStatus = (int) (Math.random() * 100);
+			System.out.println("proba de congelar : " + probabilityGettingStatus);
 
-				System.out.println("proba de congelar : " + probabilityGettingStatus);
+			// 10% of probabilities to be frozen
+			if (probabilityGettingStatus <= 10) {
 
-				// 10% of probabilities to be frozen
-				if (probabilityGettingStatus <= 10) {
-
-					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-						State frozen = new State(StatusConditions.FROZEN);
-
-						this.getPkFacing().setStatusCondition(frozen);
-
-						System.out.println(this.getPkCombatting().getName() + " fue congelado");
-					}
-				}
+				// Check if the Pokemon facing has no status
+				this.getPkFacing().trySetStatus(new State(StatusConditions.FROZEN), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -559,7 +547,7 @@ public class PkVPk {
 				System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 				if (probabilityGettingStatus <= 10) {
-					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
+					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
 				}
 			}
 
@@ -1042,7 +1030,7 @@ public class PkVPk {
 				System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 				if (probabilityGettingStatus <= 30) {
-					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
+					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
 				}
 			}
 
@@ -1484,7 +1472,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				this.getPkFacing().trySetStatus(new State(StatusConditions.BURNED));
+				this.getPkFacing().trySetStatus(new State(StatusConditions.BURNED), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1506,7 +1494,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				this.getPkFacing().trySetStatus(new State(StatusConditions.BURNED));
+				this.getPkFacing().trySetStatus(new State(StatusConditions.BURNED), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1575,26 +1563,15 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			// Ice Pokemon cannot be frozen
-			if (canBeFrozen
-					&& this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			probabilityGettingStatus = (int) (Math.random() * 100);
 
-				probabilityGettingStatus = (int) (Math.random() * 100);
+			System.out.println("proba de congelar : " + probabilityGettingStatus);
 
-				System.out.println("proba de congelar : " + probabilityGettingStatus);
+			// 10% of probabilities to be frozen
+			if (probabilityGettingStatus <= 10) {
 
-				// 10% of probabilities to be frozen
-				if (probabilityGettingStatus <= 10) {
-
-					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-						State frozen = new State(StatusConditions.FROZEN);
-
-						this.getPkFacing().setStatusCondition(frozen);
-
-						System.out.println(this.getPkCombatting().getName() + " fue congelado");
-					}
-				}
+				// Check if the Pokemon facing has no status
+				this.getPkFacing().trySetStatus(new State(StatusConditions.FROZEN), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1609,26 +1586,15 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			// Ice Pokemon cannot be frozen
-			if (canBeFrozen
-					&& this.getPkFacing().getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
+			probabilityGettingStatus = (int) (Math.random() * 100);
 
-				probabilityGettingStatus = (int) (Math.random() * 100);
+			System.out.println("proba de congelar : " + probabilityGettingStatus);
 
-				System.out.println("proba de congelar : " + probabilityGettingStatus);
+			// 10% of probabilities to be frozen
+			if (probabilityGettingStatus <= 10) {
 
-				// 10% of probabilities to be frozen
-				if (probabilityGettingStatus <= 10) {
-
-					if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-						State frozen = new State(StatusConditions.FROZEN);
-
-						this.getPkFacing().setStatusCondition(frozen);
-
-						System.out.println(this.getPkCombatting().getName() + " fue congelado");
-					}
-				}
+				// Check if the Pokemon facing has no status
+				this.getPkFacing().trySetStatus(new State(StatusConditions.FROZEN), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -2065,7 +2031,7 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está paralizado");
 			}
@@ -2194,7 +2160,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -2216,7 +2182,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -2232,7 +2198,7 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está paralizado");
 			}
@@ -2254,7 +2220,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED), weather);
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
