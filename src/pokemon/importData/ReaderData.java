@@ -15,6 +15,7 @@ import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.SpeedBoostAbility;
+import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
@@ -744,6 +745,8 @@ public class ReaderData {
 				setCategoryAttackType(attack);
 				// Set the attack is One-Hit KO
 				setAttackIsOneHit(attack);
+				// Set the attack if makes contact
+				setAttackMakesContatc(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -990,6 +993,7 @@ public class ReaderData {
 
 	// -----------------------------
 	// Set the ability effect of the attack
+	// TODO >> 006 / 008
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
@@ -1010,6 +1014,10 @@ public class ReaderData {
 		case 4:
 			ability.setEffect(new BattleArmorAbility());
 			break;
+		// Electricidad estática/Static
+		case 9:
+			ability.setEffect(new StaticAbility());
+			break;
 		// Sequía/Drought
 		case 70:
 			ability.setEffect(new DroughtAbility());
@@ -1021,7 +1029,7 @@ public class ReaderData {
 	}
 
 	// -----------------------------
-	// Set the category type of the attack
+	// Set if attack is one hit KO
 	// -----------------------------
 	public void setAttackIsOneHit(Attack attack) {
 		switch (attack.getId()) {
@@ -1033,4 +1041,14 @@ public class ReaderData {
 			attack.setIsOneHitKO(false);
 		}
 	}
+
+	// -----------------------------
+	// Set if attack is one hit KO
+	// -----------------------------
+	public void setAttackMakesContatc(Attack attack) {
+		if (attack.getBases() != null && attack.getBases().contains("fisico")) {
+			attack.setMakesContact(true);
+		}
+	}
+
 }

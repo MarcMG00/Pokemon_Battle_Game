@@ -28,6 +28,7 @@ public class Attack {
 	private boolean canRecieveDamage;
 	private double percentageFlinch;
 	private boolean isOneHitKO;
+	private boolean makesContact;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -50,6 +51,7 @@ public class Attack {
 		this.canRecieveDamage = false;
 		this.percentageFlinch = 0d;
 		this.isOneHitKO = false;
+		this.makesContact = false;
 	}
 
 	public Attack(int id, String name, String type, int power, int pp, int precision, String effect) {
@@ -70,6 +72,7 @@ public class Attack {
 		this.canRecieveDamage = false;
 		this.percentageFlinch = 0d;
 		this.isOneHitKO = false;
+		this.makesContact = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -224,6 +227,14 @@ public class Attack {
 		this.isOneHitKO = isOneHitKO;
 	}
 
+	public boolean getMakesContact() {
+		return makesContact;
+	}
+
+	public void setMakesContact(boolean makesContact) {
+		this.makesContact = makesContact;
+	}
+	
 	// ==================================== METHODS
 	// ====================================
 

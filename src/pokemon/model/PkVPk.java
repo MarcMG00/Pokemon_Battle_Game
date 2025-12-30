@@ -2255,14 +2255,16 @@ public class PkVPk {
 
 		reinitializeAttackStats(this.getPkCombatting().getNextMovement());
 
-		if (this.getPkFacing().getPs() <= 0) {
+		// Apply abilities after attacking
+		applyAbilityAfterDamage(this.getPkCombatting(), this.getPkFacing(), this.getPkCombatting().getNextMovement(),
+				dmg);
 
+		if (this.getPkFacing().getPs() <= 0) {
 			this.getPkFacing().setStatusCondition(new State(StatusConditions.DEBILITATED));
 		}
 
 		// Get status debilitated for Pokemon combating
 		if (this.getPkCombatting().getPs() <= 0) {
-
 			this.getPkCombatting().setStatusCondition(new State(StatusConditions.DEBILITATED));
 		}
 	}
@@ -2479,5 +2481,21 @@ public class PkVPk {
 	private void reinitializeAttackStats(Attack attack) {
 		attack.setPrecision(attack.getInitialPrecision());
 		attack.setPower(attack.getInitialPower());
+	}
+
+	// -----------------------------
+	// Do ability effect after attacking
+	// -----------------------------
+	private void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg) {
+
+		// Damage must be done
+		if (dmg <= 0)
+			return;
+
+		// Defender ability
+		Ability defenderAbility = defender.getAbilitySelected();
+		if (defenderAbility != null) {
+			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d);
+		}
 	}
 }
