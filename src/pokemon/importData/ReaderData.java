@@ -16,7 +16,6 @@ import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StenchAbility;
-import pokemon.interfce.SturdyAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.Pokemon;
@@ -1012,7 +1011,6 @@ public class ReaderData {
 			ability.setEffect(new BattleArmorAbility());
 			// Robustez/Sturdy
 		case 5:
-			ability.setEffect(new SturdyAbility());
 			break;
 		// Sequía/Drought
 		case 70:
