@@ -1254,6 +1254,7 @@ public class Game {
 			this.getIA().getPkCombatting().setDefenseStage(0);
 			this.getIA().getPkCombatting().setSpecialDefenseStage(0);
 			this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
+			this.getIA().getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
 
 			System.out.println("IA eligió a " + newIA.getName() + " (Id:" + newIA.getId() + ")");
 
@@ -1315,6 +1316,8 @@ public class Game {
 			this.getPlayer().getPkCombatting().setDefenseStage(0);
 			this.getPlayer().getPkCombatting().setSpecialDefenseStage(0);
 			this.getPlayer().getPkCombatting().setLastUsedAttack(new Attack());
+			this.getPlayer().getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
+
 			Pokemon selected = opt.get();
 
 			System.out.println("Jugador eligió a " + selected.getName());
@@ -1364,6 +1367,7 @@ public class Game {
 		this.getIA().getPkCombatting().setDefenseStage(0);
 		this.getIA().getPkCombatting().setSpecialDefenseStage(0);
 		this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
+		this.getIA().getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
 
 		// Do Pokemon change => update Pokemon comabting from IA, etc.
 		System.out.println("IA cambió a " + changeTo.getName());
@@ -1421,6 +1425,7 @@ public class Game {
 		defender.getPkCombatting().setDefenseStage(0);
 		defender.getPkCombatting().setSpecialDefenseStage(0);
 		defender.getPkCombatting().setLastUsedAttack(new Attack());
+		defender.getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
 
 		boolean isPlayer = defender == this.getPlayer();
 		System.out
@@ -1534,8 +1539,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "347,347,347,347,347,347";
-		String allPkIA = "6,6,6";
+		String allPkPlayer = "76,76,76,76,76,76";
+		String allPkIA = "99,99,99";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1576,10 +1581,10 @@ public class Game {
 		// Sets the attacks to pokemon's player to test
 		for (Pokemon pk : this.getPlayer().getPokemon()) {
 
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 54).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
@@ -1641,6 +1646,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 63).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 12).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {

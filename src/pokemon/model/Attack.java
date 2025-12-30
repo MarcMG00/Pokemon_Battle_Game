@@ -27,6 +27,7 @@ public class Attack {
 	private List<Integer> canHitWhileInvulnerable = new ArrayList<>();
 	private boolean canRecieveDamage;
 	private double percentageFlinch;
+	private boolean isOneHitKO;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -48,6 +49,7 @@ public class Attack {
 		this.bonus = 0;
 		this.canRecieveDamage = false;
 		this.percentageFlinch = 0d;
+		this.isOneHitKO = false;
 	}
 
 	public Attack(int id, String name, String type, int power, int pp, int precision, String effect) {
@@ -67,6 +69,7 @@ public class Attack {
 		this.bonus = 0;
 		this.canRecieveDamage = false;
 		this.percentageFlinch = 0d;
+		this.isOneHitKO = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -196,7 +199,7 @@ public class Attack {
 	public void setPercentageFlinched(double percentageFlinch) {
 		this.percentageFlinch = percentageFlinch;
 	}
-	
+
 	public int getInitialPower() {
 		return initialPower;
 	}
@@ -211,6 +214,14 @@ public class Attack {
 
 	public void setInitialPrecision(int initialPrecision) {
 		this.initialPrecision = initialPrecision;
+	}
+
+	public boolean getIsOneHitKO() {
+		return isOneHitKO;
+	}
+
+	public void setIsOneHitKO(boolean isOneHitKO) {
+		this.isOneHitKO = isOneHitKO;
 	}
 
 	// ==================================== METHODS

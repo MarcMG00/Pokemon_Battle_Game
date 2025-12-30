@@ -16,6 +16,7 @@ import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StenchAbility;
+import pokemon.interfce.SturdyAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.Pokemon;
@@ -742,6 +743,8 @@ public class ReaderData {
 
 				// Set the category type of the attack
 				setCategoryAttackType(attack);
+				// Set the attack is One-Hit KO
+				setAttackIsOneHit(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -1007,6 +1010,9 @@ public class ReaderData {
 		// Armadura batalla/Battle armor
 		case 4:
 			ability.setEffect(new BattleArmorAbility());
+			// Robustez/Sturdy
+		case 5:
+			ability.setEffect(new SturdyAbility());
 			break;
 		// Sequía/Drought
 		case 70:
@@ -1015,6 +1021,20 @@ public class ReaderData {
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());
+		}
+	}
+
+	// -----------------------------
+	// Set the category type of the attack
+	// -----------------------------
+	public void setAttackIsOneHit(Attack attack) {
+		switch (attack.getId()) {
+		case 12:
+		case 32:
+			attack.setIsOneHitKO(true);
+			break;
+		default:
+			attack.setIsOneHitKO(false);
 		}
 	}
 }

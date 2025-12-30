@@ -12,6 +12,7 @@ public class Ability {
 	private String description;
 	private AbilityEffect effect;
 	private boolean isWeatherType;
+	private boolean alreadyUsedOnEnter;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -24,6 +25,7 @@ public class Ability {
 		this.effect = new AbilityEffect() {
 		};
 		this.isWeatherType = false;
+		alreadyUsedOnEnter = false;
 	}
 
 	public Ability(int id, String name, String description) {
@@ -34,6 +36,7 @@ public class Ability {
 		this.effect = new AbilityEffect() {
 		};
 		this.isWeatherType = false;
+		alreadyUsedOnEnter = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -77,5 +80,13 @@ public class Ability {
 
 	public void setIsWeatherType(boolean isWeatherType) {
 		this.isWeatherType = isWeatherType;
+	}
+
+	public boolean getAlreadyUsedOnEnter() {
+		return alreadyUsedOnEnter;
+	}
+
+	public void setAlreadyUsedOnEnter(boolean alreadyUsedOnEnter) {
+		this.alreadyUsedOnEnter = alreadyUsedOnEnter;
 	}
 }
