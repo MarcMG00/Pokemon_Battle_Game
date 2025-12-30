@@ -1180,4 +1180,23 @@ public class Pokemon {
 		removeDrainedAllTurns();
 	}
 
+	public boolean trySetStatus(State newState) {
+
+		// Already has a status
+		if (this.statusCondition.getStatusCondition() != StatusConditions.NO_STATUS)
+			return false;
+
+		// Limber ability prevents paralysis
+		if (newState.getStatusCondition() == StatusConditions.PARALYZED && this.getAbilitySelected().getId() == 7) {
+
+			System.out.println(this.getName() + " evitó la parálisis gracias a Flexibilidad");
+			return false;
+		} else {
+			System.out.println(this.getName() + " fue paralizado");
+		}
+
+		this.setStatusCondition(newState);
+		return true;
+	}
+
 }

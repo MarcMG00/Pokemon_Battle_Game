@@ -1009,8 +1009,6 @@ public class ReaderData {
 		// Armadura batalla/Battle armor
 		case 4:
 			ability.setEffect(new BattleArmorAbility());
-			// Robustez/Sturdy
-		case 5:
 			break;
 		// Sequía/Drought
 		case 70:

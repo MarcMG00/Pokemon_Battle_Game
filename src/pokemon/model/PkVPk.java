@@ -566,12 +566,7 @@ public class PkVPk {
 				System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 				if (probabilityGettingStatus <= 10) {
-
-					State paralyzed = new State(StatusConditions.PARALYZED);
-
-					this.getPkFacing().setStatusCondition(paralyzed);
-
-					System.out.println(this.getPkFacing().getName() + " fue paralizado");
+					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 				}
 			}
 
@@ -1047,20 +1042,14 @@ public class PkVPk {
 
 			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has
 			// not a Status
-			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
-					&& !(this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED)) {
+			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
 
 				probabilityGettingStatus = (int) (Math.random() * 100);
 
 				System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 				if (probabilityGettingStatus <= 30) {
-
-					State paralyzed = new State(StatusConditions.PARALYZED);
-
-					this.getPkFacing().setStatusCondition(paralyzed);
-
-					System.out.println(this.getPkFacing().getName() + " fue paralizado");
+					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 				}
 			}
 
@@ -2097,12 +2086,7 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-				State paralyzed = new State(StatusConditions.PARALYZED);
-
-				this.getPkFacing().setStatusCondition(paralyzed);
-
-				System.out.println(this.getPkFacing().getName() + " fue paralizado");
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está paralizado");
 			}
@@ -2232,12 +2216,7 @@ public class PkVPk {
 
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-					State paralyzed = new State(StatusConditions.PARALYZED);
-
-					this.getPkFacing().setStatusCondition(paralyzed);
-
-					System.out.println(this.getPkFacing().getName() + " fue paralizado");
+					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 				}
 			}
 
@@ -2261,12 +2240,7 @@ public class PkVPk {
 
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-					State paralyzed = new State(StatusConditions.PARALYZED);
-
-					this.getPkFacing().setStatusCondition(paralyzed);
-
-					System.out.println(this.getPkFacing().getName() + " fue paralizado");
+					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 				}
 			}
 
@@ -2283,12 +2257,7 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-				State paralyzed = new State(StatusConditions.PARALYZED);
-
-				this.getPkFacing().setStatusCondition(paralyzed);
-
-				System.out.println(this.getPkFacing().getName() + " fue paralizado");
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 			} else {
 				System.out.println(this.getPkFacing().getName() + " ya está paralizado");
 			}
@@ -2311,12 +2280,7 @@ public class PkVPk {
 
 				// Check if the Pokemon facing has no status
 				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-					State paralyzed = new State(StatusConditions.PARALYZED);
-
-					this.getPkFacing().setStatusCondition(paralyzed);
-
-					System.out.println(this.getPkFacing().getName() + " fue paralizado");
+					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 				}
 			}
 
@@ -2465,7 +2429,7 @@ public class PkVPk {
 		int randomCritic = (int) (Math.random() * 100);
 
 		// 10% of probabilities to have a critic attack
-		if (randomCritic <= 100) {
+		if (randomCritic <= 10) {
 			// Cannot recieve critic damage because of ability "Battle armor"
 			if (this.getPkFacing().getAbilitySelected().getId() == 4) {
 				this.getPkFacing().getAbilitySelected().getEffect().onAttack(this.getPkCombatting(),
