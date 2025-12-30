@@ -1191,8 +1191,18 @@ public class Pokemon {
 
 			System.out.println(this.getName() + " evitó la parálisis gracias a Flexibilidad");
 			return false;
-		} else {
+		} else if (newState.getStatusCondition() == StatusConditions.PARALYZED) {
 			System.out.println(this.getName() + " fue paralizado");
+		}
+
+		// Fire Pokemon cannot be burned
+		if (newState.getStatusCondition() == StatusConditions.BURNED
+				&& this.getTypes().stream().anyMatch(t -> t.getId() == 7)) {
+
+			System.out.println(this.getName() + " no puede ser quemado ya que es de tipo fuego");
+			return false;
+		} else if (newState.getStatusCondition() == StatusConditions.BURNED) {
+			System.out.println(this.getName() + " fue quemado");
 		}
 
 		this.setStatusCondition(newState);

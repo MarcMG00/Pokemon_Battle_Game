@@ -498,17 +498,10 @@ public class PkVPk {
 
 			System.out.println("proba de quemar : " + probabilityGettingStatus);
 
-			if (probabilityGettingStatus <= 10) {
+			if (probabilityGettingStatus <= 100) {
 
 				// Check if the Pokemon facing has no status
-				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-					State burned = new State(StatusConditions.BURNED);
-
-					this.getPkFacing().setStatusCondition(burned);
-
-					System.out.println(this.getPkFacing().getName() + " fue quemado");
-				}
+				this.getPkFacing().trySetStatus(new State(StatusConditions.BURNED));
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1491,14 +1484,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-					State burned = new State(StatusConditions.BURNED);
-
-					this.getPkFacing().setStatusCondition(burned);
-
-					System.out.println(this.getPkFacing().getName() + " fue quemado");
-				}
+				this.getPkFacing().trySetStatus(new State(StatusConditions.BURNED));
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -1520,14 +1506,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-					State burned = new State(StatusConditions.BURNED);
-
-					this.getPkFacing().setStatusCondition(burned);
-
-					System.out.println(this.getPkFacing().getName() + " fue quemado");
-				}
+				this.getPkFacing().trySetStatus(new State(StatusConditions.BURNED));
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -2215,9 +2194,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
-				}
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -2239,9 +2216,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
-				}
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
@@ -2279,9 +2254,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-					this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
-				}
+				this.getPkFacing().trySetStatus(new State(StatusConditions.PARALYZED));
 			}
 
 			this.getPkCombatting().getNextMovement().setPp(this.getPkCombatting().getNextMovement().getPp() - 1);
