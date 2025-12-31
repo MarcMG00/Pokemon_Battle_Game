@@ -17,6 +17,7 @@ import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
+import pokemon.interfce.VoltAbsorbAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.Pokemon;
@@ -1017,6 +1018,10 @@ public class ReaderData {
 		// Electricidad estática/Static
 		case 9:
 			ability.setEffect(new StaticAbility());
+			break;
+		// Absorbe electricidad/Volt absorb
+		case 10:
+			ability.setEffect(new VoltAbsorbAbility());
 			break;
 		// Sequía/Drought
 		case 70:

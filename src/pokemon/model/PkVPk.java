@@ -409,6 +409,16 @@ public class PkVPk {
 
 		int modifierWeather = 1;
 
+		// Some abilities allows to not to do damage (ex : Volt absorb)
+		if (abilityDefender != null) {
+			boolean continueAttack = abilityDefender.getEffect().beforeDamage(null, attacker, defender, attackAttacker);
+
+			if (!continueAttack) {
+				attackAttacker.setPp(attackAttacker.getPp() - 1);
+				return; // cancel attack
+			}
+		}
+
 		switch (attackAttacker.getId()) {
 		// Destructor/Pound (tested)
 		case 1:
