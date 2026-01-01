@@ -174,7 +174,9 @@ public class PkVPk {
 
 		float accuracyFactor = 0f;
 
-		checkAbilitiesEffectsForAttacks(weather, atkAttacker);
+		checkWeatherEffectsForAttacks(weather, atkAttacker);
+
+		Ability ability = this.getPkCombatting().getAbilitySelected();
 
 		// -----------------------------
 		// Check if an attack is not disabled (attacks disabled cannot be used, even for
@@ -248,6 +250,10 @@ public class PkVPk {
 			accuracyFactor = (atkAttacker.getPrecision() / 100f)
 					* (getEvasionOrAccuracy(this.getPkCombatting(), 1) / getEvasionOrAccuracy(this.getPkFacing(), 2));
 		}
+
+		// ----------------------------------
+		// APPLY ABILITY MODIFIERS (ACCURACY) (ex : 14_Compound_Eyes)
+		accuracyFactor = applyAccuracyAbilities(accuracyFactor);
 
 		// Reset CanAttack if doesn't enter in any case
 		this.getPkCombatting().setCanAttack(false);
@@ -421,7 +427,7 @@ public class PkVPk {
 		int modifierWeather = 1;
 
 		boolean isWeatherSuppressed = this.getIsWeatherSuppressed();
-		
+
 		// Some abilities allows to not to do damage (ex : Volt absorb)
 		if (abilityDefender != null) {
 			boolean continueAttack = abilityDefender.getEffect().beforeDamage(null, attacker, defender, attackAttacker);
@@ -2399,9 +2405,9 @@ public class PkVPk {
 	}
 
 	// -----------------------------
-	// Change attacks depending on abilities
+	// Change attacks depending on weather
 	// -----------------------------
-	private void checkAbilitiesEffectsForAttacks(Weather weather, Attack attack) {
+	private void checkWeatherEffectsForAttacks(Weather weather, Attack attack) {
 		if (weather == Weather.SUN) {
 			if (attack.getId() == 87) {
 				attack.setPrecision(50);
@@ -2431,5 +2437,14 @@ public class PkVPk {
 		if (defenderAbility != null) {
 			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d);
 		}
+	}
+
+	private float applyAccuracyAbilities(float accuracy) {
+		Ability ability = this.getPkCombatting().getAbilitySelected();
+		if (ability != null && ability.getId() == 14) {
+			accuracy *= 1.3f;
+		}
+		// max 1f
+		return Math.min(accuracy, 1.0f);
 	}
 }
