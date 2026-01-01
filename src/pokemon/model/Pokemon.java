@@ -1181,7 +1181,7 @@ public class Pokemon {
 		removeDrainedAllTurns();
 	}
 
-	public boolean trySetStatus(State newState, Weather weather) {
+	public boolean trySetStatus(State newState, Weather weather, boolean isWeatherSuppressed) {
 
 		boolean canBeFrozen = weather != Weather.SUN;
 
@@ -1210,7 +1210,7 @@ public class Pokemon {
 
 		// FROZEN
 		// Ice Pokemon cannot be frozen
-		if (newState.getStatusCondition() == StatusConditions.FROZEN && canBeFrozen
+		if (newState.getStatusCondition() == StatusConditions.FROZEN && canBeFrozen && !isWeatherSuppressed
 				&& this.getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
 			System.out.println(this.getName() + " fue congelado");
 		} else if (newState.getStatusCondition() == StatusConditions.FROZEN) {

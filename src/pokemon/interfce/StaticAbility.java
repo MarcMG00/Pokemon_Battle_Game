@@ -22,7 +22,7 @@ public class StaticAbility implements AbilityEffect {
 			return;
 
 		// Try to apply paralysis
-		attacker.trySetStatus(new State(StatusConditions.PARALYZED), null);
+		attacker.trySetStatus(new State(StatusConditions.PARALYZED), null, false);
 		System.out.println(
 				attacker.getName() + " fue paralizado por la habilidad electricidad estática del Pokémon rival");
 	}

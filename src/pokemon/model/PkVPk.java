@@ -14,6 +14,7 @@ public class PkVPk {
 	private Player attacker;
 	private Player defender;
 	private Weather weather;
+	private boolean isWeatherSuppressed;
 
 	private static final String ANSI_RED = "\u001B[31m";
 	private static final String ANSI_GREEN = "\u001B[32m";
@@ -26,12 +27,13 @@ public class PkVPk {
 	// ==================================== CONSTRCUTORS
 	// ====================================
 
-	public PkVPk(Player attacker, Player defender, Weather weather) {
+	public PkVPk(Player attacker, Player defender, Weather weather, boolean isWeatherSuppressed) {
 		this.attacker = attacker;
 		this.defender = defender;
 		this.pkCombatting = attacker.getPkCombatting();
 		this.pkFacing = defender.getPkCombatting();
 		this.weather = weather;
+		this.isWeatherSuppressed = isWeatherSuppressed;
 	}
 
 	public PkVPk() {
@@ -40,6 +42,7 @@ public class PkVPk {
 		this.pkCombatting = new Pokemon();
 		this.pkFacing = new Pokemon();
 		this.weather = Weather.NONE;
+		this.isWeatherSuppressed = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -83,6 +86,14 @@ public class PkVPk {
 
 	public void setWeather(Weather weather) {
 		this.weather = weather;
+	}
+
+	public boolean getIsWeatherSuppressed() {
+		return isWeatherSuppressed;
+	}
+
+	public void setIsWeatherSuppressed(boolean isWeatherSuppressed) {
+		this.isWeatherSuppressed = isWeatherSuppressed;
 	}
 
 	// ==================================== METHODS
@@ -409,6 +420,8 @@ public class PkVPk {
 
 		int modifierWeather = 1;
 
+		boolean isWeatherSuppressed = this.getIsWeatherSuppressed();
+		
 		// Some abilities allows to not to do damage (ex : Volt absorb)
 		if (abilityDefender != null) {
 			boolean continueAttack = abilityDefender.getEffect().beforeDamage(null, attacker, defender, attackAttacker);
@@ -515,7 +528,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 100) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.BURNED), weather);
+				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -537,7 +550,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.FROZEN), weather);
+				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -558,7 +571,7 @@ public class PkVPk {
 			System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 			if (probabilityGettingStatus <= 10) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1005,7 +1018,7 @@ public class PkVPk {
 			System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 			if (probabilityGettingStatus <= 30) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1427,7 +1440,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.BURNED), weather);
+				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1448,7 +1461,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.BURNED), weather);
+				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1519,7 +1532,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.FROZEN), weather);
+				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1541,7 +1554,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.FROZEN), weather);
+				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1842,8 +1855,8 @@ public class PkVPk {
 		case 74:
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Desarrollo");
 
-			// Add +2 if adequate weather
-			if (weather == Weather.SUN) {
+			// Add +2 if adequate weather (and it's not suppressed)
+			if (weather == Weather.SUN && !isWeatherSuppressed) {
 				modifierWeather = 2;
 			}
 
@@ -1882,7 +1895,7 @@ public class PkVPk {
 
 		// Rayo solar/Solar beam(tested)
 		case 76:
-			if (weather == Weather.SUN) {
+			if (weather == Weather.SUN && !isWeatherSuppressed) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Rayo solar");
 
 				dmg = doDammage();
@@ -1909,7 +1922,8 @@ public class PkVPk {
 					System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Rayo solar");
 
 					// Depending on weather it has less power
-					if (weather == Weather.RAIN || weather == Weather.HAIL || weather == Weather.SANDSTORM) {
+					if (!isWeatherSuppressed
+							&& (weather == Weather.RAIN || weather == Weather.HAIL || weather == Weather.SANDSTORM)) {
 						attackAttacker.setPower(attackAttacker.getPower() / 2);
 					}
 
@@ -1952,7 +1966,7 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (defender.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
 			} else {
 				System.out.println(defender.getName() + " ya está paralizado");
 			}
@@ -2077,7 +2091,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -2098,7 +2112,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -2113,7 +2127,7 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (defender.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
 			} else {
 				System.out.println(defender.getName() + " ya está paralizado");
 			}
@@ -2134,7 +2148,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -2361,6 +2375,11 @@ public class PkVPk {
 	public float getWeatherModifier(Attack attack) {
 
 		Weather weather = this.getWeather();
+		boolean isWeatherSuppresed = this.getIsWeatherSuppressed();
+
+		if (isWeatherSuppresed) {
+			return 1.0f;
+		}
 
 		if (weather == Weather.RAIN) {
 			if (attack.getStrTypeToPkType().getId() == 2) // Water

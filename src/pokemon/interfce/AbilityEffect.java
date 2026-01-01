@@ -11,6 +11,9 @@ public interface AbilityEffect {
 	default void onSwitchIn(Game game, Pokemon owner) {
 	}
 
+	default void onSwitchOut(Game game, Pokemon owner) {
+	}
+
 	default void beforeAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack) {
 	}
 

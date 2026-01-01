@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import pokemon.enums.AttackCategory;
 import pokemon.interfce.BattleArmorAbility;
+import pokemon.interfce.CloudNineAbility;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
@@ -995,7 +996,7 @@ public class ReaderData {
 
 	// -----------------------------
 	// Set the ability effect of the attack
-	// TODO >> 006 / 008
+	// TODO >> 006 / 008 / 012
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
@@ -1027,6 +1028,10 @@ public class ReaderData {
 		// Absorbe agua/Water absorb
 		case 11:
 			ability.setEffect(new WaterAbsorbAbility());
+			break;
+		// Aclimatación/Cloud nine
+		case 13:
+			ability.setEffect(new CloudNineAbility());
 			break;
 		// Sequía/Drought
 		case 70:

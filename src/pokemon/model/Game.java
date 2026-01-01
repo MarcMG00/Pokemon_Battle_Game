@@ -50,6 +50,7 @@ public class Game {
 	private boolean mistIsActivated;
 	private int nbTurnsMistActive;
 	private Weather currentWeather = Weather.NONE;
+	private boolean isWeatherSuppressed;
 
 	private Player player;
 	private IAPlayer IA;
@@ -78,6 +79,7 @@ public class Game {
 		this.readerData = new ReaderData();
 		this.mistIsActivated = false;
 		this.nbTurnsMistActive = 0;
+		this.isWeatherSuppressed = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -244,11 +246,19 @@ public class Game {
 	}
 
 	public Weather getCurrentWeather() {
-		return currentWeather;
+		return this.currentWeather;
 	}
 
 	public void setCurrentWeather(Weather currentWeather) {
 		this.currentWeather = currentWeather;
+	}
+
+	public boolean getisWeatherSuppressed() {
+		return isWeatherSuppressed;
+	}
+
+	public void setIsWeatherSuppressed(boolean isWeatherSuppressed) {
+		this.isWeatherSuppressed = isWeatherSuppressed;
 	}
 
 	// ==================================== METHODS
@@ -1138,7 +1148,9 @@ public class Game {
 
 		if (pkPlayer.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 
-			PkVPk battleVS = new PkVPk(this.getPlayer(), this.getIA(), this.getCurrentWeather());
+			boolean isWeatherSuppressed = this.getisWeatherSuppressed();
+
+			PkVPk battleVS = new PkVPk(this.getPlayer(), this.getIA(), this.getCurrentWeather(), isWeatherSuppressed);
 			this.setBattleVS(battleVS);
 
 			if (pkPlayer.getCanAttack()) {
@@ -1152,6 +1164,7 @@ public class Game {
 				if (pkPlayer.getCanAttack()) {
 
 					System.out.println(ANSI_GREEN + "Pokemon player can attack" + ANSI_RESET);
+
 					this.getBattleVS().doAttackEffect(this.getCurrentWeather(), this.getMistIsActivated());
 					pkPlayer.setLastUsedAttack(pkPlayer.getNextMovement());
 
@@ -1180,7 +1193,9 @@ public class Game {
 
 		if (pkIA.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED) {
 
-			PkVPk battleVS = new PkVPk(this.getIA(), this.getPlayer(), this.getCurrentWeather());
+			boolean isWeatherSuppressed = this.getisWeatherSuppressed();
+
+			PkVPk battleVS = new PkVPk(this.getIA(), this.getPlayer(), this.getCurrentWeather(), isWeatherSuppressed);
 			this.setBattleVS(battleVS);
 
 			if (pkIA.getCanAttack()) {
@@ -1194,6 +1209,7 @@ public class Game {
 				if (pkIA.getCanAttack()) {
 
 					System.out.println(ANSI_GREEN + "Pokemon IA can attack" + ANSI_RESET);
+
 					this.getBattleVS().doAttackEffect(this.getCurrentWeather(), this.getMistIsActivated());
 					pkIA.setLastUsedAttack(pkIA.getNextMovement());
 
@@ -1247,6 +1263,8 @@ public class Game {
 						.findFirst().get();
 			}
 
+			// Remove ability effect (ex : 13 Cloud Nine)
+			applyExitAbilityOnSwitch(this.getIA().getPkCombatting());
 			// Reinitialize some stats before changing
 			this.getIA().getPkCombatting().setAttackStage(0);
 			this.getIA().getPkCombatting().setSpecialAttackStage(0);
@@ -1309,6 +1327,8 @@ public class Game {
 				continue;
 			}
 
+			// Remove ability effect (ex : 13 Cloud Nine)
+			applyExitAbilityOnSwitch(this.getPlayer().getPkCombatting());
 			// Reinitialize some stats
 			this.getPlayer().getPkCombatting().setAttackStage(0);
 			this.getPlayer().getPkCombatting().setSpecialAttackStage(0);
@@ -1360,6 +1380,8 @@ public class Game {
 			return false; // doesn't exists a better option
 		}
 
+		// Remove ability effect (ex : 13 Cloud Nine)
+		applyExitAbilityOnSwitch(this.getIA().getPkCombatting());
 		// Reinitialize some stats
 		this.getIA().getPkCombatting().setAttackStage(0);
 		this.getIA().getPkCombatting().setSpecialAttackStage(0);
@@ -1418,6 +1440,8 @@ public class Game {
 		System.out.println(defender.getPkCombatting().getName() + " fue expulsado por "
 				+ defender.getPkFacing().getNextMovement().getName() + ".");
 
+		// Remove ability effect (ex : 13 Cloud Nine)
+		applyExitAbilityOnSwitch(defender.getPkCombatting());
 		// Reinitialize some stats
 		defender.getPkCombatting().setAttackStage(0);
 		defender.getPkCombatting().setSpecialAttackStage(0);
@@ -1480,34 +1504,38 @@ public class Game {
 	// Sets the weather ability on first combat (if any)
 	// -----------------------------
 	private void applyEntryAbilities() {
+
 		Pokemon p1 = this.getPlayer().getPkCombatting();
 		Pokemon p2 = this.getIA().getPkCombatting();
 
 		Ability a1 = p1.getAbilitySelected();
 		Ability a2 = p2.getAbilitySelected();
 
-		// If abilities are null OR are not weather type =< nothing applied for Game on
-		// general
-		if ((a1 == null && a2 == null) || (a1.getId() == 5000 && a2.getId() == 5000)
-				|| (!a1.getIsWeatherType() && !a2.getIsWeatherType()))
-			return;
+		// Abilities that put a weather
+		Ability weatherA1 = (a1 != null && a1.getIsWeatherType()) ? a1 : null;
+		Ability weatherA2 = (a2 != null && a2.getIsWeatherType()) ? a2 : null;
 
-		// If only one ability is not null and is weather type => apply tihs ability
-		if ((a1 != null && a1.getId() != 5000 && a1.getIsWeatherType()) && (a2 == null || a2.getId() == 5000)) {
+		if (weatherA1 != null || weatherA2 != null) {
+
+			if (weatherA1 != null && weatherA2 == null) {
+				weatherA1.getEffect().onBattleStart(this, p1);
+
+			} else if (weatherA2 != null && weatherA1 == null) {
+				weatherA2.getEffect().onBattleStart(this, p2);
+
+			} else {
+				// Slower Pokemon wins if both have weather abilities
+				Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
+				slower.getAbilitySelected().getEffect().onBattleStart(this, slower);
+			}
+		}
+
+		// Weather can be suppressed if 13_Cloud_Nine
+		if (a1 != null && a1.getId() == 13) {
 			a1.getEffect().onBattleStart(this, p1);
-		} else if ((a2 != null && a2.getId() != 5000 && a2.getIsWeatherType()) && (a1 == null || a1.getId() == 5000)) {
+		}
+		if (a2 != null && a2.getId() == 13) {
 			a2.getEffect().onBattleStart(this, p2);
-		}
-		// If both abilities are not null and are weather type => compare speed (the
-		// lowlier one wins)
-		else if ((a1 != null && a1.getId() != 5000 && a1.getIsWeatherType())
-				&& (a2 != null && a2.getId() != 5000 && a2.getIsWeatherType())) {
-			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
-			slower.getAbilitySelected().getEffect().onBattleStart(this, slower);
-		}
-		// TODO >> Don't know other cases ?
-		else {
-
 		}
 	}
 
@@ -1519,7 +1547,15 @@ public class Game {
 		if (ability == null || ability.getId() == 5000)
 			return;
 
-		ability.getEffect().onBattleStart(this, entering);
+		// Sets weather
+		if (ability.getIsWeatherType()) {
+			ability.getEffect().onBattleStart(this, entering);
+		}
+
+		// Suppress weather if 13_Cloud_Nine
+		if (ability.getId() == 13) {
+			ability.getEffect().onBattleStart(this, entering);
+		}
 	}
 
 	// -----------------------------
@@ -1534,13 +1570,28 @@ public class Game {
 	}
 
 	// -----------------------------
+	// Remove abilities effects before changing to new pokemon (ex : remove 13 Cloud
+	// Nine)
+	// -----------------------------
+	private void applyExitAbilityOnSwitch(Pokemon leaving) {
+		Ability ability = leaving.getAbilitySelected();
+
+		if (ability == null || ability.getId() == 5000)
+			return;
+
+		if (ability != null && ability.getId() == 13) {
+			ability.getEffect().onSwitchOut(this, leaving);
+		}
+	}
+
+	// -----------------------------
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
 	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee)
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "466,466,466";
-		String allPkIA = "135,135,135";
+		String allPkPlayer = "55,55,55,55,55,55";
+		String allPkIA = "279,279,279";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1582,7 +1633,7 @@ public class Game {
 		for (Pokemon pk : this.getPlayer().getPokemon()) {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
@@ -1592,7 +1643,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 68).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 87).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
@@ -1643,8 +1694,8 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 63).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 12).findFirst().get());
 
