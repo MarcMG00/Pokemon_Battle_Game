@@ -1316,6 +1316,10 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
+			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP)) {
+				break;
+			}
+
 			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
 			// can be accumulated with other ephemeral status)
 			if (!(defender.getEphemeralStates().stream()
@@ -1985,6 +1989,10 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Somnífero");
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
+			
+			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP)) {
+				break;
+			}
 
 			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
 			// can be accumulated with other ephemeral status)

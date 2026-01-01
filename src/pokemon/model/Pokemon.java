@@ -1181,6 +1181,9 @@ public class Pokemon {
 		removeDrainedAllTurns();
 	}
 
+	// -----------------------------
+	// Try to put normal status on Pokemon facing
+	// -----------------------------
 	public boolean trySetStatus(State newState, Weather weather, boolean isWeatherSuppressed) {
 
 		boolean canBeFrozen = weather != Weather.SUN;
@@ -1219,6 +1222,32 @@ public class Pokemon {
 		}
 
 		this.setStatusCondition(newState);
+		return true;
+	}
+
+	// -----------------------------
+	// Try to put ephemeral status on Pokemon facing
+	// -----------------------------
+	public boolean trySetEphemeralStatus(StatusConditions status) {
+
+		Ability ability = this.getAbilitySelected();
+		if (ability == null)
+			return true;
+
+		switch (status) {
+
+		case ASLEEP:
+			// 15_Insomnia
+			if (ability.getId() == 15) {
+				System.out.println(this.getName() + " no puede dormirse dada su habilidad Insomnia");
+				return false;
+			}
+			break;
+
+		default:
+			break;
+		}
+
 		return true;
 	}
 
