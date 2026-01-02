@@ -1273,8 +1273,6 @@ public class Game {
 			this.getIA().getPkCombatting().setSpecialDefenseStage(0);
 			this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
 			this.getIA().getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
-			// Reinitialize types (ex : Kecleon change types during combat)
-			this.getIA().getPkCombatting().setTypes(this.getIA().getPkCombatting().getInitialTypes());
 
 			System.out.println("IA eligió a " + newIA.getName() + " (Id:" + newIA.getId() + ")");
 
@@ -1339,8 +1337,6 @@ public class Game {
 			this.getPlayer().getPkCombatting().setSpecialDefenseStage(0);
 			this.getPlayer().getPkCombatting().setLastUsedAttack(new Attack());
 			this.getPlayer().getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
-			// Reinitialize types (ex : Kecleon change types during combat)
-			this.getPlayer().getPkCombatting().setTypes(this.getPlayer().getPkCombatting().getInitialTypes());
 
 			Pokemon selected = opt.get();
 
@@ -1394,8 +1390,6 @@ public class Game {
 		this.getIA().getPkCombatting().setSpecialDefenseStage(0);
 		this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
 		this.getIA().getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
-		// Reinitialize types (ex : Kecleon change types during combat)
-		this.getIA().getPkCombatting().setTypes(this.getIA().getPkCombatting().getInitialTypes());
 
 		// Do Pokemon change => update Pokemon comabting from IA, etc.
 		System.out.println("IA cambió a " + changeTo.getName());
@@ -1456,8 +1450,6 @@ public class Game {
 		defender.getPkCombatting().setSpecialDefenseStage(0);
 		defender.getPkCombatting().setLastUsedAttack(new Attack());
 		defender.getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
-		// Reinitialize types (ex : Kecleon change types during combat)
-		defender.getPkCombatting().setTypes(defender.getPkCombatting().getInitialTypes());
 
 		boolean isPlayer = defender == this.getPlayer();
 		System.out
@@ -1587,7 +1579,7 @@ public class Game {
 		if (ability == null || ability.getId() == 5000)
 			return;
 
-		if (ability != null && ability.getId() == 13) {
+		if (ability != null && (ability.getId() == 13 || ability.getId() == 16)) {
 			ability.getEffect().onSwitchOut(this, leaving);
 		}
 	}

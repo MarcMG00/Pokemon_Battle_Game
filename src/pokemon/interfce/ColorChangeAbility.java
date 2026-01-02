@@ -2,8 +2,6 @@ package pokemon.interfce;
 
 import java.util.ArrayList;
 
-import com.sun.tools.javac.util.List;
-
 import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.Game;
@@ -39,5 +37,14 @@ public class ColorChangeAbility implements AbilityEffect {
 		defender.setTypes(types);
 
 		System.out.println(defender.getName() + " cambió su tipo a " + moveType.getName() + " gracias a Cambio Color!");
+	}
+
+	@Override
+	public void onSwitchOut(Game game, Pokemon owner) {
+
+		// Reinitialize types (ex : Kecleon change types during combat)
+		owner.setTypes(owner.getInitialTypes());
+
+		System.out.println(owner.getName() + " volvió a su(s) tipo(s) normal(es)");
 	}
 }
