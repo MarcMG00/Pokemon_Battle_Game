@@ -629,7 +629,7 @@ public class Pokemon {
 	public void setJustEnteredBattle(boolean justEnteredBattle) {
 		this.justEnteredBattle = justEnteredBattle;
 	}
-	
+
 	public boolean getHasSubstitute() {
 		return hasSubstitute;
 	}
@@ -652,7 +652,7 @@ public class Pokemon {
 	public void addType(PokemonType pt) {
 		this.types.add(pt);
 	}
-	
+
 	// Adds initial types to Pokemon
 	public void addInitialType(PokemonType pt) {
 		this.initialTypes.add(pt);
@@ -1269,6 +1269,14 @@ public class Pokemon {
 			// 15_Insomnia
 			if (ability.getId() == 15) {
 				System.out.println(this.getName() + " no puede dormirse dada su habilidad Insomnia");
+				return false;
+			}
+			break;
+
+		case POISONED:
+			// 17_Immunity
+			if (ability.getId() == 17) {
+				System.out.println(this.getName() + " no puede envenenarse dada su habilidad Inmunidad");
 				return false;
 			}
 			break;

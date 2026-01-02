@@ -1579,9 +1579,9 @@ public class Game {
 		if (ability == null || ability.getId() == 5000)
 			return;
 
-		if (ability != null && (ability.getId() == 13 || ability.getId() == 16)) {
+		//if (ability != null && (ability.getId() == 13 || ability.getId() == 16)) {
 			ability.getEffect().onSwitchOut(this, leaving);
-		}
+		//}
 	}
 
 	// -----------------------------

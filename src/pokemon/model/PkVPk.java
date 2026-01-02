@@ -1145,6 +1145,14 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Picotazo veneno");
 
 			dmg = doDammage();
+			
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+
+			defender.setPs(defender.getPs() - dmg);
+			
+			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED)) {
+				break;
+			}
 
 			probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -1162,10 +1170,6 @@ public class PkVPk {
 					System.out.println(defender.getName() + " fue envenenado");
 				}
 			}
-
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
-
-			defender.setPs(defender.getPs() - dmg);
 			break;
 
 		// Doble ataque/Twineedle (tested)
@@ -1184,6 +1188,10 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmgToSum);
+			
+			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED)) {
+				break;
+			}
 
 			probabilityGettingStatus = (int) (Math.random() * 100);
 
@@ -1953,6 +1961,12 @@ public class PkVPk {
 		case 77:
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Polvo veneno");
 
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+			
+			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED)) {
+				break;
+			}
+
 			// Possibility of poisoning Pokemon facing if is not already poisoned and has
 			// not a Status
 			if (this.getPkFacing().getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
@@ -1965,8 +1979,6 @@ public class PkVPk {
 			} else {
 				System.out.println(defender.getName() + " ya está envenenado");
 			}
-
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
 			break;
 
 		// Paralizador/Stun spore (tested)
