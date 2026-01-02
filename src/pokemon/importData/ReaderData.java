@@ -12,6 +12,7 @@ import java.util.Optional;
 import pokemon.enums.AttackCategory;
 import pokemon.interfce.BattleArmorAbility;
 import pokemon.interfce.CloudNineAbility;
+import pokemon.interfce.ColorChangeAbility;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
@@ -153,7 +154,7 @@ public class ReaderData {
 							if (pkty.getId() == Integer.parseInt(pks[12])) {
 
 								pokemonToAdd.addType(pkty);
-
+								pokemonToAdd.addInitialType(pkty);
 							}
 						}
 					}
@@ -173,7 +174,7 @@ public class ReaderData {
 								if (pkty.getId() == Integer.parseInt(pks[13])) {
 
 									pokemonToAdd.addType(pkty);
-
+									pokemonToAdd.addInitialType(pkty);
 								}
 							}
 						}
@@ -1032,6 +1033,10 @@ public class ReaderData {
 		// Aclimatación/Cloud nine
 		case 13:
 			ability.setEffect(new CloudNineAbility());
+			break;
+		// Cambio color/Color change
+		case 16:
+			ability.setEffect(new ColorChangeAbility());
 			break;
 		// Sequía/Drought
 		case 70:

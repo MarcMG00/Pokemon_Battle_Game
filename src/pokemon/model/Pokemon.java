@@ -27,6 +27,7 @@ public class Pokemon {
 	private ArrayList<Ability> normalAbilities;
 	private ArrayList<Ability> hiddenAbilities;
 	private ArrayList<PokemonType> types;
+	private ArrayList<PokemonType> initialTypes;
 	private ArrayList<Attack> physicalAttacks;
 	private ArrayList<Attack> specialAttacks;
 	private ArrayList<Attack> otherAttacks;
@@ -58,6 +59,7 @@ public class Pokemon {
 	private boolean isDraining;
 	private Ability AbilitySelected;
 	private boolean justEnteredBattle;
+	private boolean hasSubstitute;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -116,6 +118,8 @@ public class Pokemon {
 		this.isDraining = false;
 		this.AbilitySelected = new Ability();
 		this.justEnteredBattle = false;
+		this.hasSubstitute = false;
+		this.initialTypes = new ArrayList<>();
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -168,6 +172,8 @@ public class Pokemon {
 		this.isDraining = false;
 		this.AbilitySelected = new Ability();
 		this.justEnteredBattle = false;
+		this.hasSubstitute = false;
+		this.initialTypes = new ArrayList<>();
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -225,6 +231,8 @@ public class Pokemon {
 		this.isDraining = pokemon.isDraining;
 		this.AbilitySelected = pokemon.AbilitySelected;
 		this.justEnteredBattle = pokemon.justEnteredBattle;
+		this.hasSubstitute = pokemon.hasSubstitute;
+		this.initialTypes = pokemon.initialTypes;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -364,6 +372,14 @@ public class Pokemon {
 
 	public void setTypes(ArrayList<PokemonType> types) {
 		this.types = types;
+	}
+
+	public ArrayList<PokemonType> getInitialTypes() {
+		return initialTypes;
+	}
+
+	public void setInitialTypes(ArrayList<PokemonType> initialTypes) {
+		this.initialTypes = initialTypes;
 	}
 
 	public ArrayList<Attack> getPhysicalAttacks() {
@@ -613,6 +629,14 @@ public class Pokemon {
 	public void setJustEnteredBattle(boolean justEnteredBattle) {
 		this.justEnteredBattle = justEnteredBattle;
 	}
+	
+	public boolean getHasSubstitute() {
+		return hasSubstitute;
+	}
+
+	public void setHasSubstitute(boolean hasSubstitute) {
+		this.hasSubstitute = hasSubstitute;
+	}
 
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
@@ -627,6 +651,11 @@ public class Pokemon {
 	// Adds types to Pokemon
 	public void addType(PokemonType pt) {
 		this.types.add(pt);
+	}
+	
+	// Adds initial types to Pokemon
+	public void addInitialType(PokemonType pt) {
+		this.initialTypes.add(pt);
 	}
 
 	// Adds physical attacks to Pokemon
