@@ -753,6 +753,8 @@ public class ReaderData {
 				setAttackIsOneHit(attack);
 				// Set the attack if makes contact
 				setAttackMakesContatc(attack);
+				// Set the attack if has secondary effects
+				setAttackHasSecondaryEffects(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -1078,6 +1080,38 @@ public class ReaderData {
 	public void setAttackMakesContatc(Attack attack) {
 		if (attack.getBases() != null && attack.getBases().contains("fisico")) {
 			attack.setMakesContact(true);
+		}
+	}
+
+	// -----------------------------
+	// Set if attack has secondary effects
+	// -----------------------------
+	public void setAttackHasSecondaryEffects(Attack attack) {
+		switch (attack.getId()) {
+		case 7:
+		case 8:
+		case 9:
+		case 27:
+		case 29:
+		case 34:
+		case 40:
+		case 41:
+		case 44:
+		case 51:
+		case 52:
+		case 53:
+		case 58:
+		case 59:
+		case 60:
+		case 61:
+		case 62:
+		case 84:
+		case 85:
+		case 87:
+			attack.setHasSecondaryEffect(true);
+			break;
+		default:
+			attack.setHasSecondaryEffect(false);
 		}
 	}
 

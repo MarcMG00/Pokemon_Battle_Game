@@ -534,7 +534,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 100) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -556,7 +556,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -577,7 +577,7 @@ public class PkVPk {
 			System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 			if (probabilityGettingStatus <= 10) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1024,7 +1024,7 @@ public class PkVPk {
 			System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 			if (probabilityGettingStatus <= 30) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1150,7 +1150,7 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED, attackAttacker)) {
 				break;
 			}
 
@@ -1189,7 +1189,7 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmgToSum);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED, attackAttacker)) {
 				break;
 			}
 
@@ -1324,7 +1324,7 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker)) {
 				break;
 			}
 
@@ -1352,7 +1352,7 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED, attackAttacker)) {
 				break;
 			}
 
@@ -1462,7 +1462,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1483,7 +1483,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1554,7 +1554,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1576,7 +1576,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1590,7 +1590,7 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 			
-			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED, attackAttacker)) {
 				break;
 			}
 
@@ -1971,7 +1971,7 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED, attackAttacker)) {
 				break;
 			}
 
@@ -1996,7 +1996,7 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (defender.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
 			} else {
 				System.out.println(defender.getName() + " ya está paralizado");
 			}
@@ -2010,7 +2010,7 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker)) {
 				break;
 			}
 
@@ -2125,7 +2125,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -2146,7 +2146,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -2161,7 +2161,7 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (defender.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
 			} else {
 				System.out.println(defender.getName() + " ya está paralizado");
 			}
@@ -2182,7 +2182,7 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);

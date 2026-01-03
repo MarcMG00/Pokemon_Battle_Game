@@ -1225,9 +1225,19 @@ public class Pokemon {
 	// -----------------------------
 	// Try to put normal status on Pokemon facing
 	// -----------------------------
-	public boolean trySetStatus(State newState, Weather weather, boolean isWeatherSuppressed) {
+	public boolean trySetStatus(State newState, Weather weather, boolean isWeatherSuppressed, Attack attackAttacker) {
 
 		boolean canBeFrozen = weather != Weather.SUN;
+
+		Ability ability = this.getAbilitySelected();
+		if (ability != null) {
+			// 19_Shield_Dust doesn't allow to get secondary effects
+			if (attackAttacker.getHasSecondaryEffect() && ability.getId() == 19) {
+				System.out.println(this.getName()
+						+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
+				return false;
+			}
+		}
 
 		// Already has a status
 		if (this.statusCondition.getStatusCondition() != StatusConditions.NO_STATUS)
@@ -1269,11 +1279,18 @@ public class Pokemon {
 	// -----------------------------
 	// Try to put ephemeral status on Pokemon facing
 	// -----------------------------
-	public boolean trySetEphemeralStatus(StatusConditions status) {
+	public boolean trySetEphemeralStatus(StatusConditions status, Attack attackAttacker) {
 
 		Ability ability = this.getAbilitySelected();
 		if (ability == null)
 			return true;
+
+		// 19_Shield_Dust doesn't allow to get secondary effects
+		if (attackAttacker.getHasSecondaryEffect() && ability.getId() == 19) {
+			System.out.println(this.getName()
+					+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
+			return false;
+		}
 
 		switch (status) {
 

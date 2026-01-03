@@ -29,6 +29,7 @@ public class Attack {
 	private double percentageFlinch;
 	private boolean isOneHitKO;
 	private boolean makesContact;
+	private boolean hasSecondaryEffect;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -52,6 +53,7 @@ public class Attack {
 		this.percentageFlinch = 0d;
 		this.isOneHitKO = false;
 		this.makesContact = false;
+		this.hasSecondaryEffect = false;
 	}
 
 	public Attack(int id, String name, String type, int power, int pp, int precision, String effect) {
@@ -73,6 +75,7 @@ public class Attack {
 		this.percentageFlinch = 0d;
 		this.isOneHitKO = false;
 		this.makesContact = false;
+		this.hasSecondaryEffect = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -234,7 +237,15 @@ public class Attack {
 	public void setMakesContact(boolean makesContact) {
 		this.makesContact = makesContact;
 	}
-	
+
+	public boolean getHasSecondaryEffect() {
+		return hasSecondaryEffect;
+	}
+
+	public void setHasSecondaryEffect(boolean hasSecondaryEffect) {
+		this.hasSecondaryEffect = hasSecondaryEffect;
+	}
+
 	// ==================================== METHODS
 	// ====================================
 
