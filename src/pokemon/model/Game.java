@@ -674,6 +674,10 @@ public class Game {
 
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
+		
+		// Apply some abilities first
+	    applyIntimidationOnBattleStart(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
+	    
 		// Puts abilities (for example if weather) at the beginning
 		applyEntryAbilities();
 
@@ -1280,7 +1284,7 @@ public class Game {
 			this.getIA().setPkFacing(this.getPlayer().getPkCombatting());
 
 			// Update weather ability if any
-			applyEntryAbilityOnSwitch(newIA);
+			applyEntryAbilityOnSwitch(newIA, this.getPlayer().getPkCombatting());
 
 			this.getPlayer().setPkFacing(this.getIA().getPkCombatting());
 			refreshAttackOrders();
@@ -1351,7 +1355,7 @@ public class Game {
 			this.getIA().setPkFacing(this.getPlayer().getPkCombatting());
 
 			// Update weather ability if any
-			applyEntryAbilityOnSwitch(this.getPlayer().getPkCombatting());
+			applyEntryAbilityOnSwitch(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
 
 			refreshAttackOrders();
 
@@ -1459,7 +1463,7 @@ public class Game {
 		defender.setPkCombatting(newPk);
 
 		// Update weather ability if any
-		applyEntryAbilityOnSwitch(newPk);
+		applyEntryAbilityOnSwitch(newPk, this.getIA().getPkCombatting());
 
 		// Update Pokemon facing etc.
 		if (defender == this.getPlayer()) {
@@ -1542,10 +1546,15 @@ public class Game {
 	// -----------------------------
 	// Sets the ability during changes (forced or manual) (if any)
 	// -----------------------------
-	private void applyEntryAbilityOnSwitch(Pokemon entering) {
+	private void applyEntryAbilityOnSwitch(Pokemon entering, Pokemon defender) {
 		Ability ability = entering.getAbilitySelected();
 		if (ability == null || ability.getId() == 5000)
 			return;
+
+		// Intimidate, etc. (first abilities to apply)
+		if (ability.getId() == 22) {
+			ability.getEffect().onSwitchIn(this, entering, defender);
+		}
 
 		// Sets weather
 		if (ability.getIsWeatherType()) {
@@ -1585,13 +1594,36 @@ public class Game {
 	}
 
 	// -----------------------------
+	// Do 22_Intimidate ability
+	// -----------------------------
+	private void applyIntimidationOnBattleStart(Pokemon p1, Pokemon p2) {
+
+		boolean p1Intimidate = p1.hasAbility(22);
+		boolean p2Intimidate = p2.hasAbility(22);
+
+		if (!p1Intimidate && !p2Intimidate)
+			return;
+
+		if (p1Intimidate && !p2Intimidate) {
+			p1.getAbilitySelected().getEffect().onSwitchIn(this, p1, p2);
+		} else if (p2Intimidate && !p1Intimidate) {
+			p2.getAbilitySelected().getEffect().onSwitchIn(this, p2, p1);
+		} else {
+			// Speed comparison
+			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
+			Pokemon faster = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
+			slower.getAbilitySelected().getEffect().onSwitchIn(this, slower, faster);
+		}
+	}
+
+	// -----------------------------
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
 	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee)
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "38,38,38,38,38,38";
-		String allPkIA = "466,466,466";
+		String allPkPlayer = "130,130,130,130,130";
+		String allPkIA = "744,744,744,744";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1628,7 +1660,8 @@ public class Game {
 
 		// Sets first Pokemon to combat for player
 		this.getPlayer().setPkCombatting(this.getPlayer().getPokemon().get(0));
-		//this.getPlayer().getPkCombatting().setStatusCondition(new State(StatusConditions.FROZEN));
+		// this.getPlayer().getPkCombatting().setStatusCondition(new
+		// State(StatusConditions.FROZEN));
 
 		// Sets the attacks to pokemon's player to test
 		for (Pokemon pk : this.getPlayer().getPokemon()) {
@@ -1646,7 +1679,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());
-			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 53).findFirst().get());
+//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 53).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -1683,7 +1716,7 @@ public class Game {
 
 		for (Pokemon pk : this.getIA().getPokemon()) {
 
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
@@ -1699,7 +1732,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 12).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {

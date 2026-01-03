@@ -641,7 +641,7 @@ public class Pokemon {
 	public void setHasSubstitute(boolean hasSubstitute) {
 		this.hasSubstitute = hasSubstitute;
 	}
-	
+
 	public boolean getIsFireBoostActive() {
 		return isFireBoostActive;
 	}
@@ -1298,6 +1298,10 @@ public class Pokemon {
 		}
 
 		return true;
+	}
+
+	public boolean hasAbility(int abilityId) {
+		return this.getAbilitySelected().getId() == abilityId;
 	}
 
 }

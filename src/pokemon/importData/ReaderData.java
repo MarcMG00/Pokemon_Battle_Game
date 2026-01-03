@@ -17,6 +17,7 @@ import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlashFireAbility;
+import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
@@ -1042,6 +1043,10 @@ public class ReaderData {
 		// Absorbe fuego/Flash fire
 		case 18:
 			ability.setEffect(new FlashFireAbility());
+			break;
+		// Intimidación/Intimidate
+		case 22:
+			ability.setEffect(new IntimidateAbility());
 			break;
 		// Sequía/Drought
 		case 70:

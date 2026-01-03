@@ -8,7 +8,7 @@ public interface AbilityEffect {
 	default void onBattleStart(Game game, Pokemon owner) {
 	}
 
-	default void onSwitchIn(Game game, Pokemon owner) {
+	default void onSwitchIn(Game game, Pokemon owner, Pokemon defender) {
 	}
 
 	default void onSwitchOut(Game game, Pokemon owner) {

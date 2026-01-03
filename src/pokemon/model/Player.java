@@ -136,8 +136,11 @@ public class Player {
 			}
 
 			// 3️ - Just in case if Pokemon has no abilities
-			if (possibleAbilities.isEmpty()) {
+			if (possibleAbilities.isEmpty() && pk.getHiddenAbilities() != null && !pk.getHiddenAbilities().isEmpty()) {
+				possibleAbilities.addAll(pk.getHiddenAbilities());
+			} else if (possibleAbilities.isEmpty()) {
 				System.out.println(pk.getName() + " no tiene habilidades (ni normales, ni ocultas).");
+				possibleAbilities.addAll(pk.getHiddenAbilities());
 				continue;
 			}
 
