@@ -16,6 +16,7 @@ import pokemon.interfce.ColorChangeAbility;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
+import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
@@ -1037,6 +1038,10 @@ public class ReaderData {
 		// Cambio color/Color change
 		case 16:
 			ability.setEffect(new ColorChangeAbility());
+			break;
+		// Absorbe fuego/Flash fire
+		case 18:
+			ability.setEffect(new FlashFireAbility());
 			break;
 		// Sequía/Drought
 		case 70:

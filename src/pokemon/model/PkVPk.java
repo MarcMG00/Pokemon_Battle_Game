@@ -1145,11 +1145,11 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Picotazo veneno");
 
 			dmg = doDammage();
-			
+
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
-			
+
 			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED)) {
 				break;
 			}
@@ -1188,7 +1188,7 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmgToSum);
-			
+
 			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED)) {
 				break;
 			}
@@ -1962,7 +1962,7 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Polvo veneno");
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
-			
+
 			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED)) {
 				break;
 			}
@@ -2001,7 +2001,7 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Somnífero");
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
-			
+
 			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP)) {
 				break;
 			}
@@ -2257,6 +2257,11 @@ public class PkVPk {
 					* randomVariation
 					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveAttack() * attack.getPower())
 							/ (25f * this.getPkFacing().getEffectiveDefense()) + 2f);
+		}
+
+		// 18_Flash_Fire boost
+		if (this.getPkCombatting().getIsFireBoostActive() && attack.getStrTypeToPkType().getId() == 7) {
+			dmg *= 1.5f;
 		}
 
 		System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"

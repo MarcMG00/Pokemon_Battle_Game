@@ -20,6 +20,8 @@ public class VoltAbsorbAbility implements AbilityEffect {
 			return true;
 		}
 
+		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + attack.getName());
+		
 		System.out
 				.println(defender.getName() + " absorbió la electricidad gracias a la habilidad Absorbe electricidad");
 

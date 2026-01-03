@@ -60,6 +60,7 @@ public class Pokemon {
 	private Ability AbilitySelected;
 	private boolean justEnteredBattle;
 	private boolean hasSubstitute;
+	private boolean isFireBoostActive;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -120,6 +121,7 @@ public class Pokemon {
 		this.justEnteredBattle = false;
 		this.hasSubstitute = false;
 		this.initialTypes = new ArrayList<>();
+		this.isFireBoostActive = false;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -174,6 +176,7 @@ public class Pokemon {
 		this.justEnteredBattle = false;
 		this.hasSubstitute = false;
 		this.initialTypes = new ArrayList<>();
+		this.isFireBoostActive = false;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -233,6 +236,7 @@ public class Pokemon {
 		this.justEnteredBattle = pokemon.justEnteredBattle;
 		this.hasSubstitute = pokemon.hasSubstitute;
 		this.initialTypes = pokemon.initialTypes;
+		this.isFireBoostActive = pokemon.isFireBoostActive;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -636,6 +640,14 @@ public class Pokemon {
 
 	public void setHasSubstitute(boolean hasSubstitute) {
 		this.hasSubstitute = hasSubstitute;
+	}
+	
+	public boolean getIsFireBoostActive() {
+		return isFireBoostActive;
+	}
+
+	public void setIsFireBoostActive(boolean isFireBoostActive) {
+		this.isFireBoostActive = isFireBoostActive;
 	}
 
 	// Adds abilities to Pokemon
