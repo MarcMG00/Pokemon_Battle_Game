@@ -702,14 +702,22 @@ public class Game {
 			if (attackChoice == 1) {
 				handleAttackTurn(sc);
 			} else {
-				boolean cancelled = !handleChangeTurn(sc);
-
-				if (cancelled) {
-					System.out.println("Cambio cancelado. Regresando al menú principal...");
+				if (this.getIA().getPkCombatting().getAbilitySelected().getId() == 23) {
+					System.out.println("No puedes cambiar de Pokémon a causa de la habilidad Sombra trampa del rival");
 					attackChoice = -1; // show again options : attack/change
 					// Stay in the same round
 					nbRound--;
+				} else {
+					boolean cancelled = !handleChangeTurn(sc);
+
+					if (cancelled) {
+						System.out.println("Cambio cancelado. Regresando al menú principal...");
+						attackChoice = -1; // show again options : attack/change
+						// Stay in the same round
+						nbRound--;
+					}
 				}
+
 			}
 
 			// Get next round
@@ -1623,7 +1631,7 @@ public class Game {
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "787,787,787";
-		String allPkIA = "687,687,687";
+		String allPkIA = "202,202,202,202";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1730,7 +1738,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 68).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 
