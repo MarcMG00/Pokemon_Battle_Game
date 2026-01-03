@@ -1352,6 +1352,10 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
+			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED)) {
+				break;
+			}
+
 			// Check if the Pokemon facing doesn't have the status Confused (is a status
 			// that
 			// can be accumulated with other ephemeral status)
@@ -1585,6 +1589,10 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Psicorrayo");
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
+			
+			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED)) {
+				break;
+			}
 
 			// Check if the Pokemon facing doesn't have the status Confused (is a status
 			// that
