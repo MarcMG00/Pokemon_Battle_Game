@@ -752,7 +752,7 @@ public class ReaderData {
 				// Set the attack is One-Hit KO
 				setAttackIsOneHit(attack);
 				// Set the attack if makes contact
-				setAttackMakesContatc(attack);
+				setAttackMakesContact(attack);
 				// Set the attack if has secondary effects
 				setAttackHasSecondaryEffects(attack);
 
@@ -1077,7 +1077,7 @@ public class ReaderData {
 	// -----------------------------
 	// Set if attack is one hit KO
 	// -----------------------------
-	public void setAttackMakesContatc(Attack attack) {
+	public void setAttackMakesContact(Attack attack) {
 		if (attack.getBases() != null && attack.getBases().contains("fisico")) {
 			attack.setMakesContact(true);
 		}

@@ -713,6 +713,12 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
+			// 21_Suction_Cups doesn't allow to force change
+			if(defender.getAbilitySelected().getId() == 21) {
+				System.out.println(defender.getName() + " no puede ser forzado por el cambio dada su habilidad Ventosas");
+				break;
+			}
+			
 			// If rival has no more Pokemon => it doesn't matter, but no fail
 			if (!this.getDefender().hasAvailableSwitch()) {
 				System.out.println("Pero " + this.getPkFacing().getName() + " no tiene más Pokémon para cambiar.");
@@ -1305,6 +1311,12 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
+			// 21_Suction_Cups doesn't allow to force change
+			if(defender.getAbilitySelected().getId() == 21) {
+				System.out.println(defender.getName() + " no puede ser forzado por el cambio dada su habilidad Ventosas");
+				break;
+			}
+			
 			// If rival has no more Pokemon remaining, it doesn't matter => only fails the
 			// attack
 			if (!this.getDefender().hasAvailableSwitch()) {
