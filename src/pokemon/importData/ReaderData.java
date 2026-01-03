@@ -18,6 +18,7 @@ import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.IntimidateAbility;
+import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
@@ -1049,6 +1050,10 @@ public class ReaderData {
 		// Intimidación/Intimidate
 		case 22:
 			ability.setEffect(new IntimidateAbility());
+			break;
+		// Piel tosca/Rough skin
+		case 24:
+			ability.setEffect(new RoughSkinAbility());
 			break;
 		// Sequía/Drought
 		case 70:

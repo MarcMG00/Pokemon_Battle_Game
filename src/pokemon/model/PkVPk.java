@@ -531,7 +531,7 @@ public class PkVPk {
 
 			System.out.println("proba de quemar : " + probabilityGettingStatus);
 
-			if (probabilityGettingStatus <= 100) {
+			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
 				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed, attackAttacker);
@@ -2469,7 +2469,7 @@ public class PkVPk {
 	}
 
 	// -----------------------------
-	// Do ability effect after attacking
+	// Do ability effect after attacking (for defender)
 	// -----------------------------
 	private void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg) {
 
