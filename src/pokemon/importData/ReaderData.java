@@ -24,6 +24,7 @@ import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
 import pokemon.interfce.VoltAbsorbAbility;
 import pokemon.interfce.WaterAbsorbAbility;
+import pokemon.interfce.WonderGuardAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.Pokemon;
@@ -440,6 +441,7 @@ public class ReaderData {
 	// Reads typesList.csv file and adds to types list
 	// -----------------------------
 	public void readPkTypes(ArrayList<PokemonType> types, Map<Integer, PokemonType> typeById) {
+
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
@@ -447,7 +449,7 @@ public class ReaderData {
 			fileReader = new FileReader(SAMPLE_CSV_ALL_TYPES);
 			bufferedReader = new BufferedReader(fileReader);
 
-			// Skips first line
+			// Skip header
 			bufferedReader.readLine();
 			String line;
 
@@ -456,30 +458,41 @@ public class ReaderData {
 				String[] pkTypes = line.split(",");
 
 				if (types.size() == 18) {
-
 					break;
-
-				} else {
-
-					PokemonType pkType = new PokemonType(Integer.parseInt(pkTypes[0]), pkTypes[1].toUpperCase());
-					types.add(pkType);
-					typeById.put(pkType.getId(), pkType);
-
 				}
+
+				PokemonType pkType = new PokemonType(Integer.parseInt(pkTypes[0]), pkTypes[1].toUpperCase());
+
+				// -----------------------------
+				// Offensive
+				// -----------------------------
+				pkType.setPktDoLotDamage(parseIntList(pkTypes[2])); // Arrebienta
+				pkType.setPktDoLowDamage(parseIntList(pkTypes[4])); // NoArrebientaMucho
+				pkType.setNoEffect(parseIntList(pkTypes[6])); // NoLeHaceNingunDano
+
+				// -----------------------------
+				// Defensive
+				// -----------------------------
+				pkType.setPktRecieveLotDamage(parseIntList(pkTypes[3])); // LeArrebientan
+				pkType.setPktReceiveLowDamage(parseIntList(pkTypes[5])); // LeArrebietanPoco
+
+				types.add(pkType);
+				typeById.put(pkType.getId(), pkType);
 			}
+			PokemonType fire = typeById.get(7);
+			System.out.println("FUEGO arrebienta a: " + fire.getPktDoLotDamage());
+
 		} catch (IOException e) {
-			System.out.println("Exception reading the file  : " + e.getMessage());
+			System.out.println("Exception reading the file : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
 				System.out.println("Finished reading readPkTypes");
 			} catch (IOException e) {
-				System.out.println("Exception closing the file  : " + e.getMessage());
+				System.out.println("Exception closing the file : " + e.getMessage());
 			}
 		}
 	}
@@ -1055,6 +1068,10 @@ public class ReaderData {
 		case 24:
 			ability.setEffect(new RoughSkinAbility());
 			break;
+		// Superguarda/Wonder guard
+		case 25:
+			ability.setEffect(new WonderGuardAbility());
+			break;
 		// Sequía/Drought
 		case 70:
 			ability.setEffect(new DroughtAbility());
@@ -1118,6 +1135,25 @@ public class ReaderData {
 		default:
 			attack.setHasSecondaryEffect(false);
 		}
+	}
+
+	// -----------------------------
+	// Parse string to int
+	// -----------------------------
+	private ArrayList<Integer> parseIntList(String value) {
+
+		ArrayList<Integer> list = new ArrayList<>();
+
+		if (value == null || value.equals("0") || value.isEmpty()) {
+			return list;
+		}
+
+		String[] values = value.split(";");
+		for (String v : values) {
+			list.add(Integer.parseInt(v.trim()));
+		}
+
+		return list;
 	}
 
 }
