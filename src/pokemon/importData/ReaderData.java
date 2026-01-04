@@ -18,6 +18,7 @@ import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.IntimidateAbility;
+import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
@@ -1071,6 +1072,10 @@ public class ReaderData {
 		// Superguarda/Wonder guard
 		case 25:
 			ability.setEffect(new WonderGuardAbility());
+			break;
+		// Levitación/Levitate
+		case 26:
+			ability.setEffect(new LevitateAbility());
 			break;
 		// Sequía/Drought
 		case 70:
