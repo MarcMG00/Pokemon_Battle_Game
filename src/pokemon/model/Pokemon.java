@@ -696,7 +696,7 @@ public class Pokemon {
 	}
 
 	// Adds a ephemeral state to Pokemon
-	public void addEstadoEfimero(State ephState) {
+	public void addEphemeralState(State ephState) {
 		this.ephemeralStates.add(ephState);
 	}
 
@@ -1209,7 +1209,7 @@ public class Pokemon {
 
 					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
 
-					this.addEstadoEfimero(confused);
+					this.addEphemeralState(confused);
 				}
 			}
 		}
@@ -1240,7 +1240,7 @@ public class Pokemon {
 		}
 
 		// Already has a status
-		if (this.statusCondition.getStatusCondition() != StatusConditions.NO_STATUS)
+		if (this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS)
 			return false;
 
 		// PARALYZED

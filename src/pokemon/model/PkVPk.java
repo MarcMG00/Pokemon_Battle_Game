@@ -773,7 +773,7 @@ public class PkVPk {
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
 
-				defender.addEstadoEfimero(trapped);
+				defender.addEphemeralState(trapped);
 			}
 
 			defender.setPs(defender.getPs() - dmg);
@@ -1055,7 +1055,7 @@ public class PkVPk {
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
 
-				defender.addEstadoEfimero(trapped);
+				defender.addEphemeralState(trapped);
 			}
 
 			defender.setPs(defender.getPs() - dmg);
@@ -1098,7 +1098,7 @@ public class PkVPk {
 
 				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
 
-				attacker.addEstadoEfimero(trappedByOwnAttack);
+				attacker.addEphemeralState(trappedByOwnAttack);
 
 				// Only removes PP when choosing the attack
 				attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1352,7 +1352,7 @@ public class PkVPk {
 
 				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
 
-				defender.addEstadoEfimero(asleep);
+				defender.addEphemeralState(asleep);
 			} else {
 				System.out.println(defender.getName() + " ya está dormido!");
 			}
@@ -1380,7 +1380,7 @@ public class PkVPk {
 
 				State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
 
-				defender.addEstadoEfimero(confused);
+				defender.addEphemeralState(confused);
 			} else {
 				System.out.println(defender.getName() + " ya está confuso!");
 			}
@@ -1425,7 +1425,7 @@ public class PkVPk {
 			State attackDisabled = new State(StatusConditions.DISABLE, nbTurnsHoldingStatus + 1);
 			attackDisabled.setAttackDisabled(lastAttack);
 
-			defender.addEstadoEfimero(attackDisabled);
+			defender.addEphemeralState(attackDisabled);
 
 			System.out.println(defender.getName() + " no podrá usar " + lastAttack.getName() + " por "
 					+ nbTurnsHoldingStatus + " turnos");
@@ -1622,7 +1622,7 @@ public class PkVPk {
 
 					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
 
-					defender.addEstadoEfimero(confused);
+					defender.addEphemeralState(confused);
 				}
 			}
 			break;
@@ -1877,7 +1877,7 @@ public class PkVPk {
 
 					State drainedAllTurns = new State(StatusConditions.DRAINEDALLTURNS, 0);
 
-					this.getPkFacing().addEstadoEfimero(drainedAllTurns);
+					this.getPkFacing().addEphemeralState(drainedAllTurns);
 				} else {
 					System.out.println(defender.getName() + " ya está drenado");
 				}
@@ -2038,7 +2038,7 @@ public class PkVPk {
 
 				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
 
-				defender.addEstadoEfimero(asleep);
+				defender.addEphemeralState(asleep);
 			} else {
 				System.out.println(defender.getName() + " ya está dormido!");
 			}
@@ -2060,7 +2060,7 @@ public class PkVPk {
 
 				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
 
-				attacker.addEstadoEfimero(trappedByOwnAttack);
+				attacker.addEphemeralState(trappedByOwnAttack);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -2116,7 +2116,7 @@ public class PkVPk {
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
 
-				defender.addEstadoEfimero(trapped);
+				defender.addEphemeralState(trapped);
 			}
 
 			defender.setPs(defender.getPs() - dmg);

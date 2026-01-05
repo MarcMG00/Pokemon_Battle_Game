@@ -15,6 +15,7 @@ import pokemon.interfce.CloudNineAbility;
 import pokemon.interfce.ColorChangeAbility;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
+import pokemon.interfce.EffectSporeAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.IntimidateAbility;
@@ -1076,6 +1077,10 @@ public class ReaderData {
 		// Levitación/Levitate
 		case 26:
 			ability.setEffect(new LevitateAbility());
+			break;
+		// Efecto espora/Effect spore
+		case 27:
+			ability.setEffect(new EffectSporeAbility());
 			break;
 		// Sequía/Drought
 		case 70:
