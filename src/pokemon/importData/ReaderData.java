@@ -24,6 +24,7 @@ import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
+import pokemon.interfce.SynchronizeAbility;
 import pokemon.interfce.VoltAbsorbAbility;
 import pokemon.interfce.WaterAbsorbAbility;
 import pokemon.interfce.WonderGuardAbility;
@@ -1081,6 +1082,10 @@ public class ReaderData {
 		// Efecto espora/Effect spore
 		case 27:
 			ability.setEffect(new EffectSporeAbility());
+			break;
+		// Sincronía/Synchronize
+		case 28:
+			ability.setEffect(new SynchronizeAbility());
 			break;
 		// Sequía/Drought
 		case 70:
