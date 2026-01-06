@@ -577,7 +577,8 @@ public class PkVPk {
 			System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 			if (probabilityGettingStatus <= 10) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
+						attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -714,11 +715,12 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			// 21_Suction_Cups doesn't allow to force change
-			if(defender.getAbilitySelected().getId() == 21) {
-				System.out.println(defender.getName() + " no puede ser forzado por el cambio dada su habilidad Ventosas");
+			if (defender.getAbilitySelected().getId() == 21) {
+				System.out
+						.println(defender.getName() + " no puede ser forzado por el cambio dada su habilidad Ventosas");
 				break;
 			}
-			
+
 			// If rival has no more Pokemon => it doesn't matter, but no fail
 			if (!this.getDefender().hasAvailableSwitch()) {
 				System.out.println("Pero " + this.getPkFacing().getName() + " no tiene más Pokémon para cambiar.");
@@ -908,9 +910,17 @@ public class PkVPk {
 
 		// Ataque arena /Sand attack (tested)
 		case 28:
-			if (!isMistEffectActivated) {
-				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Ataque arena");
+			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Ataque arena");
 
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+
+			if (abilityDefender.getId() == 29) {
+				System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
+						+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
+				break;
+			}
+
+			if (!isMistEffectActivated) {
 				if (defender.getPrecisionPoints() <= -6) {
 					System.out.println("La precisión de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
@@ -922,8 +932,6 @@ public class PkVPk {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
-
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			break;
 
@@ -1030,7 +1038,8 @@ public class PkVPk {
 			System.out.println("proba de paralizar : " + probabilityGettingStatus);
 
 			if (probabilityGettingStatus <= 30) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
+						attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1128,9 +1137,17 @@ public class PkVPk {
 
 		// Látigo/Tail Whip (tested)
 		case 39:
-			if (!isMistEffectActivated) {
-				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Látigo");
+			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Látigo");
 
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+
+			if (abilityDefender.getId() == 29) {
+				System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
+						+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
+				break;
+			}
+
+			if (!isMistEffectActivated) {
 				if (defender.getDefenseStage() <= -6) {
 					System.out.println("La defensa de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
@@ -1143,7 +1160,6 @@ public class PkVPk {
 						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
 
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
 			break;
 
 		// Picotazo veneno/Poison sting (tested)
@@ -1238,9 +1254,17 @@ public class PkVPk {
 
 		// Malicioso/Leer (tested)
 		case 43:
-			if (!isMistEffectActivated) {
-				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Malicioso");
+			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Malicioso");
 
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+
+			if (abilityDefender.getId() == 29) {
+				System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
+						+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
+				break;
+			}
+
+			if (!isMistEffectActivated) {
 				if (defender.getDefenseStage() <= -6) {
 					System.out.println("La defensa de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
@@ -1252,8 +1276,6 @@ public class PkVPk {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
-
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
 			break;
 
 		// Mordisco/Bite (tested)
@@ -1287,9 +1309,17 @@ public class PkVPk {
 
 		// Gruñido/Growl (tested)
 		case 45:
-			if (!isMistEffectActivated) {
-				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Gruñido");
+			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Gruñido");
 
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+
+			if (abilityDefender.getId() == 29) {
+				System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
+						+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
+				break;
+			}
+
+			if (!isMistEffectActivated) {
 				if (defender.getAttackStage() <= -6) {
 					System.out.println("El ataque de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
@@ -1301,8 +1331,6 @@ public class PkVPk {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
-
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
 			break;
 
 		// Rugido/Roar (tested)
@@ -1312,11 +1340,12 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			// 21_Suction_Cups doesn't allow to force change
-			if(defender.getAbilitySelected().getId() == 21) {
-				System.out.println(defender.getName() + " no puede ser forzado por el cambio dada su habilidad Ventosas");
+			if (defender.getAbilitySelected().getId() == 21) {
+				System.out
+						.println(defender.getName() + " no puede ser forzado por el cambio dada su habilidad Ventosas");
 				break;
 			}
-			
+
 			// If rival has no more Pokemon remaining, it doesn't matter => only fails the
 			// attack
 			if (!this.getDefender().hasAvailableSwitch()) {
@@ -1437,10 +1466,20 @@ public class PkVPk {
 
 			dmg = doDammage();
 
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+
+			defender.setPs(defender.getPs() - dmg);
+
 			// 10% of probabilities to reduce the special defense
 			reduceDefRival = Math.random() <= 0.10;
 
 			if (reduceDefRival) {
+				if (abilityDefender.getId() == 29) {
+					System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
+							+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
+					break;
+				}
+
 				if (!isMistEffectActivated) {
 					if (defender.getSpecialDefenseStage() <= -6) {
 						System.out.println("La defensa especial de " + defender.getName() + " (Id:" + defender.getId()
@@ -1455,10 +1494,6 @@ public class PkVPk {
 							+ " no pudo bajar las estadísticas a causa de Neblina");
 				}
 			}
-
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
-
-			defender.setPs(defender.getPs() - dmg);
 			break;
 
 		// Ascuas/Ember (tested)
@@ -1601,7 +1636,7 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Psicorrayo");
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
-			
+
 			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED, attackAttacker)) {
 				break;
 			}
@@ -1633,10 +1668,20 @@ public class PkVPk {
 
 			dmg = doDammage();
 
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+
+			defender.setPs(defender.getPs() - dmg);
+
 			// 10% of probabilities to reduce the speed
 			reduceSpeedRival = Math.random() <= 0.10;
 
 			if (reduceSpeedRival) {
+				if (abilityDefender.getId() == 29) {
+					System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
+							+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
+					break;
+				}
+
 				if (!isMistEffectActivated) {
 					if (defender.getSpeedStage() <= -6) {
 						System.out.println("La velocidad de " + defender.getName() + " (Id:" + defender.getId() + ")"
@@ -1651,10 +1696,6 @@ public class PkVPk {
 							+ " no pudo bajar las estadísticas a causa de Neblina");
 				}
 			}
-
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
-
-			defender.setPs(defender.getPs() - dmg);
 			break;
 
 		// Rayo aurora/Aurora beam (tested)
@@ -1663,10 +1704,20 @@ public class PkVPk {
 
 			dmg = doDammage();
 
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+
+			defender.setPs(defender.getPs() - dmg);
+
 			// 10% of probabilities to reduce the attack
 			reduceAttackRival = Math.random() <= 0.10;
 
 			if (reduceAttackRival) {
+				if (abilityDefender.getId() == 29) {
+					System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
+							+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
+					break;
+				}
+
 				if (!isMistEffectActivated) {
 					if (defender.getAttackStage() <= -6) {
 						System.out.println("El ataque de " + defender.getName() + " (Id:" + defender.getId() + ")"
@@ -1680,10 +1731,6 @@ public class PkVPk {
 							+ " no pudo bajar las estadísticas a causa de Neblina");
 				}
 			}
-
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
-
-			defender.setPs(defender.getPs() - dmg);
 			break;
 
 		// Hiperrayo/Hyper beam (tested)
@@ -2008,7 +2055,8 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (defender.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
+						attackAttacker);
 			} else {
 				System.out.println(defender.getName() + " ya está paralizado");
 			}
@@ -2072,6 +2120,14 @@ public class PkVPk {
 		case 81:
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Diapro démora");
 
+			attackAttacker.setPp(attackAttacker.getPp() - 1);
+
+			if (abilityDefender.getId() == 29) {
+				System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
+						+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
+				break;
+			}
+
 			if (!isMistEffectActivated) {
 				if (defender.getSpeedStage() <= -6) {
 					System.out.println("La velocidad de " + defender.getName() + " (Id:" + defender.getId() + ")"
@@ -2084,8 +2140,6 @@ public class PkVPk {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " no pudo bajar las estadísticas a causa de Neblina");
 			}
-
-			attackAttacker.setPp(attackAttacker.getPp() - 1);
 			break;
 
 		// Furia dragón/Dragon rage (tested)
@@ -2137,7 +2191,8 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
+						attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -2158,7 +2213,8 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
+						attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -2173,7 +2229,8 @@ public class PkVPk {
 			// Possibility of paralyzing the Pokemon facing if is not already pralyzed and
 			// has not a Status
 			if (defender.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
+						attackAttacker);
 			} else {
 				System.out.println(defender.getName() + " ya está paralizado");
 			}
@@ -2194,7 +2251,8 @@ public class PkVPk {
 			if (probabilityGettingStatus <= 10) {
 
 				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed, attackAttacker);
+				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
+						attackAttacker);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);

@@ -1312,7 +1312,7 @@ public class Pokemon {
 		case CONFUSED:
 			// 20_Own_Tempo
 			if (ability.getId() == 20) {
-				System.out.println(this.getName() + " no puede confunidrse dada su habilidad Ritmo propio");
+				System.out.println(this.getName() + " no puede confundirse dada su habilidad Ritmo propio");
 				return false;
 			}
 

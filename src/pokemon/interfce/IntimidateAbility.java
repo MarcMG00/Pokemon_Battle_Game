@@ -12,7 +12,7 @@ public class IntimidateAbility implements AbilityEffect {
 		System.out.println("La Intimidación de " + owner.getName() + " intimida a " + defender.getName());
 
 		// Check immunity (Oblivious, Own tempo, etc.)
-		if (targetAbility != null && (targetAbility.getId() == 12 || targetAbility.getId() == 20)) {
+		if (targetAbility != null && (targetAbility.getId() == 12 || targetAbility.getId() == 20 || targetAbility.getId() == 29)) {
 			System.out.println(defender.getName() + " no se intimidó gracias a " + targetAbility.getName());
 			return;
 		}
