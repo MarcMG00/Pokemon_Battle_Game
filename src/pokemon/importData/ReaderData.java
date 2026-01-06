@@ -20,6 +20,7 @@ import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
+import pokemon.interfce.NaturalCureAbility;
 import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
@@ -1087,6 +1088,10 @@ public class ReaderData {
 		case 28:
 			ability.setEffect(new SynchronizeAbility());
 			break;
+		// Cura natural/Natural cure
+		case 30:
+			ability.setEffect(new NaturalCureAbility());
+			break;
 		// Sequía/Drought
 		case 70:
 			ability.setEffect(new DroughtAbility());
@@ -1169,6 +1174,26 @@ public class ReaderData {
 		}
 
 		return list;
+	}
+
+	// -----------------------------
+	// Set if attack reduce stats
+	// -----------------------------
+	public void setReduceStatsAttack(Attack attack) {
+		switch (attack.getId()) {
+		case 28:
+		case 39:
+		case 43:
+		case 45:
+		case 51:
+		case 61:
+		case 62:
+		case 81:
+			attack.setReduceStats(true);
+			break;
+		default:
+			attack.setReduceStats(false);
+		}
 	}
 
 }
