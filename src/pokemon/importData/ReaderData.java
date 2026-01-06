@@ -20,6 +20,7 @@ import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
+import pokemon.interfce.LightningRodAbility;
 import pokemon.interfce.NaturalCureAbility;
 import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
@@ -1091,6 +1092,10 @@ public class ReaderData {
 		// Cura natural/Natural cure
 		case 30:
 			ability.setEffect(new NaturalCureAbility());
+			break;
+		// Pararrayos/Lightning rod
+		case 31:
+			ability.setEffect(new LightningRodAbility());
 			break;
 		// Sequía/Drought
 		case 70:
