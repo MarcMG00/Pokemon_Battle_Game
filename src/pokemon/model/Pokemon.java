@@ -943,7 +943,7 @@ public class Pokemon {
 				// Adds +10% each turn not thawed
 				frozenState.setPercentToBeDefrosted(frozenState.getPercentToBeDefrosted() + 10);
 
-				System.out.println(ANSI_CYAN + this.getName() + " => congelado - no puede atacar)" + ANSI_RESET);
+				System.out.println(ANSI_CYAN + this.getName() + " => congelado - no puede atacar" + ANSI_RESET);
 			}
 		}
 	}
@@ -1243,33 +1243,52 @@ public class Pokemon {
 		if (this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS)
 			return false;
 
-		// PARALYZED
-		// Limber ability prevents paralysis
-		if (newState.getStatusCondition() == StatusConditions.PARALYZED && this.getAbilitySelected().getId() == 7) {
-			System.out.println(this.getName() + " evitó la parálisis gracias a Flexibilidad");
-			return false;
-		} else if (newState.getStatusCondition() == StatusConditions.PARALYZED) {
-			System.out.println(this.getName() + " fue paralizado");
-		}
-
-		// BURNED
-		// Fire Pokemon cannot be burned
-		if (newState.getStatusCondition() == StatusConditions.BURNED
-				&& this.getTypes().stream().anyMatch(t -> t.getId() == 7)) {
-			System.out.println(this.getName() + " no puede ser quemado ya que es de tipo fuego");
-			return false;
-		} else if (newState.getStatusCondition() == StatusConditions.BURNED) {
-			System.out.println(this.getName() + " fue quemado");
-		}
-
-		// FROZEN
-		// Ice Pokemon cannot be frozen
-		if (newState.getStatusCondition() == StatusConditions.FROZEN && canBeFrozen && !isWeatherSuppressed
-				&& this.getTypes().stream().filter(t -> t.getId() == 9).findAny().get() == null) {
-			System.out.println(this.getName() + " fue congelado");
-		} else if (newState.getStatusCondition() == StatusConditions.FROZEN) {
-			System.out.println(
-					this.getName() + " no puede ser congelado dado el tiempo (soleado) o es un Pokemon de tipo hielo");
+		switch (newState.getStatusCondition()) {
+		case PARALYZED:
+			// Limber ability prevents paralysis
+			if (this.getAbilitySelected().getId() == 7) {
+				System.out.println(this.getName() + " evitó la parálisis gracias a Flexibilidad");
+				return false;
+			} else {
+				System.out.println(this.getName() + " fue paralizado");
+			}
+			break;
+		case POISONED:
+			// 17_Immunity ability
+			if (this.getAbilitySelected().getId() == 17) {
+				System.out.println(this.getName() + " no puede envenenarse dada su habilidad Inmunidad");
+				return false;
+			} else {
+				System.out.println(this.getName() + " fue envenenado");
+			}
+			break;
+		case BADLY_POISONED:
+			break;
+		case FROZEN:
+			// Ice Pokemon cannot be frozen
+			if (canBeFrozen && !isWeatherSuppressed && this.getTypes().stream().noneMatch(t -> t.getId() == 9)) {
+				System.out.println(this.getName() + " fue congelado");
+			} else {
+				System.out.println(this.getName()
+						+ " no puede ser congelado dado el tiempo (soleado) o es un Pokemon de tipo hielo");
+				return false;
+			}
+			break;
+		case ASLEEP:
+			break;
+		case BURNED:
+			// Fire Pokemon cannot be burned
+			if (this.getTypes().stream().anyMatch(t -> t.getId() == 7)) {
+				System.out.println(this.getName() + " no puede ser quemado ya que es de tipo fuego");
+				return false;
+			} else {
+				System.out.println(this.getName() + " fue quemado");
+			}
+			break;
+		case DISABLE:
+			break;
+		default:
+			break;
 		}
 
 		this.setStatusCondition(newState);
@@ -1302,13 +1321,6 @@ public class Pokemon {
 			}
 			break;
 
-		case POISONED:
-			// 17_Immunity
-			if (ability.getId() == 17) {
-				System.out.println(this.getName() + " no puede envenenarse dada su habilidad Inmunidad");
-				return false;
-			}
-			break;
 		case CONFUSED:
 			// 20_Own_Tempo
 			if (ability.getId() == 20) {
@@ -1327,6 +1339,16 @@ public class Pokemon {
 
 	public boolean hasAbility(int abilityId) {
 		return this.getAbilitySelected().getId() == abilityId;
+	}
+
+	public boolean canBeFlinched() {
+
+		if (this.getAbilitySelected().getId() == 39) {
+			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pudo retroceder dada su habilidad Fuerza mental");
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import pokemon.enums.AttackCategory;
+import pokemon.enums.SecondaryEffectType;
+import pokemon.enums.StatType;
+import pokemon.enums.StatusConditions;
 import pokemon.interfce.BattleArmorAbility;
 import pokemon.interfce.CloudNineAbility;
 import pokemon.interfce.ColorChangeAbility;
@@ -34,6 +37,7 @@ import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
+import pokemon.model.SecondaryEffect;
 
 public class ReaderData {
 
@@ -1134,31 +1138,97 @@ public class ReaderData {
 	// Set if attack has secondary effects
 	// -----------------------------
 	public void setAttackHasSecondaryEffects(Attack attack) {
+
+		SecondaryEffect secondaryEffect = new SecondaryEffect();
+
 		switch (attack.getId()) {
 		case 7:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 8:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.FROZEN, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 9:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 23:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 27:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 29:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 34:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 40:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.POISONED, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 41:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.POISONED, 0.20);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 44:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 51:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.DEFENSE, -1, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 52:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 53:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 58:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.FROZEN, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 59:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.FROZEN, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 60:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.EPHEMERAL_STATUS, StatusConditions.CONFUSED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 61:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.SPEED, -1, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 62:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.ATTACK, -1, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 84:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 85:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		case 87:
-			attack.setHasSecondaryEffect(true);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		default:
-			attack.setHasSecondaryEffect(false);
+			attack.setSecondaryEffectsNull();
+			break;
 		}
 	}
 

@@ -30,6 +30,8 @@ public class Attack {
 	private boolean isOneHitKO;
 	private boolean makesContact;
 	private boolean hasSecondaryEffect;
+	private boolean reduceStats;
+	private List<SecondaryEffect> secondaryEffects = new ArrayList<>();
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -54,6 +56,7 @@ public class Attack {
 		this.isOneHitKO = false;
 		this.makesContact = false;
 		this.hasSecondaryEffect = false;
+		this.reduceStats = false;
 	}
 
 	public Attack(int id, String name, String type, int power, int pp, int precision, String effect) {
@@ -76,6 +79,7 @@ public class Attack {
 		this.isOneHitKO = false;
 		this.makesContact = false;
 		this.hasSecondaryEffect = false;
+		this.reduceStats = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -246,6 +250,22 @@ public class Attack {
 		this.hasSecondaryEffect = hasSecondaryEffect;
 	}
 
+	public boolean getReduceStats() {
+		return reduceStats;
+	}
+
+	public void setReduceStats(boolean reduceStats) {
+		this.reduceStats = reduceStats;
+	}
+
+	public List<SecondaryEffect> getSecondaryEffects() {
+		return secondaryEffects;
+	}
+	
+	public void setSecondaryEffectsNull() {
+		this.secondaryEffects = null;
+	}
+
 	// ==================================== METHODS
 	// ====================================
 
@@ -261,5 +281,12 @@ public class Attack {
 	// -----------------------------
 	public boolean canHitWhileTargetInvulnerable(int targetAttackId) {
 		return this.getCanHitWhileInvulnerable() != null && this.getCanHitWhileInvulnerable().contains(targetAttackId);
+	}
+
+	// -----------------------------
+	// Add secondary effect
+	// -----------------------------
+	public void addSecondaryEffect(SecondaryEffect secondaryEffect) {
+		this.getSecondaryEffects().add(secondaryEffect);
 	}
 }

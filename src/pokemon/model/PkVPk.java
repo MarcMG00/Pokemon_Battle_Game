@@ -413,8 +413,6 @@ public class PkVPk {
 		int nbTurnsHoldingStatus;
 		int probabilityGettingStatus;
 
-		double randomRetreat = Math.random();
-
 		float recoil = 0f;
 
 		boolean reduceDefRival = false;
@@ -527,16 +525,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de quemar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 10) {
-
-				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed, attackAttacker);
-			}
-
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
@@ -548,17 +536,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de congelar : " + probabilityGettingStatus);
-
-			// 10% of probabilities to be frozen
-			if (probabilityGettingStatus <= 10) {
-
-				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed, attackAttacker);
-			}
-
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
@@ -569,17 +546,6 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Puño trueno");
 
 			dmg = doDammage();
-
-			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has
-			// not a Status
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de paralizar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 10) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
-						attackAttacker);
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -816,24 +782,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
-			// flinch probability
-			// But Pokemon facing doesn't have to have a counter ability
-			if (abilityAttacker != null && abilityAttacker.getId() == 1 && abilityDefender.getId() != 39) {
-				abilityAttacker.getEffect().afterAttack(null, attacker, defender, attackAttacker, dmg,
-						attackAttacker.getPercentageFlinched());
-			}
-			// Otherwise applies flinch from the attack
-			else if (abilityDefender.getId() != 39) {
-				// 30% of probabilities to retreat Pokemon facing
-				if (randomRetreat <= attackAttacker.getPercentageFlinched()) {
-					defender.setHasRetreated(true);
-				}
-			} else {
-				System.out.println(defender.getName() + " (Id:" + defender.getId() + ")"
-						+ " no puedo retroceder dada su habilidad (u otro factor)");
-			}
-
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
@@ -885,24 +833,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
-			// flinch probability
-			// But Pokemon facing doesn't have to have a counter ability
-			if (abilityAttacker != null && abilityAttacker.getId() == 1 && abilityDefender.getId() != 39) {
-				abilityAttacker.getEffect().afterAttack(null, attacker, defender, attackAttacker, dmg,
-						attackAttacker.getPercentageFlinched());
-			}
-			// Otherwise applies flinch from the attack
-			else if (abilityDefender.getId() != 39) {
-				// 30% of probabilities to retreat Pokemon facing
-				if (randomRetreat <= attackAttacker.getPercentageFlinched()) {
-					defender.setHasRetreated(true);
-				}
-			} else {
-				System.out.println(defender.getName() + " (Id:" + defender.getId() + ")"
-						+ " no puedo retroceder dada su habilidad (u otro factor)");
-			}
-
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
@@ -940,24 +870,6 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Golpe cabeza");
 
 			dmg = doDammage();
-
-			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
-			// flinch probability
-			// But Pokemon facing doesn't have to have a counter ability
-			if (abilityAttacker != null && abilityAttacker.getId() == 1 && abilityDefender.getId() != 39) {
-				abilityAttacker.getEffect().afterAttack(null, attacker, defender, attackAttacker, dmg,
-						attackAttacker.getPercentageFlinched());
-			}
-			// Otherwise applies flinch from the attack
-			else if (abilityDefender.getId() != 39) {
-				// 30% of probabilities to retreat Pokemon facing
-				if (randomRetreat <= attackAttacker.getPercentageFlinched()) {
-					defender.setHasRetreated(true);
-				}
-			} else {
-				System.out.println(defender.getName() + " (Id:" + defender.getId() + ")"
-						+ " no puedo retroceder dada su habilidad (u otro factor)");
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -1172,26 +1084,6 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED, attackAttacker)) {
-				break;
-			}
-
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de envenenar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 30) {
-
-				// Check if the Pokemon facing has no status
-				if (defender.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-					State poisoned = new State(StatusConditions.POISONED);
-
-					defender.setStatusCondition(poisoned);
-
-					System.out.println(defender.getName() + " fue envenenado");
-				}
-			}
 			break;
 
 		// Doble ataque/Twineedle (tested)
@@ -1211,26 +1103,6 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmgToSum);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.POISONED, attackAttacker)) {
-				break;
-			}
-
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de envenenar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 20) {
-
-				// Check if the Pokemon facing has no status
-				if (defender.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS) {
-
-					State poisoned = new State(StatusConditions.POISONED);
-
-					defender.setStatusCondition(poisoned);
-
-					System.out.println(defender.getName() + " fue envenenado");
-				}
-			}
 			break;
 
 		// Pin misil/Pin missile (tested)
@@ -1283,24 +1155,6 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Mordisco");
 
 			dmg = doDammage();
-
-			// If Pokemon attacking has abilidty "Stench", puts additional percentage on
-			// flinch probability
-			// But Pokemon facing doesn't have to have a counter ability
-			if (abilityAttacker != null && abilityAttacker.getId() == 1 && abilityDefender.getId() != 39) {
-				abilityAttacker.getEffect().afterAttack(null, attacker, defender, attackAttacker, dmg,
-						attackAttacker.getPercentageFlinched());
-			}
-			// Otherwise applies flinch from the attack
-			else if (abilityDefender.getId() != 39) {
-				// 30% of probabilities to retreat Pokemon facing
-				if (randomRetreat <= attackAttacker.getPercentageFlinched()) {
-					defender.setHasRetreated(true);
-				}
-			} else {
-				System.out.println(defender.getName() + " (Id:" + defender.getId() + ")"
-						+ " no puedo retroceder dada su habilidad (u otro factor)");
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -1502,16 +1356,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de quemar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 10) {
-
-				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed, attackAttacker);
-			}
-
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
@@ -1522,16 +1366,6 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Lanzallamas");
 
 			dmg = doDammage();
-
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de quemar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 10) {
-
-				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.BURNED), weather, isWeatherSuppressed, attackAttacker);
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -1614,17 +1448,6 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Ventisca");
 
 			dmg = doDammage();
-
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de congelar : " + probabilityGettingStatus);
-
-			// 10% of probabilities to be frozen
-			if (probabilityGettingStatus <= 10) {
-
-				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed, attackAttacker);
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -2184,17 +2007,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de paralizar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 10) {
-
-				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
-						attackAttacker);
-			}
-
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
@@ -2205,17 +2017,6 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Rayo");
 
 			dmg = doDammage();
-
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de paralizar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 10) {
-
-				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
-						attackAttacker);
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -2243,17 +2044,6 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Trueno");
 
 			dmg = doDammage();
-
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de paralizar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 10) {
-
-				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
-						attackAttacker);
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -2285,6 +2075,10 @@ public class PkVPk {
 				defender.setDamageReceived(dmgToSum);
 			}
 			defender.setHasReceivedDamage(true);
+
+			// Apply secondary effects (status conditions, ephemeral status, flinch, reduce
+			// stats...)
+			applySecondaryEffects(attackAttacker, attacker, defender, weather, isWeatherSuppressed, dmg);
 		}
 
 		reinitializeAttackStats(attackAttacker);
@@ -2542,6 +2336,9 @@ public class PkVPk {
 		}
 	}
 
+	// -----------------------------
+	// Apply accuracy attack due to abilities, etc.
+	// -----------------------------
 	private float applyAccuracyAbilities(float accuracy) {
 		Ability ability = this.getPkCombatting().getAbilitySelected();
 		if (ability != null && ability.getId() == 14) {
@@ -2549,5 +2346,104 @@ public class PkVPk {
 		}
 		// max 1f
 		return Math.min(accuracy, 1.0f);
+	}
+
+	// -----------------------------
+	// Do secondary effects from attacks (set status conditions, flinch, etc)
+	// -----------------------------
+	private void applySecondaryEffects(Attack attack, Pokemon attacker, Pokemon defender, Weather weather,
+			boolean isWeatherSuppressed, float damage) {
+
+		Ability abilityAttacker = attacker.getAbilitySelected();
+		Ability abilityDefender = defender.getAbilitySelected();
+
+		double randomRetreat = Math.random();
+		int probabilityGettingStatus = (int) (Math.random() * 100);
+		int nbTurnsHoldingStatus = getRandomInt(1, 7);
+
+		if (attack.getSecondaryEffects() == null)
+			return;
+
+		for (SecondaryEffect effect : attack.getSecondaryEffects()) {
+
+			if (Math.random() > effect.getProbability()) {
+				continue;
+			}
+
+			switch (effect.getType()) {
+			case STATUS_CONDITION:
+				defender.trySetStatus(new State(effect.getStatus()), weather, isWeatherSuppressed, attack);
+				break;
+
+			case EPHEMERAL_STATUS:
+				if (!defender.trySetEphemeralStatus(effect.getStatus(), attack)) {
+					break;
+				}
+
+				if (probabilityGettingStatus <= effect.getProbability()) {
+
+					// Check if the Pokemon facing doesn't have the current ephemeral status
+					if (!(defender.getEphemeralStates().stream()
+							.anyMatch(e -> e.getStatusCondition() == effect.getStatus()))) {
+
+						nbTurnsHoldingStatus = getRandomInt(1, 7);
+
+						State state = new State(effect.getStatus(), nbTurnsHoldingStatus + 1);
+
+						defender.addEphemeralState(state);
+
+						switch (effect.getStatus()) {
+						case CONFUSED:
+							System.out.println(
+									defender.getName() + " estará confuso por " + nbTurnsHoldingStatus + " turnos");
+							break;
+
+						case CURSED:
+							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
+							break;
+
+						case INFATUATED:
+							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
+							break;
+
+						case TRAPPED:
+							System.out.println(this.getPkFacing().getName() + " quedó atrapado por "
+									+ nbTurnsHoldingStatus + " turnos");
+							break;
+
+						case SEEDED:
+							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
+							break;
+
+						case PERISH_SONG:
+							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
+							break;
+
+						default:
+							break;
+						}
+					}
+				}
+				break;
+
+			case FLINCH:
+				if (!defender.canBeFlinched())
+					break;
+
+				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
+					abilityAttacker.getEffect().afterAttack(null, attacker, defender, attack, damage,
+							attack.getPercentageFlinched());
+				} else if (randomRetreat <= attack.getPercentageFlinched()) {
+					defender.setHasRetreated(true);
+				}
+				break;
+
+			case STAT_DROP:
+				// defender.modifyStatStage(effect.getStat(), effect.getStages());
+				break;
+			default:
+				break;
+			}
+		}
 	}
 }

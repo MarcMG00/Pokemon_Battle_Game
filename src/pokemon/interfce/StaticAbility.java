@@ -13,16 +13,20 @@ public class StaticAbility implements AbilityEffect {
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double precentageFlinch) {
 
+		if (attacker.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
+			return;
+		}
 		// Attack must make contact
 		if (!attack.getMakesContact())
 			return;
 
 		// Probability
-		if (Math.random() >= PARALYSIS_CHANCE)
+		if (Math.random() >= PARALYSIS_CHANCE) {
 			return;
+		}
 
 		// Try to apply paralysis
-		attacker.trySetStatus(new State(StatusConditions.PARALYZED), null, false, null);
+		attacker.trySetStatus(new State(StatusConditions.PARALYZED), null, false, attack);
 		System.out.println(
 				attacker.getName() + " fue paralizado por la habilidad electricidad estática del Pokémon rival");
 	}
