@@ -1634,7 +1634,7 @@ public class Game {
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "237,237,237";
-		String allPkIA = "12,12,12";
+		String allPkIA = "69,69,69";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1732,7 +1732,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 53).findFirst().get());
+//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 60).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 48).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
@@ -1741,8 +1741,8 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 20).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
 

@@ -28,12 +28,12 @@ public class SecondaryEffect {
 		this.probability = probability;
 	}
 
-	public SecondaryEffect(SecondaryEffectType type, StatType stat, int stage, double probability) {
+	public SecondaryEffect(SecondaryEffectType type, StatType stat, int stages, double probability) {
 		this.type = type;
 		this.status = StatusConditions.NO_STATUS;
 		this.stat = stat;
 		this.probability = probability;
-		this.stages = stage;
+		this.stages = stages;
 	}
 	
 	public SecondaryEffect() {

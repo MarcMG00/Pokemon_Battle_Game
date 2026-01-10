@@ -488,8 +488,6 @@ public class ReaderData {
 				types.add(pkType);
 				typeById.put(pkType.getId(), pkType);
 			}
-			PokemonType fire = typeById.get(7);
-			System.out.println("FUEGO arrebienta a: " + fire.getPktDoLotDamage());
 
 		} catch (IOException e) {
 			System.out.println("Exception reading the file : " + e.getMessage());
@@ -1151,7 +1149,8 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 9:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 23:
@@ -1167,15 +1166,18 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 34:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.30);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.30);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 40:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.POISONED, 0.30);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.POISONED,
+					0.30);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 41:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.POISONED, 0.20);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.POISONED,
+					0.20);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 44:
@@ -1203,7 +1205,8 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 60:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.EPHEMERAL_STATUS, StatusConditions.CONFUSED, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.EPHEMERAL_STATUS, StatusConditions.CONFUSED,
+					0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 61:
@@ -1215,15 +1218,18 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 84:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 85:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 87:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		default:

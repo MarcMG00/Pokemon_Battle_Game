@@ -2,6 +2,7 @@ package pokemon.model;
 
 import java.util.ArrayList;
 
+import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 
@@ -1094,7 +1095,7 @@ public class Pokemon {
 
 				this.setPs(this.getPs() - reducePs);
 
-				System.out.println(this.getName() + " está atado y recibe daño)");
+				System.out.println(this.getName() + " está atado y recibe daño");
 			}
 		}
 	}
@@ -1337,10 +1338,16 @@ public class Pokemon {
 		return true;
 	}
 
+	// -----------------------------
+	// Check if have some ability
+	// -----------------------------
 	public boolean hasAbility(int abilityId) {
 		return this.getAbilitySelected().getId() == abilityId;
 	}
 
+	// -----------------------------
+	// Check if can be flinched
+	// -----------------------------
 	public boolean canBeFlinched() {
 
 		if (this.getAbilitySelected().getId() == 39) {
@@ -1349,6 +1356,89 @@ public class Pokemon {
 			return false;
 		}
 		return true;
+	}
+
+	// -----------------------------
+	// Modify stat stage from rival attacks
+	// -----------------------------
+	public void modifyStatStage(StatType stat, int stages, boolean isMistEffectActivated) {
+
+		if (this.getAbilitySelected().getId() == 29) {
+			System.out.println("Las estats de " + this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pueden bajar dada su la habilidad " + this.getAbilitySelected().getName());
+			return;
+		}
+
+		if (!isMistEffectActivated) {
+			switch (stat) {
+
+			case ATTACK:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println(
+							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque!");
+				}
+				break;
+
+			case SPECIAL_ATTACK:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println("El ataque especial de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque especial!");
+				}
+				break;
+
+			case DEFENSE:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println(
+							"La defensa de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa!");
+				}
+				break;
+
+			case SPECIAL_DEFENSE:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println("La defensa especial de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa especial!");
+				}
+				break;
+
+			case PRECISION:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su precisión!");
+				}
+				break;
+
+			case SPEED:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println("La velocidad de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su velocidad!");
+				}
+				break;
+
+			case NONE:
+				break;
+			}
+		} else {
+			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pudo bajar las estadísticas a causa de Neblina");
+		}
 	}
 
 }

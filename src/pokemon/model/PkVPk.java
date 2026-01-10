@@ -415,10 +415,6 @@ public class PkVPk {
 
 		float recoil = 0f;
 
-		boolean reduceDefRival = false;
-		boolean reduceSpeedRival = false;
-		boolean reduceAttackRival = false;
-
 		Ability abilityAttacker = attacker.getAbilitySelected();
 		Ability abilityDefender = defender.getAbilitySelected();
 
@@ -698,6 +694,7 @@ public class PkVPk {
 
 			System.out.println("¡" + defender.getName() + " fue arrastrado y obligado a retirarse!");
 			break;
+			
 		// Vuelo/Fly (tested)
 		case 19:
 			// If not charging => first turn charge the attack
@@ -942,17 +939,6 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Golpe cuerpo");
 
 			dmg = doDammage();
-
-			// Possibility of paralyzing Pokemon facing if is not already paralyzed and has
-			// not a Status
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de paralizar : " + probabilityGettingStatus);
-
-			if (probabilityGettingStatus <= 30) {
-				defender.trySetStatus(new State(StatusConditions.PARALYZED), weather, isWeatherSuppressed,
-						attackAttacker);
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -1289,7 +1275,7 @@ public class PkVPk {
 
 			disable.setPp(disable.getPp() - 1);
 
-			// If rival hasn't yet used an attack => fails
+			// If rival hasn't used yet an attack => fails
 			if (lastAttack == null || lastAttack.getId() == 0) {
 				System.out.println("¡Pero no surtió efecto!");
 				break;
@@ -1323,31 +1309,6 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
-
-			// 10% of probabilities to reduce the special defense
-			reduceDefRival = Math.random() <= 0.10;
-
-			if (reduceDefRival) {
-				if (abilityDefender.getId() == 29) {
-					System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
-							+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
-					break;
-				}
-
-				if (!isMistEffectActivated) {
-					if (defender.getSpecialDefenseStage() <= -6) {
-						System.out.println("La defensa especial de " + defender.getName() + " (Id:" + defender.getId()
-								+ ")" + " no puede bajar más!");
-					} else {
-						defender.setSpecialDefenseStage(Math.max(defender.getSpecialDefenseStage() - 1, -6));
-						System.out.println(
-								defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su defensa especial!");
-					}
-				} else {
-					System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
-							+ " no pudo bajar las estadísticas a causa de Neblina");
-				}
-			}
 			break;
 
 		// Ascuas/Ember (tested)
@@ -1377,7 +1338,7 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Neblina");
 
 			if (isMistEffectActivated) {
-				System.out.println("No tuvoo ningún efecto ya que está en uso");
+				System.out.println("No tuvo ningún efecto ya que está en uso");
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1427,17 +1388,6 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			probabilityGettingStatus = (int) (Math.random() * 100);
-
-			System.out.println("proba de congelar : " + probabilityGettingStatus);
-
-			// 10% of probabilities to be frozen
-			if (probabilityGettingStatus <= 10) {
-
-				// Check if the Pokemon facing has no status
-				defender.trySetStatus(new State(StatusConditions.FROZEN), weather, isWeatherSuppressed, attackAttacker);
-			}
-
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
@@ -1458,31 +1408,11 @@ public class PkVPk {
 		case 60:
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Psicorrayo");
 
+			dmg = doDammage();
+
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED, attackAttacker)) {
-				break;
-			}
-
-			// Check if the Pokemon facing doesn't have the status Confused (is a status
-			// that
-			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
-
-				probabilityGettingStatus = (int) (Math.random() * 100);
-
-				// 10% of probabilities to be confused
-				if (probabilityGettingStatus <= 10) {
-					nbTurnsHoldingStatus = getRandomInt(1, 7);
-
-					System.out.println(defender.getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
-
-					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
-
-					defender.addEphemeralState(confused);
-				}
-			}
+			defender.setPs(defender.getPs() - dmg);
 			break;
 
 		// Rayo burbuja/Bubble beam (tested)
@@ -1494,31 +1424,6 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
-
-			// 10% of probabilities to reduce the speed
-			reduceSpeedRival = Math.random() <= 0.10;
-
-			if (reduceSpeedRival) {
-				if (abilityDefender.getId() == 29) {
-					System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
-							+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
-					break;
-				}
-
-				if (!isMistEffectActivated) {
-					if (defender.getSpeedStage() <= -6) {
-						System.out.println("La velocidad de " + defender.getName() + " (Id:" + defender.getId() + ")"
-								+ " no puede bajar más!");
-					} else {
-						defender.setSpeedStage(Math.max(defender.getSpeedStage() - 1, -6));
-						System.out
-								.println(defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su velocidad!");
-					}
-				} else {
-					System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
-							+ " no pudo bajar las estadísticas a causa de Neblina");
-				}
-			}
 			break;
 
 		// Rayo aurora/Aurora beam (tested)
@@ -1530,30 +1435,6 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			defender.setPs(defender.getPs() - dmg);
-
-			// 10% of probabilities to reduce the attack
-			reduceAttackRival = Math.random() <= 0.10;
-
-			if (reduceAttackRival) {
-				if (abilityDefender.getId() == 29) {
-					System.out.println("Las estats de " + defender.getName() + " (Id:" + defender.getId() + ")"
-							+ " no pueden bajar dada su la habilidad " + abilityDefender.getName());
-					break;
-				}
-
-				if (!isMistEffectActivated) {
-					if (defender.getAttackStage() <= -6) {
-						System.out.println("El ataque de " + defender.getName() + " (Id:" + defender.getId() + ")"
-								+ " no puede bajar más!");
-					} else {
-						defender.setAttackStage(Math.max(defender.getAttackStage() - 1, -6));
-						System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su ataque!");
-					}
-				} else {
-					System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
-							+ " no pudo bajar las estadísticas a causa de Neblina");
-				}
-			}
 			break;
 
 		// Hiperrayo/Hyper beam (tested)
@@ -1568,7 +1449,6 @@ public class PkVPk {
 
 			// Pokemon combating cannot do anything next round
 			attacker.setCanDonAnythingNextRound(false);
-
 			break;
 
 		// Picotazo/Peck (tested)
@@ -2078,7 +1958,8 @@ public class PkVPk {
 
 			// Apply secondary effects (status conditions, ephemeral status, flinch, reduce
 			// stats...)
-			applySecondaryEffects(attackAttacker, attacker, defender, weather, isWeatherSuppressed, dmg);
+			applySecondaryEffects(attackAttacker, attacker, defender, weather, isWeatherSuppressed,
+					dmg != 0f ? dmg : dmgToSum, isMistEffectActivated);
 		}
 
 		reinitializeAttackStats(attackAttacker);
@@ -2352,7 +2233,7 @@ public class PkVPk {
 	// Do secondary effects from attacks (set status conditions, flinch, etc)
 	// -----------------------------
 	private void applySecondaryEffects(Attack attack, Pokemon attacker, Pokemon defender, Weather weather,
-			boolean isWeatherSuppressed, float damage) {
+			boolean isWeatherSuppressed, float damage, boolean isMistEffectActivated) {
 
 		Ability abilityAttacker = attacker.getAbilitySelected();
 		Ability abilityDefender = defender.getAbilitySelected();
@@ -2406,11 +2287,6 @@ public class PkVPk {
 							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
 							break;
 
-						case TRAPPED:
-							System.out.println(this.getPkFacing().getName() + " quedó atrapado por "
-									+ nbTurnsHoldingStatus + " turnos");
-							break;
-
 						case SEEDED:
 							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
 							break;
@@ -2439,7 +2315,7 @@ public class PkVPk {
 				break;
 
 			case STAT_DROP:
-				// defender.modifyStatStage(effect.getStat(), effect.getStages());
+				defender.modifyStatStage(effect.getStat(), effect.getStages(), isMistEffectActivated);
 				break;
 			default:
 				break;
