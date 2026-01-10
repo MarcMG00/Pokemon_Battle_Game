@@ -694,7 +694,7 @@ public class PkVPk {
 
 			System.out.println("¡" + defender.getName() + " fue arrastrado y obligado a retirarse!");
 			break;
-			
+
 		// Vuelo/Fly (tested)
 		case 19:
 			// If not charging => first turn charge the attack
@@ -2236,10 +2236,9 @@ public class PkVPk {
 			boolean isWeatherSuppressed, float damage, boolean isMistEffectActivated) {
 
 		Ability abilityAttacker = attacker.getAbilitySelected();
-		Ability abilityDefender = defender.getAbilitySelected();
 
 		double randomRetreat = Math.random();
-		int probabilityGettingStatus = (int) (Math.random() * 100);
+		double probabilityGettingStatus = Math.random();
 		int nbTurnsHoldingStatus = getRandomInt(1, 7);
 
 		if (attack.getSecondaryEffects() == null)
@@ -2247,7 +2246,11 @@ public class PkVPk {
 
 		for (SecondaryEffect effect : attack.getSecondaryEffects()) {
 
-			if (Math.random() > effect.getProbability()) {
+			double finalProbability = getFinalSecondaryEffectProbability(effect, attacker);
+
+			System.out.println("Proba de probabilidad : " + probabilityGettingStatus);
+
+			if (probabilityGettingStatus > finalProbability) {
 				continue;
 			}
 
@@ -2261,43 +2264,44 @@ public class PkVPk {
 					break;
 				}
 
-				if (probabilityGettingStatus <= effect.getProbability()) {
+				// Check if the Pokemon facing doesn't have the current ephemeral status
+				if (!(defender.getEphemeralStates().stream()
+						.anyMatch(e -> e.getStatusCondition() == effect.getStatus()))) {
 
-					// Check if the Pokemon facing doesn't have the current ephemeral status
-					if (!(defender.getEphemeralStates().stream()
-							.anyMatch(e -> e.getStatusCondition() == effect.getStatus()))) {
+					nbTurnsHoldingStatus = getRandomInt(1, 7);
 
-						nbTurnsHoldingStatus = getRandomInt(1, 7);
+					State state = new State(effect.getStatus(), nbTurnsHoldingStatus + 1);
 
-						State state = new State(effect.getStatus(), nbTurnsHoldingStatus + 1);
+					defender.addEphemeralState(state);
 
-						defender.addEphemeralState(state);
+					switch (effect.getStatus()) {
+					case CONFUSED:
+						System.out.println(
+								defender.getName() + " estará confuso por " + nbTurnsHoldingStatus + " turnos");
+						break;
 
-						switch (effect.getStatus()) {
-						case CONFUSED:
-							System.out.println(
-									defender.getName() + " estará confuso por " + nbTurnsHoldingStatus + " turnos");
-							break;
+					case CURSED:
+						System.out.println(
+								defender.getName() + " estará maldito por " + nbTurnsHoldingStatus + " turnos");
+						break;
 
-						case CURSED:
-							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
-							break;
+					case INFATUATED:
+						System.out.println(
+								defender.getName() + " estará enamorado por " + nbTurnsHoldingStatus + " turnos");
+						break;
 
-						case INFATUATED:
-							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
-							break;
+					case SEEDED:
+						System.out.println(
+								defender.getName() + " estará drenado por " + nbTurnsHoldingStatus + " turnos");
+						break;
 
-						case SEEDED:
-							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
-							break;
+					case PERISH_SONG:
+						System.out.println(
+								defender.getName() + " ...canto mortal... por " + nbTurnsHoldingStatus + " turnos");
+						break;
 
-						case PERISH_SONG:
-							System.out.println(defender.getName() + " por " + nbTurnsHoldingStatus + " turnos");
-							break;
-
-						default:
-							break;
-						}
+					default:
+						break;
 					}
 				}
 				break;
@@ -2321,5 +2325,23 @@ public class PkVPk {
 				break;
 			}
 		}
+	}
+
+	// -----------------------------
+	// Gets the probability of having the secondary effect
+	// -----------------------------
+	private double getFinalSecondaryEffectProbability(SecondaryEffect effect, Pokemon attacker) {
+		double probability = effect.getProbability();
+
+		System.out.println("Proba secundario effect antes : " + probability);
+
+		Ability ability = attacker.getAbilitySelected();
+		if (ability != null && ability.getId() == 32) {
+			probability *= 2;
+
+			System.out.println("Proba secundario effect después : " + probability);
+		}
+
+		return Math.min(probability, 1.0); // never > 100%
 	}
 }
