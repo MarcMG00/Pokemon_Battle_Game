@@ -1380,6 +1380,13 @@ public class Pokemon {
 				break;
 
 			case PRECISION:
+				// 35_Illuminate ability
+				if (this.getAbilitySelected().getId() == 35) {
+					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar dada su habilidad Iluminación");
+					break;
+				}
+				
 				if (this.getSpeedStage() <= -6) {
 					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar más!");

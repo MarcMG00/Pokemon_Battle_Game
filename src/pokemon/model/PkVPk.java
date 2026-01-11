@@ -848,6 +848,13 @@ public class PkVPk {
 			}
 
 			if (!isMistEffectActivated) {
+				// 35_Illuminate ability
+				if (defender.getAbilitySelected().getId() == 35) {
+					System.out.println("La precisión de " + defender.getName() + " (Id:" + defender.getId() + ")"
+							+ " no puede bajar dada su habilidad Iluminación");
+					break;
+				}
+
 				if (defender.getPrecisionPoints() <= -6) {
 					System.out.println("La precisión de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
