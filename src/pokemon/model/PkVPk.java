@@ -2248,8 +2248,6 @@ public class PkVPk {
 
 			double finalProbability = getFinalSecondaryEffectProbability(effect, attacker);
 
-			System.out.println("Proba de probabilidad : " + probabilityGettingStatus);
-
 			if (probabilityGettingStatus > finalProbability) {
 				continue;
 			}
@@ -2333,13 +2331,9 @@ public class PkVPk {
 	private double getFinalSecondaryEffectProbability(SecondaryEffect effect, Pokemon attacker) {
 		double probability = effect.getProbability();
 
-		System.out.println("Proba secundario effect antes : " + probability);
-
 		Ability ability = attacker.getAbilitySelected();
 		if (ability != null && ability.getId() == 32) {
 			probability *= 2;
-
-			System.out.println("Proba secundario effect después : " + probability);
 		}
 
 		return Math.min(probability, 1.0); // never > 100%

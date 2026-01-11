@@ -686,6 +686,8 @@ public class Game {
 			System.out.println("----------------------------------");
 			System.out.println("Let's start round nº : " + nbRound);
 			System.out.println("----------------------------------");
+			
+			applyStatsFromWeather();
 
 			Pokemon pkPlayer = this.getPlayer().getPkCombatting();
 
@@ -1628,13 +1630,27 @@ public class Game {
 	}
 
 	// -----------------------------
+	// Apply modifying stats from weather
+	// -----------------------------
+	private void applyStatsFromWeather() {
+		Ability abilityPkPlayer = this.getPlayer().getPkCombatting().getAbilitySelected();
+		Ability abilityPkIA = this.getIA().getPkCombatting().getAbilitySelected();
+
+		if (abilityPkPlayer != null && abilityPkPlayer.getId() != 5000 && abilityPkPlayer.getId() == 33)
+			this.getPlayer().getPkCombatting().setSpeed(this.getPlayer().getPkCombatting().getSpeed() * 2);
+
+		if (abilityPkIA != null && abilityPkIA.getId() != 5000 && abilityPkIA.getId() == 33)
+			this.getIA().getPkCombatting().setSpeed(this.getIA().getPkCombatting().getSpeed() * 2);
+	}
+
+	// -----------------------------
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
 	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee)
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "237,237,237";
-		String allPkIA = "385,385,385";
+		String allPkPlayer = "382,382,382";
+		String allPkIA = "418,418,418";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1685,9 +1701,9 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 8).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());

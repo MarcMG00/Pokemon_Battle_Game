@@ -525,7 +525,7 @@ public class Player {
 		for (Attack currentAttack : attacksAvailable) {
 
 			System.out
-					.println(currentAttack.getId() + " - " + currentAttack.getName() + " - " + currentAttack.getType());
+					.println(currentAttack.getId() + " - " + currentAttack.getName() + " - " + currentAttack.getType() + " -  PP : " + currentAttack.getPp());
 		}
 	}
 

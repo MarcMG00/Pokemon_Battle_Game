@@ -709,41 +709,8 @@ public class Pokemon {
 	// -----------------------------
 	public void restartParametersEffect() {
 
-		switch (this.getStatusCondition().getStatusCondition()) {
-		case TRAPPED:
-			break;
-		case PERISH_SONG:
-			break;
-		case CONFUSED:
-			break;
-		case FROZEN:
-			break;
-		case DEBILITATED:
-			break;
-		case ASLEEP:
-			break;
-		case SEEDED:
-			break;
-		case INFATUATED:
-			break;
-		case POISONED:
-			break;
-		case BADLY_POISONED:
-			break;
-		case CURSED:
-			break;
-		case PARALYZED:
-			this.setSpeed(this.getInitialSpeed());
-			break;
-		case BURNED:
-			this.setAttack(this.getInitialAttack());
-			break;
-		case NO_STATUS:
-			break;
-		default:
-			break;
-
-		}
+		this.setSpeed(this.getInitialSpeed());
+		this.setAttack(this.getInitialAttack());
 
 		// Can move and attack
 		this.getStatusCondition().setCanMoveStatusCondition(true);
