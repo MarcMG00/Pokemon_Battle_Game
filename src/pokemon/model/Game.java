@@ -1636,10 +1636,20 @@ public class Game {
 		Ability abilityPkPlayer = this.getPlayer().getPkCombatting().getAbilitySelected();
 		Ability abilityPkIA = this.getIA().getPkCombatting().getAbilitySelected();
 
+		// 33_Swift_Swim (player)
 		if (abilityPkPlayer != null && abilityPkPlayer.getId() != 5000 && abilityPkPlayer.getId() == 33)
 			this.getPlayer().getPkCombatting().setSpeed(this.getPlayer().getPkCombatting().getSpeed() * 2);
 
+		// 33_Swift_Swim (IA)
 		if (abilityPkIA != null && abilityPkIA.getId() != 5000 && abilityPkIA.getId() == 33)
+			this.getIA().getPkCombatting().setSpeed(this.getIA().getPkCombatting().getSpeed() * 2);
+		
+		// 34_Chlorophyll (player)
+		if (abilityPkPlayer != null && abilityPkPlayer.getId() != 5000 && abilityPkPlayer.getId() == 34)
+			this.getPlayer().getPkCombatting().setSpeed(this.getPlayer().getPkCombatting().getSpeed() * 2);
+
+		// 34_Chlorophyll (IA)
+		if (abilityPkIA != null && abilityPkIA.getId() != 5000 && abilityPkIA.getId() == 34)
 			this.getIA().getPkCombatting().setSpeed(this.getIA().getPkCombatting().getSpeed() * 2);
 	}
 
@@ -1649,8 +1659,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "382,382,382";
-		String allPkIA = "418,418,418";
+		String allPkPlayer = "382,382,382,382,382,382";
+		String allPkIA = "418,418,418,418,418,418";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
