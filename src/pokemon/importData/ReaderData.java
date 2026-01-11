@@ -822,8 +822,10 @@ public class ReaderData {
 				if (!cols[1].equals("0")) {
 					for (String idStr : cols[1].split(";")) {
 						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
-						if (a != null)
-							pk.addPhysicalAttack(a);
+						if (a != null) {
+							Attack attackDeepCopy = new Attack(a);
+							pk.addPhysicalAttack(attackDeepCopy);
+						}
 					}
 				}
 				// Put "Struggle" to all Pokemon (used when has no remaining PP on the principal
@@ -834,8 +836,10 @@ public class ReaderData {
 				if (!cols[2].equals("0")) {
 					for (String idStr : cols[2].split(";")) {
 						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
-						if (a != null)
-							pk.addSpecialAttack(a);
+						if (a != null) {
+							Attack attackDeepCopy = new Attack(a);
+							pk.addSpecialAttack(attackDeepCopy);
+						}
 					}
 				}
 
@@ -843,8 +847,10 @@ public class ReaderData {
 				if (!cols[3].equals("0")) {
 					for (String idStr : cols[3].split(";")) {
 						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
-						if (a != null)
-							pk.addOtherAttack(a);
+						if (a != null) {
+							Attack attackDeepCopy = new Attack(a);
+							pk.addOtherAttack(attackDeepCopy);
+						}
 					}
 				}
 			}

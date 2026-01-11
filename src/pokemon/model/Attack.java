@@ -81,6 +81,29 @@ public class Attack {
 		this.hasSecondaryEffect = false;
 		this.reduceStats = false;
 	}
+	
+	public Attack(Attack attack) {
+		super();
+		this.id = attack.id;
+		this.name = attack.name;
+		this.type = attack.type;
+		this.bases = attack.bases;
+		this.power = attack.power;
+		this.initialPower = attack.initialPower;
+		this.pp = attack.pp;
+		this.precision = attack.precision;
+		this.initialPrecision = attack.initialPrecision;
+		this.effect = attack.effect;
+		this.strTypeToPkType = attack.strTypeToPkType;
+		this.effectivenessAgainstPkFacing = attack.effectivenessAgainstPkFacing;
+		this.bonus = attack.bonus;
+		this.canRecieveDamage = attack.canRecieveDamage;
+		this.percentageFlinch = attack.percentageFlinch;
+		this.isOneHitKO = attack.isOneHitKO;
+		this.makesContact = attack.makesContact;
+		this.hasSecondaryEffect = attack.hasSecondaryEffect;
+		this.reduceStats = attack.reduceStats;
+	}
 
 	// ==================================== GETTERS/SETTERS
 	// ====================================

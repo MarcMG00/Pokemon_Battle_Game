@@ -38,6 +38,16 @@ public class Ability {
 		this.isWeatherType = false;
 		alreadyUsedOnEnter = false;
 	}
+	
+	public Ability(Ability ability) {
+		super();
+		this.id = ability.id;
+		this.name = ability.name;
+		this.description = ability.description;
+		this.effect = ability.effect;
+		this.isWeatherType = ability.isWeatherType;
+		alreadyUsedOnEnter = ability.alreadyUsedOnEnter;
+	}
 
 	// ==================================== GETTERS/SETTERS
 	// ====================================

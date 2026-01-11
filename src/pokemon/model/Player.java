@@ -157,7 +157,8 @@ public class Player {
 				continue;
 			}
 
-			pk.setAbilitySelected(finalAbility);
+			Ability finalAbilityDeepCopy = new Ability(finalAbility);
+			pk.setAbilitySelected(finalAbilityDeepCopy);
 
 			System.out.println(
 					pk.getName() + " (Id:" + pk.getId() + ")" + " obtuvo la habilidad: " + finalAbility.getName());
