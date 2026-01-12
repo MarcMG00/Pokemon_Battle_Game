@@ -58,10 +58,11 @@ public class Pokemon {
 	private boolean hasReceivedDamage;
 	private float damageReceived;
 	private boolean isDraining;
-	private Ability AbilitySelected;
+	private Ability AbilitySelected; // main ability that will used only to compare abilities (for example 36_Calc)
 	private boolean justEnteredBattle;
 	private boolean hasSubstitute;
 	private boolean isFireBoostActive;
+	private Ability currentAbility; // ability that will be used to do effects
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -123,6 +124,7 @@ public class Pokemon {
 		this.hasSubstitute = false;
 		this.initialTypes = new ArrayList<>();
 		this.isFireBoostActive = false;
+		this.currentAbility = new Ability();
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -178,6 +180,7 @@ public class Pokemon {
 		this.hasSubstitute = false;
 		this.initialTypes = new ArrayList<>();
 		this.isFireBoostActive = false;
+		this.currentAbility = new Ability();
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -238,6 +241,7 @@ public class Pokemon {
 		this.hasSubstitute = pokemon.hasSubstitute;
 		this.initialTypes = pokemon.initialTypes;
 		this.isFireBoostActive = pokemon.isFireBoostActive;
+		this.currentAbility = pokemon.currentAbility;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -620,11 +624,11 @@ public class Pokemon {
 	}
 
 	public Ability getAbilitySelected() {
-		return AbilitySelected;
+		return currentAbility;
 	}
 
-	public void setAbilitySelected(Ability abilitySelected) {
-		AbilitySelected = abilitySelected;
+	public void setAbilitySelected(Ability currentAbility) {
+		this.currentAbility = currentAbility;
 	}
 
 	public boolean getJustEnteredBattle() {
@@ -649,6 +653,14 @@ public class Pokemon {
 
 	public void setIsFireBoostActive(boolean isFireBoostActive) {
 		this.isFireBoostActive = isFireBoostActive;
+	}
+	
+	public Ability getBaseAbility() {
+		return AbilitySelected;
+	}
+
+	public void setBaseAbility(Ability abilitySelected) {
+		this.AbilitySelected = abilitySelected;
 	}
 
 	// Adds abilities to Pokemon
@@ -1386,7 +1398,7 @@ public class Pokemon {
 							+ " no puede bajar dada su habilidad Iluminación");
 					break;
 				}
-				
+
 				if (this.getSpeedStage() <= -6) {
 					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar más!");

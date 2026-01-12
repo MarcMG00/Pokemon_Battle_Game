@@ -677,16 +677,17 @@ public class Game {
 
 		// Apply some abilities first
 		applyIntimidationOnBattleStart(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
+		applyTraceOnBattleStart(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
 
-		// Puts abilities (for example if weather) at the beginning
-		applyEntryAbilities();
+		// Puts weather abilities at the beginning
+		applyEntryWeatherAbilities();
 
 		while (this.getIA().getPokemon().size() >= 1 && this.getPlayer().getPokemon().size() >= 1) {
 
 			System.out.println("----------------------------------");
 			System.out.println("Let's start round nº : " + nbRound);
 			System.out.println("----------------------------------");
-			
+
 			applyStatsFromWeather();
 
 			Pokemon pkPlayer = this.getPlayer().getPkCombatting();
@@ -1520,7 +1521,7 @@ public class Game {
 	// -----------------------------
 	// Sets the weather ability on first combat (if any)
 	// -----------------------------
-	private void applyEntryAbilities() {
+	private void applyEntryWeatherAbilities() {
 
 		Pokemon p1 = this.getPlayer().getPkCombatting();
 		Pokemon p2 = this.getIA().getPkCombatting();
@@ -1568,15 +1569,15 @@ public class Game {
 		if (ability.getId() == 22) {
 			ability.getEffect().onSwitchIn(this, entering, defender);
 		}
-
 		// Sets weather
-		if (ability.getIsWeatherType()) {
+		else if (ability.getIsWeatherType()) {
 			ability.getEffect().onBattleStart(this, entering);
 		}
-
 		// Suppress weather if 13_Cloud_Nine
-		if (ability.getId() == 13) {
+		else if (ability.getId() == 13) {
 			ability.getEffect().onBattleStart(this, entering);
+		} else {
+			ability.getEffect().onSwitchIn(this, entering, defender);
 		}
 	}
 
@@ -1596,7 +1597,7 @@ public class Game {
 	// Nine)
 	// -----------------------------
 	private void applyExitAbilityOnSwitch(Pokemon leaving) {
-		Ability ability = leaving.getAbilitySelected();
+		Ability ability = leaving.getBaseAbility();
 
 		if (ability == null || ability.getId() == 5000)
 			return;
@@ -1630,6 +1631,29 @@ public class Game {
 	}
 
 	// -----------------------------
+	// Do 36_Trace ability
+	// -----------------------------
+	private void applyTraceOnBattleStart(Pokemon p1, Pokemon p2) {
+
+		boolean p1Trace = p1.hasAbility(36);
+		boolean p2Trace = p2.hasAbility(36);
+
+		if (!p1Trace && !p2Trace)
+			return;
+
+		if (p1Trace && !p2Trace) {
+			p1.getAbilitySelected().getEffect().onSwitchIn(this, p1, p2);
+		} else if (p2Trace && !p1Trace) {
+			p2.getAbilitySelected().getEffect().onSwitchIn(this, p2, p1);
+		} else {
+			// Speed comparison
+			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
+			Pokemon faster = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
+			slower.getAbilitySelected().getEffect().onSwitchIn(this, slower, faster);
+		}
+	}
+
+	// -----------------------------
 	// Apply modifying stats from weather
 	// -----------------------------
 	private void applyStatsFromWeather() {
@@ -1643,7 +1667,7 @@ public class Game {
 		// 33_Swift_Swim (IA)
 		if (abilityPkIA != null && abilityPkIA.getId() != 5000 && abilityPkIA.getId() == 33)
 			this.getIA().getPkCombatting().setSpeed(this.getIA().getPkCombatting().getSpeed() * 2);
-		
+
 		// 34_Chlorophyll (player)
 		if (abilityPkPlayer != null && abilityPkPlayer.getId() != 5000 && abilityPkPlayer.getId() == 34)
 			this.getPlayer().getPkCombatting().setSpeed(this.getPlayer().getPkCombatting().getSpeed() * 2);
@@ -1659,8 +1683,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "382,382,382,382,382,382";
-		String allPkIA = "418,418,418,418,418,418";
+		String allPkPlayer = "282,282,282";
+		String allPkIA = "405,405,405";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();

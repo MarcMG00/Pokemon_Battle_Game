@@ -30,6 +30,7 @@ import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
 import pokemon.interfce.SynchronizeAbility;
+import pokemon.interfce.TraceAbility;
 import pokemon.interfce.VoltAbsorbAbility;
 import pokemon.interfce.WaterAbsorbAbility;
 import pokemon.interfce.WonderGuardAbility;
@@ -1104,6 +1105,10 @@ public class ReaderData {
 		// Pararrayos/Lightning rod
 		case 31:
 			ability.setEffect(new LightningRodAbility());
+			break;
+		// Calco/Trace
+		case 36:
+			ability.setEffect(new TraceAbility());
 			break;
 		// Sequía/Drought
 		case 70:

@@ -159,6 +159,8 @@ public class Player {
 
 			Ability finalAbilityDeepCopy = new Ability(finalAbility);
 			pk.setAbilitySelected(finalAbilityDeepCopy);
+			pk.setBaseAbility(finalAbilityDeepCopy);
+			pk.setBaseAbilityId(finalAbilityDeepCopy.getId());
 
 			System.out.println(
 					pk.getName() + " (Id:" + pk.getId() + ")" + " obtuvo la habilidad: " + finalAbility.getName());
@@ -525,8 +527,8 @@ public class Player {
 
 		for (Attack currentAttack : attacksAvailable) {
 
-			System.out
-					.println(currentAttack.getId() + " - " + currentAttack.getName() + " - " + currentAttack.getType() + " -  PP : " + currentAttack.getPp());
+			System.out.println(currentAttack.getId() + " - " + currentAttack.getName() + " - " + currentAttack.getType()
+					+ " -  PP : " + currentAttack.getPp());
 		}
 	}
 
