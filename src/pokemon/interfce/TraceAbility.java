@@ -22,8 +22,8 @@ public class TraceAbility implements AbilityEffect {
 
 		owner.setAbilitySelected(AbilityDeepCopy);
 
-		System.out
-				.println(owner.getName() + " copió la habilidad de " + defender.getName() + " dada su habilidad Calco");
+		System.out.println(owner.getName() + " copió la habilidad " + defender.getAbilitySelected().getName() + " de "
+				+ defender.getName() + " dada su habilidad Calco");
 
 		// Applies immediately abilities that are onSwitchIn or startBattle
 		owner.getAbilitySelected().getEffect().onBattleStart(game, owner);
@@ -33,7 +33,7 @@ public class TraceAbility implements AbilityEffect {
 
 	@Override
 	public void onSwitchOut(Game game, Pokemon owner) {
-		System.out.println(owner.getName() + "dejó de copiar la habilidad del rival");
+		System.out.println(owner.getName() + " dejó de copiar la habilidad del rival");
 		owner.setAbilitySelected(new Ability(owner.getBaseAbility()));
 	}
 }
