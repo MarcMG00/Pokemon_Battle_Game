@@ -20,10 +20,12 @@ public class StenchAbility implements AbilityEffect {
 		if (attack.getPercentageFlinched() == 0)
 			return;
 
-		// 3 - The defender can be flinched TODO >> when ability or some attack
-		// forbidden to defender to be flinched
-		if (defender.getAbilitySelected().getId() == 39)
+		// 3 - The defender can be flinched
+		if (defender.getAbilitySelected().getId() == 39) {
+			System.out.println(
+					defender.getName() + " no se intimidó gracias a " + defender.getAbilitySelected().getName());
 			return;
+		}
 
 		// 5 - Probability to be flinched
 		if (Math.random() < percentageFlinch + FLINCH_CHANCE) {
