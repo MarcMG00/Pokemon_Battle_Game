@@ -654,7 +654,7 @@ public class Pokemon {
 	public void setIsFireBoostActive(boolean isFireBoostActive) {
 		this.isFireBoostActive = isFireBoostActive;
 	}
-	
+
 	public Ability getBaseAbility() {
 		return AbilitySelected;
 	}
@@ -1245,12 +1245,29 @@ public class Pokemon {
 		case BADLY_POISONED:
 			break;
 		case FROZEN:
-			// Ice Pokemon cannot be frozen
+			// 40_Magma_Armor ability
+			if (this.getAbilitySelected().getId() == 40) {
+				System.out.println(this.getName() + " no puede ser congelado dada su habilidad Escudo magma");
+				return false;
+			}
+
+			// Sun forbids to froze
+			if (weather == Weather.SUN) {
+				System.out.println(this.getName() + " no puede ser congelado por el tiempo soleado");
+				return false;
+			}
+
+			// Pokemon is ice type
+			if (this.getTypes().stream().anyMatch(t -> t.getId() == 9)) {
+				System.out.println(this.getName() + " no puede ser congelado ya que es de tipo hielo");
+				return false;
+			}
+
 			if (canBeFrozen && !isWeatherSuppressed && this.getTypes().stream().noneMatch(t -> t.getId() == 9)) {
 				System.out.println(this.getName() + " fue congelado");
 			} else {
 				System.out.println(this.getName()
-						+ " no puede ser congelado dado el tiempo (soleado) o es un Pokemon de tipo hielo");
+						+ " no puede ser congelado por otra razón no mencionada todavía (no debería entrar)");
 				return false;
 			}
 			break;
