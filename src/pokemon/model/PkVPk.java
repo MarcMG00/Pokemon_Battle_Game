@@ -2003,6 +2003,11 @@ public class PkVPk {
 
 		float dmg = 0;
 
+		// If ability is Huge_Power and it's a physical attack => set Power *2
+		if (this.getPkCombatting().getAbilitySelected().getId() == 37 && attack.getBases().contains("fisico")) {
+			attack.setPower(attack.getPower() * 2);
+		}
+
 		if (isSpecialAttack) {
 			// Apply special damage
 			dmg = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier
