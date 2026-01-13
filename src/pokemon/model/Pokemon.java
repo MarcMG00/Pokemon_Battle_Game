@@ -1274,6 +1274,12 @@ public class Pokemon {
 		case ASLEEP:
 			break;
 		case BURNED:
+			// 41_Water_Vell ability
+			if (this.getAbilitySelected().getId() == 41) {
+				System.out.println(this.getName() + " no puede ser quemado dada su habilidad Velo agua");
+				return false;
+			}
+
 			// Fire Pokemon cannot be burned
 			if (this.getTypes().stream().anyMatch(t -> t.getId() == 7)) {
 				System.out.println(this.getName() + " no puede ser quemado ya que es de tipo fuego");
