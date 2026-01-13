@@ -10,6 +10,7 @@ public enum StatusConditions {
 	SEEDED, // drenado
 	PERISH_SONG, // canto mortal
 	TRAPPEDBYOWNATTACK, // Solo puede usar este ataque durante unos turnos
+	DRAINEDALLTURNS, // Drained but there is no turns (removed by other conditions)
 
 	// Status conditions / Estados persitentes
 	PARALYZED, // paralizado
@@ -19,8 +20,6 @@ public enum StatusConditions {
 	ASLEEP, // dormido
 	BURNED, // quemado
 	DISABLE, // anula el útlimo ataque usado por el rival durante unos turnos
-
-	DRAINEDALLTURNS, // Drained but there is no turns (removed by other conditions)
 
 	// No status
 	NO_STATUS, // sin estado

@@ -1,27 +1,57 @@
 package pokemon.model;
 
+import pokemon.interfce.AbilityEffect;
+
 public class Ability {
-	
+
 	// ==================================== FIELDS
 	// ====================================
-	
+
 	private int id;
 	private String name;
 	private String description;
-	
+	private AbilityEffect effect;
+	private boolean isWeatherType;
+	private boolean alreadyUsedOnEnter;
+
 	// ==================================== CONSTRUCTORS
 	// ====================================
-	
+
+	public Ability() {
+		super();
+		this.id = 5000;
+		this.name = "";
+		this.description = "";
+		this.effect = new AbilityEffect() {
+		};
+		this.isWeatherType = false;
+		alreadyUsedOnEnter = false;
+	}
+
 	public Ability(int id, String name, String description) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
+		this.effect = new AbilityEffect() {
+		};
+		this.isWeatherType = false;
+		alreadyUsedOnEnter = false;
+	}
+	
+	public Ability(Ability ability) {
+		super();
+		this.id = ability.id;
+		this.name = ability.name;
+		this.description = ability.description;
+		this.effect = ability.effect;
+		this.isWeatherType = ability.isWeatherType;
+		alreadyUsedOnEnter = ability.alreadyUsedOnEnter;
 	}
 
 	// ==================================== GETTERS/SETTERS
 	// ====================================
-	
+
 	public int getId() {
 		return id;
 	}
@@ -44,5 +74,29 @@ public class Ability {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public AbilityEffect getEffect() {
+		return effect;
+	}
+
+	public void setEffect(AbilityEffect effect) {
+		this.effect = effect;
+	}
+
+	public boolean getIsWeatherType() {
+		return isWeatherType;
+	}
+
+	public void setIsWeatherType(boolean isWeatherType) {
+		this.isWeatherType = isWeatherType;
+	}
+
+	public boolean getAlreadyUsedOnEnter() {
+		return alreadyUsedOnEnter;
+	}
+
+	public void setAlreadyUsedOnEnter(boolean alreadyUsedOnEnter) {
+		this.alreadyUsedOnEnter = alreadyUsedOnEnter;
 	}
 }
