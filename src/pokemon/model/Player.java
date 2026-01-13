@@ -160,7 +160,6 @@ public class Player {
 			Ability finalAbilityDeepCopy = new Ability(finalAbility);
 			pk.setAbilitySelected(finalAbilityDeepCopy);
 			pk.setBaseAbility(finalAbilityDeepCopy);
-			pk.setBaseAbilityId(finalAbilityDeepCopy.getId());
 
 			System.out.println(
 					pk.getName() + " (Id:" + pk.getId() + ")" + " obtuvo la habilidad: " + finalAbility.getName());

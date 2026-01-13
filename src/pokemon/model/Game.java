@@ -1684,7 +1684,7 @@ public class Game {
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "282,282,282";
-		String allPkIA = "405,405,405";
+		String allPkIA = "034,034,034";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();

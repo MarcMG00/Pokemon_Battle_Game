@@ -6,14 +6,14 @@ import pokemon.model.Game;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class StaticAbility implements AbilityEffect {
-	private static final double PARALYSIS_CHANCE = 0.30;
+public class PoisonPointAbility implements AbilityEffect {
+	private static final double POISONED_CHANCE = 0.30;
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double precentageFlinch) {
 
-		if (attacker.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
+		if (attacker.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
 			return;
 		}
 
@@ -22,13 +22,12 @@ public class StaticAbility implements AbilityEffect {
 			return;
 
 		// Probability
-		if (Math.random() >= PARALYSIS_CHANCE) {
+		if (Math.random() >= POISONED_CHANCE) {
 			return;
 		}
 
 		// Try to apply paralysis
-		attacker.trySetStatus(new State(StatusConditions.PARALYZED), null, false, attack);
-		System.out.println(
-				attacker.getName() + " fue paralizado por la habilidad electricidad estática del Pokémon rival");
+		attacker.trySetStatus(new State(StatusConditions.POISONED), null, false, attack);
+		System.out.println(attacker.getName() + " fue envenenado por la habilidad punto tóxico del Pokémon rival");
 	}
 }

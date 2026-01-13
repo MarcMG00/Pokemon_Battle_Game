@@ -25,6 +25,7 @@ import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
 import pokemon.interfce.NaturalCureAbility;
+import pokemon.interfce.PoisonPointAbility;
 import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
@@ -1109,6 +1110,10 @@ public class ReaderData {
 		// Calco/Trace
 		case 36:
 			ability.setEffect(new TraceAbility());
+			break;
+		// Punto tóxico/Poison point
+		case 38:
+			ability.setEffect(new PoisonPointAbility());
 			break;
 		// Sequía/Drought
 		case 70:
