@@ -2,7 +2,9 @@ package pokemon.model;
 
 import java.util.ArrayList;
 
+import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
+import pokemon.enums.Weather;
 
 public class Pokemon {
 
@@ -26,6 +28,7 @@ public class Pokemon {
 	private ArrayList<Ability> normalAbilities;
 	private ArrayList<Ability> hiddenAbilities;
 	private ArrayList<PokemonType> types;
+	private ArrayList<PokemonType> initialTypes;
 	private ArrayList<Attack> physicalAttacks;
 	private ArrayList<Attack> specialAttacks;
 	private ArrayList<Attack> otherAttacks;
@@ -55,6 +58,11 @@ public class Pokemon {
 	private boolean hasReceivedDamage;
 	private float damageReceived;
 	private boolean isDraining;
+	private Ability AbilitySelected; // main ability that will used only to compare abilities (for example 36_Calc)
+	private boolean justEnteredBattle;
+	private boolean hasSubstitute;
+	private boolean isFireBoostActive;
+	private Ability currentAbility; // ability that will be used to do effects
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -111,6 +119,12 @@ public class Pokemon {
 		this.hasReceivedDamage = false;
 		this.damageReceived = 0;
 		this.isDraining = false;
+		this.AbilitySelected = new Ability();
+		this.justEnteredBattle = false;
+		this.hasSubstitute = false;
+		this.initialTypes = new ArrayList<>();
+		this.isFireBoostActive = false;
+		this.currentAbility = new Ability();
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -161,6 +175,12 @@ public class Pokemon {
 		this.hasReceivedDamage = false;
 		this.damageReceived = 0;
 		this.isDraining = false;
+		this.AbilitySelected = new Ability();
+		this.justEnteredBattle = false;
+		this.hasSubstitute = false;
+		this.initialTypes = new ArrayList<>();
+		this.isFireBoostActive = false;
+		this.currentAbility = new Ability();
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -216,6 +236,12 @@ public class Pokemon {
 		this.hasReceivedDamage = pokemon.hasReceivedDamage;
 		this.damageReceived = pokemon.damageReceived;
 		this.isDraining = pokemon.isDraining;
+		this.AbilitySelected = pokemon.AbilitySelected;
+		this.justEnteredBattle = pokemon.justEnteredBattle;
+		this.hasSubstitute = pokemon.hasSubstitute;
+		this.initialTypes = pokemon.initialTypes;
+		this.isFireBoostActive = pokemon.isFireBoostActive;
+		this.currentAbility = pokemon.currentAbility;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -355,6 +381,14 @@ public class Pokemon {
 
 	public void setTypes(ArrayList<PokemonType> types) {
 		this.types = types;
+	}
+
+	public ArrayList<PokemonType> getInitialTypes() {
+		return initialTypes;
+	}
+
+	public void setInitialTypes(ArrayList<PokemonType> initialTypes) {
+		this.initialTypes = initialTypes;
 	}
 
 	public ArrayList<Attack> getPhysicalAttacks() {
@@ -589,6 +623,46 @@ public class Pokemon {
 		this.isDraining = isDraining;
 	}
 
+	public Ability getAbilitySelected() {
+		return currentAbility;
+	}
+
+	public void setAbilitySelected(Ability currentAbility) {
+		this.currentAbility = currentAbility;
+	}
+
+	public boolean getJustEnteredBattle() {
+		return justEnteredBattle;
+	}
+
+	public void setJustEnteredBattle(boolean justEnteredBattle) {
+		this.justEnteredBattle = justEnteredBattle;
+	}
+
+	public boolean getHasSubstitute() {
+		return hasSubstitute;
+	}
+
+	public void setHasSubstitute(boolean hasSubstitute) {
+		this.hasSubstitute = hasSubstitute;
+	}
+
+	public boolean getIsFireBoostActive() {
+		return isFireBoostActive;
+	}
+
+	public void setIsFireBoostActive(boolean isFireBoostActive) {
+		this.isFireBoostActive = isFireBoostActive;
+	}
+
+	public Ability getBaseAbility() {
+		return AbilitySelected;
+	}
+
+	public void setBaseAbility(Ability abilitySelected) {
+		this.AbilitySelected = abilitySelected;
+	}
+
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
 		this.normalAbilities.add(ablty);
@@ -602,6 +676,11 @@ public class Pokemon {
 	// Adds types to Pokemon
 	public void addType(PokemonType pt) {
 		this.types.add(pt);
+	}
+
+	// Adds initial types to Pokemon
+	public void addInitialType(PokemonType pt) {
+		this.initialTypes.add(pt);
 	}
 
 	// Adds physical attacks to Pokemon
@@ -630,7 +709,7 @@ public class Pokemon {
 	}
 
 	// Adds a ephemeral state to Pokemon
-	public void addEstadoEfimero(State ephState) {
+	public void addEphemeralState(State ephState) {
 		this.ephemeralStates.add(ephState);
 	}
 
@@ -642,41 +721,8 @@ public class Pokemon {
 	// -----------------------------
 	public void restartParametersEffect() {
 
-		switch (this.getStatusCondition().getStatusCondition()) {
-		case TRAPPED:
-			break;
-		case PERISH_SONG:
-			break;
-		case CONFUSED:
-			break;
-		case FROZEN:
-			break;
-		case DEBILITATED:
-			break;
-		case ASLEEP:
-			break;
-		case SEEDED:
-			break;
-		case INFATUATED:
-			break;
-		case POISONED:
-			break;
-		case BADLY_POISONED:
-			break;
-		case CURSED:
-			break;
-		case PARALYZED:
-			this.setSpeed(this.getInitialSpeed());
-			break;
-		case BURNED:
-			this.setAttack(this.getInitialAttack());
-			break;
-		case NO_STATUS:
-			break;
-		default:
-			break;
-
-		}
+		this.setSpeed(this.getInitialSpeed());
+		this.setAttack(this.getInitialAttack());
 
 		// Can move and attack
 		this.getStatusCondition().setCanMoveStatusCondition(true);
@@ -685,6 +731,7 @@ public class Pokemon {
 		// Reset damage received
 		this.setHasReceivedDamage(false);
 		this.setDamageReceived(0f);
+		this.setJustEnteredBattle(false);
 	}
 
 	// -----------------------------
@@ -876,7 +923,7 @@ public class Pokemon {
 				// Adds +10% each turn not thawed
 				frozenState.setPercentToBeDefrosted(frozenState.getPercentToBeDefrosted() + 10);
 
-				System.out.println(ANSI_CYAN + this.getName() + " => congelado - no puede atacar)" + ANSI_RESET);
+				System.out.println(ANSI_CYAN + this.getName() + " => congelado - no puede atacar" + ANSI_RESET);
 			}
 		}
 	}
@@ -1027,7 +1074,7 @@ public class Pokemon {
 
 				this.setPs(this.getPs() - reducePs);
 
-				System.out.println(this.getName() + " está atado y recibe daño)");
+				System.out.println(this.getName() + " está atado y recibe daño");
 			}
 		}
 	}
@@ -1142,7 +1189,7 @@ public class Pokemon {
 
 					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
 
-					this.addEstadoEfimero(confused);
+					this.addEphemeralState(confused);
 				}
 			}
 		}
@@ -1153,6 +1200,254 @@ public class Pokemon {
 	// -----------------------------
 	public void removeStates() {
 		removeDrainedAllTurns();
+	}
+
+	// -----------------------------
+	// Try to put normal status on Pokemon facing
+	// -----------------------------
+	public boolean trySetStatus(State newState, Weather weather, boolean isWeatherSuppressed, Attack attackAttacker) {
+
+		boolean canBeFrozen = weather != Weather.SUN;
+
+		Ability ability = this.getAbilitySelected();
+		if (ability != null) {
+			// 19_Shield_Dust doesn't allow to get secondary effects
+			if (attackAttacker.getHasSecondaryEffect() && ability.getId() == 19) {
+				System.out.println(this.getName()
+						+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
+				return false;
+			}
+		}
+
+		// Already has a status
+		if (this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS)
+			return false;
+
+		switch (newState.getStatusCondition()) {
+		case PARALYZED:
+			// Limber ability prevents paralysis
+			if (this.getAbilitySelected().getId() == 7) {
+				System.out.println(this.getName() + " evitó la parálisis gracias a Flexibilidad");
+				return false;
+			} else {
+				System.out.println(this.getName() + " fue paralizado");
+			}
+			break;
+		case POISONED:
+			// 17_Immunity ability
+			if (this.getAbilitySelected().getId() == 17) {
+				System.out.println(this.getName() + " no puede envenenarse dada su habilidad Inmunidad");
+				return false;
+			} else {
+				System.out.println(this.getName() + " fue envenenado");
+			}
+			break;
+		case BADLY_POISONED:
+			break;
+		case FROZEN:
+			// 40_Magma_Armor ability
+			if (this.getAbilitySelected().getId() == 40) {
+				System.out.println(this.getName() + " no puede ser congelado dada su habilidad Escudo magma");
+				return false;
+			}
+
+			// Sun forbids to froze
+			if (weather == Weather.SUN) {
+				System.out.println(this.getName() + " no puede ser congelado por el tiempo soleado");
+				return false;
+			}
+
+			// Pokemon is ice type
+			if (this.getTypes().stream().anyMatch(t -> t.getId() == 9)) {
+				System.out.println(this.getName() + " no puede ser congelado ya que es de tipo hielo");
+				return false;
+			}
+
+			if (canBeFrozen && !isWeatherSuppressed && this.getTypes().stream().noneMatch(t -> t.getId() == 9)) {
+				System.out.println(this.getName() + " fue congelado");
+			} else {
+				System.out.println(this.getName()
+						+ " no puede ser congelado por otra razón no mencionada todavía (no debería entrar)");
+				return false;
+			}
+			break;
+		case ASLEEP:
+			break;
+		case BURNED:
+			// 41_Water_Vell ability
+			if (this.getAbilitySelected().getId() == 41) {
+				System.out.println(this.getName() + " no puede ser quemado dada su habilidad Velo agua");
+				return false;
+			}
+
+			// Fire Pokemon cannot be burned
+			if (this.getTypes().stream().anyMatch(t -> t.getId() == 7)) {
+				System.out.println(this.getName() + " no puede ser quemado ya que es de tipo fuego");
+				return false;
+			} else {
+				System.out.println(this.getName() + " fue quemado");
+			}
+			break;
+		case DISABLE:
+			break;
+		default:
+			break;
+		}
+
+		this.setStatusCondition(newState);
+		return true;
+	}
+
+	// -----------------------------
+	// Try to put ephemeral status on Pokemon facing
+	// -----------------------------
+	public boolean trySetEphemeralStatus(StatusConditions status, Attack attackAttacker) {
+
+		Ability ability = this.getAbilitySelected();
+		if (ability == null)
+			return true;
+
+		// 19_Shield_Dust doesn't allow to get secondary effects
+		if (attackAttacker.getHasSecondaryEffect() && ability.getId() == 19) {
+			System.out.println(this.getName()
+					+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
+			return false;
+		}
+
+		switch (status) {
+
+		case ASLEEP:
+			// 15_Insomnia
+			if (ability.getId() == 15) {
+				System.out.println(this.getName() + " no puede dormirse dada su habilidad Insomnia");
+				return false;
+			}
+			break;
+
+		case CONFUSED:
+			// 20_Own_Tempo
+			if (ability.getId() == 20) {
+				System.out.println(this.getName() + " no puede confundirse dada su habilidad Ritmo propio");
+				return false;
+			}
+
+			break;
+
+		default:
+			break;
+		}
+
+		return true;
+	}
+
+	// -----------------------------
+	// Check if have some ability
+	// -----------------------------
+	public boolean hasAbility(int abilityId) {
+		return this.getAbilitySelected().getId() == abilityId;
+	}
+
+	// -----------------------------
+	// Check if can be flinched
+	// -----------------------------
+	public boolean canBeFlinched() {
+
+		if (this.getAbilitySelected().getId() == 39) {
+			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pudo retroceder dada su habilidad Fuerza mental");
+			return false;
+		}
+		return true;
+	}
+
+	// -----------------------------
+	// Modify stat stage from rival attacks
+	// -----------------------------
+	public void modifyStatStage(StatType stat, int stages, boolean isMistEffectActivated) {
+
+		if (this.getAbilitySelected().getId() == 29) {
+			System.out.println("Las estats de " + this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pueden bajar dada su la habilidad " + this.getAbilitySelected().getName());
+			return;
+		}
+
+		if (!isMistEffectActivated) {
+			switch (stat) {
+
+			case ATTACK:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println(
+							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque!");
+				}
+				break;
+
+			case SPECIAL_ATTACK:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println("El ataque especial de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque especial!");
+				}
+				break;
+
+			case DEFENSE:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println(
+							"La defensa de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa!");
+				}
+				break;
+
+			case SPECIAL_DEFENSE:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println("La defensa especial de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa especial!");
+				}
+				break;
+
+			case PRECISION:
+				// 35_Illuminate ability
+				if (this.getAbilitySelected().getId() == 35) {
+					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar dada su habilidad Iluminación");
+					break;
+				}
+
+				if (this.getSpeedStage() <= -6) {
+					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su precisión!");
+				}
+				break;
+
+			case SPEED:
+				if (this.getSpeedStage() <= -6) {
+					System.out.println("La velocidad de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar más!");
+				} else {
+					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su velocidad!");
+				}
+				break;
+
+			case NONE:
+				break;
+			}
+		} else {
+			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pudo bajar las estadísticas a causa de Neblina");
+		}
 	}
 
 }

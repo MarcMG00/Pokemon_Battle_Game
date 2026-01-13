@@ -1,5 +1,7 @@
 package pokemon.model;
 
+import java.util.ArrayList;
+
 public class PokemonType {
 	
 	// ==================================== FIELDS
@@ -7,9 +9,11 @@ public class PokemonType {
 	
 	private int id;
 	private String name;
-	private float xLowDamage;
-	private float xNormalDamage;
-	private float xHighDamage;
+	private ArrayList<Integer> pktDoLotDamage;
+	private ArrayList<Integer> pktRecieveLotDamage;
+	private ArrayList<Integer> pktDoLowDamage;
+	private ArrayList<Integer> pktReceiveLowDamage;
+	private ArrayList<Integer> noEffect;
 	
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -18,18 +22,22 @@ public class PokemonType {
 		super();
 		this.id = 0;
 		this.name = "";
-		this.xLowDamage = 0f;
-		this.xHighDamage = 2f;
-		this.xNormalDamage = 1.5f;
+		this.pktDoLotDamage = new ArrayList<>();
+		this.pktRecieveLotDamage = new ArrayList<>();
+		this.pktDoLowDamage = new ArrayList<>();
+		this.pktReceiveLowDamage = new ArrayList<>();
+		this.noEffect = new ArrayList<>();
 	}
 	
 	public PokemonType(int id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.xLowDamage = 0f;
-		this.xHighDamage = 2f;
-		this.xNormalDamage = 1.5f;
+		this.pktDoLotDamage = new ArrayList<>();
+		this.pktRecieveLotDamage = new ArrayList<>();
+		this.pktDoLowDamage = new ArrayList<>();
+		this.pktReceiveLowDamage = new ArrayList<>();
+		this.noEffect = new ArrayList<>();
 	}
 	
 	// ==================================== GETTERS/SETTERS
@@ -51,27 +59,43 @@ public class PokemonType {
 		this.name = name;
 	}
 
-	public float getXLowDamage() {
-		return xLowDamage;
+	public ArrayList<Integer> getPktDoLotDamage() {
+		return pktDoLotDamage;
 	}
 
-	public void setXLowDamage(float xLowDamage) {
-		this.xLowDamage = xLowDamage;
+	public void setPktDoLotDamage(ArrayList<Integer> pktDoLotDamage) {
+		this.pktDoLotDamage = pktDoLotDamage;
 	}
 
-	public float getXHighDamage() {
-		return xHighDamage;
+	public ArrayList<Integer> getPktRecieveLotDamage() {
+		return pktRecieveLotDamage;
 	}
 
-	public void setXHighDamage(float xHighDamage) {
-		this.xHighDamage = xHighDamage;
+	public void setPktRecieveLotDamage(ArrayList<Integer> pktRecieveLotDamage) {
+		this.pktRecieveLotDamage = pktRecieveLotDamage;
 	}
 
-	public float getXNormalDamage() {
-		return xNormalDamage;
+	public ArrayList<Integer> getPktDoLowDamage() {
+		return pktDoLowDamage;
 	}
 
-	public void setXNormalDamage(float xNormalDamage) {
-		this.xNormalDamage = xNormalDamage;
+	public void setPktDoLowDamage(ArrayList<Integer> pktDoLowDamage) {
+		this.pktDoLowDamage = pktDoLowDamage;
+	}
+
+	public ArrayList<Integer> getPktReceiveLowDamage() {
+		return pktReceiveLowDamage;
+	}
+
+	public void setPktReceiveLowDamage(ArrayList<Integer> pktReceiveLowDamage) {
+		this.pktReceiveLowDamage = pktReceiveLowDamage;
+	}
+
+	public ArrayList<Integer> getNoEffect() {
+		return noEffect;
+	}
+
+	public void setNoEffect(ArrayList<Integer> noEffect) {
+		this.noEffect = noEffect;
 	}
 }

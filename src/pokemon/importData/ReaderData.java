@@ -10,10 +10,36 @@ import java.util.Map;
 import java.util.Optional;
 
 import pokemon.enums.AttackCategory;
+import pokemon.enums.SecondaryEffectType;
+import pokemon.enums.StatType;
+import pokemon.enums.StatusConditions;
+import pokemon.interfce.BattleArmorAbility;
+import pokemon.interfce.CloudNineAbility;
+import pokemon.interfce.ColorChangeAbility;
+import pokemon.interfce.DrizzleAbility;
+import pokemon.interfce.DroughtAbility;
+import pokemon.interfce.EffectSporeAbility;
+import pokemon.interfce.EmptyAbility;
+import pokemon.interfce.FlashFireAbility;
+import pokemon.interfce.IntimidateAbility;
+import pokemon.interfce.LevitateAbility;
+import pokemon.interfce.LightningRodAbility;
+import pokemon.interfce.NaturalCureAbility;
+import pokemon.interfce.PoisonPointAbility;
+import pokemon.interfce.RoughSkinAbility;
+import pokemon.interfce.SpeedBoostAbility;
+import pokemon.interfce.StaticAbility;
+import pokemon.interfce.StenchAbility;
+import pokemon.interfce.SynchronizeAbility;
+import pokemon.interfce.TraceAbility;
+import pokemon.interfce.VoltAbsorbAbility;
+import pokemon.interfce.WaterAbsorbAbility;
+import pokemon.interfce.WonderGuardAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
+import pokemon.model.SecondaryEffect;
 
 public class ReaderData {
 
@@ -143,7 +169,7 @@ public class ReaderData {
 							if (pkty.getId() == Integer.parseInt(pks[12])) {
 
 								pokemonToAdd.addType(pkty);
-
+								pokemonToAdd.addInitialType(pkty);
 							}
 						}
 					}
@@ -163,7 +189,7 @@ public class ReaderData {
 								if (pkty.getId() == Integer.parseInt(pks[13])) {
 
 									pokemonToAdd.addType(pkty);
-
+									pokemonToAdd.addInitialType(pkty);
 								}
 							}
 						}
@@ -194,7 +220,7 @@ public class ReaderData {
 	// -----------------------------
 	// Reads habsList.csv file and adds to abilities list
 	// -----------------------------
-	public void readAbilities() {
+	public void readAbilities(ArrayList<Ability> abilities) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
@@ -216,8 +242,11 @@ public class ReaderData {
 
 				} else {
 
-					this.getAbilities().add(new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]));
+					Ability abilityToAdd = new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]);
+					setAbilityEffect(abilityToAdd);
 
+					this.getAbilities().add(abilityToAdd);
+					abilities.add(abilityToAdd);
 				}
 			}
 		} catch (IOException e) {
@@ -423,6 +452,7 @@ public class ReaderData {
 	// Reads typesList.csv file and adds to types list
 	// -----------------------------
 	public void readPkTypes(ArrayList<PokemonType> types, Map<Integer, PokemonType> typeById) {
+
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
@@ -430,7 +460,7 @@ public class ReaderData {
 			fileReader = new FileReader(SAMPLE_CSV_ALL_TYPES);
 			bufferedReader = new BufferedReader(fileReader);
 
-			// Skips first line
+			// Skip header
 			bufferedReader.readLine();
 			String line;
 
@@ -439,30 +469,39 @@ public class ReaderData {
 				String[] pkTypes = line.split(",");
 
 				if (types.size() == 18) {
-
 					break;
-
-				} else {
-
-					PokemonType pkType = new PokemonType(Integer.parseInt(pkTypes[0]), pkTypes[1].toUpperCase());
-					types.add(pkType);
-					typeById.put(pkType.getId(), pkType);
-
 				}
+
+				PokemonType pkType = new PokemonType(Integer.parseInt(pkTypes[0]), pkTypes[1].toUpperCase());
+
+				// -----------------------------
+				// Offensive
+				// -----------------------------
+				pkType.setPktDoLotDamage(parseIntList(pkTypes[2])); // Arrebienta
+				pkType.setPktDoLowDamage(parseIntList(pkTypes[4])); // NoArrebientaMucho
+				pkType.setNoEffect(parseIntList(pkTypes[6])); // NoLeHaceNingunDano
+
+				// -----------------------------
+				// Defensive
+				// -----------------------------
+				pkType.setPktRecieveLotDamage(parseIntList(pkTypes[3])); // LeArrebientan
+				pkType.setPktReceiveLowDamage(parseIntList(pkTypes[5])); // LeArrebietanPoco
+
+				types.add(pkType);
+				typeById.put(pkType.getId(), pkType);
 			}
+
 		} catch (IOException e) {
-			System.out.println("Exception reading the file  : " + e.getMessage());
+			System.out.println("Exception reading the file : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
 				System.out.println("Finished reading readPkTypes");
 			} catch (IOException e) {
-				System.out.println("Exception closing the file  : " + e.getMessage());
+				System.out.println("Exception closing the file : " + e.getMessage());
 			}
 		}
 	}
@@ -706,6 +745,8 @@ public class ReaderData {
 						Integer.parseInt(attacks[3]), Integer.parseInt(attacks[4]), Integer.parseInt(attacks[5]),
 						attacks[6]);
 
+				putPercentageFlinchAttacks(attack);
+
 				// Some attacks can have 2 bases (so we split with ";")
 				String[] bs = attacks[7].split(";");
 
@@ -731,6 +772,12 @@ public class ReaderData {
 
 				// Set the category type of the attack
 				setCategoryAttackType(attack);
+				// Set the attack is One-Hit KO
+				setAttackIsOneHit(attack);
+				// Set the attack if makes contact
+				setAttackMakesContact(attack);
+				// Set the attack if has secondary effects
+				setAttackHasSecondaryEffects(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -777,8 +824,10 @@ public class ReaderData {
 				if (!cols[1].equals("0")) {
 					for (String idStr : cols[1].split(";")) {
 						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
-						if (a != null)
-							pk.addPhysicalAttack(a);
+						if (a != null) {
+							Attack attackDeepCopy = new Attack(a);
+							pk.addPhysicalAttack(attackDeepCopy);
+						}
 					}
 				}
 				// Put "Struggle" to all Pokemon (used when has no remaining PP on the principal
@@ -789,8 +838,10 @@ public class ReaderData {
 				if (!cols[2].equals("0")) {
 					for (String idStr : cols[2].split(";")) {
 						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
-						if (a != null)
-							pk.addSpecialAttack(a);
+						if (a != null) {
+							Attack attackDeepCopy = new Attack(a);
+							pk.addSpecialAttack(attackDeepCopy);
+						}
 					}
 				}
 
@@ -798,8 +849,10 @@ public class ReaderData {
 				if (!cols[3].equals("0")) {
 					for (String idStr : cols[3].split(";")) {
 						Attack a = this.getAttackById().get(Integer.parseInt(idStr));
-						if (a != null)
-							pk.addOtherAttack(a);
+						if (a != null) {
+							Attack attackDeepCopy = new Attack(a);
+							pk.addOtherAttack(attackDeepCopy);
+						}
 					}
 				}
 			}
@@ -926,8 +979,9 @@ public class ReaderData {
 			canHitWhileInvulnerable.add(19);
 			break;
 		}
-		
-		// Some charged attacks can be hit by all the movements (13_Razor_Wind / 76_Solar_Beam)
+
+		// Some charged attacks can be hit by all the movements (13_Razor_Wind /
+		// 76_Solar_Beam)
 		canHitWhileInvulnerable.add(13);
 		canHitWhileInvulnerable.add(76);
 
@@ -946,6 +1000,22 @@ public class ReaderData {
 	}
 
 	// -----------------------------
+	// Set percentage of flinch/retreat to attack
+	// -----------------------------
+	public void putPercentageFlinchAttacks(Attack attack) {
+		switch (attack.getId()) {
+		case 23:
+		case 27:
+		case 29:
+		case 44:
+			attack.setPercentageFlinched(0.30d);
+			break;
+		default:
+			attack.setPercentageFlinched(0d);
+		}
+	}
+
+	// -----------------------------
 	// Set the category type of the attack
 	// -----------------------------
 	public void setCategoryAttackType(Attack attack) {
@@ -955,6 +1025,271 @@ public class ReaderData {
 			break;
 		default:
 			attack.setCategory(AttackCategory.NORMAL);
+		}
+	}
+
+	// -----------------------------
+	// Set the ability effect of the attack
+	// TODO >> 006 / 008 / 012
+	// -----------------------------
+	public void setAbilityEffect(Ability ability) {
+		switch (ability.getId()) {
+		// Hedor/Stench
+		case 1:
+			ability.setEffect(new StenchAbility());
+			break;
+		// Llovizna/Drizzle
+		case 2:
+			ability.setEffect(new DrizzleAbility());
+			ability.setIsWeatherType(true);
+			break;
+		// Impulso/Speed boost
+		case 3:
+			ability.setEffect(new SpeedBoostAbility());
+			break;
+		// Armadura batalla/Battle armor
+		case 4:
+			ability.setEffect(new BattleArmorAbility());
+			break;
+		// Electricidad estática/Static
+		case 9:
+			ability.setEffect(new StaticAbility());
+			break;
+		// Absorbe electricidad/Volt absorb
+		case 10:
+			ability.setEffect(new VoltAbsorbAbility());
+			break;
+		// Absorbe agua/Water absorb
+		case 11:
+			ability.setEffect(new WaterAbsorbAbility());
+			break;
+		// Aclimatación/Cloud nine
+		case 13:
+			ability.setEffect(new CloudNineAbility());
+			break;
+		// Cambio color/Color change
+		case 16:
+			ability.setEffect(new ColorChangeAbility());
+			break;
+		// Absorbe fuego/Flash fire
+		case 18:
+			ability.setEffect(new FlashFireAbility());
+			break;
+		// Intimidación/Intimidate
+		case 22:
+			ability.setEffect(new IntimidateAbility());
+			break;
+		// Piel tosca/Rough skin
+		case 24:
+			ability.setEffect(new RoughSkinAbility());
+			break;
+		// Superguarda/Wonder guard
+		case 25:
+			ability.setEffect(new WonderGuardAbility());
+			break;
+		// Levitación/Levitate
+		case 26:
+			ability.setEffect(new LevitateAbility());
+			break;
+		// Efecto espora/Effect spore
+		case 27:
+			ability.setEffect(new EffectSporeAbility());
+			break;
+		// Sincronía/Synchronize
+		case 28:
+			ability.setEffect(new SynchronizeAbility());
+			break;
+		// Cura natural/Natural cure
+		case 30:
+			ability.setEffect(new NaturalCureAbility());
+			break;
+		// Pararrayos/Lightning rod
+		case 31:
+			ability.setEffect(new LightningRodAbility());
+			break;
+		// Calco/Trace
+		case 36:
+			ability.setEffect(new TraceAbility());
+			break;
+		// Punto tóxico/Poison point
+		case 38:
+			ability.setEffect(new PoisonPointAbility());
+			break;
+		// Sequía/Drought
+		case 70:
+			ability.setEffect(new DroughtAbility());
+			ability.setIsWeatherType(true);
+			break;
+		default:
+			ability.setEffect(new EmptyAbility());
+		}
+	}
+
+	// -----------------------------
+	// Set if attack is one hit KO
+	// -----------------------------
+	public void setAttackIsOneHit(Attack attack) {
+		switch (attack.getId()) {
+		case 12:
+		case 32:
+			attack.setIsOneHitKO(true);
+			break;
+		default:
+			attack.setIsOneHitKO(false);
+		}
+	}
+
+	// -----------------------------
+	// Set if attack is one hit KO
+	// -----------------------------
+	public void setAttackMakesContact(Attack attack) {
+		if (attack.getBases() != null && attack.getBases().contains("fisico")) {
+			attack.setMakesContact(true);
+		}
+	}
+
+	// -----------------------------
+	// Set if attack has secondary effects
+	// -----------------------------
+	public void setAttackHasSecondaryEffects(Attack attack) {
+
+		SecondaryEffect secondaryEffect = new SecondaryEffect();
+
+		switch (attack.getId()) {
+		case 7:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 8:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.FROZEN, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 9:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 23:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 27:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 29:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 34:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 40:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.POISONED,
+					0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 41:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.POISONED,
+					0.20);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 44:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 51:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.DEFENSE, -1, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 52:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 53:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 58:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.FROZEN, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 59:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.FROZEN, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 60:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.EPHEMERAL_STATUS, StatusConditions.CONFUSED,
+					0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 61:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.SPEED, -1, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 62:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.ATTACK, -1, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 84:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 85:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 87:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.PARALYZED,
+					0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		default:
+			attack.setSecondaryEffectsNull();
+			break;
+		}
+	}
+
+	// -----------------------------
+	// Parse string to int
+	// -----------------------------
+	private ArrayList<Integer> parseIntList(String value) {
+
+		ArrayList<Integer> list = new ArrayList<>();
+
+		if (value == null || value.equals("0") || value.isEmpty()) {
+			return list;
+		}
+
+		String[] values = value.split(";");
+		for (String v : values) {
+			list.add(Integer.parseInt(v.trim()));
+		}
+
+		return list;
+	}
+
+	// -----------------------------
+	// Set if attack reduce stats
+	// -----------------------------
+	public void setReduceStatsAttack(Attack attack) {
+		switch (attack.getId()) {
+		case 28:
+		case 39:
+		case 43:
+		case 45:
+		case 51:
+		case 61:
+		case 62:
+		case 81:
+			attack.setReduceStats(true);
+			break;
+		default:
+			attack.setReduceStats(false);
 		}
 	}
 
