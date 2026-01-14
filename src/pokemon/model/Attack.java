@@ -103,6 +103,8 @@ public class Attack {
 		this.makesContact = attack.makesContact;
 		this.hasSecondaryEffect = attack.hasSecondaryEffect;
 		this.reduceStats = attack.reduceStats;
+		this.canHitWhileInvulnerable = attack.canHitWhileInvulnerable;
+		this.secondaryEffects = attack.secondaryEffects;
 	}
 
 	// ==================================== GETTERS/SETTERS

@@ -1183,7 +1183,7 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 29:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.90);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 34:

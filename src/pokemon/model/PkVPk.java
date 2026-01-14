@@ -2249,7 +2249,6 @@ public class PkVPk {
 
 		Ability abilityAttacker = attacker.getAbilitySelected();
 
-		double randomRetreat = Math.random();
 		double probabilityGettingStatus = Math.random();
 		int nbTurnsHoldingStatus = getRandomInt(1, 7);
 
@@ -2323,7 +2322,7 @@ public class PkVPk {
 				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
 					abilityAttacker.getEffect().afterAttack(null, attacker, defender, attack, damage,
 							attack.getPercentageFlinched());
-				} else if (randomRetreat <= attack.getPercentageFlinched()) {
+				} else {
 					defender.setHasRetreated(true);
 				}
 				break;
