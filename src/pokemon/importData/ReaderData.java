@@ -26,6 +26,7 @@ import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
 import pokemon.interfce.NaturalCureAbility;
 import pokemon.interfce.PoisonPointAbility;
+import pokemon.interfce.RainDishAbility;
 import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
@@ -1030,7 +1031,7 @@ public class ReaderData {
 
 	// -----------------------------
 	// Set the ability effect of the attack
-	// TODO >> 006 / 008 / 012
+	// TODO >> 006 / 008 / 012 / 43 (during attacks ?)
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
@@ -1115,6 +1116,10 @@ public class ReaderData {
 		case 38:
 			ability.setEffect(new PoisonPointAbility());
 			break;
+		// Cura lluvia/Rain dish
+		case 44:
+			ability.setEffect(new RainDishAbility());
+			break;
 		// Sequía/Drought
 		case 70:
 			ability.setEffect(new DroughtAbility());
@@ -1178,7 +1183,7 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 29:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.30);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.FLINCH, 0.90);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 34:

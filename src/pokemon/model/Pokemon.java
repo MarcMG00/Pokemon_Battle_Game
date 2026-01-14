@@ -946,7 +946,7 @@ public class Pokemon {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
 
 			// Reduces current PS by 6.25%
-			float reducePs = this.getPs() * 0.0625f;
+			float reducePs = this.getInitialPs() * 0.0625f;
 
 			this.setPs(this.getPs() - reducePs);
 
@@ -991,7 +991,7 @@ public class Pokemon {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
 
 			// Reduces current PS by 6.25%
-			float reducePs = this.getPs() * 0.0625f;
+			float reducePs = this.getInitialPs() * 0.0625f;
 
 			this.setPs(this.getPs() - reducePs);
 
