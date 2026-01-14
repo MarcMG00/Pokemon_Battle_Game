@@ -894,6 +894,15 @@ public class Game {
 
 		Pokemon pkIA = this.getIA().getPkCombatting();
 
+		// 42_Magnet_Pull ability doesn't allow to change Pokemon that are steel type
+		if (pkIA.getAbilitySelected().getId() == 42
+				&& this.getPlayer().getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 1)) {
+			System.out.println(
+					this.getPlayer().getPkCombatting().getName() + " (" + this.getPlayer().getPkCombatting().getId()
+							+ ") " + "no puede cambiarse a causa de la habilidad Imán del Pokémon rival");
+			return false;
+		}
+
 		if (this.getPlayer().getPkCombatting().getCanDonAnythingNextRound()) {
 			boolean changed = changePokemon(sc);
 
@@ -902,7 +911,7 @@ public class Game {
 		} else {
 			System.out.println(
 					this.getPlayer().getPkCombatting().getName() + " (" + this.getPlayer().getPkCombatting().getId()
-							+ ") " + "no puede cambiarse  este turno a causa de algún ataque o estado");
+							+ ") " + "no puede cambiarse este turno a causa de algún ataque o estado");
 			this.getPlayer().getPkCombatting().setCanDonAnythingNextRound(true);
 		}
 
@@ -1382,6 +1391,15 @@ public class Game {
 	// will attack normally
 	// -----------------------------
 	private boolean tryIAChange() {
+
+		// 42_Magnet_Pull ability doesn't allow to change Pokemon that are steel type
+		if (this.getPlayer().getPkCombatting().getAbilitySelected().getId() == 42
+				&& this.getIA().getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 1)) {
+			System.out.println(this.getIA().getPkCombatting().getName() + " (" + this.getIA().getPkCombatting().getId()
+					+ ") " + "no puede cambiarse a causa de la habilidad Imán del Pokémon rival");
+			return false;
+		}
+
 		// 15% of probability to change Pokemon
 		int randomNumber = (int) (Math.random() * 100) + 1;
 		if (randomNumber > 15) {
@@ -1683,8 +1701,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "282,282,282";
-		String allPkIA = "034,034,034";
+		String allPkPlayer = "376,371,372";
+		String allPkIA = "462,462,462";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1791,10 +1809,11 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {
