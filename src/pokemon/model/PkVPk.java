@@ -1164,6 +1164,13 @@ public class PkVPk {
 				break;
 			}
 
+			// 52_Hyper_Cutter ability
+			if (abilityDefender.getId() == 52) {
+				System.out.println("El ataque de " + defender.getName() + " (Id:" + defender.getId() + ")"
+						+ " no puede bajar dada su " + abilityDefender.getName());
+				break;
+			}
+
 			if (!isMistEffectActivated) {
 				if (defender.getAttackStage() <= -6) {
 					System.out.println("El ataque de " + defender.getName() + " (Id:" + defender.getId() + ")"

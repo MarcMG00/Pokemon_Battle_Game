@@ -1382,6 +1382,14 @@ public class Pokemon {
 			switch (stat) {
 
 			case ATTACK:
+				// 52_Hyper_Cutter ability
+				if (this.getAbilitySelected().getId() == 52) {
+					System.out.println(
+							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
+					break;
+				}
+				
 				if (this.getSpeedStage() <= -6) {
 					System.out.println(
 							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
