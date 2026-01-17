@@ -2077,6 +2077,15 @@ public class PkVPk {
 					+ "), se quedó a un PS gracias a la habilidad Robustez - check en doDammage()");
 		}
 
+		// Ability 48_Thick_Fat reduces damage by 2 (only if attack type it's fire or
+		// ice type)
+		if (this.getPkFacing().getAbilitySelected().getId() == 47
+				&& (attack.getStrTypeToPkType().getId() == 7 || attack.getStrTypeToPkType().getId() == 9)) {
+			dmg = dmg / 2;
+			System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId()
+					+ "), recibió la mitad de daño dada su habilidad Sebo");
+		}
+
 		return dmg;
 	}
 
