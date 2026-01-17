@@ -1422,10 +1422,10 @@ public class Pokemon {
 				break;
 
 			case PRECISION:
-				// 35_Illuminate ability
-				if (this.getAbilitySelected().getId() == 35) {
+				// 35_Illuminate/ 51_Keen_Eye ability
+				if (this.getAbilitySelected().getId() == 35 || this.getAbilitySelected().getId() == 51) {
 					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar dada su habilidad Iluminación");
+							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
 					break;
 				}
 

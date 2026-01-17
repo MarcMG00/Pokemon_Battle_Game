@@ -846,10 +846,10 @@ public class PkVPk {
 			}
 
 			if (!isMistEffectActivated) {
-				// 35_Illuminate ability
-				if (defender.getAbilitySelected().getId() == 35) {
+				// 35_Illuminate/ 51_Keen_Eye ability
+				if (defender.getAbilitySelected().getId() == 35 || defender.getAbilitySelected().getId() == 51) {
 					System.out.println("La precisión de " + defender.getName() + " (Id:" + defender.getId() + ")"
-							+ " no puede bajar dada su habilidad Iluminación");
+							+ " no puede bajar dada su habilidad" + defender.getAbilitySelected().getName());
 					break;
 				}
 
