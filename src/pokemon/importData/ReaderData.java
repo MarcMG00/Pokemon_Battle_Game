@@ -28,6 +28,7 @@ import pokemon.interfce.NaturalCureAbility;
 import pokemon.interfce.PoisonPointAbility;
 import pokemon.interfce.RainDishAbility;
 import pokemon.interfce.RoughSkinAbility;
+import pokemon.interfce.SandStreamAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
@@ -1119,6 +1120,11 @@ public class ReaderData {
 		// Cura lluvia/Rain dish
 		case 44:
 			ability.setEffect(new RainDishAbility());
+			break;
+		// Chorro arena/Sand stream
+		case 45:
+			ability.setEffect(new SandStreamAbility());
+			ability.setIsWeatherType(true);
 			break;
 		// Sequía/Drought
 		case 70:

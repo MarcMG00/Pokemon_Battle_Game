@@ -17,4 +17,17 @@ public class DroughtAbility implements AbilityEffect {
 
 		System.out.println(owner.getName() + " invocó Día soleado con Sequía!");
 	}
+
+	@Override
+	public void onSwitchIn(Game game, Pokemon owner, Pokemon defender) {
+
+		if (game.getCurrentWeather() == Weather.SUN) {
+			System.out.println(owner.getName() + " invocó Día soleado con Sequía! - pero ya hay sol");
+			return;
+		}
+
+		game.setCurrentWeather(Weather.SUN);
+
+		System.out.println(owner.getName() + " invocó Día soleado con Sequía!");
+	}
 }

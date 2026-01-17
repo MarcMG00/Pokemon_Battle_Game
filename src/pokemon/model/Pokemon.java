@@ -1,6 +1,7 @@
 package pokemon.model;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
@@ -188,12 +189,12 @@ public class Pokemon {
 	public Pokemon(Pokemon pokemon) {
 		this.id = pokemon.id;
 		this.name = pokemon.name;
-		this.ps = pokemon.ps;
-		this.attack = pokemon.attack;
-		this.def = pokemon.def;
-		this.speed = pokemon.speed;
-		this.specialAttack = pokemon.specialAttack;
-		this.specialDefense = pokemon.specialDefense;
+		this.ps = pokemon.initialPs;
+		this.attack = pokemon.initialAttack;
+		this.def = pokemon.initialDef;
+		this.speed = pokemon.initialSpeed;
+		this.specialAttack = pokemon.initialSpecialAttack;
+		this.specialDefense = pokemon.initialSpecialDefense;
 		this.initialPs = ps;
 		this.initialAttack = attack;
 		this.initialDef = def;
@@ -204,44 +205,50 @@ public class Pokemon {
 		this.hiddenAbilities = pokemon.hiddenAbilities;
 		this.types = pokemon.types;
 
-		this.physicalAttacks = new ArrayList<>(pokemon.physicalAttacks);
-		this.specialAttacks = new ArrayList<>(pokemon.specialAttacks);
-		this.otherAttacks = new ArrayList<>(pokemon.otherAttacks);
+		this.physicalAttacks = (ArrayList<Attack>) pokemon.physicalAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
+		this.specialAttacks = (ArrayList<Attack>) pokemon.specialAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
+		this.otherAttacks = (ArrayList<Attack>) pokemon.otherAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
 		this.fourPrincipalAttacks = new ArrayList<>(); // starts empty
 		this.fourIdAttacks = new ArrayList<>();
 
-		this.nextMovement = pokemon.nextMovement;
-		this.lotDamageAttacks = new ArrayList<>(pokemon.lotDamageAttacks);
-		this.normalAttacks = new ArrayList<>(pokemon.normalAttacks);
-		this.lowAttacks = new ArrayList<>(pokemon.lowAttacks);
-		this.notEffectAttacks = new ArrayList<>(pokemon.notEffectAttacks);
+		this.nextMovement = null;
+		this.lotDamageAttacks = (ArrayList<Attack>) pokemon.lotDamageAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
+		this.normalAttacks = (ArrayList<Attack>) pokemon.normalAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
+		this.lowAttacks = (ArrayList<Attack>) pokemon.lowAttacks.stream().map(Attack::new).collect(Collectors.toList());
+		this.notEffectAttacks = (ArrayList<Attack>) pokemon.notEffectAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
 
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
-		this.statusCondition = pokemon.statusCondition;
-		this.ephemeralStates = new ArrayList<>(pokemon.ephemeralStates);
+		this.statusCondition = new State(StatusConditions.NO_STATUS);
+		this.ephemeralStates = new ArrayList<>();
 
-		this.isChargingAttackForNextRound = pokemon.isChargingAttackForNextRound;
-		this.canAttack = pokemon.canAttack;
-		this.hasUsedMinimize = pokemon.hasUsedMinimize;
-		this.hasRetreated = pokemon.hasRetreated;
-		this.attackStage = pokemon.attackStage;
-		this.specialAttackStage = pokemon.specialAttackStage;
-		this.defenseStage = pokemon.defenseStage;
-		this.specialDefenseStage = pokemon.specialDefenseStage;
-		this.speedStage = pokemon.speedStage;
-		this.lastUsedAttack = pokemon.lastUsedAttack;
-		this.canDonAnythingNextRound = pokemon.canDonAnythingNextRound;
+		this.isChargingAttackForNextRound = false;
+		this.canAttack = true;
+		this.hasUsedMinimize = false;
+		this.hasRetreated = false;
+		this.attackStage = 0;
+		this.specialAttackStage = 0;
+		this.defenseStage = 0;
+		this.specialDefenseStage = 0;
+		this.speedStage = 0;
+		this.lastUsedAttack = null;
+		this.canDonAnythingNextRound = true;
 		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
-		this.hasReceivedDamage = pokemon.hasReceivedDamage;
-		this.damageReceived = pokemon.damageReceived;
-		this.isDraining = pokemon.isDraining;
+		this.hasReceivedDamage = false;
+		this.damageReceived = 0f;
+		this.isDraining = false;
 		this.AbilitySelected = pokemon.AbilitySelected;
-		this.justEnteredBattle = pokemon.justEnteredBattle;
-		this.hasSubstitute = pokemon.hasSubstitute;
+		this.justEnteredBattle = false;
+		this.hasSubstitute = false;
 		this.initialTypes = pokemon.initialTypes;
-		this.isFireBoostActive = pokemon.isFireBoostActive;
-		this.currentAbility = pokemon.currentAbility;
+		this.isFireBoostActive = false;
+		this.currentAbility = pokemon.AbilitySelected != null ? new Ability(pokemon.AbilitySelected) : null;
 	}
 
 	// ==================================== GETTERS/SETTERS

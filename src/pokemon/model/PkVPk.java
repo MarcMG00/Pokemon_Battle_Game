@@ -170,7 +170,8 @@ public class PkVPk {
 		Attack atkAttacker = this.getPkCombatting().getNextMovement();
 		Attack atkDefender = this.getPkFacing().getNextMovement();
 
-		boolean canHitInvulnerable = atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
+		boolean canHitInvulnerable = atkDefender == null
+				|| atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
 
 		float accuracyFactor = 0f;
 
