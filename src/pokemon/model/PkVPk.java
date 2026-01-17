@@ -474,7 +474,7 @@ public class PkVPk {
 
 		// Puño cometa/Comet punch (tested)
 		case 4:
-			nbTimesAttack = getRandomInt(1, 5);
+			nbTimesAttack = getRandomInt(1, 5, null);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Puño cometa");
@@ -730,7 +730,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = getRandomInt(4, 5);
+				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
@@ -961,7 +961,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = getRandomInt(4, 5);
+				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
 
 				System.out.println(defender.getName() + " quedó atrapado");
 
@@ -1003,7 +1003,7 @@ public class PkVPk {
 			if (!attacker.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK)) {
 
-				nbTurnsHoldingStatus = getRandomInt(2, 5);
+				nbTurnsHoldingStatus = getRandomInt(2, 5, StatusConditions.TRAPPEDBYOWNATTACK);
 
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " usará el mismo ataque durante " + nbTurnsHoldingStatus + " turnos.");
@@ -1098,7 +1098,7 @@ public class PkVPk {
 
 		// Pin misil/Pin missile (tested)
 		case 42:
-			nbTimesAttack = getRandomInt(1, 5);
+			nbTimesAttack = getRandomInt(1, 5, null);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Pin misil");
@@ -1219,7 +1219,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
 
-				nbTurnsHoldingStatus = getRandomInt(1, 7);
+				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.ASLEEP);
 
 				System.out.println(
 						defender.getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
@@ -1248,7 +1248,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
 
-				nbTurnsHoldingStatus = getRandomInt(1, 7);
+				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.CONFUSED);
 
 				System.out.println(defender.getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
 
@@ -1294,7 +1294,7 @@ public class PkVPk {
 				defender.getEphemeralStates().remove(previousDisableState);
 			}
 
-			nbTurnsHoldingStatus = getRandomInt(4, 7);
+			nbTurnsHoldingStatus = getRandomInt(4, 7, null);
 
 			State attackDisabled = new State(StatusConditions.DISABLE, nbTurnsHoldingStatus + 1);
 			attackDisabled.setAttackDisabled(lastAttack);
@@ -1787,7 +1787,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
 
-				nbTurnsHoldingStatus = getRandomInt(1, 7);
+				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.ASLEEP);
 
 				System.out.println(
 						defender.getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
@@ -1809,7 +1809,7 @@ public class PkVPk {
 			if (!(attacker.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
 
-				nbTurnsHoldingStatus = getRandomInt(2, 5);
+				nbTurnsHoldingStatus = getRandomInt(2, 5, StatusConditions.TRAPPEDBYOWNATTACK);
 
 				System.out.println(
 						attacker.getName() + " usará el mismo ataque durante " + nbTurnsHoldingStatus + " turnos.");
@@ -1872,7 +1872,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = getRandomInt(4, 5);
+				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
 
 				System.out.println(defender.getName() + " quedó atrapado");
 
@@ -2152,8 +2152,17 @@ public class PkVPk {
 	// -----------------------------
 	// Gets number of turns for a state or number of attacks
 	// -----------------------------
-	public static int getRandomInt(int min, int max) {
-		return min + (int) (Math.random() * (max - min + 1));
+	public int getRandomInt(int min, int max, StatusConditions status) {
+		int nbTurnsHoldingStatus = min + (int) (Math.random() * (max - min + 1));
+
+		// 48_Early_Bird ability
+		if (status == StatusConditions.ASLEEP && this.getPkFacing().getAbilitySelected().getId() == 48) {
+			nbTurnsHoldingStatus = nbTurnsHoldingStatus / 2;
+			System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId()
+					+ "), se quedará dormido la mitad de turnos gracias a su habilidad Madrugar");
+		}
+
+		return nbTurnsHoldingStatus;
 	}
 
 	// -----------------------------
@@ -2259,7 +2268,7 @@ public class PkVPk {
 		Ability abilityAttacker = attacker.getAbilitySelected();
 
 		double probabilityGettingStatus = Math.random();
-		int nbTurnsHoldingStatus = getRandomInt(1, 7);
+		int nbTurnsHoldingStatus;
 
 		if (attack.getSecondaryEffects() == null)
 			return;
@@ -2286,7 +2295,7 @@ public class PkVPk {
 				if (!(defender.getEphemeralStates().stream()
 						.anyMatch(e -> e.getStatusCondition() == effect.getStatus()))) {
 
-					nbTurnsHoldingStatus = getRandomInt(1, 7);
+					nbTurnsHoldingStatus = getRandomInt(1, 7, effect.getStatus());
 
 					State state = new State(effect.getStatus(), nbTurnsHoldingStatus + 1);
 
