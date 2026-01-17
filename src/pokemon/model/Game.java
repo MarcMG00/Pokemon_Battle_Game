@@ -676,8 +676,10 @@ public class Game {
 		Scanner sc = new Scanner(System.in);
 
 		// Apply some abilities first
-		applyIntimidationOnBattleStart(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
+		// applyIntimidationOnBattleStart(this.getPlayer().getPkCombatting(),
+		// this.getIA().getPkCombatting());
 		applyTraceOnBattleStart(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
+		applyAbilities(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
 
 		// Puts weather abilities at the beginning
 		applyEntryWeatherAbilities();
@@ -1593,17 +1595,19 @@ public class Game {
 	// Sets the ability during changes (forced or manual) (if any)
 	// -----------------------------
 	private void applyEntryAbilityOnSwitch(Pokemon entering, Pokemon defender) {
-		Ability ability = entering.getAbilitySelected();
-		if (ability == null || ability.getId() == 5000)
+		Ability abilityEntering = entering.getAbilitySelected();
+		Ability abilityDefendering = defender.getAbilitySelected();
+
+		if (abilityEntering == null || abilityEntering.getId() == 5000)
 			return;
 
 		// Intimidate, etc. (first abilities to apply)
 //		if (ability.getId() == 22) {
-		ability.getEffect().onSwitchIn(this, entering, defender);
+		abilityEntering.getEffect().onSwitchIn(this, entering, defender);
 //		}
 		// Sets weather
 //		else if (ability.getIsWeatherType()) {
-		ability.getEffect().onBattleStart(this, entering);
+		abilityEntering.getEffect().onBattleStart(this, entering);
 //		}
 		// Suppress weather if 13_Cloud_Nine
 //		else if (ability.getId() == 13) {
@@ -1611,6 +1615,9 @@ public class Game {
 //		} else {
 //		ability.getEffect().onSwitchIn(this, entering, defender);
 //		}
+
+		if (abilityDefendering != null && abilityDefendering.getId() == 46)
+			abilityDefendering.getEffect().onSwitchIn(this, defender, entering);
 	}
 
 	// -----------------------------
@@ -1660,6 +1667,7 @@ public class Game {
 			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
 			Pokemon faster = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
 			slower.getAbilitySelected().getEffect().onSwitchIn(this, slower, faster);
+			faster.getAbilitySelected().getEffect().onSwitchIn(this, faster, slower);
 		}
 	}
 
@@ -1683,7 +1691,23 @@ public class Game {
 			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
 			Pokemon faster = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
 			slower.getAbilitySelected().getEffect().onSwitchIn(this, slower, faster);
+			faster.getAbilitySelected().getEffect().onSwitchIn(this, faster, slower);
 		}
+	}
+
+	// -----------------------------
+	// Do start abilities (that are not weather type)
+	// -----------------------------
+	private void applyAbilities(Pokemon p1, Pokemon p2) {
+
+		boolean p1HasWeatherType = p1.getAbilitySelected().getIsWeatherType();
+		boolean p2HasWeatherType = p2.getAbilitySelected().getIsWeatherType();
+
+		if (p1HasWeatherType && p2HasWeatherType)
+			return;
+
+		p1.getAbilitySelected().getEffect().onSwitchIn(this, p1, p2);
+		p2.getAbilitySelected().getEffect().onSwitchIn(this, p2, p1);
 	}
 
 	// -----------------------------
@@ -1810,8 +1834,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "398,398,398";
-		String allPkIA = "466,466,466";
+		String allPkPlayer = "282,282,282";
+		String allPkIA = "150,150,150";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1858,13 +1882,13 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 8).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());
@@ -1922,7 +1946,7 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 60).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
@@ -1933,7 +1957,7 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());

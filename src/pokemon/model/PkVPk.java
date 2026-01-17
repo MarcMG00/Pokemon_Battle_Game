@@ -177,8 +177,6 @@ public class PkVPk {
 
 		checkWeatherEffectsForAttacks(weather, atkAttacker);
 
-		Ability ability = this.getPkCombatting().getAbilitySelected();
-
 		// -----------------------------
 		// Check if an attack is not disabled (attacks disabled cannot be used, even for
 		// charged attacks, they are instantly disabled)
@@ -412,7 +410,6 @@ public class PkVPk {
 		int nbTimesAttack;
 
 		int nbTurnsHoldingStatus;
-		int probabilityGettingStatus;
 
 		float recoil = 0f;
 
@@ -1003,8 +1000,8 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			if (!(attacker.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
+			if (!attacker.getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK)) {
 
 				nbTurnsHoldingStatus = getRandomInt(2, 5);
 
@@ -1973,7 +1970,7 @@ public class PkVPk {
 		reinitializeAttackStats(attackAttacker);
 
 		// Apply abilities after attacking
-		applyAbilityAfterDamage(attacker, defender, attackAttacker, dmg);
+		applyAbilityAfterDamage(attacker, defender, attackAttacker, dmg, weather, isWeatherSuppressed);
 
 		if (defender.getPs() <= 0) {
 			defender.setStatusCondition(new State(StatusConditions.DEBILITATED));
@@ -2217,7 +2214,8 @@ public class PkVPk {
 	// -----------------------------
 	// Do ability effect after attacking (for defender)
 	// -----------------------------
-	private void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg) {
+	private void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg, Weather weather,
+			boolean isWeatherSuppressed) {
 
 		// Damage must be done
 		if (dmg <= 0)
@@ -2226,7 +2224,8 @@ public class PkVPk {
 		// Defender ability
 		Ability defenderAbility = defender.getAbilitySelected();
 		if (defenderAbility != null) {
-			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d);
+			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, weather,
+					isWeatherSuppressed);
 		}
 	}
 
@@ -2322,7 +2321,7 @@ public class PkVPk {
 
 				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
 					abilityAttacker.getEffect().afterAttack(null, attacker, defender, attack, damage,
-							attack.getPercentageFlinched());
+							attack.getPercentageFlinched(), weather, isWeatherSuppressed);
 				} else {
 					defender.setHasRetreated(true);
 				}

@@ -33,7 +33,7 @@ public class TraceAbility implements AbilityEffect {
 
 	@Override
 	public void onSwitchOut(Game game, Pokemon owner) {
-		System.out.println(owner.getName() + "dejó de copiar la habilidad del rival");
+		System.out.println(owner.getName() + " dejó de copiar la habilidad del rival");
 		owner.setAbilitySelected(new Ability(owner.getBaseAbility()));
 	}
 }

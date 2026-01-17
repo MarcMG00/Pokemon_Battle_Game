@@ -1,5 +1,6 @@
 package pokemon.interfce;
 
+import pokemon.enums.Weather;
 import pokemon.model.Attack;
 import pokemon.model.Game;
 import pokemon.model.Pokemon;
@@ -25,7 +26,7 @@ public interface AbilityEffect {
 	}
 
 	default void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch) {
+			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
 	}
 
 	default void endOfTurn(Game game, Pokemon owner) {

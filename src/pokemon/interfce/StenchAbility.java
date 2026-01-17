@@ -1,5 +1,6 @@
 package pokemon.interfce;
 
+import pokemon.enums.Weather;
 import pokemon.model.Attack;
 import pokemon.model.Game;
 import pokemon.model.Pokemon;
@@ -10,7 +11,7 @@ public class StenchAbility implements AbilityEffect {
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double percentageFlinch) {
+			double percentageFlinch, Weather weather, boolean isWeatherSuppressed) {
 
 		// 1️ - The attack has to do damage
 		if (dmg == 0f)

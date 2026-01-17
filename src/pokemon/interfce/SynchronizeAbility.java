@@ -1,6 +1,7 @@
 package pokemon.interfce;
 
 import pokemon.enums.StatusConditions;
+import pokemon.enums.Weather;
 import pokemon.model.Attack;
 import pokemon.model.Game;
 import pokemon.model.Pokemon;
@@ -9,7 +10,7 @@ import pokemon.model.State;
 public class SynchronizeAbility implements AbilityEffect {
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double percentageFlinch) {
+			double percentageFlinch, Weather weather, boolean isWeatherSuppressed) {
 
 		// Attacks that counter ability (Misty terrain / Safeguard)
 		if (attack.getId() == 581 || attack.getId() == 219)

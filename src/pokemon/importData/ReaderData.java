@@ -26,6 +26,7 @@ import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
 import pokemon.interfce.NaturalCureAbility;
 import pokemon.interfce.PoisonPointAbility;
+import pokemon.interfce.PressureAbility;
 import pokemon.interfce.RainDishAbility;
 import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SandStreamAbility;
@@ -1125,6 +1126,10 @@ public class ReaderData {
 		case 45:
 			ability.setEffect(new SandStreamAbility());
 			ability.setIsWeatherType(true);
+			break;
+		// Presión/Pressure
+		case 46:
+			ability.setEffect(new PressureAbility());
 			break;
 		// Sequía/Drought
 		case 70:
