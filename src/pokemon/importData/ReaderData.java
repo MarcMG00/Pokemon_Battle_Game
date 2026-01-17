@@ -20,6 +20,7 @@ import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EffectSporeAbility;
 import pokemon.interfce.EmptyAbility;
+import pokemon.interfce.FlameBodyAbility;
 import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
@@ -1130,6 +1131,10 @@ public class ReaderData {
 		// Presión/Pressure
 		case 46:
 			ability.setEffect(new PressureAbility());
+			break;
+		// Cuerpo llama/Flame body
+		case 49:
+			ability.setEffect(new FlameBodyAbility());
 			break;
 		// Sequía/Drought
 		case 70:

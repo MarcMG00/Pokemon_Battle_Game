@@ -1834,7 +1834,7 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "282,282,282";
+		String allPkPlayer = "78,78,78";
 		String allPkIA = "150,150,150";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
