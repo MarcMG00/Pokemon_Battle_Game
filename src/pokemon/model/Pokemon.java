@@ -1345,6 +1345,15 @@ public class Pokemon {
 
 			break;
 
+		case INFATUATED:
+			// 12_Oblivious
+			if (ability.getId() == 12) {
+				System.out.println(this.getName() + " no puede confundirse dada su habilidad Despiste");
+				return false;
+			}
+
+			break;
+
 		default:
 			break;
 		}
@@ -1481,7 +1490,7 @@ public class Pokemon {
 	// Change attacks depending on abilities, etc.
 	// -----------------------------
 	public void checkStatsForAttacks(Attack atkAttacker) {
-		
+
 		// 55_Hustle ability reduces precision by 20%
 		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
 			atkAttacker.setPrecision(atkAttacker.getPrecision() * 0.8f);

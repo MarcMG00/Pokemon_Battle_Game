@@ -8,7 +8,7 @@ import pokemon.model.Pokemon;
 import pokemon.model.State;
 
 public class FlameBodyAbility implements AbilityEffect {
-	private static final double BURNED_CHANCE = 0.90;
+	private static final double BURNED_CHANCE = 0.30;
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,

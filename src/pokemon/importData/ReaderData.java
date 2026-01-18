@@ -16,6 +16,7 @@ import pokemon.enums.StatusConditions;
 import pokemon.interfce.BattleArmorAbility;
 import pokemon.interfce.CloudNineAbility;
 import pokemon.interfce.ColorChangeAbility;
+import pokemon.interfce.CuteCharmAbility;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EffectSporeAbility;
@@ -1034,7 +1035,7 @@ public class ReaderData {
 
 	// -----------------------------
 	// Set the ability effect of the attack
-	// TODO >> 006 / 008 / 012 / 43 (during attacks ?)
+	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
@@ -1135,6 +1136,10 @@ public class ReaderData {
 		// Cuerpo llama/Flame body
 		case 49:
 			ability.setEffect(new FlameBodyAbility());
+			break;
+		// Gran encanto/Cute charm
+		case 56:
+			ability.setEffect(new CuteCharmAbility());
 			break;
 		// Sequía/Drought
 		case 70:
