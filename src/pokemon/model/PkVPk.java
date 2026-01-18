@@ -2242,6 +2242,17 @@ public class PkVPk {
 	private void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg, Weather weather,
 			boolean isWeatherSuppressed) {
 
+		// Attacker ability
+		Ability attackerAbility = attacker.getAbilitySelected();
+
+		// 54_Truant ability (can't do anything nex round)
+		if (attackerAbility != null && attackerAbility.getId() == 54) {
+			System.out.println(attacker.getName() + " (" + attacker.getId() + ") "
+					+ "no popdrá atacar o cambiarse en el siguiente turno a causa de "
+					+ attacker.getAbilitySelected().getName());
+			attacker.setCanDonAnythingNextRound(false);
+		}
+
 		// Damage must be done
 		if (dmg <= 0)
 			return;

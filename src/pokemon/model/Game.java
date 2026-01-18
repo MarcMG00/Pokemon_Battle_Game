@@ -918,9 +918,12 @@ public class Game {
 			if (!changed)
 				return false; // player cancelled the change (return to start options)
 		} else {
-			System.out.println(
-					this.getPlayer().getPkCombatting().getName() + " (" + this.getPlayer().getPkCombatting().getId()
-							+ ") " + "no puede cambiarse este turno a causa de algún ataque o estado");
+			System.out.println(this.getPlayer().getPkCombatting().getName() + " ("
+					+ this.getPlayer().getPkCombatting().getId() + ") "
+					+ (this.getPlayer().getPkCombatting().getAbilitySelected().getId() == 54
+							? "no puede cambiarse este turno a causa de "
+									+ this.getPlayer().getPkCombatting().getAbilitySelected().getName()
+							: "no puede cambiarse este turno a causa de algún ataque o estado"));
 			this.getPlayer().getPkCombatting().setCanDonAnythingNextRound(true);
 		}
 
@@ -934,8 +937,13 @@ public class Game {
 
 			handleChangeSequence(sc); // only IA attacks
 		} else {
-			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recuperarse a causa de "
-					+ pkIA.getLastUsedAttack().getName());
+			if (pkIA.getAbilitySelected().getId() == 54) {
+				System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "no puede atacar o cambiarse a causa de "
+						+ pkIA.getAbilitySelected().getName());
+			} else {
+				System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recuperarse a causa de "
+						+ pkIA.getLastUsedAttack().getName());
+			}
 
 			pkIA.setCanDonAnythingNextRound(true);
 		}
@@ -1138,8 +1146,15 @@ public class Game {
 				handleIARetaliation();
 			}
 		} else {
-			System.out.println(attacker.getPkCombatting().getName() + " (" + attacker.getPkCombatting().getId() + ") "
-					+ "debe recuperarse a causa de " + attacker.getPkCombatting().getLastUsedAttack().getName());
+			if (attacker.getPkCombatting().getAbilitySelected().getId() == 54) {
+				System.out.println(attacker.getPkCombatting().getName() + " (" + attacker.getPkCombatting().getId()
+						+ ") " + "no puede atacar o cambiarse a causa de "
+						+ attacker.getPkCombatting().getAbilitySelected().getName());
+			} else {
+				System.out.println(attacker.getPkCombatting().getName() + " (" + attacker.getPkCombatting().getId()
+						+ ") " + "debe recuperarse a causa de "
+						+ attacker.getPkCombatting().getLastUsedAttack().getName());
+			}
 
 			attacker.getPkCombatting().setCanDonAnythingNextRound(true);
 		}
@@ -1834,7 +1849,7 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "78,78,78";
+		String allPkPlayer = "289,289,289";
 		String allPkIA = "150,150,150";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
