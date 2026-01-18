@@ -176,6 +176,7 @@ public class PkVPk {
 		float accuracyFactor = 0f;
 
 		checkWeatherEffectsForAttacks(weather, atkAttacker);
+		this.getPkCombatting().checkStatsForAttacks(atkAttacker);
 
 		// -----------------------------
 		// Check if an attack is not disabled (attacks disabled cannot be used, even for
@@ -1975,6 +1976,7 @@ public class PkVPk {
 		}
 
 		reinitializeAttackStats(attackAttacker);
+		attacker.reinitializeStatsAfterAttack();
 
 		// Apply abilities after attacking
 		applyAbilityAfterDamage(attacker, defender, attackAttacker, dmg, weather, isWeatherSuppressed);

@@ -748,6 +748,11 @@ public class Pokemon {
 		int stage = this.getAttackStage();
 		float multiplier;
 
+		// 55_Hustle ability rises attack by 50%
+		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
+			this.setAttack(this.getAttack() * 1.5f);
+		}
+
 		if (stage >= 0)
 			multiplier = (2f + stage) / 2.0f;
 		else
@@ -1384,12 +1389,11 @@ public class Pokemon {
 			case ATTACK:
 				// 52_Hyper_Cutter ability
 				if (this.getAbilitySelected().getId() == 52) {
-					System.out.println(
-							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")"
+					System.out.println("El ataque de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
 					break;
 				}
-				
+
 				if (this.getSpeedStage() <= -6) {
 					System.out.println(
 							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
@@ -1462,6 +1466,25 @@ public class Pokemon {
 		} else {
 			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
 					+ " no pudo bajar las estadísticas a causa de Neblina");
+		}
+	}
+
+	// -----------------------------
+	// Reset stats from attacks (to avoid problems each turn) => because of some
+	// boosts, etc.
+	// -----------------------------
+	public void reinitializeStatsAfterAttack() {
+		this.setAttack(this.getInitialAttack());
+	}
+
+	// -----------------------------
+	// Change attacks depending on abilities, etc.
+	// -----------------------------
+	public void checkStatsForAttacks(Attack atkAttacker) {
+		
+		// 55_Hustle ability reduces precision by 20%
+		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
+			atkAttacker.setPrecision(atkAttacker.getPrecision() * 0.8f);
 		}
 	}
 
