@@ -64,6 +64,7 @@ public class Pokemon {
 	private boolean hasSubstitute;
 	private boolean isFireBoostActive;
 	private Ability currentAbility; // ability that will be used to do effects
+	private Player owner;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -249,6 +250,7 @@ public class Pokemon {
 		this.initialTypes = pokemon.initialTypes;
 		this.isFireBoostActive = false;
 		this.currentAbility = pokemon.AbilitySelected != null ? new Ability(pokemon.AbilitySelected) : null;
+		this.owner = pokemon.owner;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -664,6 +666,14 @@ public class Pokemon {
 
 	public Ability getBaseAbility() {
 		return AbilitySelected;
+	}
+
+	public Player getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Player owner) {
+		this.owner = owner;
 	}
 
 	public void setBaseAbility(Ability abilitySelected) {

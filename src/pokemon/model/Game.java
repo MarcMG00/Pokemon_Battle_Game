@@ -1849,7 +1849,7 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "289,289,289";
+		String allPkPlayer = "311,311,312";
 		String allPkIA = "150,150,150";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
@@ -1879,6 +1879,8 @@ public class Game {
 
 				// Update repetitions counter
 				pkCount.put(baseId, count + 1);
+				
+				newPk.setOwner(this.getPlayer());
 
 				// Add to player team
 				this.getPlayer().addPokemon(newPk);
@@ -1949,6 +1951,8 @@ public class Game {
 				// Update repetitions counter
 				pkCount.put(baseId, count + 1);
 
+				newPk.setOwner(this.getIA());
+				
 				// Add to player team
 				this.getIA().addPokemon(newPk);
 			}

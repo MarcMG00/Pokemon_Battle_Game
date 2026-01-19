@@ -27,6 +27,7 @@ import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
 import pokemon.interfce.NaturalCureAbility;
+import pokemon.interfce.PlusAbility;
 import pokemon.interfce.PoisonPointAbility;
 import pokemon.interfce.PressureAbility;
 import pokemon.interfce.RainDishAbility;
@@ -1140,6 +1141,10 @@ public class ReaderData {
 		// Gran encanto/Cute charm
 		case 56:
 			ability.setEffect(new CuteCharmAbility());
+			break;
+		// Más/Plus
+		case 57:
+			ability.setEffect(new PlusAbility());
 			break;
 		// Sequía/Drought
 		case 70:
