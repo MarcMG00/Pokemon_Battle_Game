@@ -26,6 +26,7 @@ import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
+import pokemon.interfce.MinusAbility;
 import pokemon.interfce.NaturalCureAbility;
 import pokemon.interfce.PlusAbility;
 import pokemon.interfce.PoisonPointAbility;
@@ -1145,6 +1146,10 @@ public class ReaderData {
 		// Más/Plus
 		case 57:
 			ability.setEffect(new PlusAbility());
+			break;
+		// Menos/Minus
+		case 58:
+			ability.setEffect(new MinusAbility());
 			break;
 		// Sequía/Drought
 		case 70:
