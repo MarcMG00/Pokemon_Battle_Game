@@ -31,4 +31,7 @@ public interface AbilityEffect {
 
 	default void endOfTurn(Game game, Pokemon owner) {
 	}
+	
+	default void duringBattle(Game game, Pokemon owner, Pokemon defender) {
+	}
 }

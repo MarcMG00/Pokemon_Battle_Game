@@ -938,8 +938,8 @@ public class Game {
 			handleChangeSequence(sc); // only IA attacks
 		} else {
 			if (pkIA.getAbilitySelected().getId() == 54) {
-				System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "no puede atacar o cambiarse a causa de "
-						+ pkIA.getAbilitySelected().getName());
+				System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") "
+						+ "no puede atacar o cambiarse a causa de " + pkIA.getAbilitySelected().getName());
 			} else {
 				System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recuperarse a causa de "
 						+ pkIA.getLastUsedAttack().getName());
@@ -1631,8 +1631,13 @@ public class Game {
 //		ability.getEffect().onSwitchIn(this, entering, defender);
 //		}
 
-		if (abilityDefendering != null && abilityDefendering.getId() == 46)
-			abilityDefendering.getEffect().onSwitchIn(this, defender, entering);
+		// if (abilityDefendering != null && abilityDefendering.getId() == 46)
+		// abilityDefendering.getEffect().onSwitchIn(this, defender, entering);
+
+		// For example for 59_Foceast ability
+		// If 36_Trace (copies ability) => needs to be applied
+		// abilityEntering.getEffect().duringBattle(this, entering, defender);
+		abilityDefendering.getEffect().duringBattle(this, defender, entering);
 	}
 
 	// -----------------------------
@@ -1849,8 +1854,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "311,311,312";
-		String allPkIA = "150,150,150";
+		String allPkPlayer = "311,382,248,248,282,248";
+		String allPkIA = "351,351,351";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1879,7 +1884,7 @@ public class Game {
 
 				// Update repetitions counter
 				pkCount.put(baseId, count + 1);
-				
+
 				newPk.setOwner(this.getPlayer());
 
 				// Add to player team
@@ -1952,7 +1957,7 @@ public class Game {
 				pkCount.put(baseId, count + 1);
 
 				newPk.setOwner(this.getIA());
-				
+
 				// Add to player team
 				this.getIA().addPokemon(newPk);
 			}

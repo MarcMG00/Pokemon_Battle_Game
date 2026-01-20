@@ -23,6 +23,7 @@ import pokemon.interfce.EffectSporeAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlameBodyAbility;
 import pokemon.interfce.FlashFireAbility;
+import pokemon.interfce.ForecastAbility;
 import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
@@ -1150,6 +1151,10 @@ public class ReaderData {
 		// Menos/Minus
 		case 58:
 			ability.setEffect(new MinusAbility());
+			break;
+		// Predicción/Forecast
+		case 59:
+			ability.setEffect(new ForecastAbility());
 			break;
 		// Sequía/Drought
 		case 70:
