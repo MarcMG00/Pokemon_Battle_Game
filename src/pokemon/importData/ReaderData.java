@@ -1204,7 +1204,7 @@ public class ReaderData {
 
 		switch (attack.getId()) {
 		case 7:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.90);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 8:
