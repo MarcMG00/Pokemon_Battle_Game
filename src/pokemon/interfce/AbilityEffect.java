@@ -29,6 +29,10 @@ public interface AbilityEffect {
 			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
 	}
 
+	default void beforeEndOfTurn(Game game, Pokemon owner) {
+		
+	}
+	
 	default void endOfTurn(Game game, Pokemon owner) {
 	}
 	

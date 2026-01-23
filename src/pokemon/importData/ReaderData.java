@@ -35,6 +35,7 @@ import pokemon.interfce.PressureAbility;
 import pokemon.interfce.RainDishAbility;
 import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SandStreamAbility;
+import pokemon.interfce.ShedSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
@@ -1039,6 +1040,7 @@ public class ReaderData {
 	// -----------------------------
 	// Set the ability effect of the attack
 	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
+	// / 60 (when applying objects)
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
@@ -1156,6 +1158,10 @@ public class ReaderData {
 		case 59:
 			ability.setEffect(new ForecastAbility());
 			break;
+		// Mudar/Shed skin
+		case 61:
+			ability.setEffect(new ShedSkinAbility());
+			break;
 		// Sequía/Drought
 		case 70:
 			ability.setEffect(new DroughtAbility());
@@ -1198,7 +1204,7 @@ public class ReaderData {
 
 		switch (attack.getId()) {
 		case 7:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.BURNED, 0.90);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 8:

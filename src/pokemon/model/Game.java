@@ -810,6 +810,10 @@ public class Game {
 		// Execute the attack sequence (ordering uses current canAttack and speed)
 		handleNormalAttackSequence(sc);
 
+		// Apply abilities before end of turn
+		applyBeforeEndTurnAbility(this.getPlayer().getPkCombatting());
+		applyBeforeEndTurnAbility(this.getIA().getPkCombatting());
+
 		// At the end of the turn we must perform end-of-turn ephemeral effects and
 		// reduce counters and parameters
 		reduceNumberTurnsEffects(this.getPlayer(), this.getIA());
@@ -955,6 +959,10 @@ public class Game {
 
 		// Remove drained ALL SATUS state (cause player changed)
 		clearDrainEffects(pkPlayer, pkIA);
+
+		// Apply abilities before end of turn
+		applyBeforeEndTurnAbility(this.getPlayer().getPkCombatting());
+		applyBeforeEndTurnAbility(this.getIA().getPkCombatting());
 
 		reduceNumberTurnsEffects(this.getIA(), this.getPlayer());
 
@@ -1641,7 +1649,7 @@ public class Game {
 	}
 
 	// -----------------------------
-	// Sets the weather ability during changes (forced or manual) (if any)
+	// Apply ability on end turn
 	// -----------------------------
 	private void applyEndTurnAbility(Pokemon pk) {
 		Ability ability = pk.getAbilitySelected();
@@ -1650,6 +1658,18 @@ public class Game {
 			return;
 
 		ability.getEffect().endOfTurn(this, pk);
+	}
+
+	// -----------------------------
+	// Apply ability before end of turn
+	// -----------------------------
+	private void applyBeforeEndTurnAbility(Pokemon pk) {
+		Ability ability = pk.getAbilitySelected();
+		if (ability == null || ability.getId() == 5000
+				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 61))
+			return;
+
+		ability.getEffect().beforeEndOfTurn(this, pk);
 	}
 
 	// -----------------------------
@@ -1854,8 +1874,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "311,382,248,248,282,248";
-		String allPkIA = "351,351,351";
+		String allPkPlayer = "560,560,560,560,560,560";
+		String allPkIA = "466,466,466";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1968,7 +1988,7 @@ public class Game {
 
 		for (Pokemon pk : this.getIA().getPokemon()) {
 
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
@@ -1981,7 +2001,7 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
