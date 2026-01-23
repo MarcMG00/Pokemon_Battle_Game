@@ -761,6 +761,19 @@ public class Pokemon {
 		// 55_Hustle ability rises attack by 50%
 		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
 			this.setAttack(this.getAttack() * 1.5f);
+			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad Entusisamo");
+		}
+
+		// 62_Guts ability rises attack by 50% (if have some of those status conditions)
+		if (this.getAbilitySelected().getId() == 62
+				&& (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED
+						|| this.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED
+						|| this.getStatusCondition().getStatusCondition() == StatusConditions.POISONED
+						|| this.getStatusCondition().getStatusCondition() == StatusConditions.BADLY_POISONED
+						|| this.getEphemeralStates().stream()
+								.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
+			this.setAttack(this.getAttack() * 1.5f);
+			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad Agallas");
 		}
 
 		if (stage >= 0)
