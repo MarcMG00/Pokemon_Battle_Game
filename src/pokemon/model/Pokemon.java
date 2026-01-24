@@ -806,6 +806,13 @@ public class Pokemon {
 		int stage = this.getDefenseStage();
 		float multiplier;
 
+		if (this.getAbilitySelected().getId() == 63
+				&& (this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS
+						|| !this.getEphemeralStates().isEmpty())) {
+			this.setDef(this.getDef() * 1.5f);
+			System.out.println(this.getName() + " aumentó su defensa gracias a su habilidad Escama especial");
+		}
+
 		if (stage >= 0)
 			multiplier = (2f + stage) / 2.0f;
 		else
@@ -1507,6 +1514,7 @@ public class Pokemon {
 	// -----------------------------
 	public void reinitializeStatsAfterAttack() {
 		this.setAttack(this.getInitialAttack());
+		this.setDef(this.getInitialDef());
 	}
 
 	// -----------------------------
