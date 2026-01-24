@@ -2054,6 +2054,14 @@ public class PkVPk {
 					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Torrente");
 		}
 
+		// If ability is 68_Swarm and it's a fire attack => set Power *50% more
+		if (this.getPkCombatting().getAbilitySelected().getId() == 68 && attack.getStrTypeToPkType().getId() == 3
+				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
+			attack.setPower(attack.getPower() * 1.5f);
+			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Enjambre");
+		}
+
 		if (isSpecialAttack) {
 			// Apply special damage
 			dmg = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier
