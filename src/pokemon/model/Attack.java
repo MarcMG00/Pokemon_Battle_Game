@@ -14,11 +14,11 @@ public class Attack {
 	private String name;
 	private String type;
 	private ArrayList<String> bases;
-	private int power;
-	private int initialPower;
+	private float power;
+	private float initialPower;
 	private int pp;
-	private int precision;
-	private int initialPrecision;
+	private float precision;
+	private float initialPrecision;
 	private String effect;
 	private PokemonType strTypeToPkType;
 	private float effectivenessAgainstPkFacing;
@@ -59,7 +59,7 @@ public class Attack {
 		this.reduceStats = false;
 	}
 
-	public Attack(int id, String name, String type, int power, int pp, int precision, String effect) {
+	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -81,7 +81,7 @@ public class Attack {
 		this.hasSecondaryEffect = false;
 		this.reduceStats = false;
 	}
-	
+
 	public Attack(Attack attack) {
 		super();
 		this.id = attack.id;
@@ -103,6 +103,8 @@ public class Attack {
 		this.makesContact = attack.makesContact;
 		this.hasSecondaryEffect = attack.hasSecondaryEffect;
 		this.reduceStats = attack.reduceStats;
+		this.canHitWhileInvulnerable = attack.canHitWhileInvulnerable;
+		this.secondaryEffects = attack.secondaryEffects;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -140,11 +142,11 @@ public class Attack {
 		this.bases = bases;
 	}
 
-	public int getPower() {
+	public float getPower() {
 		return power;
 	}
 
-	public void setPower(int power) {
+	public void setPower(float power) {
 		this.power = power;
 	}
 
@@ -156,11 +158,11 @@ public class Attack {
 		this.pp = pp;
 	}
 
-	public int getPrecision() {
+	public float getPrecision() {
 		return precision;
 	}
 
-	public void setPrecision(int precision) {
+	public void setPrecision(float precision) {
 		this.precision = precision;
 	}
 
@@ -233,19 +235,19 @@ public class Attack {
 		this.percentageFlinch = percentageFlinch;
 	}
 
-	public int getInitialPower() {
+	public float getInitialPower() {
 		return initialPower;
 	}
 
-	public void setInitialPower(int initialPower) {
+	public void setInitialPower(float initialPower) {
 		this.initialPower = initialPower;
 	}
 
-	public int getInitialPrecision() {
+	public float getInitialPrecision() {
 		return initialPrecision;
 	}
 
-	public void setInitialPrecision(int initialPrecision) {
+	public void setInitialPrecision(float initialPrecision) {
 		this.initialPrecision = initialPrecision;
 	}
 
@@ -284,7 +286,7 @@ public class Attack {
 	public List<SecondaryEffect> getSecondaryEffects() {
 		return secondaryEffects;
 	}
-	
+
 	public void setSecondaryEffectsNull() {
 		this.secondaryEffects = null;
 	}

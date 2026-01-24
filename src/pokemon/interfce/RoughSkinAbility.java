@@ -1,5 +1,6 @@
 package pokemon.interfce;
 
+import pokemon.enums.Weather;
 import pokemon.model.Attack;
 import pokemon.model.Game;
 import pokemon.model.Pokemon;
@@ -7,7 +8,7 @@ import pokemon.model.Pokemon;
 public class RoughSkinAbility implements AbilityEffect {
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch) {
+			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
 
 		// Attack must make contact
 		if (!attack.getMakesContact())

@@ -9,7 +9,6 @@ public class IntimidateAbility implements AbilityEffect {
 	public void onSwitchIn(Game game, Pokemon owner, Pokemon defender) {
 
 		Ability targetAbility = defender.getAbilitySelected();
-		System.out.println("La Intimidación de " + owner.getName() + " intimida a " + defender.getName());
 
 		// Check immunity (Oblivious, Own tempo, etc.)
 		if (targetAbility != null && (targetAbility.getId() == 12 || targetAbility.getId() == 20 || targetAbility.getId() == 29 || targetAbility.getId() == 39)) {
