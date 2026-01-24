@@ -14,8 +14,8 @@ public class Attack {
 	private String name;
 	private String type;
 	private ArrayList<String> bases;
-	private int power;
-	private int initialPower;
+	private float power;
+	private float initialPower;
 	private int pp;
 	private float precision;
 	private float initialPrecision;
@@ -59,7 +59,7 @@ public class Attack {
 		this.reduceStats = false;
 	}
 
-	public Attack(int id, String name, String type, int power, int pp, float precision, String effect) {
+	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -142,11 +142,11 @@ public class Attack {
 		this.bases = bases;
 	}
 
-	public int getPower() {
+	public float getPower() {
 		return power;
 	}
 
-	public void setPower(int power) {
+	public void setPower(float power) {
 		this.power = power;
 	}
 
@@ -235,11 +235,11 @@ public class Attack {
 		this.percentageFlinch = percentageFlinch;
 	}
 
-	public int getInitialPower() {
+	public float getInitialPower() {
 		return initialPower;
 	}
 
-	public void setInitialPower(int initialPower) {
+	public void setInitialPower(float initialPower) {
 		this.initialPower = initialPower;
 	}
 

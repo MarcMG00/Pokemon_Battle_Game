@@ -2030,6 +2030,14 @@ public class PkVPk {
 			attack.setPower(attack.getPower() * 2);
 		}
 
+		// If ability is 65_Overgrow and it's a grass attack => set Power *50% more
+		if (this.getPkCombatting().getAbilitySelected().getId() == 65 && attack.getStrTypeToPkType().getId() == 12
+				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
+			attack.setPower(attack.getPower() * 1.5f);
+			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Espesura");
+		}
+
 		if (isSpecialAttack) {
 			// Apply special damage
 			dmg = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier

@@ -1890,8 +1890,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "073,073,073,073,073";
-		String allPkIA = "407,407,407";
+		String allPkPlayer = "3,3,3,3,3,3";
+		String allPkIA = "466,466,466";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1941,11 +1941,11 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 8).findFirst().get());
@@ -2006,7 +2006,7 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 72).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
@@ -2021,7 +2021,7 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {
