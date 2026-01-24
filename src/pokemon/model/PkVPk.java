@@ -2037,6 +2037,14 @@ public class PkVPk {
 			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
 					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Espesura");
 		}
+		
+		// If ability is 66_Blaze and it's a fire attack => set Power *50% more
+		if (this.getPkCombatting().getAbilitySelected().getId() == 66 && attack.getStrTypeToPkType().getId() == 7
+				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
+			attack.setPower(attack.getPower() * 1.5f);
+			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Mar llamas");
+		}
 
 		if (isSpecialAttack) {
 			// Apply special damage
