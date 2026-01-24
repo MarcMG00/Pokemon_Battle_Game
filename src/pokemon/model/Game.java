@@ -819,6 +819,10 @@ public class Game {
 		reduceNumberTurnsEffects(this.getPlayer(), this.getIA());
 		reduceNumberTurnsEffects(this.getIA(), this.getPlayer());
 
+		// Reduce drained all turns status after the other ones (because doesn't apply the first turn)
+		reduceDrainedAllTurnsEffects(this.getPlayer(), this.getIA());
+		reduceDrainedAllTurnsEffects(this.getIA(), this.getPlayer());
+
 		// Apply ability effect on end of turn
 		applyEndTurnAbility(this.getPlayer().getPkCombatting());
 		applyEndTurnAbility(this.getIA().getPkCombatting());
@@ -878,7 +882,7 @@ public class Game {
 		playerAttacker.getPkCombatting().doTrappedEffect();
 		playerAttacker.getPkCombatting().putConfusedStateIfNeeded();
 		playerAttacker.getPkCombatting().reduceDisabledAttackTurn();
-		playerAttacker.getPkCombatting().doDrainedAllTurnsEffect();
+		playerAttacker.getPkCombatting().doDrainedAllTurnsEffect(playerDefender.getPkCombatting());
 
 		// Get PS from drained rival Pokemon
 		if (playerAttacker.getPkCombatting().getIsDraining()) {
@@ -889,7 +893,7 @@ public class Game {
 			// Only can drain if it's not the same turn attacking with the draining attack
 			// (Leech seed..)
 			if (drainedAllTurnsState.getNbTurns() != 0) {
-				playerAttacker.getPkCombatting().doDrainedAllTurnsBeneficiaryEffect();
+				playerAttacker.getPkCombatting().doDrainedAllTurnsBeneficiaryEffect(playerDefender.getPkCombatting());
 
 			}
 		}
@@ -898,6 +902,13 @@ public class Game {
 				.getStatusCondition() == StatusConditions.DEBILITATED) {
 			handleForcedSwitch(playerAttacker);
 		}
+	}
+	
+	// -----------------------------
+	// Reduce DrainedAllTruns status in last (because it doesn't start on the first turn it was drained)
+	// -----------------------------
+	private void reduceDrainedAllTurnsEffects(Player playerAttacker, Player playerDefender) {
+		playerAttacker.getPkCombatting().startDrainedAllTurnsEffect();
 	}
 
 	// -----------------------------
@@ -957,14 +968,16 @@ public class Game {
 			handleForcedSwitch(this.getPlayer());
 		}
 
-		// Remove drained ALL SATUS state (cause player changed)
-		clearDrainEffects(pkPlayer, pkIA);
-
 		// Apply abilities before end of turn
 		applyBeforeEndTurnAbility(this.getPlayer().getPkCombatting());
 		applyBeforeEndTurnAbility(this.getIA().getPkCombatting());
 
 		reduceNumberTurnsEffects(this.getIA(), this.getPlayer());
+		
+		// Reduce drained all turns status after the other ones (because doesn't apply the first turn)
+		reduceDrainedAllTurnsEffects(this.getIA(), this.getPlayer());
+		this.getPlayer().getPkCombatting().doDrainedAllTurnsEffect(this.getIA().getPkCombatting());
+		reduceDrainedAllTurnsEffects(this.getPlayer(), this.getIA());
 
 		applyEndTurnAbility(pkPlayer);
 		applyEndTurnAbility(pkIA);
@@ -1403,6 +1416,9 @@ public class Game {
 			this.getPlayer().getPkCombatting().setSpecialDefenseStage(0);
 			this.getPlayer().getPkCombatting().setLastUsedAttack(new Attack());
 			this.getPlayer().getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
+			
+			// Remove drained ALL SATUS state (cause player changed)
+			clearDrainEffects(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
 
 			Pokemon selected = opt.get();
 
@@ -1874,8 +1890,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "148,148,148,148,148,148";
-		String allPkIA = "466,466,466";
+		String allPkPlayer = "073,073,073,073,073";
+		String allPkIA = "407,407,407";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1925,12 +1941,12 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 8).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());
@@ -1988,11 +2004,11 @@ public class Game {
 
 		for (Pokemon pk : this.getIA().getPokemon()) {
 
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 60).findFirst().get());
+//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 72).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 48).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
@@ -2005,7 +2021,7 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {

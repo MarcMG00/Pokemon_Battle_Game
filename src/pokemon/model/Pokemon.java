@@ -1124,42 +1124,77 @@ public class Pokemon {
 	// -----------------------------
 	// Do effect from DRAINED ALL TURNS state (end of the turn) => affects to enemy
 	// -----------------------------
-	public void doDrainedAllTurnsEffect() {
+	public void doDrainedAllTurnsEffect(Pokemon defender) {
 		// Get drained all turns state
 		State drainedAllTurnsState = this.getEphemeralStates().stream()
 				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
 
 		// Turn number "0" allows to avoid applying effect the first turn
 		if (drainedAllTurnsState != null && drainedAllTurnsState.getNbTurns() != 0) {
-			// Reduces 12,5% from his initial PS
-			float reducePs = this.getInitialPs() * 0.125f;
+			// Cannot be drained if defender has the ability 64_Liquid_Ooze
+			if (defender.getAbilitySelected().getId() != 64) {
+				// Reduces 12,5% from his initial PS
+				float reducePs = this.getInitialPs() * 0.125f;
 
-			this.setPs(this.getPs() - reducePs);
+				this.setPs(this.getPs() - reducePs);
 
-			System.out.println(this.getName() + " está drenado y recibe daño; PS restantes : " + this.getPs());
+				System.out.println(this.getName() + " está drenado y recibe daño; PS restantes : " + this.getPs());
 
-			if (this.getPs() <= 0) {
-				this.setStatusCondition(new State(StatusConditions.DEBILITATED));
+				if (this.getPs() <= 0) {
+					this.setStatusCondition(new State(StatusConditions.DEBILITATED));
+				}
 			}
 		} else {
 			if (drainedAllTurnsState != null) {
 				System.out.println(this.getName() + " será drenado a partir del próximo turno");
-				drainedAllTurnsState.setNbTurns(1);
 			}
 		}
+	}
+
+	// -----------------------------
+	// Reduce nb turns from DRAINED ALL TURNS state (end of the turn) => affects to
+	// enemy
+	// -----------------------------
+	public void startDrainedAllTurnsEffect() {
+		// Get drained all turns state
+		State drainedAllTurnsState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
+		// Turn number "0" allows to avoid applying effect the first turn
+		if (drainedAllTurnsState != null && drainedAllTurnsState.getNbTurns() == 0) {
+			drainedAllTurnsState.setNbTurns(1);
+		}
+
 	}
 
 	// -----------------------------
 	// Do effect from DRAINED ALL TURNS state (end of the turn) => benefits to
 	// Pokemon doing the attack
 	// -----------------------------
-	public void doDrainedAllTurnsBeneficiaryEffect() {
-		// Increases 12,5% from his initial PS
-		float increasePS = this.getInitialPs() * 0.125f;
+	public void doDrainedAllTurnsBeneficiaryEffect(Pokemon defender) {
+		State drainedAllTurnsStateDefender = defender.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
 
-		this.setPs(this.getPs() + increasePS);
+		if (drainedAllTurnsStateDefender != null) {
+			if (defender.getAbilitySelected().getId() == 64) {
+				// Reduces 12,5% from his initial PS
+				float reducePs = this.getInitialPs() * 0.125f;
 
-		System.out.println(this.getName() + " se curó gracias al efecto activo de Drenadoras");
+				this.setPs(this.getPs() - reducePs);
+
+				System.out.println(this.getName()
+						+ " perdió PS al intentar drenar al rival dada la habilidad rival Viscosecreción; PS restantes : "
+						+ this.getPs());
+			} else {
+				if (drainedAllTurnsStateDefender.getNbTurns() != 0) {
+					// Increases 12,5% from his initial PS
+					float increasePS = this.getInitialPs() * 0.125f;
+
+					this.setPs(this.getPs() + increasePS);
+
+					System.out.println(this.getName() + " se curó gracias al efecto activo de Drenadoras");
+				}
+			}
+		}
 	}
 
 	// -----------------------------

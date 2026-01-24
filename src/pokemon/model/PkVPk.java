@@ -1587,18 +1587,25 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// Pokemon combating gets health
-			if (attacker.getPs() != attacker.getInitialPs()) {
-
+			// Pokemon combating gets or loses health
+			if (defender.getAbilitySelected().getId() == 64) {
 				// The half of damage done
-				attacker.setPs(attacker.getPs() + (dmg / 2f));
+				attacker.setPs(attacker.getPs() - (dmg / 2f));
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
+						+ " perdió PS al intentar drenar al rival dada la habilidad Viscosecreción");
 
-				// If more PS received than initial PS, put the max limit at initial PS
-				if (attacker.getPs() >= attacker.getInitialPs()) {
-					attacker.setPs(attacker.getInitialPs());
+			} else {
+				if (attacker.getPs() != attacker.getInitialPs()) {
+
+					// The half of damage done
+					attacker.setPs(attacker.getPs() + (dmg / 2f));
+
+					// If more PS received than initial PS, put the max limit at initial PS
+					if (attacker.getPs() >= attacker.getInitialPs()) {
+						attacker.setPs(attacker.getInitialPs());
+					}
 				}
 			}
-
 			break;
 
 		// Megaagotar/Mega drain (tested)
@@ -1611,15 +1618,23 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// Pokemon combating gets health
-			if (attacker.getPs() != attacker.getInitialPs()) {
-
+			// Pokemon combating gets or loses health
+			if (defender.getAbilitySelected().getId() == 64) {
 				// The half of damage done
-				attacker.setPs(attacker.getPs() + (dmg / 2f));
+				attacker.setPs(attacker.getPs() - (dmg / 2f));
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
+						+ " perdió PS al intentar drenar al rival dada su habilidad Viscosecreción");
 
-				// If more PS received than initial PS, put the max limit at initial PS
-				if (attacker.getPs() >= attacker.getInitialPs()) {
-					attacker.setPs(attacker.getInitialPs());
+			} else {
+				if (attacker.getPs() != attacker.getInitialPs()) {
+
+					// The half of damage done
+					attacker.setPs(attacker.getPs() + (dmg / 2f));
+
+					// If more PS received than initial PS, put the max limit at initial PS
+					if (attacker.getPs() >= attacker.getInitialPs()) {
+						attacker.setPs(attacker.getInitialPs());
+					}
 				}
 			}
 			break;
@@ -1636,7 +1651,7 @@ public class PkVPk {
 				if (!(defender.getEphemeralStates().stream()
 						.anyMatch(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS))) {
 
-					System.out.println(defender.getName() + " fue drenado");
+					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " fue drenado");
 
 					State drainedAllTurns = new State(StatusConditions.DRAINEDALLTURNS, 0);
 
