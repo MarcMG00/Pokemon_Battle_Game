@@ -170,13 +170,13 @@ public class PkVPk {
 		Attack atkAttacker = this.getPkCombatting().getNextMovement();
 		Attack atkDefender = this.getPkFacing().getNextMovement();
 
-		boolean canHitInvulnerable = atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
+		boolean canHitInvulnerable = atkDefender == null
+				|| atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
 
 		float accuracyFactor = 0f;
 
 		checkWeatherEffectsForAttacks(weather, atkAttacker);
-
-		Ability ability = this.getPkCombatting().getAbilitySelected();
+		this.getPkCombatting().checkStatsForAttacks(atkAttacker);
 
 		// -----------------------------
 		// Check if an attack is not disabled (attacks disabled cannot be used, even for
@@ -411,7 +411,6 @@ public class PkVPk {
 		int nbTimesAttack;
 
 		int nbTurnsHoldingStatus;
-		int probabilityGettingStatus;
 
 		float recoil = 0f;
 
@@ -476,7 +475,7 @@ public class PkVPk {
 
 		// Puño cometa/Comet punch (tested)
 		case 4:
-			nbTimesAttack = getRandomInt(1, 5);
+			nbTimesAttack = getRandomInt(1, 5, null);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Puño cometa");
@@ -732,7 +731,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = getRandomInt(4, 5);
+				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
 
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
@@ -848,10 +847,10 @@ public class PkVPk {
 			}
 
 			if (!isMistEffectActivated) {
-				// 35_Illuminate ability
-				if (defender.getAbilitySelected().getId() == 35) {
+				// 35_Illuminate/ 51_Keen_Eye ability
+				if (defender.getAbilitySelected().getId() == 35 || defender.getAbilitySelected().getId() == 51) {
 					System.out.println("La precisión de " + defender.getName() + " (Id:" + defender.getId() + ")"
-							+ " no puede bajar dada su habilidad Iluminación");
+							+ " no puede bajar dada su habilidad" + defender.getAbilitySelected().getName());
 					break;
 				}
 
@@ -963,7 +962,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = getRandomInt(4, 5);
+				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
 
 				System.out.println(defender.getName() + " quedó atrapado");
 
@@ -1002,10 +1001,10 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			if (!(attacker.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
+			if (!attacker.getEphemeralStates().stream()
+					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK)) {
 
-				nbTurnsHoldingStatus = getRandomInt(2, 5);
+				nbTurnsHoldingStatus = getRandomInt(2, 5, StatusConditions.TRAPPEDBYOWNATTACK);
 
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " usará el mismo ataque durante " + nbTurnsHoldingStatus + " turnos.");
@@ -1100,7 +1099,7 @@ public class PkVPk {
 
 		// Pin misil/Pin missile (tested)
 		case 42:
-			nbTimesAttack = getRandomInt(1, 5);
+			nbTimesAttack = getRandomInt(1, 5, null);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Pin misil");
@@ -1166,6 +1165,13 @@ public class PkVPk {
 				break;
 			}
 
+			// 52_Hyper_Cutter ability
+			if (abilityDefender.getId() == 52) {
+				System.out.println("El ataque de " + defender.getName() + " (Id:" + defender.getId() + ")"
+						+ " no puede bajar dada su " + abilityDefender.getName());
+				break;
+			}
+
 			if (!isMistEffectActivated) {
 				if (defender.getAttackStage() <= -6) {
 					System.out.println("El ataque de " + defender.getName() + " (Id:" + defender.getId() + ")"
@@ -1221,7 +1227,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
 
-				nbTurnsHoldingStatus = getRandomInt(1, 7);
+				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.ASLEEP);
 
 				System.out.println(
 						defender.getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
@@ -1250,7 +1256,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
 
-				nbTurnsHoldingStatus = getRandomInt(1, 7);
+				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.CONFUSED);
 
 				System.out.println(defender.getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
 
@@ -1296,7 +1302,7 @@ public class PkVPk {
 				defender.getEphemeralStates().remove(previousDisableState);
 			}
 
-			nbTurnsHoldingStatus = getRandomInt(4, 7);
+			nbTurnsHoldingStatus = getRandomInt(4, 7, null);
 
 			State attackDisabled = new State(StatusConditions.DISABLE, nbTurnsHoldingStatus + 1);
 			attackDisabled.setAttackDisabled(lastAttack);
@@ -1581,18 +1587,25 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// Pokemon combating gets health
-			if (attacker.getPs() != attacker.getInitialPs()) {
-
+			// Pokemon combating gets or loses health
+			if (defender.getAbilitySelected().getId() == 64) {
 				// The half of damage done
-				attacker.setPs(attacker.getPs() + (dmg / 2f));
+				attacker.setPs(attacker.getPs() - (dmg / 2f));
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
+						+ " perdió PS al intentar drenar al rival dada la habilidad Viscosecreción");
 
-				// If more PS received than initial PS, put the max limit at initial PS
-				if (attacker.getPs() >= attacker.getInitialPs()) {
-					attacker.setPs(attacker.getInitialPs());
+			} else {
+				if (attacker.getPs() != attacker.getInitialPs()) {
+
+					// The half of damage done
+					attacker.setPs(attacker.getPs() + (dmg / 2f));
+
+					// If more PS received than initial PS, put the max limit at initial PS
+					if (attacker.getPs() >= attacker.getInitialPs()) {
+						attacker.setPs(attacker.getInitialPs());
+					}
 				}
 			}
-
 			break;
 
 		// Megaagotar/Mega drain (tested)
@@ -1605,15 +1618,23 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// Pokemon combating gets health
-			if (attacker.getPs() != attacker.getInitialPs()) {
-
+			// Pokemon combating gets or loses health
+			if (defender.getAbilitySelected().getId() == 64) {
 				// The half of damage done
-				attacker.setPs(attacker.getPs() + (dmg / 2f));
+				attacker.setPs(attacker.getPs() - (dmg / 2f));
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
+						+ " perdió PS al intentar drenar al rival dada su habilidad Viscosecreción");
 
-				// If more PS received than initial PS, put the max limit at initial PS
-				if (attacker.getPs() >= attacker.getInitialPs()) {
-					attacker.setPs(attacker.getInitialPs());
+			} else {
+				if (attacker.getPs() != attacker.getInitialPs()) {
+
+					// The half of damage done
+					attacker.setPs(attacker.getPs() + (dmg / 2f));
+
+					// If more PS received than initial PS, put the max limit at initial PS
+					if (attacker.getPs() >= attacker.getInitialPs()) {
+						attacker.setPs(attacker.getInitialPs());
+					}
 				}
 			}
 			break;
@@ -1630,7 +1651,7 @@ public class PkVPk {
 				if (!(defender.getEphemeralStates().stream()
 						.anyMatch(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS))) {
 
-					System.out.println(defender.getName() + " fue drenado");
+					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " fue drenado");
 
 					State drainedAllTurns = new State(StatusConditions.DRAINEDALLTURNS, 0);
 
@@ -1789,7 +1810,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
 
-				nbTurnsHoldingStatus = getRandomInt(1, 7);
+				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.ASLEEP);
 
 				System.out.println(
 						defender.getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
@@ -1811,7 +1832,7 @@ public class PkVPk {
 			if (!(attacker.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
 
-				nbTurnsHoldingStatus = getRandomInt(2, 5);
+				nbTurnsHoldingStatus = getRandomInt(2, 5, StatusConditions.TRAPPEDBYOWNATTACK);
 
 				System.out.println(
 						attacker.getName() + " usará el mismo ataque durante " + nbTurnsHoldingStatus + " turnos.");
@@ -1874,7 +1895,7 @@ public class PkVPk {
 			if (!(defender.getEphemeralStates().stream()
 					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
 
-				nbTurnsHoldingStatus = getRandomInt(4, 5);
+				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
 
 				System.out.println(defender.getName() + " quedó atrapado");
 
@@ -1970,9 +1991,10 @@ public class PkVPk {
 		}
 
 		reinitializeAttackStats(attackAttacker);
+		attacker.reinitializeStatsAfterAttack();
 
 		// Apply abilities after attacking
-		applyAbilityAfterDamage(attacker, defender, attackAttacker, dmg);
+		applyAbilityAfterDamage(attacker, defender, attackAttacker, dmg, weather, isWeatherSuppressed);
 
 		if (defender.getPs() <= 0) {
 			defender.setStatusCondition(new State(StatusConditions.DEBILITATED));
@@ -2006,6 +2028,38 @@ public class PkVPk {
 		// If ability is Huge_Power and it's a physical attack => set Power *2
 		if (this.getPkCombatting().getAbilitySelected().getId() == 37 && attack.getBases().contains("fisico")) {
 			attack.setPower(attack.getPower() * 2);
+		}
+
+		// If ability is 65_Overgrow and it's a grass attack => set Power *50% more
+		if (this.getPkCombatting().getAbilitySelected().getId() == 65 && attack.getStrTypeToPkType().getId() == 12
+				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
+			attack.setPower(attack.getPower() * 1.5f);
+			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Espesura");
+		}
+
+		// If ability is 66_Blaze and it's a fire attack => set Power *50% more
+		if (this.getPkCombatting().getAbilitySelected().getId() == 66 && attack.getStrTypeToPkType().getId() == 7
+				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
+			attack.setPower(attack.getPower() * 1.5f);
+			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Mar llamas");
+		}
+
+		// If ability is 67_Torrent and it's a water attack => set Power *50% more
+		if (this.getPkCombatting().getAbilitySelected().getId() == 66 && attack.getStrTypeToPkType().getId() == 2
+				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
+			attack.setPower(attack.getPower() * 1.5f);
+			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Torrente");
+		}
+
+		// If ability is 68_Swarm and it's a fire attack => set Power *50% more
+		if (this.getPkCombatting().getAbilitySelected().getId() == 68 && attack.getStrTypeToPkType().getId() == 3
+				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
+			attack.setPower(attack.getPower() * 1.5f);
+			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Enjambre");
 		}
 
 		if (isSpecialAttack) {
@@ -2079,6 +2133,15 @@ public class PkVPk {
 					+ "), se quedó a un PS gracias a la habilidad Robustez - check en doDammage()");
 		}
 
+		// Ability 48_Thick_Fat reduces damage by 2 (only if attack type it's fire or
+		// ice type)
+		if (this.getPkFacing().getAbilitySelected().getId() == 47
+				&& (attack.getStrTypeToPkType().getId() == 7 || attack.getStrTypeToPkType().getId() == 9)) {
+			dmg = dmg / 2;
+			System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId()
+					+ "), recibió la mitad de daño dada su habilidad Sebo");
+		}
+
 		return dmg;
 	}
 
@@ -2145,8 +2208,17 @@ public class PkVPk {
 	// -----------------------------
 	// Gets number of turns for a state or number of attacks
 	// -----------------------------
-	public static int getRandomInt(int min, int max) {
-		return min + (int) (Math.random() * (max - min + 1));
+	public int getRandomInt(int min, int max, StatusConditions status) {
+		int nbTurnsHoldingStatus = min + (int) (Math.random() * (max - min + 1));
+
+		// 48_Early_Bird ability
+		if (status == StatusConditions.ASLEEP && this.getPkFacing().getAbilitySelected().getId() == 48) {
+			nbTurnsHoldingStatus = nbTurnsHoldingStatus / 2;
+			System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId()
+					+ "), se quedará dormido la mitad de turnos gracias a su habilidad Madrugar");
+		}
+
+		return nbTurnsHoldingStatus;
 	}
 
 	// -----------------------------
@@ -2216,7 +2288,19 @@ public class PkVPk {
 	// -----------------------------
 	// Do ability effect after attacking (for defender)
 	// -----------------------------
-	private void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg) {
+	private void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg, Weather weather,
+			boolean isWeatherSuppressed) {
+
+		// Attacker ability
+		Ability attackerAbility = attacker.getAbilitySelected();
+
+		// 54_Truant ability (can't do anything nex round)
+		if (attackerAbility != null && attackerAbility.getId() == 54) {
+			System.out.println(attacker.getName() + " (" + attacker.getId() + ") "
+					+ "no popdrá atacar o cambiarse en el siguiente turno a causa de "
+					+ attacker.getAbilitySelected().getName());
+			attacker.setCanDonAnythingNextRound(false);
+		}
 
 		// Damage must be done
 		if (dmg <= 0)
@@ -2225,7 +2309,8 @@ public class PkVPk {
 		// Defender ability
 		Ability defenderAbility = defender.getAbilitySelected();
 		if (defenderAbility != null) {
-			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d);
+			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, weather,
+					isWeatherSuppressed);
 		}
 	}
 
@@ -2249,9 +2334,8 @@ public class PkVPk {
 
 		Ability abilityAttacker = attacker.getAbilitySelected();
 
-		double randomRetreat = Math.random();
 		double probabilityGettingStatus = Math.random();
-		int nbTurnsHoldingStatus = getRandomInt(1, 7);
+		int nbTurnsHoldingStatus;
 
 		if (attack.getSecondaryEffects() == null)
 			return;
@@ -2278,7 +2362,7 @@ public class PkVPk {
 				if (!(defender.getEphemeralStates().stream()
 						.anyMatch(e -> e.getStatusCondition() == effect.getStatus()))) {
 
-					nbTurnsHoldingStatus = getRandomInt(1, 7);
+					nbTurnsHoldingStatus = getRandomInt(1, 7, effect.getStatus());
 
 					State state = new State(effect.getStatus(), nbTurnsHoldingStatus + 1);
 
@@ -2322,8 +2406,8 @@ public class PkVPk {
 
 				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
 					abilityAttacker.getEffect().afterAttack(null, attacker, defender, attack, damage,
-							attack.getPercentageFlinched());
-				} else if (randomRetreat <= attack.getPercentageFlinched()) {
+							attack.getPercentageFlinched(), weather, isWeatherSuppressed);
+				} else {
 					defender.setHasRetreated(true);
 				}
 				break;

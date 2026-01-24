@@ -676,8 +676,10 @@ public class Game {
 		Scanner sc = new Scanner(System.in);
 
 		// Apply some abilities first
-		applyIntimidationOnBattleStart(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
+		// applyIntimidationOnBattleStart(this.getPlayer().getPkCombatting(),
+		// this.getIA().getPkCombatting());
 		applyTraceOnBattleStart(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
+		applyAbilities(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
 
 		// Puts weather abilities at the beginning
 		applyEntryWeatherAbilities();
@@ -776,13 +778,13 @@ public class Game {
 		// that's the rule:
 		// first turn of a charging, executes regardless of states conditions, the
 		// second turn is checked.
-		if ((playerSecondTurnOfCharged
-				|| this.getPlayer().getPkCombatting().getNextMovement().getCategory() != AttackCategory.CHARGED)
+		if ((playerSecondTurnOfCharged || (this.getPlayer().getPkCombatting().getNextMovement() != null
+				&& this.getPlayer().getPkCombatting().getNextMovement().getCategory() != AttackCategory.CHARGED))
 				&& this.getPlayer().getPkCombatting().getCanDonAnythingNextRound()) {
 			evaluateStatusStartOfTurn(this.getPlayer().getPkCombatting());
 		}
-		if ((IASecondTurnOfCharged
-				|| this.getIA().getPkCombatting().getNextMovement().getCategory() != AttackCategory.CHARGED)
+		if ((IASecondTurnOfCharged || (this.getIA().getPkCombatting().getNextMovement() != null
+				&& this.getIA().getPkCombatting().getNextMovement().getCategory() != AttackCategory.CHARGED))
 				&& this.getIA().getPkCombatting().getCanDonAnythingNextRound()) {
 			evaluateStatusStartOfTurn(this.getIA().getPkCombatting());
 		}
@@ -808,10 +810,18 @@ public class Game {
 		// Execute the attack sequence (ordering uses current canAttack and speed)
 		handleNormalAttackSequence(sc);
 
+		// Apply abilities before end of turn
+		applyBeforeEndTurnAbility(this.getPlayer().getPkCombatting());
+		applyBeforeEndTurnAbility(this.getIA().getPkCombatting());
+
 		// At the end of the turn we must perform end-of-turn ephemeral effects and
 		// reduce counters and parameters
 		reduceNumberTurnsEffects(this.getPlayer(), this.getIA());
 		reduceNumberTurnsEffects(this.getIA(), this.getPlayer());
+
+		// Reduce drained all turns status after the other ones (because doesn't apply the first turn)
+		reduceDrainedAllTurnsEffects(this.getPlayer(), this.getIA());
+		reduceDrainedAllTurnsEffects(this.getIA(), this.getPlayer());
 
 		// Apply ability effect on end of turn
 		applyEndTurnAbility(this.getPlayer().getPkCombatting());
@@ -819,6 +829,13 @@ public class Game {
 
 		this.getPlayer().getPkCombatting().restartParametersEffect();
 		this.getIA().getPkCombatting().restartParametersEffect();
+
+		// Apply effects from weather type on end of turn
+		applyStatsFromWeatherEndOfTurn(this.getPlayer().getPkCombatting());
+		boolean playerKO = checkDebilitatedAfterEndTurn(this.getPlayer().getPkCombatting(), this.getPlayer(), sc);
+
+		applyStatsFromWeatherEndOfTurn(this.getIA().getPkCombatting());
+		boolean iaKO = checkDebilitatedAfterEndTurn(this.getIA().getPkCombatting(), this.getIA(), sc);
 
 		reduceNbTurnsMistActive();
 	}
@@ -865,7 +882,7 @@ public class Game {
 		playerAttacker.getPkCombatting().doTrappedEffect();
 		playerAttacker.getPkCombatting().putConfusedStateIfNeeded();
 		playerAttacker.getPkCombatting().reduceDisabledAttackTurn();
-		playerAttacker.getPkCombatting().doDrainedAllTurnsEffect();
+		playerAttacker.getPkCombatting().doDrainedAllTurnsEffect(playerDefender.getPkCombatting());
 
 		// Get PS from drained rival Pokemon
 		if (playerAttacker.getPkCombatting().getIsDraining()) {
@@ -876,7 +893,7 @@ public class Game {
 			// Only can drain if it's not the same turn attacking with the draining attack
 			// (Leech seed..)
 			if (drainedAllTurnsState.getNbTurns() != 0) {
-				playerAttacker.getPkCombatting().doDrainedAllTurnsBeneficiaryEffect();
+				playerAttacker.getPkCombatting().doDrainedAllTurnsBeneficiaryEffect(playerDefender.getPkCombatting());
 
 			}
 		}
@@ -886,6 +903,13 @@ public class Game {
 			handleForcedSwitch(playerAttacker);
 		}
 	}
+	
+	// -----------------------------
+	// Reduce DrainedAllTruns status in last (because it doesn't start on the first turn it was drained)
+	// -----------------------------
+	private void reduceDrainedAllTurnsEffects(Player playerAttacker, Player playerDefender) {
+		playerAttacker.getPkCombatting().startDrainedAllTurnsEffect();
+	}
 
 	// -----------------------------
 	// Handle attack from IA when player is changing the Pokemon
@@ -894,15 +918,27 @@ public class Game {
 
 		Pokemon pkIA = this.getIA().getPkCombatting();
 
+		// 42_Magnet_Pull ability doesn't allow to change Pokemon that are steel type
+		if (pkIA.getAbilitySelected().getId() == 42
+				&& this.getPlayer().getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 1)) {
+			System.out.println(
+					this.getPlayer().getPkCombatting().getName() + " (" + this.getPlayer().getPkCombatting().getId()
+							+ ") " + "no puede cambiarse a causa de la habilidad Imán del Pokémon rival");
+			return false;
+		}
+
 		if (this.getPlayer().getPkCombatting().getCanDonAnythingNextRound()) {
 			boolean changed = changePokemon(sc);
 
 			if (!changed)
 				return false; // player cancelled the change (return to start options)
 		} else {
-			System.out.println(
-					this.getPlayer().getPkCombatting().getName() + " (" + this.getPlayer().getPkCombatting().getId()
-							+ ") " + "no puede cambiarse  este turno a causa de algún ataque o estado");
+			System.out.println(this.getPlayer().getPkCombatting().getName() + " ("
+					+ this.getPlayer().getPkCombatting().getId() + ") "
+					+ (this.getPlayer().getPkCombatting().getAbilitySelected().getId() == 54
+							? "no puede cambiarse este turno a causa de "
+									+ this.getPlayer().getPkCombatting().getAbilitySelected().getName()
+							: "no puede cambiarse este turno a causa de algún ataque o estado"));
 			this.getPlayer().getPkCombatting().setCanDonAnythingNextRound(true);
 		}
 
@@ -916,8 +952,13 @@ public class Game {
 
 			handleChangeSequence(sc); // only IA attacks
 		} else {
-			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recuperarse a causa de "
-					+ pkIA.getLastUsedAttack().getName());
+			if (pkIA.getAbilitySelected().getId() == 54) {
+				System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") "
+						+ "no puede atacar o cambiarse a causa de " + pkIA.getAbilitySelected().getName());
+			} else {
+				System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "debe recuperarse a causa de "
+						+ pkIA.getLastUsedAttack().getName());
+			}
 
 			pkIA.setCanDonAnythingNextRound(true);
 		}
@@ -927,16 +968,29 @@ public class Game {
 			handleForcedSwitch(this.getPlayer());
 		}
 
-		// Remove drained ALL SATUS state (cause player changed)
-		clearDrainEffects(pkPlayer, pkIA);
+		// Apply abilities before end of turn
+		applyBeforeEndTurnAbility(this.getPlayer().getPkCombatting());
+		applyBeforeEndTurnAbility(this.getIA().getPkCombatting());
 
 		reduceNumberTurnsEffects(this.getIA(), this.getPlayer());
+		
+		// Reduce drained all turns status after the other ones (because doesn't apply the first turn)
+		reduceDrainedAllTurnsEffects(this.getIA(), this.getPlayer());
+		this.getPlayer().getPkCombatting().doDrainedAllTurnsEffect(this.getIA().getPkCombatting());
+		reduceDrainedAllTurnsEffects(this.getPlayer(), this.getIA());
 
 		applyEndTurnAbility(pkPlayer);
 		applyEndTurnAbility(pkIA);
 
 		pkPlayer.restartParametersEffect();
 		pkIA.restartParametersEffect();
+
+		// Apply effects from weather type on end of turn
+		applyStatsFromWeatherEndOfTurn(this.getPlayer().getPkCombatting());
+		boolean playerKO = checkDebilitatedAfterEndTurn(this.getPlayer().getPkCombatting(), this.getPlayer(), sc);
+
+		applyStatsFromWeatherEndOfTurn(this.getIA().getPkCombatting());
+		boolean iaKO = checkDebilitatedAfterEndTurn(this.getIA().getPkCombatting(), this.getIA(), sc);
 
 		reduceNbTurnsMistActive();
 
@@ -1113,8 +1167,15 @@ public class Game {
 				handleIARetaliation();
 			}
 		} else {
-			System.out.println(attacker.getPkCombatting().getName() + " (" + attacker.getPkCombatting().getId() + ") "
-					+ "debe recuperarse a causa de " + attacker.getPkCombatting().getLastUsedAttack().getName());
+			if (attacker.getPkCombatting().getAbilitySelected().getId() == 54) {
+				System.out.println(attacker.getPkCombatting().getName() + " (" + attacker.getPkCombatting().getId()
+						+ ") " + "no puede atacar o cambiarse a causa de "
+						+ attacker.getPkCombatting().getAbilitySelected().getName());
+			} else {
+				System.out.println(attacker.getPkCombatting().getName() + " (" + attacker.getPkCombatting().getId()
+						+ ") " + "debe recuperarse a causa de "
+						+ attacker.getPkCombatting().getLastUsedAttack().getName());
+			}
 
 			attacker.getPkCombatting().setCanDonAnythingNextRound(true);
 		}
@@ -1355,6 +1416,9 @@ public class Game {
 			this.getPlayer().getPkCombatting().setSpecialDefenseStage(0);
 			this.getPlayer().getPkCombatting().setLastUsedAttack(new Attack());
 			this.getPlayer().getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
+			
+			// Remove drained ALL SATUS state (cause player changed)
+			clearDrainEffects(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
 
 			Pokemon selected = opt.get();
 
@@ -1382,6 +1446,15 @@ public class Game {
 	// will attack normally
 	// -----------------------------
 	private boolean tryIAChange() {
+
+		// 42_Magnet_Pull ability doesn't allow to change Pokemon that are steel type
+		if (this.getPlayer().getPkCombatting().getAbilitySelected().getId() == 42
+				&& this.getIA().getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 1)) {
+			System.out.println(this.getIA().getPkCombatting().getName() + " (" + this.getIA().getPkCombatting().getId()
+					+ ") " + "no puede cambiarse a causa de la habilidad Imán del Pokémon rival");
+			return false;
+		}
+
 		// 15% of probability to change Pokemon
 		int randomNumber = (int) (Math.random() * 100) + 1;
 		if (randomNumber > 15) {
@@ -1561,35 +1634,58 @@ public class Game {
 	// Sets the ability during changes (forced or manual) (if any)
 	// -----------------------------
 	private void applyEntryAbilityOnSwitch(Pokemon entering, Pokemon defender) {
-		Ability ability = entering.getAbilitySelected();
-		if (ability == null || ability.getId() == 5000)
+		Ability abilityEntering = entering.getAbilitySelected();
+		Ability abilityDefendering = defender.getAbilitySelected();
+
+		if (abilityEntering == null || abilityEntering.getId() == 5000)
 			return;
 
 		// Intimidate, etc. (first abilities to apply)
-		if (ability.getId() == 22) {
-			ability.getEffect().onSwitchIn(this, entering, defender);
-		}
+//		if (ability.getId() == 22) {
+		abilityEntering.getEffect().onSwitchIn(this, entering, defender);
+//		}
 		// Sets weather
-		else if (ability.getIsWeatherType()) {
-			ability.getEffect().onBattleStart(this, entering);
-		}
+//		else if (ability.getIsWeatherType()) {
+		abilityEntering.getEffect().onBattleStart(this, entering);
+//		}
 		// Suppress weather if 13_Cloud_Nine
-		else if (ability.getId() == 13) {
-			ability.getEffect().onBattleStart(this, entering);
-		} else {
-			ability.getEffect().onSwitchIn(this, entering, defender);
-		}
+//		else if (ability.getId() == 13) {
+//		ability.getEffect().onBattleStart(this, entering);
+//		} else {
+//		ability.getEffect().onSwitchIn(this, entering, defender);
+//		}
+
+		// if (abilityDefendering != null && abilityDefendering.getId() == 46)
+		// abilityDefendering.getEffect().onSwitchIn(this, defender, entering);
+
+		// For example for 59_Foceast ability
+		// If 36_Trace (copies ability) => needs to be applied
+		// abilityEntering.getEffect().duringBattle(this, entering, defender);
+		abilityDefendering.getEffect().duringBattle(this, defender, entering);
 	}
 
 	// -----------------------------
-	// Sets the weather ability during changes (forced or manual) (if any)
+	// Apply ability on end turn
 	// -----------------------------
 	private void applyEndTurnAbility(Pokemon pk) {
 		Ability ability = pk.getAbilitySelected();
-		if (ability == null || ability.getId() == 5000 || pk.getJustEnteredBattle())
+		if (ability == null || ability.getId() == 5000
+				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 44))
 			return;
 
 		ability.getEffect().endOfTurn(this, pk);
+	}
+
+	// -----------------------------
+	// Apply ability before end of turn
+	// -----------------------------
+	private void applyBeforeEndTurnAbility(Pokemon pk) {
+		Ability ability = pk.getAbilitySelected();
+		if (ability == null || ability.getId() == 5000
+				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 61))
+			return;
+
+		ability.getEffect().beforeEndOfTurn(this, pk);
 	}
 
 	// -----------------------------
@@ -1627,6 +1723,7 @@ public class Game {
 			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
 			Pokemon faster = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
 			slower.getAbilitySelected().getEffect().onSwitchIn(this, slower, faster);
+			faster.getAbilitySelected().getEffect().onSwitchIn(this, faster, slower);
 		}
 	}
 
@@ -1650,7 +1747,23 @@ public class Game {
 			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
 			Pokemon faster = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
 			slower.getAbilitySelected().getEffect().onSwitchIn(this, slower, faster);
+			faster.getAbilitySelected().getEffect().onSwitchIn(this, faster, slower);
 		}
+	}
+
+	// -----------------------------
+	// Do start abilities (that are not weather type)
+	// -----------------------------
+	private void applyAbilities(Pokemon p1, Pokemon p2) {
+
+		boolean p1HasWeatherType = p1.getAbilitySelected().getIsWeatherType();
+		boolean p2HasWeatherType = p2.getAbilitySelected().getIsWeatherType();
+
+		if (p1HasWeatherType && p2HasWeatherType)
+			return;
+
+		p1.getAbilitySelected().getEffect().onSwitchIn(this, p1, p2);
+		p2.getAbilitySelected().getEffect().onSwitchIn(this, p2, p1);
 	}
 
 	// -----------------------------
@@ -1678,13 +1791,107 @@ public class Game {
 	}
 
 	// -----------------------------
+	// Apply modifying stats from weather (end of turn)
+	// -----------------------------
+	private void applyStatsFromWeatherEndOfTurn(Pokemon pokemon) {
+		// Sand storm
+		if (this.getCurrentWeather() == Weather.SANDSTORM) {
+			// If Pokemon is steel, rock, ground => don't affect
+			if (pokemon.getTypes().stream()
+					.noneMatch(t -> (t.getId() == 1) || (t.getId() == 14) || (t.getId() == 16))) {
+
+				// Some abilities are not affected
+				if (pokemon.getAbilitySelected().getId() == 8 || pokemon.getAbilitySelected().getId() == 98
+						|| pokemon.getAbilitySelected().getId() == 159 || pokemon.getAbilitySelected().getId() == 142
+						|| pokemon.getAbilitySelected().getId() == 146) {
+					System.out.println(
+							pokemon.getName() + " no se ve afectado por la tormenta de arena dada su habilidad "
+									+ pokemon.getAbilitySelected().getName());
+				} else {
+					// Reduces current PS by 6.25%
+					float reducePs = pokemon.getInitialPs() * 0.0625f;
+
+					pokemon.setPs(pokemon.getPs() - reducePs);
+
+					System.out.println(pokemon.getName() + " ha sido zarandeado por la tormenta de arena");
+				}
+			}
+		}
+	}
+
+	// -----------------------------
+	// Check if a Pokemon fainted due to end-of-turn effects (weather, poison, burn)
+	// -----------------------------
+	private boolean checkDebilitatedAfterEndTurn(Pokemon pk, Player owner, Scanner sc) {
+
+		if (pk.getPs() >= 0) {
+			return false;
+		}
+
+		// Mark as debilitated
+		pk.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
+
+		System.out.println(pk.getName() + " fue debilitado.");
+
+		// Force clean of drain effects because one of the Pokemon have died (so it
+		// doesn't matter the order of Pokemon)
+		clearDrainEffects(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
+
+		// Force switch
+		if (owner == this.getPlayer()) {
+			System.out.println("¿Qué Pokémon deberías escoger?");
+			boolean changed = false;
+			while (!changed) {
+				changed = changePokemon(sc);
+			}
+		} else {
+			Pokemon newIA = owner.decideBestChangePokemon(this.getPlayer().getPkCombatting(), this.getEffectPerTypes());
+
+			if (newIA == null) {
+				newIA = owner.getPokemon().stream()
+						.filter(p -> p.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED)
+						.findFirst().orElse(null);
+			}
+
+			if (newIA != null) {
+				applyExitAbilityOnSwitch(owner.getPkCombatting());
+
+				owner.getPkCombatting().removeStates();
+				// Reinitialize some stats
+				owner.getPkCombatting().setAttackStage(0);
+				owner.getPkCombatting().setSpecialAttackStage(0);
+				owner.getPkCombatting().setPrecisionPoints(0);
+				owner.getPkCombatting().setDefenseStage(0);
+				owner.getPkCombatting().setSpecialDefenseStage(0);
+				owner.getPkCombatting().setLastUsedAttack(new Attack());
+				owner.getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
+
+				System.out.println("IA envía a " + newIA.getName());
+
+				newIA.setJustEnteredBattle(false);
+				owner.setPkCombatting(newIA);
+
+				applyEntryAbilityOnSwitch(newIA, this.getPlayer().getPkCombatting());
+
+				this.getPlayer().setPkFacing(newIA);
+				owner.setPkFacing(this.getPlayer().getPkCombatting());
+
+				refreshAttackOrders();
+			}
+		}
+
+		return true;
+	}
+
+	// -----------------------------
 	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
-	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee)
+	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee, 248 Tyranitar,
+	// 382 Kyogre)
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "282,282,282";
-		String allPkIA = "034,034,034";
+		String allPkPlayer = "3,3,3,3,3,3";
+		String allPkIA = "466,466,466";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1714,6 +1921,8 @@ public class Game {
 				// Update repetitions counter
 				pkCount.put(baseId, count + 1);
 
+				newPk.setOwner(this.getPlayer());
+
 				// Add to player team
 				this.getPlayer().addPokemon(newPk);
 			}
@@ -1736,8 +1945,8 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 8).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());
@@ -1755,21 +1964,38 @@ public class Game {
 
 		}
 
+		pkCount = new HashMap<Integer, Integer>();
 		String[] pkByPkIA = allPkIA.split(",");
 
 		// Add Pokemon to IA
 		for (String PkID : pkByPkIA) {
 
-			Optional<Pokemon> pkOpt;
+			int baseId = Integer.parseInt(PkID);
 
-			pkOpt = this.getPokemon().stream().filter(pk -> pk.getId() == Integer.parseInt(PkID)).findFirst();
+			Optional<Pokemon> pkOpt = this.getPokemon().stream().filter(pk -> pk.getId() == baseId).findFirst();
 
 			if (pkOpt.isPresent()) {
 
 				// Creates a new instance of Pokemon in memory (otherwise there are problems of
 				// duplications)
-				this.getIA().addPokemon(new Pokemon(pkOpt.get()));
+				Pokemon newPk = new Pokemon(pkOpt.get());
 
+				// Increase count for this base ID
+				int count = pkCount.getOrDefault(baseId, 0);
+
+				// If it's not the first one, modify ID
+				if (count > 0) {
+					int newId = baseId * 1000 + count;
+					newPk.setId(newId);
+				}
+
+				// Update repetitions counter
+				pkCount.put(baseId, count + 1);
+
+				newPk.setOwner(this.getIA());
+
+				// Add to player team
+				this.getIA().addPokemon(newPk);
 			}
 		}
 
@@ -1780,9 +2006,9 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 60).findFirst().get());
+//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 72).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 48).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
@@ -1791,10 +2017,11 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
 
 			// Adds the Ids of attacks chosen in a list
 			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks()) {

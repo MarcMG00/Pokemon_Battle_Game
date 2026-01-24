@@ -1,6 +1,7 @@
 package pokemon.model;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
@@ -63,6 +64,7 @@ public class Pokemon {
 	private boolean hasSubstitute;
 	private boolean isFireBoostActive;
 	private Ability currentAbility; // ability that will be used to do effects
+	private Player owner;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -188,12 +190,12 @@ public class Pokemon {
 	public Pokemon(Pokemon pokemon) {
 		this.id = pokemon.id;
 		this.name = pokemon.name;
-		this.ps = pokemon.ps;
-		this.attack = pokemon.attack;
-		this.def = pokemon.def;
-		this.speed = pokemon.speed;
-		this.specialAttack = pokemon.specialAttack;
-		this.specialDefense = pokemon.specialDefense;
+		this.ps = pokemon.initialPs;
+		this.attack = pokemon.initialAttack;
+		this.def = pokemon.initialDef;
+		this.speed = pokemon.initialSpeed;
+		this.specialAttack = pokemon.initialSpecialAttack;
+		this.specialDefense = pokemon.initialSpecialDefense;
 		this.initialPs = ps;
 		this.initialAttack = attack;
 		this.initialDef = def;
@@ -204,44 +206,51 @@ public class Pokemon {
 		this.hiddenAbilities = pokemon.hiddenAbilities;
 		this.types = pokemon.types;
 
-		this.physicalAttacks = new ArrayList<>(pokemon.physicalAttacks);
-		this.specialAttacks = new ArrayList<>(pokemon.specialAttacks);
-		this.otherAttacks = new ArrayList<>(pokemon.otherAttacks);
+		this.physicalAttacks = (ArrayList<Attack>) pokemon.physicalAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
+		this.specialAttacks = (ArrayList<Attack>) pokemon.specialAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
+		this.otherAttacks = (ArrayList<Attack>) pokemon.otherAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
 		this.fourPrincipalAttacks = new ArrayList<>(); // starts empty
 		this.fourIdAttacks = new ArrayList<>();
 
-		this.nextMovement = pokemon.nextMovement;
-		this.lotDamageAttacks = new ArrayList<>(pokemon.lotDamageAttacks);
-		this.normalAttacks = new ArrayList<>(pokemon.normalAttacks);
-		this.lowAttacks = new ArrayList<>(pokemon.lowAttacks);
-		this.notEffectAttacks = new ArrayList<>(pokemon.notEffectAttacks);
+		this.nextMovement = null;
+		this.lotDamageAttacks = (ArrayList<Attack>) pokemon.lotDamageAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
+		this.normalAttacks = (ArrayList<Attack>) pokemon.normalAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
+		this.lowAttacks = (ArrayList<Attack>) pokemon.lowAttacks.stream().map(Attack::new).collect(Collectors.toList());
+		this.notEffectAttacks = (ArrayList<Attack>) pokemon.notEffectAttacks.stream().map(Attack::new)
+				.collect(Collectors.toList());
 
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
-		this.statusCondition = pokemon.statusCondition;
-		this.ephemeralStates = new ArrayList<>(pokemon.ephemeralStates);
+		this.statusCondition = new State(StatusConditions.NO_STATUS);
+		this.ephemeralStates = new ArrayList<>();
 
-		this.isChargingAttackForNextRound = pokemon.isChargingAttackForNextRound;
-		this.canAttack = pokemon.canAttack;
-		this.hasUsedMinimize = pokemon.hasUsedMinimize;
-		this.hasRetreated = pokemon.hasRetreated;
-		this.attackStage = pokemon.attackStage;
-		this.specialAttackStage = pokemon.specialAttackStage;
-		this.defenseStage = pokemon.defenseStage;
-		this.specialDefenseStage = pokemon.specialDefenseStage;
-		this.speedStage = pokemon.speedStage;
-		this.lastUsedAttack = pokemon.lastUsedAttack;
-		this.canDonAnythingNextRound = pokemon.canDonAnythingNextRound;
+		this.isChargingAttackForNextRound = false;
+		this.canAttack = true;
+		this.hasUsedMinimize = false;
+		this.hasRetreated = false;
+		this.attackStage = 0;
+		this.specialAttackStage = 0;
+		this.defenseStage = 0;
+		this.specialDefenseStage = 0;
+		this.speedStage = 0;
+		this.lastUsedAttack = null;
+		this.canDonAnythingNextRound = true;
 		this.weight = 1 + (int) (Math.random() * (350 - 1 + 1));
-		this.hasReceivedDamage = pokemon.hasReceivedDamage;
-		this.damageReceived = pokemon.damageReceived;
-		this.isDraining = pokemon.isDraining;
+		this.hasReceivedDamage = false;
+		this.damageReceived = 0f;
+		this.isDraining = false;
 		this.AbilitySelected = pokemon.AbilitySelected;
-		this.justEnteredBattle = pokemon.justEnteredBattle;
-		this.hasSubstitute = pokemon.hasSubstitute;
+		this.justEnteredBattle = false;
+		this.hasSubstitute = false;
 		this.initialTypes = pokemon.initialTypes;
-		this.isFireBoostActive = pokemon.isFireBoostActive;
-		this.currentAbility = pokemon.currentAbility;
+		this.isFireBoostActive = false;
+		this.currentAbility = pokemon.AbilitySelected != null ? new Ability(pokemon.AbilitySelected) : null;
+		this.owner = pokemon.owner;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -659,6 +668,14 @@ public class Pokemon {
 		return AbilitySelected;
 	}
 
+	public Player getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Player owner) {
+		this.owner = owner;
+	}
+
 	public void setBaseAbility(Ability abilitySelected) {
 		this.AbilitySelected = abilitySelected;
 	}
@@ -741,6 +758,24 @@ public class Pokemon {
 		int stage = this.getAttackStage();
 		float multiplier;
 
+		// 55_Hustle ability rises attack by 50%
+		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
+			this.setAttack(this.getAttack() * 1.5f);
+			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad Entusisamo");
+		}
+
+		// 62_Guts ability rises attack by 50% (if have some of those status conditions)
+		if (this.getAbilitySelected().getId() == 62
+				&& (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED
+						|| this.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED
+						|| this.getStatusCondition().getStatusCondition() == StatusConditions.POISONED
+						|| this.getStatusCondition().getStatusCondition() == StatusConditions.BADLY_POISONED
+						|| this.getEphemeralStates().stream()
+								.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
+			this.setAttack(this.getAttack() * 1.5f);
+			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad Agallas");
+		}
+
 		if (stage >= 0)
 			multiplier = (2f + stage) / 2.0f;
 		else
@@ -770,6 +805,13 @@ public class Pokemon {
 	public float getEffectiveDefense() {
 		int stage = this.getDefenseStage();
 		float multiplier;
+
+		if (this.getAbilitySelected().getId() == 63
+				&& (this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS
+						|| !this.getEphemeralStates().isEmpty())) {
+			this.setDef(this.getDef() * 1.5f);
+			System.out.println(this.getName() + " aumentó su defensa gracias a su habilidad Escama especial");
+		}
 
 		if (stage >= 0)
 			multiplier = (2f + stage) / 2.0f;
@@ -946,7 +988,7 @@ public class Pokemon {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
 
 			// Reduces current PS by 6.25%
-			float reducePs = this.getPs() * 0.0625f;
+			float reducePs = this.getInitialPs() * 0.0625f;
 
 			this.setPs(this.getPs() - reducePs);
 
@@ -991,7 +1033,7 @@ public class Pokemon {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
 
 			// Reduces current PS by 6.25%
-			float reducePs = this.getPs() * 0.0625f;
+			float reducePs = this.getInitialPs() * 0.0625f;
 
 			this.setPs(this.getPs() - reducePs);
 
@@ -1082,42 +1124,77 @@ public class Pokemon {
 	// -----------------------------
 	// Do effect from DRAINED ALL TURNS state (end of the turn) => affects to enemy
 	// -----------------------------
-	public void doDrainedAllTurnsEffect() {
+	public void doDrainedAllTurnsEffect(Pokemon defender) {
 		// Get drained all turns state
 		State drainedAllTurnsState = this.getEphemeralStates().stream()
 				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
 
 		// Turn number "0" allows to avoid applying effect the first turn
 		if (drainedAllTurnsState != null && drainedAllTurnsState.getNbTurns() != 0) {
-			// Reduces 12,5% from his initial PS
-			float reducePs = this.getInitialPs() * 0.125f;
+			// Cannot be drained if defender has the ability 64_Liquid_Ooze
+			if (defender.getAbilitySelected().getId() != 64) {
+				// Reduces 12,5% from his initial PS
+				float reducePs = this.getInitialPs() * 0.125f;
 
-			this.setPs(this.getPs() - reducePs);
+				this.setPs(this.getPs() - reducePs);
 
-			System.out.println(this.getName() + " está drenado y recibe daño; PS restantes : " + this.getPs());
+				System.out.println(this.getName() + " está drenado y recibe daño; PS restantes : " + this.getPs());
 
-			if (this.getPs() <= 0) {
-				this.setStatusCondition(new State(StatusConditions.DEBILITATED));
+				if (this.getPs() <= 0) {
+					this.setStatusCondition(new State(StatusConditions.DEBILITATED));
+				}
 			}
 		} else {
 			if (drainedAllTurnsState != null) {
 				System.out.println(this.getName() + " será drenado a partir del próximo turno");
-				drainedAllTurnsState.setNbTurns(1);
 			}
 		}
+	}
+
+	// -----------------------------
+	// Reduce nb turns from DRAINED ALL TURNS state (end of the turn) => affects to
+	// enemy
+	// -----------------------------
+	public void startDrainedAllTurnsEffect() {
+		// Get drained all turns state
+		State drainedAllTurnsState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
+		// Turn number "0" allows to avoid applying effect the first turn
+		if (drainedAllTurnsState != null && drainedAllTurnsState.getNbTurns() == 0) {
+			drainedAllTurnsState.setNbTurns(1);
+		}
+
 	}
 
 	// -----------------------------
 	// Do effect from DRAINED ALL TURNS state (end of the turn) => benefits to
 	// Pokemon doing the attack
 	// -----------------------------
-	public void doDrainedAllTurnsBeneficiaryEffect() {
-		// Increases 12,5% from his initial PS
-		float increasePS = this.getInitialPs() * 0.125f;
+	public void doDrainedAllTurnsBeneficiaryEffect(Pokemon defender) {
+		State drainedAllTurnsStateDefender = defender.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS).findFirst().orElse(null);
 
-		this.setPs(this.getPs() + increasePS);
+		if (drainedAllTurnsStateDefender != null) {
+			if (defender.getAbilitySelected().getId() == 64) {
+				// Reduces 12,5% from his initial PS
+				float reducePs = this.getInitialPs() * 0.125f;
 
-		System.out.println(this.getName() + " se curó gracias al efecto activo de Drenadoras");
+				this.setPs(this.getPs() - reducePs);
+
+				System.out.println(this.getName()
+						+ " perdió PS al intentar drenar al rival dada la habilidad rival Viscosecreción; PS restantes : "
+						+ this.getPs());
+			} else {
+				if (drainedAllTurnsStateDefender.getNbTurns() != 0) {
+					// Increases 12,5% from his initial PS
+					float increasePS = this.getInitialPs() * 0.125f;
+
+					this.setPs(this.getPs() + increasePS);
+
+					System.out.println(this.getName() + " se curó gracias al efecto activo de Drenadoras");
+				}
+			}
+		}
 	}
 
 	// -----------------------------
@@ -1333,6 +1410,15 @@ public class Pokemon {
 
 			break;
 
+		case INFATUATED:
+			// 12_Oblivious
+			if (ability.getId() == 12) {
+				System.out.println(this.getName() + " no puede confundirse dada su habilidad Despiste");
+				return false;
+			}
+
+			break;
+
 		default:
 			break;
 		}
@@ -1375,6 +1461,13 @@ public class Pokemon {
 			switch (stat) {
 
 			case ATTACK:
+				// 52_Hyper_Cutter ability
+				if (this.getAbilitySelected().getId() == 52) {
+					System.out.println("El ataque de " + this.getName() + " (Id:" + this.getId() + ")"
+							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
+					break;
+				}
+
 				if (this.getSpeedStage() <= -6) {
 					System.out.println(
 							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
@@ -1415,10 +1508,10 @@ public class Pokemon {
 				break;
 
 			case PRECISION:
-				// 35_Illuminate ability
-				if (this.getAbilitySelected().getId() == 35) {
+				// 35_Illuminate/ 51_Keen_Eye ability
+				if (this.getAbilitySelected().getId() == 35 || this.getAbilitySelected().getId() == 51) {
 					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar dada su habilidad Iluminación");
+							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
 					break;
 				}
 
@@ -1447,6 +1540,26 @@ public class Pokemon {
 		} else {
 			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
 					+ " no pudo bajar las estadísticas a causa de Neblina");
+		}
+	}
+
+	// -----------------------------
+	// Reset stats from attacks (to avoid problems each turn) => because of some
+	// boosts, etc.
+	// -----------------------------
+	public void reinitializeStatsAfterAttack() {
+		this.setAttack(this.getInitialAttack());
+		this.setDef(this.getInitialDef());
+	}
+
+	// -----------------------------
+	// Change attacks depending on abilities, etc.
+	// -----------------------------
+	public void checkStatsForAttacks(Attack atkAttacker) {
+
+		// 55_Hustle ability reduces precision by 20%
+		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
+			atkAttacker.setPrecision(atkAttacker.getPrecision() * 0.8f);
 		}
 	}
 

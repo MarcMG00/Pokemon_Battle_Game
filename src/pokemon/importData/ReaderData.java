@@ -16,17 +16,26 @@ import pokemon.enums.StatusConditions;
 import pokemon.interfce.BattleArmorAbility;
 import pokemon.interfce.CloudNineAbility;
 import pokemon.interfce.ColorChangeAbility;
+import pokemon.interfce.CuteCharmAbility;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
 import pokemon.interfce.EffectSporeAbility;
 import pokemon.interfce.EmptyAbility;
+import pokemon.interfce.FlameBodyAbility;
 import pokemon.interfce.FlashFireAbility;
+import pokemon.interfce.ForecastAbility;
 import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
+import pokemon.interfce.MinusAbility;
 import pokemon.interfce.NaturalCureAbility;
+import pokemon.interfce.PlusAbility;
 import pokemon.interfce.PoisonPointAbility;
+import pokemon.interfce.PressureAbility;
+import pokemon.interfce.RainDishAbility;
 import pokemon.interfce.RoughSkinAbility;
+import pokemon.interfce.SandStreamAbility;
+import pokemon.interfce.ShedSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
 import pokemon.interfce.StenchAbility;
@@ -1030,7 +1039,8 @@ public class ReaderData {
 
 	// -----------------------------
 	// Set the ability effect of the attack
-	// TODO >> 006 / 008 / 012
+	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
+	// / 60 (when applying objects)
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
@@ -1114,6 +1124,43 @@ public class ReaderData {
 		// Punto tóxico/Poison point
 		case 38:
 			ability.setEffect(new PoisonPointAbility());
+			break;
+		// Cura lluvia/Rain dish
+		case 44:
+			ability.setEffect(new RainDishAbility());
+			break;
+		// Chorro arena/Sand stream
+		case 45:
+			ability.setEffect(new SandStreamAbility());
+			ability.setIsWeatherType(true);
+			break;
+		// Presión/Pressure
+		case 46:
+			ability.setEffect(new PressureAbility());
+			break;
+		// Cuerpo llama/Flame body
+		case 49:
+			ability.setEffect(new FlameBodyAbility());
+			break;
+		// Gran encanto/Cute charm
+		case 56:
+			ability.setEffect(new CuteCharmAbility());
+			break;
+		// Más/Plus
+		case 57:
+			ability.setEffect(new PlusAbility());
+			break;
+		// Menos/Minus
+		case 58:
+			ability.setEffect(new MinusAbility());
+			break;
+		// Predicción/Forecast
+		case 59:
+			ability.setEffect(new ForecastAbility());
+			break;
+		// Mudar/Shed skin
+		case 61:
+			ability.setEffect(new ShedSkinAbility());
 			break;
 		// Sequía/Drought
 		case 70:

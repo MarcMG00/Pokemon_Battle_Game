@@ -17,4 +17,17 @@ public class DrizzleAbility implements AbilityEffect {
 
 		System.out.println(owner.getName() + " invocó la lluvia con Llovizna!");
 	}
+
+	@Override
+	public void onSwitchIn(Game game, Pokemon owner, Pokemon defender) {
+
+		if (game.getCurrentWeather() == Weather.RAIN) {
+			System.out.println(owner.getName() + " invocó la lluvia con Llovizna! - pero ya está lloviendo");
+			return;
+		}
+
+		game.setCurrentWeather(Weather.RAIN);
+
+		System.out.println(owner.getName() + " invocó la lluvia con Llovizna!");
+	}
 }
