@@ -986,13 +986,20 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// ---- RECOIL ----
-			recoil = dmg * 0.25f;
+			// 69_Rock_Head ability is not affected by recoil 
+			if (attacker.getAbilitySelected().getId() == 69) {
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId()
+						+ ") no sufrió daño por el retroceso gracias a su habilidad "
+						+ attacker.getAbilitySelected().getName());
+			} else {
+				// ---- RECOIL ----
+				recoil = dmg * 0.25f;
 
-			attacker.setPs(attacker.getPs() - recoil);
+				attacker.setPs(attacker.getPs() - recoil);
 
-			System.out.println(attacker.getName() + " (Id:" + attacker.getId()
-					+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId()
+						+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+			}
 			break;
 
 		// Saña/Thrash (tested)
@@ -1030,13 +1037,20 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// ---- RECOIL ----
-			recoil = dmg * 0.33f;
+			// 69_Rock_Head ability is not affected by recoil 
+			if (attacker.getAbilitySelected().getId() == 69) {
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId()
+						+ ") no sufrió daño por el retroceso gracias a su habilidad "
+						+ attacker.getAbilitySelected().getName());
+			} else {
+				// ---- RECOIL ----
+				recoil = dmg * 0.25f;
 
-			attacker.setPs(attacker.getPs() - recoil);
+				attacker.setPs(attacker.getPs() - recoil);
 
-			System.out.println(attacker.getName() + " (Id:" + attacker.getId()
-					+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId()
+						+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+			}
 			break;
 
 		// Látigo/Tail Whip (tested)
@@ -1496,13 +1510,20 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// ---- RECOIL ----
-			recoil = dmg * 0.25f;
+			// 69_Rock_Head ability is not affected by recoil 
+			if (attacker.getAbilitySelected().getId() == 69) {
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId()
+						+ ") no sufrió daño por el retroceso gracias a su habilidad "
+						+ attacker.getAbilitySelected().getName());
+			} else {
+				// ---- RECOIL ----
+				recoil = dmg * 0.25f;
 
-			attacker.setPs(attacker.getPs() - recoil);
+				attacker.setPs(attacker.getPs() - recoil);
 
-			System.out.println(attacker.getName() + " (Id:" + attacker.getId()
-					+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+				System.out.println(attacker.getName() + " (Id:" + attacker.getId()
+						+ ") se dañó a sí mismo por el retroceso (" + recoil + ")");
+			}
 			break;
 
 		// Patada baja/Low kick (tested)
