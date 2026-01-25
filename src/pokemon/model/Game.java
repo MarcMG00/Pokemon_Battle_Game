@@ -819,7 +819,8 @@ public class Game {
 		reduceNumberTurnsEffects(this.getPlayer(), this.getIA());
 		reduceNumberTurnsEffects(this.getIA(), this.getPlayer());
 
-		// Reduce drained all turns status after the other ones (because doesn't apply the first turn)
+		// Reduce drained all turns status after the other ones (because doesn't apply
+		// the first turn)
 		reduceDrainedAllTurnsEffects(this.getPlayer(), this.getIA());
 		reduceDrainedAllTurnsEffects(this.getIA(), this.getPlayer());
 
@@ -903,9 +904,10 @@ public class Game {
 			handleForcedSwitch(playerAttacker);
 		}
 	}
-	
+
 	// -----------------------------
-	// Reduce DrainedAllTruns status in last (because it doesn't start on the first turn it was drained)
+	// Reduce DrainedAllTruns status in last (because it doesn't start on the first
+	// turn it was drained)
 	// -----------------------------
 	private void reduceDrainedAllTurnsEffects(Player playerAttacker, Player playerDefender) {
 		playerAttacker.getPkCombatting().startDrainedAllTurnsEffect();
@@ -924,6 +926,18 @@ public class Game {
 			System.out.println(
 					this.getPlayer().getPkCombatting().getName() + " (" + this.getPlayer().getPkCombatting().getId()
 							+ ") " + "no puede cambiarse a causa de la habilidad Imán del Pokémon rival");
+			return false;
+		}
+
+		// 71_Arena_Trap ability doesn't allow to change Pokemon (only if attacker is
+		// not Fly type or has not the ability levitate or is not levitating)
+		if (pkIA.getAbilitySelected().getId() == 71
+				&& (!this.getPlayer().getPkCombatting().getTypes().stream().filter(t -> t.getId() == 18).findAny()
+						.isPresent() || this.getPlayer().getPkCombatting().getAbilitySelected().getId() == 26
+						|| this.getPlayer().getPkCombatting().getIsLevitating())) {
+			System.out.println(
+					this.getPlayer().getPkCombatting().getName() + " (" + this.getPlayer().getPkCombatting().getId()
+							+ ") " + "no puede cambiarse a causa de la habilidad Trampa arena del Pokémon rival");
 			return false;
 		}
 
@@ -973,8 +987,9 @@ public class Game {
 		applyBeforeEndTurnAbility(this.getIA().getPkCombatting());
 
 		reduceNumberTurnsEffects(this.getIA(), this.getPlayer());
-		
-		// Reduce drained all turns status after the other ones (because doesn't apply the first turn)
+
+		// Reduce drained all turns status after the other ones (because doesn't apply
+		// the first turn)
 		reduceDrainedAllTurnsEffects(this.getIA(), this.getPlayer());
 		this.getPlayer().getPkCombatting().doDrainedAllTurnsEffect(this.getIA().getPkCombatting());
 		reduceDrainedAllTurnsEffects(this.getPlayer(), this.getIA());
@@ -1416,7 +1431,7 @@ public class Game {
 			this.getPlayer().getPkCombatting().setSpecialDefenseStage(0);
 			this.getPlayer().getPkCombatting().setLastUsedAttack(new Attack());
 			this.getPlayer().getPkCombatting().getAbilitySelected().setAlreadyUsedOnEnter(false);
-			
+
 			// Remove drained ALL SATUS state (cause player changed)
 			clearDrainEffects(this.getPlayer().getPkCombatting(), this.getIA().getPkCombatting());
 
@@ -1452,6 +1467,17 @@ public class Game {
 				&& this.getIA().getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 1)) {
 			System.out.println(this.getIA().getPkCombatting().getName() + " (" + this.getIA().getPkCombatting().getId()
 					+ ") " + "no puede cambiarse a causa de la habilidad Imán del Pokémon rival");
+			return false;
+		}
+
+		// 71_Arena_Trap ability doesn't allow to change Pokemon (only if attacker is
+		// not Fly type or has not the ability levitate or is not levitating)
+		if (this.getPlayer().getPkCombatting().getAbilitySelected().getId() == 71
+				&& (!this.getIA().getPkCombatting().getTypes().stream().filter(t -> t.getId() == 18).findAny()
+						.isPresent() || this.getIA().getPkCombatting().getAbilitySelected().getId() == 26)
+				|| this.getIA().getPkCombatting().getIsLevitating()) {
+			System.out.println(this.getIA().getPkCombatting().getName() + " (" + this.getIA().getPkCombatting().getId()
+					+ ") " + "no puede cambiarse a causa de la habilidad Trampa arena del Pokémon rival");
 			return false;
 		}
 
@@ -1890,8 +1916,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "306,306,306,306,306,306";
-		String allPkIA = "466,466,466";
+		String allPkPlayer = "6,466,466,466,6,6";
+		String allPkIA = "51,51,51,51,51,51";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -1946,12 +1972,12 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 8).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 84).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 38).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 38).findFirst().get());
 
 			// Adds the Ids of attacks chosed in a list
 //			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
@@ -2007,7 +2033,7 @@ public class Game {
 
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 72).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
@@ -2018,7 +2044,7 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());

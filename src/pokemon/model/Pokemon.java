@@ -65,6 +65,7 @@ public class Pokemon {
 	private boolean isFireBoostActive;
 	private Ability currentAbility; // ability that will be used to do effects
 	private Player owner;
+	private boolean isLevitating;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -127,6 +128,7 @@ public class Pokemon {
 		this.initialTypes = new ArrayList<>();
 		this.isFireBoostActive = false;
 		this.currentAbility = new Ability();
+		this.isLevitating = false;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -183,6 +185,7 @@ public class Pokemon {
 		this.initialTypes = new ArrayList<>();
 		this.isFireBoostActive = false;
 		this.currentAbility = new Ability();
+		this.isLevitating = false;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -251,6 +254,7 @@ public class Pokemon {
 		this.isFireBoostActive = false;
 		this.currentAbility = pokemon.AbilitySelected != null ? new Ability(pokemon.AbilitySelected) : null;
 		this.owner = pokemon.owner;
+		this.isLevitating = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -678,6 +682,14 @@ public class Pokemon {
 
 	public void setBaseAbility(Ability abilitySelected) {
 		this.AbilitySelected = abilitySelected;
+	}
+	
+	public boolean getIsLevitating() {
+		return isLevitating;
+	}
+
+	public void setIsLevitating(boolean isLevitating) {
+		this.isLevitating = isLevitating;
 	}
 
 	// Adds abilities to Pokemon
