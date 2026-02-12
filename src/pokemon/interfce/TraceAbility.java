@@ -1,8 +1,10 @@
 package pokemon.interfce;
 
+import pokemon.enums.StatusConditions;
 import pokemon.model.Ability;
 import pokemon.model.Game;
 import pokemon.model.Pokemon;
+import pokemon.model.State;
 
 public class TraceAbility implements AbilityEffect {
 	@Override
@@ -14,6 +16,7 @@ public class TraceAbility implements AbilityEffect {
 			return;
 		}
 
+		// Allows to switch again with new ability
 		if (owner.getBaseAbility().getId() != 36)
 			return;
 
@@ -26,6 +29,18 @@ public class TraceAbility implements AbilityEffect {
 				.println(owner.getName() + " copió la habilidad de " + defender.getName() + " dada su habilidad Calco");
 
 		// Applies immediately abilities that are onSwitchIn or startBattle
+		if ((owner.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
+			// 72_Vital_Spirit forbid to get asleep, so wake up instantly
+			if (defender.getAbilitySelected().getId() == 72) {
+				// Get confused state
+				State asleepState = owner.getEphemeralStates().stream()
+						.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().orElse(null);
+				owner.getEphemeralStates().remove(asleepState);
+
+				System.out.println(owner.getName() + " se despertó gracias a la habilidad copiada "
+						+ defender.getAbilitySelected().getName());
+			}
+		}
 		owner.getAbilitySelected().getEffect().onBattleStart(game, owner);
 		owner.getAbilitySelected().getEffect().onSwitchIn(game, owner, defender);
 

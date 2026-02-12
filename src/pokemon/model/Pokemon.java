@@ -683,7 +683,7 @@ public class Pokemon {
 	public void setBaseAbility(Ability abilitySelected) {
 		this.AbilitySelected = abilitySelected;
 	}
-	
+
 	public boolean getIsLevitating() {
 		return isLevitating;
 	}
@@ -1360,8 +1360,6 @@ public class Pokemon {
 				return false;
 			}
 			break;
-		case ASLEEP:
-			break;
 		case BURNED:
 			// 41_Water_Vell ability
 			if (this.getAbilitySelected().getId() == 41) {
@@ -1406,9 +1404,10 @@ public class Pokemon {
 		switch (status) {
 
 		case ASLEEP:
-			// 15_Insomnia
-			if (ability.getId() == 15) {
-				System.out.println(this.getName() + " no puede dormirse dada su habilidad Insomnia");
+			// 15_Insomnia, 72_Vital_Spirit
+			if (ability.getId() == 15 || ability.getId() == 72) {
+				System.out.println(
+						this.getName() + " no puede dormirse dada su habilidad " + this.getAbilitySelected().getName());
 				return false;
 			}
 			break;
