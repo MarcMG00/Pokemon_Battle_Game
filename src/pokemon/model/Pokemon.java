@@ -1307,9 +1307,13 @@ public class Pokemon {
 				return false;
 			}
 		}
-
+		
+		// Get asleep state (because it has a number of turns, it works like an ephemeral status, but it's a normal status condition)
+		State asleepState = this.getEphemeralStates().stream()
+				.filter(e -> e.getStatusCondition() == StatusConditions.ASLEEP).findFirst().orElse(null);
+				
 		// Already has a status
-		if (this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS)
+		if (this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS || asleepState != null)
 			return false;
 
 		switch (newState.getStatusCondition()) {
