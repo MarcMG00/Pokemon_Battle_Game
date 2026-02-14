@@ -986,7 +986,7 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// 69_Rock_Head ability is not affected by recoil 
+			// 69_Rock_Head ability is not affected by recoil
 			if (attacker.getAbilitySelected().getId() == 69) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId()
 						+ ") no sufrió daño por el retroceso gracias a su habilidad "
@@ -1037,7 +1037,7 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// 69_Rock_Head ability is not affected by recoil 
+			// 69_Rock_Head ability is not affected by recoil
 			if (attacker.getAbilitySelected().getId() == 69) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId()
 						+ ") no sufrió daño por el retroceso gracias a su habilidad "
@@ -1510,7 +1510,7 @@ public class PkVPk {
 
 			defender.setPs(defender.getPs() - dmg);
 
-			// 69_Rock_Head ability is not affected by recoil 
+			// 69_Rock_Head ability is not affected by recoil
 			if (attacker.getAbilitySelected().getId() == 69) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId()
 						+ ") no sufrió daño por el retroceso gracias a su habilidad "
@@ -2046,8 +2046,9 @@ public class PkVPk {
 
 		float dmg = 0;
 
-		// If ability is Huge_Power and it's a physical attack => set Power *2
-		if (this.getPkCombatting().getAbilitySelected().getId() == 37 && attack.getBases().contains("fisico")) {
+		// If ability is 37_Huge_Power/ 74_Pure_Power and it's a physical attack => set Power *2
+		if ((this.getPkCombatting().getAbilitySelected().getId() == 37
+				|| this.getPkCombatting().getAbilitySelected().getId() == 74) && attack.getBases().contains("fisico")) {
 			attack.setPower(attack.getPower() * 2);
 		}
 

@@ -773,7 +773,7 @@ public class Pokemon {
 		// 55_Hustle ability rises attack by 50%
 		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
 			this.setAttack(this.getAttack() * 1.5f);
-			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad Entusisamo");
+			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad " + this.getAbilitySelected().getName());
 		}
 
 		// 62_Guts ability rises attack by 50% (if have some of those status conditions)
