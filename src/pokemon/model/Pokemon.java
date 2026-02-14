@@ -1466,7 +1466,8 @@ public class Pokemon {
 	// -----------------------------
 	public void modifyStatStage(StatType stat, int stages, boolean isMistEffectActivated) {
 
-		if (this.getAbilitySelected().getId() == 29) {
+		// 29_Clear_Body / 73_White_Smoke abilities cannot be reduced stats
+		if (this.getAbilitySelected().getId() == 29 || this.getAbilitySelected().getId() == 73) {
 			System.out.println("Las estats de " + this.getName() + " (Id:" + this.getId() + ")"
 					+ " no pueden bajar dada su la habilidad " + this.getAbilitySelected().getName());
 			return;
