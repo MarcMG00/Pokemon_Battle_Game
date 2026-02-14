@@ -2046,7 +2046,8 @@ public class PkVPk {
 
 		float dmg = 0;
 
-		// If ability is 37_Huge_Power/ 74_Pure_Power and it's a physical attack => set Power *2
+		// If ability is 37_Huge_Power/ 74_Pure_Power and it's a physical attack => set
+		// Power *2
 		if ((this.getPkCombatting().getAbilitySelected().getId() == 37
 				|| this.getPkCombatting().getAbilitySelected().getId() == 74) && attack.getBases().contains("fisico")) {
 			attack.setPower(attack.getPower() * 2);
@@ -2175,13 +2176,7 @@ public class PkVPk {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10) {
-			// Cannot recieve critic damage because of ability "Battle armor"
-			if (this.getPkFacing().getAbilitySelected().getId() == 4) {
-				this.getPkFacing().getAbilitySelected().getEffect().onAttack(this.getPkCombatting(),
-						this.getPkFacing());
-				return false;
-			}
-			return true;
+			return this.canReceiveCriticity();
 		}
 
 		return false;
@@ -2195,13 +2190,7 @@ public class PkVPk {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 30) {
-			// Cannot recieve critic damage because of ability "Battle armor"
-			if (this.getPkFacing().getAbilitySelected().getId() == 4) {
-				this.getPkFacing().getAbilitySelected().getEffect().onAttack(this.getPkCombatting(),
-						this.getPkFacing());
-				return false;
-			}
-			return true;
+			return this.canReceiveCriticity();
 		}
 
 		return false;
@@ -2215,16 +2204,22 @@ public class PkVPk {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 40) {
-			// Cannot recieve critic damage because of ability "Battle armor"
-			if (this.getPkFacing().getAbilitySelected().getId() == 4) {
-				this.getPkFacing().getAbilitySelected().getEffect().onAttack(this.getPkCombatting(),
-						this.getPkFacing());
-				return false;
-			}
-			return true;
+			return this.canReceiveCriticity();
 		}
 
 		return false;
+	}
+
+	public boolean canReceiveCriticity() {
+		// Cannot recieve critic damage because of ability 4_Battle_Armor /
+		// 75_Shell_Armor
+		if (this.getPkFacing().getAbilitySelected().getId() == 4
+				|| this.getPkFacing().getAbilitySelected().getId() == 75) {
+			System.out.println(this.getPkFacing().getName() + " no puede recibir ataques críticos dada su habilidad "
+					+ this.getPkFacing().getAbilitySelected().getName());
+			return false;
+		}
+		return true;
 	}
 
 	// -----------------------------
