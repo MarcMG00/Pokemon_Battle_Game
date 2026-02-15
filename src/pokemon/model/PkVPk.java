@@ -113,7 +113,7 @@ public class PkVPk {
 			evAcu = pk.getPrecisionPoints();
 			break;
 		case 2:
-			evAcu = pk.getEvasionPoints();
+			evAcu = pk.getEffectiveEvasion();
 			break;
 		}
 

@@ -492,11 +492,11 @@ public class Pokemon {
 		this.precisionPoints = precisionPoints;
 	}
 
-	public int getEvasionPoints() {
+	public int getEvasionStage() {
 		return evasionPoints;
 	}
 
-	public void setEvasionPoints(int evasionPoints) {
+	public void setEvasionStage(int evasionPoints) {
 		this.evasionPoints = evasionPoints;
 	}
 
@@ -773,7 +773,8 @@ public class Pokemon {
 		// 55_Hustle ability rises attack by 50%
 		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
 			this.setAttack(this.getAttack() * 1.5f);
-			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad " + this.getAbilitySelected().getName());
+			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad "
+					+ this.getAbilitySelected().getName());
 		}
 
 		// 62_Guts ability rises attack by 50% (if have some of those status conditions)
@@ -861,6 +862,28 @@ public class Pokemon {
 			multiplier = 2.0f / (2f - stage);
 
 		return this.getSpeed() * multiplier;
+	}
+
+	// -----------------------------
+	// Get evasion stage
+	// -----------------------------
+	public int getEffectiveEvasion() {
+		int stage = this.getEvasionStage();
+		int evasionPoints = stage > 0 ? stage : 1;
+
+		// 77_Tangled_Feed duplicates evasion by 2 if confused
+		if (this.getAbilitySelected().getId() == 77) {
+			// Get confused state
+			State confusedState = this.getEphemeralStates().stream()
+					.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().orElse(null);
+			if (confusedState != null) {
+				evasionPoints = Math.min(evasionPoints * 2, 6);
+				System.out.println(this.getName() + " aumentó su evasión gracias aa su habilidad "
+						+ this.getAbilitySelected().getName());
+			}
+		}
+
+		return evasionPoints;
 	}
 
 	// -----------------------------
@@ -1307,11 +1330,12 @@ public class Pokemon {
 				return false;
 			}
 		}
-		
-		// Get asleep state (because it has a number of turns, it works like an ephemeral status, but it's a normal status condition)
+
+		// Get asleep state (because it has a number of turns, it works like an
+		// ephemeral status, but it's a normal status condition)
 		State asleepState = this.getEphemeralStates().stream()
 				.filter(e -> e.getStatusCondition() == StatusConditions.ASLEEP).findFirst().orElse(null);
-				
+
 		// Already has a status
 		if (this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS || asleepState != null)
 			return false;
