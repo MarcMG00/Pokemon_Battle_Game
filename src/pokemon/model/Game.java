@@ -833,10 +833,10 @@ public class Game {
 
 		// Apply effects from weather type on end of turn
 		applyStatsFromWeatherEndOfTurn(this.getPlayer().getPkCombatting());
-		boolean playerKO = checkDebilitatedAfterEndTurn(this.getPlayer().getPkCombatting(), this.getPlayer(), sc);
+		checkDebilitatedAfterEndTurn(this.getPlayer().getPkCombatting(), this.getPlayer(), sc);
 
 		applyStatsFromWeatherEndOfTurn(this.getIA().getPkCombatting());
-		boolean iaKO = checkDebilitatedAfterEndTurn(this.getIA().getPkCombatting(), this.getIA(), sc);
+		checkDebilitatedAfterEndTurn(this.getIA().getPkCombatting(), this.getIA(), sc);
 
 		reduceNbTurnsMistActive();
 	}
@@ -1002,10 +1002,10 @@ public class Game {
 
 		// Apply effects from weather type on end of turn
 		applyStatsFromWeatherEndOfTurn(this.getPlayer().getPkCombatting());
-		boolean playerKO = checkDebilitatedAfterEndTurn(this.getPlayer().getPkCombatting(), this.getPlayer(), sc);
+		checkDebilitatedAfterEndTurn(this.getPlayer().getPkCombatting(), this.getPlayer(), sc);
 
 		applyStatsFromWeatherEndOfTurn(this.getIA().getPkCombatting());
-		boolean iaKO = checkDebilitatedAfterEndTurn(this.getIA().getPkCombatting(), this.getIA(), sc);
+		checkDebilitatedAfterEndTurn(this.getIA().getPkCombatting(), this.getIA(), sc);
 
 		reduceNbTurnsMistActive();
 
@@ -1621,7 +1621,6 @@ public class Game {
 	// Sets the weather ability on first combat (if any)
 	// -----------------------------
 	private void applyEntryWeatherAbilities() {
-
 		Pokemon p1 = this.getPlayer().getPkCombatting();
 		Pokemon p2 = this.getIA().getPkCombatting();
 
@@ -1647,11 +1646,11 @@ public class Game {
 			}
 		}
 
-		// Weather can be suppressed if 13_Cloud_Nine
-		if (a1 != null && a1.getId() == 13) {
+		// Weather can be suppressed if 13_Cloud_Nine / 76_Air_Lock
+		if (a1 != null && (a1.getId() == 13 || a1.getId() == 76)) {
 			a1.getEffect().onBattleStart(this, p1);
 		}
-		if (a2 != null && a2.getId() == 13) {
+		if (a2 != null && (a2.getId() == 13 || a2.getId() == 76)) {
 			a2.getEffect().onBattleStart(this, p2);
 		}
 	}
@@ -1788,8 +1787,11 @@ public class Game {
 		if (p1HasWeatherType && p2HasWeatherType)
 			return;
 
-		p1.getAbilitySelected().getEffect().onSwitchIn(this, p1, p2);
-		p2.getAbilitySelected().getEffect().onSwitchIn(this, p2, p1);
+		if (!p1HasWeatherType)
+			p1.getAbilitySelected().getEffect().onSwitchIn(this, p1, p2);
+
+		if (!p2HasWeatherType)
+			p2.getAbilitySelected().getEffect().onSwitchIn(this, p2, p1);
 	}
 
 	// -----------------------------
@@ -1916,8 +1918,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "6,466,466,466,6,6";
-		String allPkIA = "51,51,51,51,51,51";
+		String allPkPlayer = "384,384,384";
+		String allPkIA = "248,248,248,248";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -2037,7 +2039,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 72).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 48).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());

@@ -13,7 +13,7 @@ import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
-import pokemon.interfce.BattleArmorAbility;
+import pokemon.interfce.AirLockAbility;
 import pokemon.interfce.CloudNineAbility;
 import pokemon.interfce.ColorChangeAbility;
 import pokemon.interfce.CuteCharmAbility;
@@ -1057,10 +1057,6 @@ public class ReaderData {
 		case 3:
 			ability.setEffect(new SpeedBoostAbility());
 			break;
-		// Armadura batalla/Battle armor
-		case 4:
-			ability.setEffect(new BattleArmorAbility());
-			break;
 		// Electricidad estática/Static
 		case 9:
 			ability.setEffect(new StaticAbility());
@@ -1166,6 +1162,10 @@ public class ReaderData {
 		case 70:
 			ability.setEffect(new DroughtAbility());
 			ability.setIsWeatherType(true);
+			break;
+		// Esclusa de aire/Air lock
+		case 76:
+			ability.setEffect(new AirLockAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());
