@@ -484,11 +484,11 @@ public class Pokemon {
 		this.fourIdAttacks = fourIdAttacks;
 	}
 
-	public int getPrecisionPoints() {
+	public int getPrecisionStage() {
 		return precisionPoints;
 	}
 
-	public void setPrecisionPoints(int precisionPoints) {
+	public void setPrecisionStage(int precisionPoints) {
 		this.precisionPoints = precisionPoints;
 	}
 
@@ -798,7 +798,7 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Get attack stage for special attack
+	// Get effective special attack
 	// -----------------------------
 	public float getEffectiveSpecialAttack() {
 		int stage = this.getSpecialAttackStage();
@@ -813,7 +813,7 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Get defense stage for normal defense
+	// Get effective defense
 	// -----------------------------
 	public float getEffectiveDefense() {
 		int stage = this.getDefenseStage();
@@ -835,7 +835,7 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Get defense stage for special defense
+	// Get effective special defense
 	// -----------------------------
 	public float getEffectiveSpecialDefense() {
 		int stage = this.getSpecialDefenseStage();
@@ -850,7 +850,7 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Get speed stage
+	// Get effective speed
 	// -----------------------------
 	public float getEffectiveSpeed() {
 		int stage = this.getSpeedStage();
@@ -865,7 +865,17 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Get evasion stage
+	// Get effective precision
+	// -----------------------------
+	public int getEffectivePrecision() {
+		int stage = this.getPrecisionStage();
+		int precisionPoints = stage > 0 ? stage : 1;
+
+		return precisionPoints;
+	}
+
+	// -----------------------------
+	// Get effective evasion
 	// -----------------------------
 	public int getEffectiveEvasion() {
 		int stage = this.getEvasionStage();
@@ -1508,41 +1518,41 @@ public class Pokemon {
 					break;
 				}
 
-				if (this.getSpeedStage() <= -6) {
+				if (this.getAttackStage() <= -6) {
 					System.out.println(
 							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
 				} else {
-					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					this.setAttackStage(Math.max(this.getAttackStage() + stages, -6));
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque!");
 				}
 				break;
 
 			case SPECIAL_ATTACK:
-				if (this.getSpeedStage() <= -6) {
+				if (this.getSpecialAttackStage() <= -6) {
 					System.out.println("El ataque especial de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					this.setSpecialAttackStage(Math.max(this.getSpecialAttackStage() + stages, -6));
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque especial!");
 				}
 				break;
 
 			case DEFENSE:
-				if (this.getSpeedStage() <= -6) {
+				if (this.getDefenseStage() <= -6) {
 					System.out.println(
 							"La defensa de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
 				} else {
-					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					this.setDefenseStage(Math.max(this.getDefenseStage() + stages, -6));
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa!");
 				}
 				break;
 
 			case SPECIAL_DEFENSE:
-				if (this.getSpeedStage() <= -6) {
+				if (this.getSpecialDefenseStage() <= -6) {
 					System.out.println("La defensa especial de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					this.setSpecialDefenseStage(Math.max(this.getSpecialDefenseStage() + stages, -6));
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa especial!");
 				}
 				break;
@@ -1555,11 +1565,11 @@ public class Pokemon {
 					break;
 				}
 
-				if (this.getSpeedStage() <= -6) {
+				if (this.getPrecisionStage() <= -6) {
 					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					this.setPrecisionStage(Math.max(this.getPrecisionStage() + stages, -6));
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su precisión!");
 				}
 				break;

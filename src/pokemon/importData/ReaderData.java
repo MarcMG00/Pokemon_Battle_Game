@@ -28,6 +28,7 @@ import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
 import pokemon.interfce.MinusAbility;
+import pokemon.interfce.MotorDriveAbility;
 import pokemon.interfce.NaturalCureAbility;
 import pokemon.interfce.PlusAbility;
 import pokemon.interfce.PoisonPointAbility;
@@ -1166,6 +1167,10 @@ public class ReaderData {
 		// Esclusa de aire/Air lock
 		case 76:
 			ability.setEffect(new AirLockAbility());
+			break;
+		// Electromotor/Motor drive
+		case 78:
+			ability.setEffect(new MotorDriveAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());

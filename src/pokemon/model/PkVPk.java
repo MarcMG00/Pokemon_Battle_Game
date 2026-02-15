@@ -110,7 +110,7 @@ public class PkVPk {
 
 		switch (t) {
 		case 1:
-			evAcu = pk.getPrecisionPoints();
+			evAcu = pk.getEffectivePrecision();
 			break;
 		case 2:
 			evAcu = pk.getEffectiveEvasion();
@@ -854,11 +854,11 @@ public class PkVPk {
 					break;
 				}
 
-				if (defender.getPrecisionPoints() <= -6) {
+				if (defender.getPrecisionStage() <= -6) {
 					System.out.println("La precisión de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					defender.setPrecisionPoints(Math.max(defender.getPrecisionPoints() - 1, -6));
+					defender.setPrecisionStage(Math.max(defender.getPrecisionStage() - 1, -6));
 					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su precisión!");
 				}
 			} else {
