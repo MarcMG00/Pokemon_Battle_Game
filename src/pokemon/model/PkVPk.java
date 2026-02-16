@@ -1,6 +1,7 @@
 package pokemon.model;
 
 import pokemon.enums.AttackCategory;
+import pokemon.enums.Sex;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 
@@ -2083,6 +2084,21 @@ public class PkVPk {
 			attack.setPower(attack.getPower() * 1.5f);
 			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
 					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Enjambre");
+		}
+
+		// If ability is 79_Rivalry => set Power *25% more/less
+		if (this.getPkCombatting().getAbilitySelected().getId() == 79) {
+			// Same sex => more
+			if (this.getPkFacing().getSex() == this.getPkCombatting().getSex()) {
+				attack.setPower(attack.getPower() * 1.25f);
+				System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+						+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Rivalidad");
+			} else {
+				attack.setPower(attack.getPower() * 0.75f);
+				System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+						+ this.getPkCombatting().getId() + ")"
+						+ "disminuyó su ataque a causa de su habilidad Rivalidad");
+			}
 		}
 
 		if (isSpecialAttack) {

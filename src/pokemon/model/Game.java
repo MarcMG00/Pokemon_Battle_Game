@@ -1362,7 +1362,7 @@ public class Game {
 			// Reinitialize some stats before changing
 			this.getIA().getPkCombatting().setAttackStage(0);
 			this.getIA().getPkCombatting().setSpecialAttackStage(0);
-			this.getIA().getPkCombatting().setPrecisionPoints(0);
+			this.getIA().getPkCombatting().setPrecisionStage(0);
 			this.getIA().getPkCombatting().setDefenseStage(0);
 			this.getIA().getPkCombatting().setSpecialDefenseStage(0);
 			this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
@@ -1426,7 +1426,7 @@ public class Game {
 			// Reinitialize some stats
 			this.getPlayer().getPkCombatting().setAttackStage(0);
 			this.getPlayer().getPkCombatting().setSpecialAttackStage(0);
-			this.getPlayer().getPkCombatting().setPrecisionPoints(0);
+			this.getPlayer().getPkCombatting().setPrecisionStage(0);
 			this.getPlayer().getPkCombatting().setDefenseStage(0);
 			this.getPlayer().getPkCombatting().setSpecialDefenseStage(0);
 			this.getPlayer().getPkCombatting().setLastUsedAttack(new Attack());
@@ -1502,7 +1502,7 @@ public class Game {
 		// Reinitialize some stats
 		this.getIA().getPkCombatting().setAttackStage(0);
 		this.getIA().getPkCombatting().setSpecialAttackStage(0);
-		this.getIA().getPkCombatting().setPrecisionPoints(0);
+		this.getIA().getPkCombatting().setPrecisionStage(0);
 		this.getIA().getPkCombatting().setDefenseStage(0);
 		this.getIA().getPkCombatting().setSpecialDefenseStage(0);
 		this.getIA().getPkCombatting().setLastUsedAttack(new Attack());
@@ -1562,7 +1562,7 @@ public class Game {
 		// Reinitialize some stats
 		defender.getPkCombatting().setAttackStage(0);
 		defender.getPkCombatting().setSpecialAttackStage(0);
-		defender.getPkCombatting().setPrecisionPoints(0);
+		defender.getPkCombatting().setPrecisionStage(0);
 		defender.getPkCombatting().setDefenseStage(0);
 		defender.getPkCombatting().setSpecialDefenseStage(0);
 		defender.getPkCombatting().setLastUsedAttack(new Attack());
@@ -1888,7 +1888,7 @@ public class Game {
 				// Reinitialize some stats
 				owner.getPkCombatting().setAttackStage(0);
 				owner.getPkCombatting().setSpecialAttackStage(0);
-				owner.getPkCombatting().setPrecisionPoints(0);
+				owner.getPkCombatting().setPrecisionStage(0);
 				owner.getPkCombatting().setDefenseStage(0);
 				owner.getPkCombatting().setSpecialDefenseStage(0);
 				owner.getPkCombatting().setLastUsedAttack(new Attack());

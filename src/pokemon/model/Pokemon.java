@@ -3,6 +3,7 @@ package pokemon.model;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import pokemon.enums.Sex;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
@@ -66,6 +67,7 @@ public class Pokemon {
 	private Ability currentAbility; // ability that will be used to do effects
 	private Player owner;
 	private boolean isLevitating;
+	private Sex sex;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -129,6 +131,7 @@ public class Pokemon {
 		this.isFireBoostActive = false;
 		this.currentAbility = new Ability();
 		this.isLevitating = false;
+		this.sex = Sex.random();
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -186,6 +189,7 @@ public class Pokemon {
 		this.isFireBoostActive = false;
 		this.currentAbility = new Ability();
 		this.isLevitating = false;
+		this.sex = Sex.random();
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -255,6 +259,7 @@ public class Pokemon {
 		this.currentAbility = pokemon.AbilitySelected != null ? new Ability(pokemon.AbilitySelected) : null;
 		this.owner = pokemon.owner;
 		this.isLevitating = false;
+		this.sex = Sex.random();
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -690,6 +695,14 @@ public class Pokemon {
 
 	public void setIsLevitating(boolean isLevitating) {
 		this.isLevitating = isLevitating;
+	}
+
+	public Sex getSex() {
+		return sex;
+	}
+
+	public void setSex(Sex sex) {
+		this.sex = sex;
 	}
 
 	// Adds abilities to Pokemon
