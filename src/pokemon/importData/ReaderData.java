@@ -39,6 +39,7 @@ import pokemon.interfce.SandStreamAbility;
 import pokemon.interfce.ShedSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
+import pokemon.interfce.SteadfastAbility;
 import pokemon.interfce.StenchAbility;
 import pokemon.interfce.SynchronizeAbility;
 import pokemon.interfce.TraceAbility;
@@ -1171,6 +1172,10 @@ public class ReaderData {
 		// Electromotor/Motor drive
 		case 78:
 			ability.setEffect(new MotorDriveAbility());
+			break;
+		// Impasible/Steadfast
+		case 80:
+			ability.setEffect(new SteadfastAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());
