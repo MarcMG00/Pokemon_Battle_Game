@@ -115,6 +115,10 @@ public class PkVPk {
 			break;
 		case 2:
 			evAcu = pk.getEffectiveEvasion();
+			
+			// 80_Snow_Cloak sets 20% more of evasion
+			if(this.getPkFacing().getAbilitySelected().getId() == 80)
+				evAcu *= 1.2f;
 			break;
 		}
 
