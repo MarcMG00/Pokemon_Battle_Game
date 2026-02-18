@@ -1,7 +1,6 @@
 package pokemon.model;
 
 import pokemon.enums.AttackCategory;
-import pokemon.enums.Sex;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 
@@ -16,6 +15,7 @@ public class PkVPk {
 	private Player defender;
 	private Weather weather;
 	private boolean isWeatherSuppressed;
+	private boolean isACriticAttack;
 
 	private static final String ANSI_RED = "\u001B[31m";
 	private static final String ANSI_GREEN = "\u001B[32m";
@@ -35,6 +35,7 @@ public class PkVPk {
 		this.pkFacing = defender.getPkCombatting();
 		this.weather = weather;
 		this.isWeatherSuppressed = isWeatherSuppressed;
+		this.isACriticAttack = false;
 	}
 
 	public PkVPk() {
@@ -44,6 +45,7 @@ public class PkVPk {
 		this.pkFacing = new Pokemon();
 		this.weather = Weather.NONE;
 		this.isWeatherSuppressed = false;
+		this.isACriticAttack = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -95,6 +97,14 @@ public class PkVPk {
 
 	public void setIsWeatherSuppressed(boolean isWeatherSuppressed) {
 		this.isWeatherSuppressed = isWeatherSuppressed;
+	}
+
+	public boolean getIsACriticAttack() {
+		return isACriticAttack;
+	}
+
+	public void setIsACriticAttack(boolean isACriticAttack) {
+		this.isACriticAttack = isACriticAttack;
 	}
 
 	// ==================================== METHODS
@@ -2030,6 +2040,8 @@ public class PkVPk {
 		if (attacker.getPs() <= 0) {
 			attacker.setStatusCondition(new State(StatusConditions.DEBILITATED));
 		}
+		
+		this.setIsACriticAttack(false);
 	}
 
 	// -----------------------------
@@ -2196,6 +2208,7 @@ public class PkVPk {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10) {
+			this.setIsACriticAttack(true);
 			return this.canReceiveCriticity();
 		}
 
@@ -2210,6 +2223,7 @@ public class PkVPk {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 30) {
+			this.setIsACriticAttack(true);
 			return this.canReceiveCriticity();
 		}
 
@@ -2224,6 +2238,7 @@ public class PkVPk {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 40) {
+			this.setIsACriticAttack(true);
 			return this.canReceiveCriticity();
 		}
 
@@ -2346,7 +2361,7 @@ public class PkVPk {
 		// Defender ability
 		Ability defenderAbility = defender.getAbilitySelected();
 		if (defenderAbility != null) {
-			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, weather,
+			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, this.getIsACriticAttack(), weather,
 					isWeatherSuppressed);
 		}
 	}
@@ -2443,7 +2458,7 @@ public class PkVPk {
 
 				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
 					abilityAttacker.getEffect().afterAttack(null, attacker, defender, attack, damage,
-							attack.getPercentageFlinched(), weather, isWeatherSuppressed);
+							attack.getPercentageFlinched(), this.getIsACriticAttack(), weather, isWeatherSuppressed);
 				} else {
 					defender.setHasRetreated(true);
 				}

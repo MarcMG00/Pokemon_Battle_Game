@@ -9,7 +9,7 @@ import pokemon.model.Pokemon;
 public class PressureAbility implements AbilityEffect {
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double percentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		// Some conditions don't allow to do remove an extra PP (if charging an attack,
 		// if trapped by own attack, etc.)

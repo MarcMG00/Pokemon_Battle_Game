@@ -12,7 +12,7 @@ import pokemon.model.PokemonType;
 public class ColorChangeAbility implements AbilityEffect {
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		// Movement has to do damage
 		if (dmg <= 0f)

@@ -26,7 +26,7 @@ public interface AbilityEffect {
 	}
 
 	default void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 	}
 
 	default void beforeEndOfTurn(Game game, Pokemon owner) {

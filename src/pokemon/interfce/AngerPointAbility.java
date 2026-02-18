@@ -5,21 +5,18 @@ import pokemon.model.Attack;
 import pokemon.model.Game;
 import pokemon.model.Pokemon;
 
-public class SteadfastAbility implements AbilityEffect {
+public class AngerPointAbility implements AbilityEffect {
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
+		// How to check if got a critic attack ?
 		// 1️ - The attack has to retreat defender
-		if (!defender.getHasRetreated())
+		if (!isACriticAttack || defender.getAttackStage() >= 6)
 			return;
 
-		if (defender.getSpeedStage() >= 6) {
-			System.out.println(defender.getName() + " no puede aumentar más su velocidad");
-			return;
-		}
-
-		defender.setSpeedStage(Math.min(defender.getSpeedStage() + 1, 6));
-		System.out.println(defender.getName() + " aumentó su velocidad gracias a su habilidad Impasible");
+		// Puts max stage
+		defender.setAttackStage(6);
+		System.out.println(defender.getName() + " aumentó su ataque al máximo gracias a su habilidad Irascible");
 	}
 }

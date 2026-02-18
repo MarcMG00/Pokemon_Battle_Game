@@ -12,7 +12,7 @@ public class CuteCharmAbility implements AbilityEffect {
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		if (defender.getEphemeralStates().stream()
 				.anyMatch(e -> e.getStatusCondition() == StatusConditions.INFATUATED)) {

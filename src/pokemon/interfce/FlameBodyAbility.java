@@ -12,7 +12,7 @@ public class FlameBodyAbility implements AbilityEffect {
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		if (attacker.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
 			return;

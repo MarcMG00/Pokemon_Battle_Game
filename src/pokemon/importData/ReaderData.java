@@ -14,6 +14,7 @@ import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
 import pokemon.interfce.AirLockAbility;
+import pokemon.interfce.AngerPointAbility;
 import pokemon.interfce.CloudNineAbility;
 import pokemon.interfce.ColorChangeAbility;
 import pokemon.interfce.CuteCharmAbility;
@@ -1176,6 +1177,10 @@ public class ReaderData {
 		// Impasible/Steadfast
 		case 80:
 			ability.setEffect(new SteadfastAbility());
+			break;
+		// Irascible/Anger point
+		case 83:
+			ability.setEffect(new AngerPointAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());

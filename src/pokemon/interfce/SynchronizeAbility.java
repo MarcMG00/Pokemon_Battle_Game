@@ -10,7 +10,7 @@ import pokemon.model.State;
 public class SynchronizeAbility implements AbilityEffect {
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double percentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		// Attacks that counter ability (Misty terrain / Safeguard)
 		if (attack.getId() == 581 || attack.getId() == 219)
