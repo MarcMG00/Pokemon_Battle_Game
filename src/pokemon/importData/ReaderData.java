@@ -1043,7 +1043,9 @@ public class ReaderData {
 	// -----------------------------
 	// Set the ability effect of the attack
 	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
-	// / 60 (when applying objects)
+	// / 60 (when applying objects) / 82 (when applying objects) / 80 (to complete)
+	// / 83 (to complete) / 84 (when applying
+	// objects)
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {

@@ -1047,6 +1047,10 @@ public class Pokemon {
 
 			// Reduces current PS by 6.25%
 			float reducePs = this.getInitialPs() * 0.0625f;
+			
+			// 85_Heatproof ability reduces to half the burned effect
+			if(this.getAbilitySelected().getId() == 85)
+				reducePs /= 2;
 
 			this.setPs(this.getPs() - reducePs);
 

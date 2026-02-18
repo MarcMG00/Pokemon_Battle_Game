@@ -125,9 +125,9 @@ public class PkVPk {
 			break;
 		case 2:
 			evAcu = pk.getEffectiveEvasion();
-			
+
 			// 80_Snow_Cloak sets 20% more of evasion
-			if(this.getPkFacing().getAbilitySelected().getId() == 80)
+			if (this.getPkFacing().getAbilitySelected().getId() == 80)
 				evAcu *= 1.2f;
 			break;
 		}
@@ -2040,7 +2040,7 @@ public class PkVPk {
 		if (attacker.getPs() <= 0) {
 			attacker.setStatusCondition(new State(StatusConditions.DEBILITATED));
 		}
-		
+
 		this.setIsACriticAttack(false);
 	}
 
@@ -2188,13 +2188,15 @@ public class PkVPk {
 					+ "), se quedó a un PS gracias a la habilidad Robustez - check en doDammage()");
 		}
 
-		// Ability 48_Thick_Fat reduces damage by 2 (only if attack type it's fire or
-		// ice type)
-		if (this.getPkFacing().getAbilitySelected().getId() == 47
+		// Ability 47_Thick_Fat or 85_Heatproof reduces damage by 2 (only if attack type
+		// it's fire or ice type)
+		if ((this.getPkFacing().getAbilitySelected().getId() == 47
+				|| this.getPkFacing().getAbilitySelected().getId() == 85)
 				&& (attack.getStrTypeToPkType().getId() == 7 || attack.getStrTypeToPkType().getId() == 9)) {
 			dmg = dmg / 2;
 			System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId()
-					+ "), recibió la mitad de daño dada su habilidad Sebo");
+					+ "), recibió la mitad de daño dada su habilidad "
+					+ this.getPkFacing().getAbilitySelected().getName());
 		}
 
 		return dmg;
@@ -2361,8 +2363,8 @@ public class PkVPk {
 		// Defender ability
 		Ability defenderAbility = defender.getAbilitySelected();
 		if (defenderAbility != null) {
-			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, this.getIsACriticAttack(), weather,
-					isWeatherSuppressed);
+			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d,
+					this.getIsACriticAttack(), weather, isWeatherSuppressed);
 		}
 	}
 
