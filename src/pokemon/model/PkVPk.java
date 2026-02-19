@@ -1,6 +1,7 @@
 package pokemon.model;
 
 import pokemon.enums.AttackCategory;
+import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 
@@ -640,7 +641,7 @@ public class PkVPk {
 				System.out.println("El ataque de " + attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " no puede subir más!");
 			} else {
-				attacker.setAttackStage(Math.min(attacker.getAttackStage() + 2, 6));
+				attacker.setStageValueStats(StatType.ATTACK, 2, false);
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " aumentó mucho su Ataque!");
 			}
 
@@ -873,7 +874,7 @@ public class PkVPk {
 					System.out.println("La precisión de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					defender.setPrecisionStage(Math.max(defender.getPrecisionStage() - 1, -6));
+					defender.setStageValueStats(StatType.PRECISION, 1, true);
 					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su precisión!");
 				}
 			} else {
@@ -1085,7 +1086,7 @@ public class PkVPk {
 					System.out.println("La defensa de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					defender.setDefenseStage(Math.max(defender.getDefenseStage() - 1, -6));
+					defender.setStageValueStats(StatType.DEFENSE, 1, true);
 					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su defensa!");
 				}
 			} else {
@@ -1162,7 +1163,7 @@ public class PkVPk {
 					System.out.println("La defensa de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					defender.setDefenseStage(Math.max(defender.getDefenseStage() - 1, -6));
+					defender.setStageValueStats(StatType.DEFENSE, 1, true);
 					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su defensa!");
 				}
 			} else {
@@ -1206,8 +1207,8 @@ public class PkVPk {
 					System.out.println("El ataque de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					defender.setAttackStage(Math.min(defender.getAttackStage() - 1, -6));
-					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su defensa!");
+					defender.setStageValueStats(StatType.ATTACK, 1, true);
+					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su ataque!");
 				}
 			} else {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
@@ -1717,7 +1718,7 @@ public class PkVPk {
 				System.out.println("El ataque de " + attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " no puede subir más!");
 			} else {
-				attacker.setAttackStage(Math.min(attacker.getAttackStage() + modifierWeather, 6));
+				attacker.setStageValueStats(StatType.ATTACK, modifierWeather, false);
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " aumentó su Ataque!");
 			}
 
@@ -1726,7 +1727,7 @@ public class PkVPk {
 				System.out.println("El ataque especial de " + attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " no puede subir más!");
 			} else {
-				attacker.setSpecialAttackStage(Math.min(attacker.getSpecialAttackStage() + modifierWeather, 6));
+				attacker.setStageValueStats(StatType.SPECIAL_ATTACK, modifierWeather, false);
 				System.out.println(
 						attacker.getName() + " (Id:" + attacker.getId() + ")" + " aumentó su Ataque especial!");
 			}
@@ -1900,7 +1901,7 @@ public class PkVPk {
 					System.out.println("La velocidad de " + defender.getName() + " (Id:" + defender.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					this.getPkFacing().setSpeedStage(Math.max(defender.getSpeedStage() - 1, -6));
+					defender.setStageValueStats(StatType.SPEED, 1, false);
 					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su velocidad!");
 				}
 			} else {

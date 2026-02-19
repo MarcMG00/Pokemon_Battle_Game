@@ -1047,9 +1047,9 @@ public class Pokemon {
 
 			// Reduces current PS by 6.25%
 			float reducePs = this.getInitialPs() * 0.0625f;
-			
+
 			// 85_Heatproof ability reduces to half the burned effect
-			if(this.getAbilitySelected().getId() == 85)
+			if (this.getAbilitySelected().getId() == 85)
 				reducePs /= 2;
 
 			this.setPs(this.getPs() - reducePs);
@@ -1539,7 +1539,7 @@ public class Pokemon {
 					System.out.println(
 							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
 				} else {
-					this.setAttackStage(Math.max(this.getAttackStage() + stages, -6));
+					setStageValueStats(StatType.ATTACK, stages, true);
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque!");
 				}
 				break;
@@ -1549,7 +1549,7 @@ public class Pokemon {
 					System.out.println("El ataque especial de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					this.setSpecialAttackStage(Math.max(this.getSpecialAttackStage() + stages, -6));
+					setStageValueStats(StatType.SPECIAL_ATTACK, stages, true);
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque especial!");
 				}
 				break;
@@ -1559,7 +1559,7 @@ public class Pokemon {
 					System.out.println(
 							"La defensa de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
 				} else {
-					this.setDefenseStage(Math.max(this.getDefenseStage() + stages, -6));
+					setStageValueStats(StatType.DEFENSE, stages, true);
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa!");
 				}
 				break;
@@ -1569,7 +1569,7 @@ public class Pokemon {
 					System.out.println("La defensa especial de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					this.setSpecialDefenseStage(Math.max(this.getSpecialDefenseStage() + stages, -6));
+					setStageValueStats(StatType.SPECIAL_DEFENSE, stages, true);
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa especial!");
 				}
 				break;
@@ -1586,7 +1586,7 @@ public class Pokemon {
 					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					this.setPrecisionStage(Math.max(this.getPrecisionStage() + stages, -6));
+					setStageValueStats(StatType.PRECISION, stages, true);
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su precisión!");
 				}
 				break;
@@ -1596,7 +1596,7 @@ public class Pokemon {
 					System.out.println("La velocidad de " + this.getName() + " (Id:" + this.getId() + ")"
 							+ " no puede bajar más!");
 				} else {
-					this.setSpeedStage(Math.max(this.getSpeedStage() + stages, -6));
+					setStageValueStats(StatType.SPEED, stages, true);
 					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su velocidad!");
 				}
 				break;
@@ -1627,6 +1627,61 @@ public class Pokemon {
 		// 55_Hustle ability reduces precision by 20%
 		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
 			atkAttacker.setPrecision(atkAttacker.getPrecision() * 0.8f);
+		}
+	}
+
+	// -----------------------------
+	// Set stage value on stats
+	// -----------------------------
+	public void setStageValueStats(StatType statType, int nbStage, boolean isStatDrop) {
+
+		// 86_Simple ability duplicates by 2 the stage (whether it's negative or
+		// positive)
+		if (this.getAbilitySelected().getId() == 86) {
+			nbStage *= 2;
+			System.out.println(this.getName() + " (Id:" + this.getId() + ") " + (isStatDrop ? "bajó" : "subió")
+					+ " el doble, dada su habilidad " + this.getAbilitySelected().getName());
+		}
+
+		switch (statType) {
+		case ATTACK:
+			if (isStatDrop)
+				this.setAttackStage(Math.max(this.getAttackStage() - nbStage, -6));
+			else
+				this.setAttackStage(Math.min(this.getAttackStage() + nbStage, 6));
+			break;
+		case SPECIAL_ATTACK:
+			if (isStatDrop)
+				this.setSpecialAttackStage(Math.max(this.getSpecialAttackStage() - nbStage, -6));
+			else
+				this.setSpecialAttackStage(Math.min(this.getSpecialAttackStage() + nbStage, 6));
+			break;
+		case DEFENSE:
+			if (isStatDrop)
+				this.setDefenseStage(Math.max(this.getDefenseStage() - nbStage, -6));
+			else
+				this.setDefenseStage(Math.min(this.getDefenseStage() + nbStage, 6));
+			break;
+		case SPECIAL_DEFENSE:
+			if (isStatDrop)
+				this.setSpecialDefenseStage(Math.max(this.getSpecialDefenseStage() - nbStage, -6));
+			else
+				this.setSpecialDefenseStage(Math.min(this.getSpecialDefenseStage() + nbStage, 6));
+			break;
+		case PRECISION:
+			if (isStatDrop)
+				this.setPrecisionStage(Math.max(this.getPrecisionStage() - nbStage, -6));
+			else
+				this.setPrecisionStage(Math.min(this.getPrecisionStage() + nbStage, 6));
+			break;
+		case SPEED:
+			if (isStatDrop)
+				this.setSpeedStage(Math.max(this.getSpeedStage() - nbStage, -6));
+			else
+				this.setSpeedStage(Math.min(this.getSpeedStage() + nbStage, 6));
+			break;
+		default:
+			break;
 		}
 	}
 
