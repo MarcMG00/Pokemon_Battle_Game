@@ -2200,6 +2200,13 @@ public class PkVPk {
 					+ this.getPkFacing().getAbilitySelected().getName());
 		}
 
+		// 87_Dry_Skin with a fire attack, do 25% more damage
+		if (this.getPkFacing().getAbilitySelected().getId() == 87 && attack.getStrTypeToPkType().getId() == 7) {
+			dmg *= 1.25f;
+			System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId()
+					+ "), recibirá más daño dada su habilidad " + this.getPkFacing().getAbilitySelected().getName());
+		}
+
 		return dmg;
 	}
 

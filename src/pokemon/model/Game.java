@@ -1822,6 +1822,8 @@ public class Game {
 	// Apply modifying stats from weather (end of turn)
 	// -----------------------------
 	private void applyStatsFromWeatherEndOfTurn(Pokemon pokemon) {
+		Ability abPokemon = pokemon.getAbilitySelected();
+
 		// Sand storm
 		if (this.getCurrentWeather() == Weather.SANDSTORM) {
 			// If Pokemon is steel, rock, ground => don't affect
@@ -1829,20 +1831,41 @@ public class Game {
 					.noneMatch(t -> (t.getId() == 1) || (t.getId() == 14) || (t.getId() == 16))) {
 
 				// Some abilities are not affected
-				if (pokemon.getAbilitySelected().getId() == 8 || pokemon.getAbilitySelected().getId() == 98
-						|| pokemon.getAbilitySelected().getId() == 159 || pokemon.getAbilitySelected().getId() == 142
-						|| pokemon.getAbilitySelected().getId() == 146) {
-					System.out.println(
-							pokemon.getName() + " no se ve afectado por la tormenta de arena dada su habilidad "
-									+ pokemon.getAbilitySelected().getName());
+				if (abPokemon.getId() == 8 || abPokemon.getId() == 98 || abPokemon.getId() == 159
+						|| abPokemon.getId() == 142 || abPokemon.getId() == 146) {
+					System.out.println(pokemon.getName()
+							+ " no se ve afectado por la tormenta de arena dada su habilidad " + abPokemon.getName());
 				} else {
 					// Reduces current PS by 6.25%
 					float reducePs = pokemon.getInitialPs() * 0.0625f;
-
 					pokemon.setPs(pokemon.getPs() - reducePs);
 
 					System.out.println(pokemon.getName() + " ha sido zarandeado por la tormenta de arena");
 				}
+			}
+		}
+
+		// Sun
+		if (this.getCurrentWeather() == Weather.SUN) {
+			// 87_Dry_Skin
+			if (abPokemon.getId() == 87) {
+				// Reduces current PS by 12.5%
+				float reducePs = pokemon.getInitialPs() * 0.125f;
+				pokemon.setPs(pokemon.getPs() - reducePs);
+				System.out.println(pokemon.getName() + " (Id:" + pokemon.getId() + "), recibie daño dada su habilidad "
+						+ abPokemon.getName() + " (hace SOL)");
+			}
+		}
+
+		// Rain
+		if (this.getCurrentWeather() == Weather.RAIN) {
+			// 87_Dry_Skin
+			if (abPokemon.getId() == 87) {
+				// Rises current PS by 12.5%
+				float reducePs = pokemon.getInitialPs() * 0.125f;
+				pokemon.setPs(pokemon.getPs() + reducePs);
+				System.out.println(pokemon.getName() + " (Id:" + pokemon.getId() + "), recupera PS dada su habilidad "
+						+ abPokemon.getName() + " (está LLOVIENDO)");
 			}
 		}
 	}
@@ -1918,8 +1941,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "384,384,384";
-		String allPkIA = "248,248,248,248";
+		String allPkPlayer = "400,400,400,400";
+		String allPkIA = "021,021,021,021,021,021";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -2040,13 +2063,14 @@ public class Game {
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 72).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 23).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 45).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
