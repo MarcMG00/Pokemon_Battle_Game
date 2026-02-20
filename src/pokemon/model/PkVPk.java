@@ -2118,6 +2118,37 @@ public class PkVPk {
 			}
 		}
 
+		// If ability is 89_Iron_Fist and fist attack => set Power *20% more
+		if (this.getPkCombatting().getAbilitySelected().getId() == 89
+				&& (this.getPkCombatting().getNextMovement().getId() == 838
+						|| this.getPkCombatting().getNextMovement().getId() == 818
+						|| this.getPkCombatting().getNextMovement().getId() == 742
+						|| this.getPkCombatting().getNextMovement().getId() == 327
+						|| this.getPkCombatting().getNextMovement().getId() == 817
+						|| this.getPkCombatting().getNextMovement().getId() == 359
+						|| this.getPkCombatting().getNextMovement().getId() == 665
+						|| this.getPkCombatting().getNextMovement().getId() == 5
+						|| this.getPkCombatting().getNextMovement().getId() == 264
+						|| this.getPkCombatting().getNextMovement().getId() == 418
+						|| this.getPkCombatting().getNextMovement().getId() == 4
+						|| this.getPkCombatting().getNextMovement().getId() == 223
+						|| this.getPkCombatting().getNextMovement().getId() == 409
+						|| this.getPkCombatting().getNextMovement().getId() == 7
+						|| this.getPkCombatting().getNextMovement().getId() == 889
+						|| this.getPkCombatting().getNextMovement().getId() == 8
+						|| this.getPkCombatting().getNextMovement().getId() == 612
+						|| this.getPkCombatting().getNextMovement().getId() == 857
+						|| this.getPkCombatting().getNextMovement().getId() == 146
+						|| this.getPkCombatting().getNextMovement().getId() == 309
+						|| this.getPkCombatting().getNextMovement().getId() == 325
+						|| this.getPkCombatting().getNextMovement().getId() == 9
+						|| this.getPkCombatting().getNextMovement().getId() == 721
+						|| this.getPkCombatting().getNextMovement().getId() == 183)) {
+			attack.setPower(attack.getPower() * 1.2f);
+			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
+					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque dada su habilidad Puño férreo");
+		}
+
 		if (isSpecialAttack) {
 			// Apply special damage
 			dmg = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier
