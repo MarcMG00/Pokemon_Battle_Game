@@ -68,6 +68,7 @@ public class Pokemon {
 	private Player owner;
 	private boolean isLevitating;
 	private Sex sex;
+	private boolean isAttackBoostedFromDownloadAbility;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -132,6 +133,7 @@ public class Pokemon {
 		this.currentAbility = new Ability();
 		this.isLevitating = false;
 		this.sex = Sex.random();
+		this.isAttackBoostedFromDownloadAbility = false;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -190,6 +192,7 @@ public class Pokemon {
 		this.currentAbility = new Ability();
 		this.isLevitating = false;
 		this.sex = Sex.random();
+		this.isAttackBoostedFromDownloadAbility = false;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -260,6 +263,7 @@ public class Pokemon {
 		this.owner = pokemon.owner;
 		this.isLevitating = false;
 		this.sex = Sex.random();
+		this.isAttackBoostedFromDownloadAbility = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -703,6 +707,14 @@ public class Pokemon {
 
 	public void setSex(Sex sex) {
 		this.sex = sex;
+	}
+	
+	public boolean getIsAttackBoostedFromDownloadAbility() {
+		return isAttackBoostedFromDownloadAbility;
+	}
+
+	public void setIsAttackBoostedFromDownloadAbility(boolean isAttackBoostedFromDownloadAbility) {
+		this.isAttackBoostedFromDownloadAbility = isAttackBoostedFromDownloadAbility;
 	}
 
 	// Adds abilities to Pokemon

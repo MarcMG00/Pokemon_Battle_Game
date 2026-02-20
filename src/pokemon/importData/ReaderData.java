@@ -18,8 +18,10 @@ import pokemon.interfce.AngerPointAbility;
 import pokemon.interfce.CloudNineAbility;
 import pokemon.interfce.ColorChangeAbility;
 import pokemon.interfce.CuteCharmAbility;
+import pokemon.interfce.DownloadAbility;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
+import pokemon.interfce.DrySkinAbility;
 import pokemon.interfce.EffectSporeAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlameBodyAbility;
@@ -1183,6 +1185,14 @@ public class ReaderData {
 		// Irascible/Anger point
 		case 83:
 			ability.setEffect(new AngerPointAbility());
+			break;
+		// Piel seca/Dry skin
+		case 87:
+			ability.setEffect(new DrySkinAbility());
+			break;
+		// Descarga/Download
+		case 88:
+			ability.setEffect(new DownloadAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());
