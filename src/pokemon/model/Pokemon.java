@@ -708,7 +708,7 @@ public class Pokemon {
 	public void setSex(Sex sex) {
 		this.sex = sex;
 	}
-	
+
 	public boolean getIsAttackBoostedFromDownloadAbility() {
 		return isAttackBoostedFromDownloadAbility;
 	}
@@ -1104,18 +1104,27 @@ public class Pokemon {
 	// Do effect from POISONED state (end of the turn)
 	// -----------------------------
 	public void doPoisonedEffectEndTurn() {
+
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
+			// 90_Poison_Heal ability heals 12,5% of initial PS
+			if (this.getAbilitySelected().getId() == 90) {
+				float healsPs = this.getInitialPs() * 0.125f;
+				this.setPs(Math.min(this.getPs() + healsPs, this.getInitialPs()));
 
-			// Reduces current PS by 6.25%
-			float reducePs = this.getInitialPs() * 0.0625f;
+				System.out.println(this.getName() + " está envenenado, pero recuperó PS gracias a su habilidad "
+						+ this.getAbilitySelected().getName());
+			} else {
+				// Reduces current PS by 6.25%
+				float reducePs = this.getInitialPs() * 0.0625f;
+				this.setPs(this.getPs() - reducePs);
 
-			this.setPs(this.getPs() - reducePs);
+				System.out.println(this.getName() + " está envenenado - PS actuales : " + this.getPs());
 
-			System.out.println(this.getName() + " está envenenado - PS actuales : " + this.getPs());
-
-			if (this.getPs() <= 0) {
-				this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
+				if (this.getPs() <= 0) {
+					this.getStatusCondition().setStatusCondition(StatusConditions.DEBILITATED);
+				}
 			}
+
 		}
 	}
 

@@ -1047,7 +1047,7 @@ public class ReaderData {
 	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
 	// / 60 (when applying objects) / 82 (when applying objects) / 80 (to complete)
 	// / 83 (to complete) / 84 (when applying
-	// objects)
+	// objects) / 90 (to complete)
 	// -----------------------------
 	public void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
