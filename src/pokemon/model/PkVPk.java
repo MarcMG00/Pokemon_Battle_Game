@@ -472,7 +472,11 @@ public class PkVPk {
 
 		// Doble bofetón/Double slap (tested)
 		case 3:
-			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
+			// 92_Skill_Link do max of multiple attacks
+			if (abilityAttacker.getId() == 92)
+				nbTimesAttack = 5;
+			else
+				nbTimesAttack = getRandomInt(1, 5, null);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Doble bofetón");
@@ -491,7 +495,11 @@ public class PkVPk {
 
 		// Puño cometa/Comet punch (tested)
 		case 4:
-			nbTimesAttack = getRandomInt(1, 5, null);
+			// 92_Skill_Link do max of multiple attacks
+			if (abilityAttacker.getId() == 92)
+				nbTimesAttack = 5;
+			else
+				nbTimesAttack = getRandomInt(1, 5, null);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Puño cometa");
@@ -908,7 +916,11 @@ public class PkVPk {
 
 		// Ataque furia/Fury attack (tested)
 		case 31:
-			nbTimesAttack = (int) ((Math.random() * (5 - 1)) + 1);
+			// 92_Skill_Link do max of multiple attacks
+			if (abilityAttacker.getId() == 92)
+				nbTimesAttack = 5;
+			else
+				nbTimesAttack = getRandomInt(1, 5, null);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Ataque furia");
@@ -1129,7 +1141,11 @@ public class PkVPk {
 
 		// Pin misil/Pin missile (tested)
 		case 42:
-			nbTimesAttack = getRandomInt(1, 5, null);
+			// 92_Skill_Link do max of multiple attacks
+			if (abilityAttacker.getId() == 92)
+				nbTimesAttack = 5;
+			else
+				nbTimesAttack = getRandomInt(1, 5, null);
 
 			for (int i = 0; i < nbTimesAttack; i++) {
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Pin misil");
