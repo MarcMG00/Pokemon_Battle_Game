@@ -27,6 +27,7 @@ import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlameBodyAbility;
 import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.ForecastAbility;
+import pokemon.interfce.HydratationAbility;
 import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
@@ -1193,6 +1194,10 @@ public class ReaderData {
 		// Descarga/Download
 		case 88:
 			ability.setEffect(new DownloadAbility());
+			break;
+		// Hidratación/Hydratation
+		case 93:
+			ability.setEffect(new HydratationAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());
