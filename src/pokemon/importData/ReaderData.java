@@ -298,7 +298,7 @@ public class ReaderData {
 			while ((line = bufferedReader.readLine()) != null) {
 
 				Optional<Pokemon> pkOpt;
-				String[] abltysPk = line.split(",");
+				String[] abltysPk = line.split(",", -1);
 
 				// Gets the current Pokemon of the line from the Pokemon list
 				pkOpt = pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(abltysPk[0])).findFirst();

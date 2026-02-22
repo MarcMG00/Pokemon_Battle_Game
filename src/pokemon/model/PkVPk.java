@@ -2149,6 +2149,15 @@ public class PkVPk {
 					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque dada su habilidad Puño férreo");
 		}
 
+		// If ability is 91_Adaptable and attack same type as pokemon typew => set Power
+		// *1,75
+		if (this.getPkCombatting().getAbilitySelected().getId() == 91 && this.getPkCombatting().getTypes()
+				.contains(this.getPkCombatting().getNextMovement().getStrTypeToPkType())) {
+			attack.setPower(attack.getPower() * 1.75f);
+			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
+					+ " aumentó su ataque dada su habilidad Adaptable");
+		}
+
 		if (isSpecialAttack) {
 			// Apply special damage
 			dmg = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier
