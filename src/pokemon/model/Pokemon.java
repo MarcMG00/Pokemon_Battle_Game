@@ -777,6 +777,9 @@ public class Pokemon {
 
 		this.setSpeed(this.getInitialSpeed());
 		this.setAttack(this.getInitialAttack());
+		this.setSpecialAttack(this.getInitialSpecialAttack());
+		this.setDef(this.getInitialDef());
+		this.setSpecialDefense(this.getInitialSpecialDefense());
 
 		// Can move and attack
 		this.getStatusCondition().setCanMoveStatusCondition(true);
@@ -828,6 +831,12 @@ public class Pokemon {
 	public float getEffectiveSpecialAttack() {
 		int stage = this.getSpecialAttackStage();
 		float multiplier;
+
+		// 94_Solar_Power increases special attack by 50%
+		if (this.getAbilitySelected().getId() == 94) {
+			this.setSpecialAttack(this.getSpecialAttack() * 1.5f);
+			System.out.println(this.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
+		}
 
 		if (stage >= 0)
 			multiplier = (2f + stage) / 2.0f;
