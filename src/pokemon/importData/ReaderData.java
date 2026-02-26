@@ -37,6 +37,7 @@ import pokemon.interfce.NaturalCureAbility;
 import pokemon.interfce.PlusAbility;
 import pokemon.interfce.PoisonPointAbility;
 import pokemon.interfce.PressureAbility;
+import pokemon.interfce.QuickFeetAbility;
 import pokemon.interfce.RainDishAbility;
 import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SandStreamAbility;
@@ -1198,6 +1199,10 @@ public class ReaderData {
 		// Hidratación/Hydratation
 		case 93:
 			ability.setEffect(new HydratationAbility());
+			break;
+		// Pies rápidos/Quick feet
+		case 95:
+			ability.setEffect(new QuickFeetAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());

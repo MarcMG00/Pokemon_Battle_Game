@@ -69,6 +69,7 @@ public class Pokemon {
 	private boolean isLevitating;
 	private Sex sex;
 	private boolean isAttackBoostedFromDownloadAbility;
+	private boolean isUsingAbility;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -134,6 +135,7 @@ public class Pokemon {
 		this.isLevitating = false;
 		this.sex = Sex.random();
 		this.isAttackBoostedFromDownloadAbility = false;
+		this.isUsingAbility = false;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -193,6 +195,7 @@ public class Pokemon {
 		this.isLevitating = false;
 		this.sex = Sex.random();
 		this.isAttackBoostedFromDownloadAbility = false;
+		this.isUsingAbility = false;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -264,6 +267,7 @@ public class Pokemon {
 		this.isLevitating = false;
 		this.sex = Sex.random();
 		this.isAttackBoostedFromDownloadAbility = false;
+		this.isUsingAbility = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -717,6 +721,14 @@ public class Pokemon {
 		this.isAttackBoostedFromDownloadAbility = isAttackBoostedFromDownloadAbility;
 	}
 
+	public boolean getIsUsingAbility() {
+		return isUsingAbility;
+	}
+
+	public void setIsUsingAbility(boolean isUsingAbility) {
+		this.isUsingAbility = isUsingAbility;
+	}
+
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
 		this.normalAbilities.add(ablty);
@@ -775,7 +787,12 @@ public class Pokemon {
 	// -----------------------------
 	public void restartParametersEffect() {
 
-		this.setSpeed(this.getInitialSpeed());
+		// 95_Quick_Feet => don't restart effect (it will when Pokemon will no more have
+		// status conditions)
+		if (this.getAbilitySelected().getId() != 95) {
+			this.setSpeed(this.getInitialSpeed());
+		}
+
 		this.setAttack(this.getInitialAttack());
 		this.setSpecialAttack(this.getInitialSpecialAttack());
 		this.setDef(this.getInitialDef());
@@ -971,6 +988,9 @@ public class Pokemon {
 
 				System.out.println(ANSI_CYAN + this.getName() + " => paralizado - no puede atacar" + ANSI_RESET);
 			}
+
+			System.out.println(
+					ANSI_CYAN + this.getName() + " => paralizado - velocidad : " + this.getSpeed() + ANSI_RESET);
 		}
 	}
 
@@ -1088,8 +1108,13 @@ public class Pokemon {
 	// -----------------------------
 	public void doParalyzedEffect() {
 		if (this.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
-			// Modifies speed of Pokemon (reduces by 50%)
-			this.setSpeed((this.getSpeed() * 50f) / 100f);
+			// 95_Quick_Feet increase doesn't apply reduction of speed (continues with the
+			// 50% increased)
+			if (this.getAbilitySelected().getId() != 95) {
+				// Modifies speed of Pokemon (reduces by 50%)
+				this.setSpeed((this.getSpeed() * 50f) / 100f);
+
+			}
 		}
 	}
 
