@@ -2205,7 +2205,12 @@ public class PkVPk {
 			// 30/100 of probabilities to have a critic attack
 			if (isHighCritic30) {
 
-				dmg = dmg * 2;
+				// 97_Sniper ability does *3 damage
+				if (this.getPkCombatting().getAbilitySelected().getId() == 97) {
+					dmg = dmg * 3;
+				} else {
+					dmg = dmg * 2;
+				}
 				System.out.println("Fue un golpe crítico - 30");
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
@@ -2216,7 +2221,12 @@ public class PkVPk {
 			// 40/100 of probabilities to have a critic attack
 			if (isHighCritic40) {
 
-				dmg = dmg * 2;
+				// 97_Sniper ability does *3 damage
+				if (this.getPkCombatting().getAbilitySelected().getId() == 97) {
+					dmg = dmg * 3;
+				} else {
+					dmg = dmg * 2;
+				}
 				System.out.println("Fue un golpe crítico - 40");
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
@@ -2226,7 +2236,12 @@ public class PkVPk {
 
 			if (isCritic) {
 
-				dmg = dmg * 2;
+				// 97_Sniper ability does *3 damage
+				if (this.getPkCombatting().getAbilitySelected().getId() == 97) {
+					dmg = dmg * 3;
+				} else {
+					dmg = dmg * 2;
+				}
 				System.out.println("Fue un golpe crítico");
 				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
 						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
