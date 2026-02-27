@@ -2084,7 +2084,7 @@ public class PkVPk {
 		// Power *2
 		if ((this.getPkCombatting().getAbilitySelected().getId() == 37
 				|| this.getPkCombatting().getAbilitySelected().getId() == 74) && attack.getBases().contains("fisico")) {
-			attack.setPower(attack.getPower() * 2);
+			attack.setPower(attack.getPower() * 2f);
 		}
 
 		// If ability is 65_Overgrow and it's a grass attack => set Power *50% more

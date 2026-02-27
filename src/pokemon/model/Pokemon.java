@@ -1534,7 +1534,7 @@ public class Pokemon {
 		case INFATUATED:
 			// 12_Oblivious
 			if (ability.getId() == 12) {
-				System.out.println(this.getName() + " no puede confundirse dada su habilidad Despiste");
+				System.out.println(this.getName() + " no puede enamorarse dada su habilidad Despiste");
 				return false;
 			}
 

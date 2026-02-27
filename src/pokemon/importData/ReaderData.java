@@ -34,6 +34,7 @@ import pokemon.interfce.LightningRodAbility;
 import pokemon.interfce.MinusAbility;
 import pokemon.interfce.MotorDriveAbility;
 import pokemon.interfce.NaturalCureAbility;
+import pokemon.interfce.NormalizeAbility;
 import pokemon.interfce.PlusAbility;
 import pokemon.interfce.PoisonPointAbility;
 import pokemon.interfce.PressureAbility;
@@ -1203,6 +1204,10 @@ public class ReaderData {
 		// Pies rápidos/Quick feet
 		case 95:
 			ability.setEffect(new QuickFeetAbility());
+			break;
+		// Normalidad/Normalize
+		case 96:
+			ability.setEffect(new NormalizeAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());
