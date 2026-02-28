@@ -1290,7 +1290,7 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 51:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.DEFENSE, -1, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.DEFENSE, 1, 0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 52:
@@ -1315,11 +1315,11 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 61:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.SPEED, -1, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.SPEED, 1, 0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 62:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.ATTACK, -1, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.ATTACK, 1, 0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 84:
