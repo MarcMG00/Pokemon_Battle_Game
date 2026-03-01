@@ -29,13 +29,10 @@ public class TraceAbility implements AbilityEffect {
 				.println(owner.getName() + " copió la habilidad de " + defender.getName() + " dada su habilidad Calco");
 
 		// Applies immediately abilities that are onSwitchIn or startBattle
-		if ((owner.getEphemeralStates().stream().anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
+		if ((owner.hasActiveEphemeralStatus(StatusConditions.ASLEEP))) {
 			// 72_Vital_Spirit forbid to get asleep, so wake up instantly
 			if (defender.getAbilitySelected().getId() == 72) {
-				// Get confused state
-				State asleepState = owner.getEphemeralStates().stream()
-						.filter(e -> e.getStatusCondition() == StatusConditions.CONFUSED).findFirst().orElse(null);
-				owner.getEphemeralStates().remove(asleepState);
+				owner.removeEphemeralStatus(StatusConditions.ASLEEP);
 
 				System.out.println(owner.getName() + " se despertó gracias a la habilidad copiada "
 						+ defender.getAbilitySelected().getName());

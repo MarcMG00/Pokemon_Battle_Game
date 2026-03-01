@@ -11,14 +11,15 @@ public class RainDishAbility implements AbilityEffect {
 		if (game.getCurrentWeather() != Weather.RAIN)
 			return;
 
-		if (owner.getPs() >= owner.getInitialPs()) {
+		if (owner.getPs() >= owner.getInitialPs())
 			return;
-		} else {
+		else {
 			// Reduces current PS by 6.25%
 			float incrementPs = owner.getInitialPs() * 0.0625f;
 
 			owner.setPs(owner.getPs() + incrementPs);
-			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")" + " recuperó algo de PS gracias a su habilidad Cura lluvia");
+			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")"
+					+ " recuperó algo de PS gracias a su habilidad Cura lluvia");
 		}
 	}
 }

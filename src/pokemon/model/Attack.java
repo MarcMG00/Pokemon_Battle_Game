@@ -30,7 +30,6 @@ public class Attack {
 	private boolean isOneHitKO;
 	private boolean makesContact;
 	private boolean hasSecondaryEffect;
-	private boolean reduceStats;
 	private List<SecondaryEffect> secondaryEffects = new ArrayList<>();
 
 	// ==================================== CONSTRUCTORS
@@ -56,7 +55,6 @@ public class Attack {
 		this.isOneHitKO = false;
 		this.makesContact = false;
 		this.hasSecondaryEffect = false;
-		this.reduceStats = false;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -79,7 +77,6 @@ public class Attack {
 		this.isOneHitKO = false;
 		this.makesContact = false;
 		this.hasSecondaryEffect = false;
-		this.reduceStats = false;
 	}
 
 	public Attack(Attack attack) {
@@ -102,7 +99,6 @@ public class Attack {
 		this.isOneHitKO = attack.isOneHitKO;
 		this.makesContact = attack.makesContact;
 		this.hasSecondaryEffect = attack.hasSecondaryEffect;
-		this.reduceStats = attack.reduceStats;
 		this.canHitWhileInvulnerable = attack.canHitWhileInvulnerable;
 		this.secondaryEffects = attack.secondaryEffects;
 	}
@@ -273,14 +269,6 @@ public class Attack {
 
 	public void setHasSecondaryEffect(boolean hasSecondaryEffect) {
 		this.hasSecondaryEffect = hasSecondaryEffect;
-	}
-
-	public boolean getReduceStats() {
-		return reduceStats;
-	}
-
-	public void setReduceStats(boolean reduceStats) {
-		this.reduceStats = reduceStats;
 	}
 
 	public List<SecondaryEffect> getSecondaryEffects() {

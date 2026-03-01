@@ -1,6 +1,5 @@
 package pokemon.interfce;
 
-import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 import pokemon.model.Game;
 import pokemon.model.Pokemon;
@@ -13,10 +12,9 @@ public class HydratationAbility implements AbilityEffect {
 			return;
 
 		// Remove status condition and ephemeral status from Pokemon leaving
-		if (owner.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS
-				|| !owner.getEphemeralStates().isEmpty()) {
-			owner.setStatusCondition(new State(StatusConditions.NO_STATUS));
-			owner.getEphemeralStates().clear();
+		if (owner.hasStatusCondition() || owner.hasEphemeralStatus()) {
+			owner.setStatusCondition(new State());
+			owner.getEphemeralStatuses().clear();
 
 			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")"
 					+ " se curó de todos sus problemas de estado gracias a su habilidad Cura lluvia");
@@ -29,10 +27,9 @@ public class HydratationAbility implements AbilityEffect {
 			return;
 
 		// Remove status condition and ephemeral status from Pokemon leaving
-		if (owner.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS
-				|| !owner.getEphemeralStates().isEmpty()) {
-			owner.setStatusCondition(new State(StatusConditions.NO_STATUS));
-			owner.getEphemeralStates().clear();
+		if (owner.hasStatusCondition() || owner.hasEphemeralStatus()) {
+			owner.setStatusCondition(new State());
+			owner.getEphemeralStatuses().clear();
 
 			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")"
 					+ " se curó de todos sus problemas de estado gracias a su habilidad Cura lluvia");

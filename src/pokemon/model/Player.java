@@ -744,14 +744,10 @@ public class Player {
 	// Returns true if the given attack is currently disabled for this Pokemon
 	// -----------------------------
 	private boolean isAttackDisabled(Pokemon pk, Attack atk) {
-		// Get trapped state
-		State disableState = pk.getEphemeralStates().stream()
-				.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
-
-		if (disableState != null) {
-			return disableState.getAttackDisabled().getId() == atk.getId();
+		if (pk.hasActiveStatusCondition(StatusConditions.DISABLE)) {
+			State disableStatus = pk.getStatusCondition();
+			return disableStatus.getAttackDisabled().getId() == atk.getId();
 		}
-
 		return false;
 	}
 }

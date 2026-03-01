@@ -752,16 +752,12 @@ public class PkVPk {
 
 			// Check if the Pokemon facing doesn't have the status Trapped (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
-
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
 				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
-
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(trapped);
+				defender.addEphemeralStatus(StatusConditions.TRAPPED, trapped);
 			}
 
 			defender.setPs(defender.getPs() - dmg);
@@ -987,16 +983,13 @@ public class PkVPk {
 
 			// Check if the Pokemon facing doesn't have the status Trapped (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
 
 				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
-
 				System.out.println(defender.getName() + " quedó atrapado");
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(trapped);
+				defender.addEphemeralStatus(StatusConditions.TRAPPED, trapped);
 			}
 
 			defender.setPs(defender.getPs() - dmg);
@@ -1036,17 +1029,15 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			if (!attacker.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK)) {
+			if (!attacker.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
 
 				nbTurnsHoldingStatus = getRandomInt(2, 5, StatusConditions.TRAPPEDBYOWNATTACK);
-
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " usará el mismo ataque durante " + nbTurnsHoldingStatus + " turnos.");
 
 				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
-
-				attacker.addEphemeralState(trappedByOwnAttack);
+				defender.addEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK, trappedByOwnAttack);
+				;
 
 				// Only removes PP when choosing the attack
 				attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1264,23 +1255,19 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker))
 				break;
-			}
 
 			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
-
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.ASLEEP);
 
 				System.out.println(
 						defender.getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
 
 				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(asleep);
+				defender.addEphemeralStatus(StatusConditions.ASLEEP, asleep);
 			} else {
 				System.out.println(defender.getName() + " ya está dormido!");
 			}
@@ -1292,26 +1279,22 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED, attackAttacker)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED, attackAttacker))
 				break;
-			}
 
 			// Check if the Pokemon facing doesn't have the status Confused (is a status
 			// that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.CONFUSED)) {
 
 				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.CONFUSED);
 
 				System.out.println(defender.getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
 
 				State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(confused);
-			} else {
+				defender.addEphemeralStatus(StatusConditions.CONFUSED, confused);
+			} else
 				System.out.println(defender.getName() + " ya está confuso!");
-			}
 			break;
 
 		// Bomba sónica/Sonic boom (tested)
@@ -1340,20 +1323,14 @@ public class PkVPk {
 				break;
 			}
 
-			// Gets if existing a disable state (cause needs to be replaced)
-			State previousDisableState = defender.getEphemeralStates().stream()
-					.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
-
-			if (previousDisableState != null) {
-				defender.getEphemeralStates().remove(previousDisableState);
-			}
+			if (defender.hasActiveStatusCondition(StatusConditions.DISABLE))
+				defender.setStatusCondition(new State());
 
 			nbTurnsHoldingStatus = getRandomInt(4, 7, null);
 
 			State attackDisabled = new State(StatusConditions.DISABLE, nbTurnsHoldingStatus + 1);
 			attackDisabled.setAttackDisabled(lastAttack);
-
-			defender.addEphemeralState(attackDisabled);
+			defender.setStatusCondition(attackDisabled);
 
 			System.out.println(defender.getName() + " no podrá usar " + lastAttack.getName() + " por "
 					+ nbTurnsHoldingStatus + " turnos");
@@ -1701,20 +1678,15 @@ public class PkVPk {
 
 				attacker.setIsDraining(true);
 
-				if (!(defender.getEphemeralStates().stream()
-						.anyMatch(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS))) {
-
+				if (!defender.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
 					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " fue drenado");
 
 					State drainedAllTurns = new State(StatusConditions.DRAINEDALLTURNS, 0);
-
-					this.getPkFacing().addEphemeralState(drainedAllTurns);
-				} else {
+					this.getPkFacing().addEphemeralStatus(StatusConditions.DRAINEDALLTURNS, drainedAllTurns);
+				} else
 					System.out.println(defender.getName() + " ya está drenado");
-				}
-			} else {
+			} else
 				System.out.println(defender.getName() + " no puede estar drenado ya que es de tipo planta");
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -1854,26 +1826,21 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker))
 				break;
-			}
 
 			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
-
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.ASLEEP);
 
 				System.out.println(
 						defender.getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
 
 				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(asleep);
-			} else {
+				defender.addEphemeralStatus(StatusConditions.ASLEEP, asleep);
+			} else
 				System.out.println(defender.getName() + " ya está dormido!");
-			}
 			break;
 
 		// Danza pétalo/Petal dance (tested)
@@ -1882,17 +1849,14 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			if (!(attacker.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
-
+			if (!attacker.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
 				nbTurnsHoldingStatus = getRandomInt(2, 5, StatusConditions.TRAPPEDBYOWNATTACK);
 
 				System.out.println(
 						attacker.getName() + " usará el mismo ataque durante " + nbTurnsHoldingStatus + " turnos.");
 
 				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
-
-				attacker.addEphemeralState(trappedByOwnAttack);
+				defender.addEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK, trappedByOwnAttack);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1945,16 +1909,13 @@ public class PkVPk {
 
 			// Check if the Pokemon facing doesn't have the status Trapped (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
-
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
 				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
 
 				System.out.println(defender.getName() + " quedó atrapado");
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(trapped);
+				defender.addEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK, trapped);
 			}
 
 			defender.setPs(defender.getPs() - dmg);
@@ -2134,7 +2095,7 @@ public class PkVPk {
 			}
 		}
 
-		// If ability is 89_Iron_Fist and fist attack => set Power *20% more
+		// If ability is 89_Iron_Fist and is a fist attack => set Power *20% more
 		if (this.getPkCombatting().getAbilitySelected().getId() == 89
 				&& (this.getPkCombatting().getNextMovement().getId() == 838
 						|| this.getPkCombatting().getNextMovement().getId() == 818
@@ -2358,14 +2319,11 @@ public class PkVPk {
 	// Gets if last attack from Pokemon combating used is disabled
 	// -----------------------------
 	public boolean isAttackDisabled(Pokemon pk, Attack selectedAttack) {
+		if (pk.hasActiveStatusCondition(StatusConditions.DISABLE)) {
+			State disableStatus = pk.getStatusCondition();
 
-		State disableState = pk.getEphemeralStates().stream()
-				.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
-
-		if (disableState != null) {
-			if (disableState.getAttackDisabled() == pk.getNextMovement()) {
+			if (disableStatus.getAttackDisabled() == pk.getNextMovement())
 				return true;
-			}
 		}
 		return false;
 	}
@@ -2464,7 +2422,6 @@ public class PkVPk {
 	// -----------------------------
 	private void applySecondaryEffects(Attack attack, Pokemon attacker, Pokemon defender, Weather weather,
 			boolean isWeatherSuppressed, float damage, boolean isMistEffectActivated) {
-
 		Ability abilityAttacker = attacker.getAbilitySelected();
 
 		double probabilityGettingStatus = Math.random();
@@ -2474,65 +2431,32 @@ public class PkVPk {
 			return;
 
 		for (SecondaryEffect effect : attack.getSecondaryEffects()) {
-
 			double finalProbability = getFinalSecondaryEffectProbability(effect, attacker);
 
-			if (probabilityGettingStatus > finalProbability) {
+			if (probabilityGettingStatus > finalProbability)
 				continue;
-			}
 
 			switch (effect.getType()) {
 			case STATUS_CONDITION:
 				defender.trySetStatus(new State(effect.getStatus()), weather, isWeatherSuppressed, attack);
 				break;
-
 			case EPHEMERAL_STATUS:
-				if (!defender.trySetEphemeralStatus(effect.getStatus(), attack)) {
+				StatusConditions status = effect.getStatus();
+
+				if (!defender.trySetEphemeralStatus(status, attack))
 					break;
-				}
 
-				// Check if the Pokemon facing doesn't have the current ephemeral status
-				if (!(defender.getEphemeralStates().stream()
-						.anyMatch(e -> e.getStatusCondition() == effect.getStatus()))) {
+				if (!defender.hasActiveEphemeralStatus(status)) {
 
-					nbTurnsHoldingStatus = getRandomInt(1, 7, effect.getStatus());
+					nbTurnsHoldingStatus = getRandomInt(1, 7, status);
+					State state = new State(status, nbTurnsHoldingStatus + 1);
 
-					State state = new State(effect.getStatus(), nbTurnsHoldingStatus + 1);
+					defender.addEphemeralStatus(status, state);
 
-					defender.addEphemeralState(state);
-
-					switch (effect.getStatus()) {
-					case CONFUSED:
-						System.out.println(
-								defender.getName() + " estará confuso por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					case CURSED:
-						System.out.println(
-								defender.getName() + " estará maldito por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					case INFATUATED:
-						System.out.println(
-								defender.getName() + " estará enamorado por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					case SEEDED:
-						System.out.println(
-								defender.getName() + " estará drenado por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					case PERISH_SONG:
-						System.out.println(
-								defender.getName() + " ...canto mortal... por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					default:
-						break;
-					}
+					System.out.println(defender.getName() + " estará " + status.getMessage() + " por "
+							+ nbTurnsHoldingStatus + " turnos");
 				}
 				break;
-
 			case FLINCH:
 				if (!defender.canBeFlinched())
 					break;
@@ -2540,11 +2464,9 @@ public class PkVPk {
 				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
 					abilityAttacker.getEffect().afterAttack(null, attacker, defender, attack, damage,
 							attack.getPercentageFlinched(), this.getIsACriticAttack(), weather, isWeatherSuppressed);
-				} else {
+				} else
 					defender.setHasRetreated(true);
-				}
 				break;
-
 			case STAT_DROP:
 				defender.modifyStatStage(effect.getStat(), effect.getStages(), isMistEffectActivated);
 				break;

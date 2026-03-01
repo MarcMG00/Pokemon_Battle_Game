@@ -1361,25 +1361,4 @@ public class ReaderData {
 
 		return list;
 	}
-
-	// -----------------------------
-	// Set if attack reduce stats
-	// -----------------------------
-	public void setReduceStatsAttack(Attack attack) {
-		switch (attack.getId()) {
-		case 28:
-		case 39:
-		case 43:
-		case 45:
-		case 51:
-		case 61:
-		case 62:
-		case 81:
-			attack.setReduceStats(true);
-			break;
-		default:
-			attack.setReduceStats(false);
-		}
-	}
-
 }

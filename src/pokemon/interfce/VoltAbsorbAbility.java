@@ -11,14 +11,12 @@ public class VoltAbsorbAbility implements AbilityEffect {
 	public boolean beforeDamage(Game game, Pokemon attacker, Pokemon defender, Attack attack) {
 
 		// Only electric movements
-		if (!attack.getType().equals("ELECTRICO")) {
+		if (!attack.getType().equals("ELECTRICO"))
 			return true;
-		}
 
 		// Attack has to do damage
-		if (attack.getPower() <= 0) {
+		if (attack.getPower() <= 0)
 			return true;
-		}
 
 		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + attack.getName());
 
@@ -30,9 +28,8 @@ public class VoltAbsorbAbility implements AbilityEffect {
 			float heal = defender.getInitialPs() * HEAL_PERCENT;
 			defender.setPs(Math.min(defender.getPs() + heal, defender.getInitialPs()));
 			System.out.println(defender.getName() + " recuperó " + heal + " PS");
-		} else {
+		} else
 			System.out.println(defender.getName() + " no puede recuperar más PS");
-		}
 
 		// Cancel damage and effects of the attack
 		return false;

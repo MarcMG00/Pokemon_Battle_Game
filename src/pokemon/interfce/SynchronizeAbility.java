@@ -17,28 +17,25 @@ public class SynchronizeAbility implements AbilityEffect {
 			return;
 
 		// Already has a status
-		if (attacker.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS)
+		if (attacker.hasStatusCondition())
 			return;
 
 		// Poisoned status
-		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
-
+		if (defender.hasActiveStatusCondition(StatusConditions.POISONED)) {
 			System.out.println(attacker.getName() + " fue envenenado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.POISONED));
 			return;
 		}
 
 		// Burned status
-		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
-
+		if (defender.hasActiveStatusCondition(StatusConditions.BURNED)) {
 			System.out.println(attacker.getName() + " fue quemado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.BURNED));
 			return;
 		}
 
 		// Paralyzed status
-		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
-
+		if (defender.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			System.out.println(attacker.getName() + " fue paralizado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.PARALYZED));
 			return;
