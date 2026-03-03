@@ -1244,7 +1244,7 @@ public class Game {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
-				this.getBattleVS().getProbabilityOfAttacking(this.getCurrentWeather());
+				this.getBattleVS().resolveAttack();
 
 				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
 				// facing is invulnerable, etc.
@@ -1287,7 +1287,7 @@ public class Game {
 
 				// Get probability of attacking (we already checked for status conditions. Now
 				// we do it for evasion/accuracy)
-				this.getBattleVS().getProbabilityOfAttacking(this.getCurrentWeather());
+				this.getBattleVS().resolveAttack();
 
 				// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
 				// facing is invulnerable, etc.
@@ -1713,30 +1713,6 @@ public class Game {
 		// if (ability != null && (ability.getId() == 13 || ability.getId() == 16)) {
 		ability.getEffect().onSwitchOut(this, leaving);
 		// }
-	}
-
-	// -----------------------------
-	// Do 22_Intimidate ability
-	// -----------------------------
-	private void applyIntimidationOnBattleStart(Pokemon p1, Pokemon p2) {
-
-		boolean p1Intimidate = p1.hasAbility(22);
-		boolean p2Intimidate = p2.hasAbility(22);
-
-		if (!p1Intimidate && !p2Intimidate)
-			return;
-
-		if (p1Intimidate && !p2Intimidate) {
-			p1.getAbilitySelected().getEffect().onSwitchIn(this, p1, p2);
-		} else if (p2Intimidate && !p1Intimidate) {
-			p2.getAbilitySelected().getEffect().onSwitchIn(this, p2, p1);
-		} else {
-			// Speed comparison
-			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
-			Pokemon faster = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
-			slower.getAbilitySelected().getEffect().onSwitchIn(this, slower, faster);
-			faster.getAbilitySelected().getEffect().onSwitchIn(this, faster, slower);
-		}
 	}
 
 	// -----------------------------

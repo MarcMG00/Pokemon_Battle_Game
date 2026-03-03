@@ -4,7 +4,6 @@ import pokemon.enums.StatusConditions;
 import pokemon.model.Ability;
 import pokemon.model.Game;
 import pokemon.model.Pokemon;
-import pokemon.model.State;
 
 public class TraceAbility implements AbilityEffect {
 	@Override

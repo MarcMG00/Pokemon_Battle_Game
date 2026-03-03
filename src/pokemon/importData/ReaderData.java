@@ -13,6 +13,7 @@ import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
+import pokemon.enums.Weather;
 import pokemon.interfce.AirLockAbility;
 import pokemon.interfce.AngerPointAbility;
 import pokemon.interfce.CloudNineAbility;
@@ -762,8 +763,6 @@ public class ReaderData {
 						Integer.parseInt(attacks[3]), Integer.parseInt(attacks[4]), Integer.parseInt(attacks[5]),
 						attacks[6]);
 
-				putPercentageFlinchAttacks(attack);
-
 				// Some attacks can have 2 bases (so we split with ";")
 				String[] bs = attacks[7].split(";");
 
@@ -785,8 +784,7 @@ public class ReaderData {
 				attack.transformStrTypeToPokemonType(types);
 
 				// Add the attacks that can hit while Pokemon facing is invulnerable
-				putCanHitInvulnerableAttacks(attack);
-
+				setCanHitInvulnerableAttacks(attack);
 				// Set the category type of the attack
 				setCategoryAttackType(attack);
 				// Set the attack is One-Hit KO
@@ -795,6 +793,14 @@ public class ReaderData {
 				setAttackMakesContact(attack);
 				// Set the attack if has secondary effects
 				setAttackHasSecondaryEffects(attack);
+				// Set the attack if always hits
+				setAttackAlwaysHits(attack);
+				// Set the attack can hurt its self if fails
+				setCanRecieveDamageFailAttacks(attack);
+				// Set attack always hits under a specific weather
+				setAttackAlwaysHeatswithWeather(attack);
+				// Set if attack forces to change Pokemon
+				setAttackForceChange(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -981,78 +987,13 @@ public class ReaderData {
 //		}
 
 	// -----------------------------
-	// Add the attacks that can hit while Pokemon facing is invulnerable
-	// -----------------------------
-	public static void putCanHitInvulnerableAttacks(Attack attack) {
-		List<Integer> canHitWhileInvulnerable = new ArrayList<>();
-
-		switch (attack.getId()) {
-		case 16:
-		case 87:
-		case 239:
-		case 327:
-		case 479:
-		case 542:
-			canHitWhileInvulnerable.add(19);
-			break;
-		}
-
-		// Some charged attacks can be hit by all the movements (13_Razor_Wind /
-		// 76_Solar_Beam)
-		canHitWhileInvulnerable.add(13);
-		canHitWhileInvulnerable.add(76);
-
-		attack.setCanHitWhileInvulnerable(canHitWhileInvulnerable);
-	}
-
-	// -----------------------------
-	// Set attack that can hurt Pokemon owner if fails
-	// -----------------------------
-	public static void putCanRecieveDamageFailAttacks(Attack attack) {
-		switch (attack.getId()) {
-		case 26:
-			attack.setCanRecieveDamage(true);
-			break;
-		}
-	}
-
-	// -----------------------------
-	// Set percentage of flinch/retreat to attack
-	// -----------------------------
-	public void putPercentageFlinchAttacks(Attack attack) {
-		switch (attack.getId()) {
-		case 23:
-		case 27:
-		case 29:
-		case 44:
-			attack.setPercentageFlinched(0.30d);
-			break;
-		default:
-			attack.setPercentageFlinched(0d);
-		}
-	}
-
-	// -----------------------------
-	// Set the category type of the attack
-	// -----------------------------
-	public void setCategoryAttackType(Attack attack) {
-		switch (attack.getId()) {
-		case 19:
-			attack.setCategory(AttackCategory.CHARGED);
-			break;
-		default:
-			attack.setCategory(AttackCategory.NORMAL);
-		}
-	}
-
-	// -----------------------------
 	// Set the ability effect of the attack
 	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
 	// / 60 (when applying objects) / 82 (when applying objects) / 80 (to complete)
 	// / 83 (to complete) / 84 (when applying
 	// objects) / 90 (to complete)
 	// -----------------------------
-	public void setAbilityEffect(Ability ability) {
+	private static void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
 		// Hedor/Stench
 		case 1:
@@ -1215,9 +1156,58 @@ public class ReaderData {
 	}
 
 	// -----------------------------
-	// Set if attack is one hit KO
+	// Add the attacks that can hit while Pokemon facing is invulnerable
 	// -----------------------------
-	public void setAttackIsOneHit(Attack attack) {
+	private static void setCanHitInvulnerableAttacks(Attack attack) {
+		List<Integer> canHitWhileInvulnerable = new ArrayList<>();
+
+		switch (attack.getId()) {
+		case 16:
+		case 87:
+		case 239:
+		case 327:
+		case 479:
+		case 542:
+			canHitWhileInvulnerable.add(19);
+			break;
+		}
+
+		// Some charged attacks can be hit by all the movements (13_Razor_Wind /
+		// 76_Solar_Beam)
+		canHitWhileInvulnerable.add(13);
+		canHitWhileInvulnerable.add(76);
+
+		attack.setCanHitWhileInvulnerable(canHitWhileInvulnerable);
+	}
+
+	// -----------------------------
+	// Set the attack if can hurt Pokemon owner if it fails
+	// -----------------------------
+	private static void setCanRecieveDamageFailAttacks(Attack attack) {
+		switch (attack.getId()) {
+		case 26:
+			attack.setCanRecieveDamage(true);
+			break;
+		}
+	}
+
+	// -----------------------------
+	// Set the category type of the attack
+	// -----------------------------
+	private static void setCategoryAttackType(Attack attack) {
+		switch (attack.getId()) {
+		case 19:
+			attack.setCategory(AttackCategory.CHARGED);
+			break;
+		default:
+			attack.setCategory(AttackCategory.NORMAL);
+		}
+	}
+
+	// -----------------------------
+	// Set if the attack is one hit KO
+	// -----------------------------
+	private static void setAttackIsOneHit(Attack attack) {
 		switch (attack.getId()) {
 		case 12:
 		case 32:
@@ -1229,19 +1219,17 @@ public class ReaderData {
 	}
 
 	// -----------------------------
-	// Set if attack is one hit KO
+	// Set if the attack is one hit KO
 	// -----------------------------
-	public void setAttackMakesContact(Attack attack) {
-		if (attack.getBases() != null && attack.getBases().contains("fisico")) {
+	private static void setAttackMakesContact(Attack attack) {
+		if (attack.getBases() != null && attack.getBases().contains("fisico"))
 			attack.setMakesContact(true);
-		}
 	}
 
 	// -----------------------------
-	// Set if attack has secondary effects
+	// Set if the attack has secondary effects
 	// -----------------------------
-	public void setAttackHasSecondaryEffects(Attack attack) {
-
+	private static void setAttackHasSecondaryEffects(Attack attack) {
 		SecondaryEffect secondaryEffect = new SecondaryEffect();
 
 		switch (attack.getId()) {
@@ -1344,20 +1332,63 @@ public class ReaderData {
 	}
 
 	// -----------------------------
+	// Set if attack always hits
+	// -----------------------------
+	private static void setAttackAlwaysHits(Attack attack) {
+		switch (attack.getId()) {
+		case 14:
+		case 18:
+		case 46:
+		case 74:
+		case 54:
+		case 165: // "Struggle" attack has 100% of precision (used when no more PPs remaining on
+					// other attacks, etc.)
+			attack.setAlwaysHits(true);
+			break;
+		default:
+			attack.setAlwaysHits(false);
+		}
+	}
+
+	// -----------------------------
+	// Set if the attack always hits with a specific weather
+	// -----------------------------
+	private static void setAttackAlwaysHeatswithWeather(Attack attack) {
+		switch (attack.getId()) {
+		case 87:
+			attack.setGuaranteedWeather(Weather.RAIN);
+			break;
+		default:
+			attack.setGuaranteedWeather(Weather.NONE);
+		}
+	}
+
+	// -----------------------------
+	// Set if the attack forces the Pokemon rival to change
+	// -----------------------------
+	private static void setAttackForceChange(Attack attack) {
+		switch (attack.getId()) {
+		case 18:
+		case 46:
+			attack.setForceChange(true);
+			break;
+		default:
+			attack.setForceChange(false);
+		}
+	}
+
+	// -----------------------------
 	// Parse string to int
 	// -----------------------------
 	private ArrayList<Integer> parseIntList(String value) {
-
 		ArrayList<Integer> list = new ArrayList<>();
 
-		if (value == null || value.equals("0") || value.isEmpty()) {
+		if (value == null || value.equals("0") || value.isEmpty())
 			return list;
-		}
 
 		String[] values = value.split(";");
-		for (String v : values) {
+		for (String v : values)
 			list.add(Integer.parseInt(v.trim()));
-		}
 
 		return list;
 	}

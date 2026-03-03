@@ -1,9 +1,13 @@
 package pokemon.model;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import pokemon.enums.AttackCategory;
+import pokemon.enums.SecondaryEffectType;
+import pokemon.enums.Weather;
 
 public class Attack {
 
@@ -26,11 +30,15 @@ public class Attack {
 	private AttackCategory category = AttackCategory.NORMAL;
 	private List<Integer> canHitWhileInvulnerable = new ArrayList<>();
 	private boolean canRecieveDamage;
-	private double percentageFlinch;
 	private boolean isOneHitKO;
 	private boolean makesContact;
 	private boolean hasSecondaryEffect;
 	private List<SecondaryEffect> secondaryEffects = new ArrayList<>();
+	private boolean alwaysHits;
+	private boolean ignoresAccuracy;
+	private boolean hitsDuringInvulnerable;
+	private Weather guaranteedWeather;
+	private boolean forceChange;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -51,10 +59,14 @@ public class Attack {
 		this.effectivenessAgainstPkFacing = 0;
 		this.bonus = 0;
 		this.canRecieveDamage = false;
-		this.percentageFlinch = 0d;
 		this.isOneHitKO = false;
 		this.makesContact = false;
 		this.hasSecondaryEffect = false;
+		this.alwaysHits = false;
+		this.ignoresAccuracy = false;
+		this.hitsDuringInvulnerable = false;
+		this.guaranteedWeather = Weather.NONE;
+		this.forceChange = false;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -73,10 +85,14 @@ public class Attack {
 		this.effectivenessAgainstPkFacing = 0;
 		this.bonus = 0;
 		this.canRecieveDamage = false;
-		this.percentageFlinch = 0d;
 		this.isOneHitKO = false;
 		this.makesContact = false;
 		this.hasSecondaryEffect = false;
+		this.alwaysHits = false;
+		this.ignoresAccuracy = false;
+		this.hitsDuringInvulnerable = false;
+		this.guaranteedWeather = Weather.NONE;
+		this.forceChange = false;
 	}
 
 	public Attack(Attack attack) {
@@ -95,12 +111,16 @@ public class Attack {
 		this.effectivenessAgainstPkFacing = attack.effectivenessAgainstPkFacing;
 		this.bonus = attack.bonus;
 		this.canRecieveDamage = attack.canRecieveDamage;
-		this.percentageFlinch = attack.percentageFlinch;
 		this.isOneHitKO = attack.isOneHitKO;
 		this.makesContact = attack.makesContact;
 		this.hasSecondaryEffect = attack.hasSecondaryEffect;
 		this.canHitWhileInvulnerable = attack.canHitWhileInvulnerable;
 		this.secondaryEffects = attack.secondaryEffects;
+		this.alwaysHits = false;
+		this.ignoresAccuracy = false;
+		this.hitsDuringInvulnerable = false;
+		this.guaranteedWeather = Weather.NONE;
+		this.forceChange = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -223,14 +243,6 @@ public class Attack {
 		this.canRecieveDamage = canRecieveDamage;
 	}
 
-	public double getPercentageFlinched() {
-		return percentageFlinch;
-	}
-
-	public void setPercentageFlinched(double percentageFlinch) {
-		this.percentageFlinch = percentageFlinch;
-	}
-
 	public float getInitialPower() {
 		return initialPower;
 	}
@@ -247,7 +259,7 @@ public class Attack {
 		this.initialPrecision = initialPrecision;
 	}
 
-	public boolean getIsOneHitKO() {
+	public boolean isOneHitKO() {
 		return isOneHitKO;
 	}
 
@@ -279,6 +291,46 @@ public class Attack {
 		this.secondaryEffects = null;
 	}
 
+	public boolean alwaysHits() {
+		return alwaysHits;
+	}
+
+	public void setAlwaysHits(boolean alwaysHits) {
+		this.alwaysHits = alwaysHits;
+	}
+
+	public boolean isIgnoresAccuracy() {
+		return ignoresAccuracy;
+	}
+
+	public void setIgnoresAccuracy(boolean ignoresAccuracy) {
+		this.ignoresAccuracy = ignoresAccuracy;
+	}
+
+	public boolean isHitsDuringInvulnerable() {
+		return hitsDuringInvulnerable;
+	}
+
+	public void setHitsDuringInvulnerable(boolean hitsDuringInvulnerable) {
+		this.hitsDuringInvulnerable = hitsDuringInvulnerable;
+	}
+
+	public Weather getGuaranteedWeather() {
+		return guaranteedWeather;
+	}
+
+	public void setGuaranteedWeather(Weather guaranteedWeather) {
+		this.guaranteedWeather = guaranteedWeather;
+	}
+
+	public boolean isForceChange() {
+		return forceChange;
+	}
+
+	public void setForceChange(boolean forceChange) {
+		this.forceChange = forceChange;
+	}
+
 	// ==================================== METHODS
 	// ====================================
 
@@ -297,9 +349,38 @@ public class Attack {
 	}
 
 	// -----------------------------
+	// Check if attack always hits under the specific weather
+	// -----------------------------
+	public boolean alwaysHeatsUnderWeather(Weather weather) {
+		return this.getGuaranteedWeather() == weather;
+	}
+
+	// -----------------------------
 	// Add secondary effect
 	// -----------------------------
-	public void addSecondaryEffect(SecondaryEffect secondaryEffect) {
-		this.getSecondaryEffects().add(secondaryEffect);
+	public void addSecondaryEffect(SecondaryEffect effect) {
+		this.getSecondaryEffects().add(effect);
+	}
+
+	// -----------------------------
+	// Check if has a specific secondary effect
+	// -----------------------------
+	public boolean hasSecondaryEffect() {
+		return this.getSecondaryEffects() != null;
+	}
+
+	// -----------------------------
+	// Check if has a specific secondary effect
+	// -----------------------------
+	public boolean hasActiveSecondaryEffect(SecondaryEffectType effectType) {
+		return this.getSecondaryEffects() != null
+				&& this.getSecondaryEffects().stream().anyMatch(e -> e.getType() == effectType);
+	}
+
+	// -----------------------------
+	// Get all the secondary effects from a effect type
+	// -----------------------------
+	public List<SecondaryEffect> getSecondaryEffectsOfType(SecondaryEffectType effectType) {
+		return this.getSecondaryEffects().stream().filter(e -> e.getType() == effectType).toList();
 	}
 }

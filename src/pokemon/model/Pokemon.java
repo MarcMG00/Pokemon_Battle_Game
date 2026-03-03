@@ -1638,8 +1638,14 @@ public class Pokemon {
 	// Change attacks depending on abilities, etc.
 	// -----------------------------
 	public void checkStatsForAttacks(Attack atkAttacker) {
+		Ability pkAbility = this.getAbilitySelected();
+
+		// 14_Compound_Eyes ability rises precision by 30%
+		if (pkAbility.getId() == 14)
+			atkAttacker.setPrecision(atkAttacker.getPrecision() * 1.3f);
+
 		// 55_Hustle ability reduces precision by 20%
-		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico"))
+		if (pkAbility.getId() == 55 && this.getNextMovement().getBases().contains("fisico"))
 			atkAttacker.setPrecision(atkAttacker.getPrecision() * 0.8f);
 	}
 
@@ -1695,5 +1701,19 @@ public class Pokemon {
 		default:
 			break;
 		}
+	}
+
+	// -----------------------------
+	// Don't allow to attack (PkVsPk)
+	// -----------------------------
+	public void denyAttack() {
+		this.setCanAttack(false);
+	}
+
+	// -----------------------------
+	// Allow to attack (PkVsPk)
+	// -----------------------------
+	public void allowAttack() {
+		this.setCanAttack(true);
 	}
 }

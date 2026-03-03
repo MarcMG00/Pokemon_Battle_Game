@@ -1,6 +1,7 @@
 package pokemon.model;
 
 import pokemon.enums.AttackCategory;
+import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
@@ -178,110 +179,138 @@ public class PkVPk {
 	// -----------------------------
 	// Gets the probability of attacking
 	// -----------------------------
-	public void getProbabilityOfAttacking(Weather weather) {
+	public void resolveAttack() {
+		Pokemon attacker = this.getPkCombatting();
+		Pokemon defender = this.getPkFacing();
+		Attack atkAttacker = attacker.getNextMovement();
+		Attack atkDefender = defender.getNextMovement();
+		boolean isAttackerCharging = attacker.getIsChargingAttackForNextRound();
+		boolean isDefenderCharging = defender.getIsChargingAttackForNextRound();
 
-		boolean isAttackerCharging = this.getPkCombatting().getIsChargingAttackForNextRound();
-		boolean isDefenderCharging = this.getPkFacing().getIsChargingAttackForNextRound();
-
-		Attack atkAttacker = this.getPkCombatting().getNextMovement();
-		Attack atkDefender = this.getPkFacing().getNextMovement();
+		Weather weather = this.getWeather();
 
 		boolean canHitInvulnerable = atkDefender == null
 				|| atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
 
-		float accuracyFactor = 0f;
-
-		checkWeatherEffectsForAttacks(weather, atkAttacker);
-		this.getPkCombatting().checkStatsForAttacks(atkAttacker);
-
-		// -----------------------------
-		// Check if an attack is not disabled (attacks disabled cannot be used, even for
-		// charged attacks, they are instantly disabled)
-		// -----------------------------
-		if (isAttackDisabled(this.getPkCombatting(), this.getPkCombatting().getNextMovement())) {
-			System.out.println(this.getPkCombatting().getName() + " intentó usar "
-					+ this.getPkCombatting().getNextMovement().getName() + ", pero está anulado!");
-
-			this.getPkCombatting().setCanAttack(false);
+		// 1 - Check if an attack is not disabled (attacks disabled cannot be used, even
+		// for charged attacks, they are instantly disabled)
+		if (!canUseAttack(attacker, atkAttacker)) {
 			return;
 		}
 
-		// -----------------------------
-		// WHIRLWIND (REMOLINO) / ROAR (RUGIDO) / MIST (NEBLINA)
-		// -----------------------------
-		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46 || atkAttacker.getId() == 54) {
-
-			// If Pokemon facing is invulnerable, cannot do the attack
-			if (isDefenderCharging && !canHitInvulnerable) {
-				this.getPkCombatting().setCanAttack(false);
-				System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ", pero "
-						+ this.getPkFacing().getName() + " evitó el ataque (invulnerable).");
-			} else {
-				// Asserts all the time
-				this.getPkCombatting().setCanAttack(true);
-			}
-
+		// 2 - Special cases that ignore precision
+		if (handleForcedChangeOrIgnorePrecision(attacker, defender, atkAttacker, canHitInvulnerable,
+				isDefenderCharging)) {
 			return;
 		}
 
-		// For almost all the attacks from "otros", it has 100% of accuracy
-		if (atkAttacker.getId() == 14 || atkAttacker.getId() == 74) {
-			this.getPkCombatting().setCanAttack(true);
+		// 3 - Charged attack (first turn)
+		if (handleChargeStart(attacker, atkAttacker, isAttackerCharging)) {
 			return;
 		}
-
-		// Some attacks with adequate weather hit all the time (Thunder, etc.)
-		if (weather == Weather.RAIN && atkAttacker.getId() == 87) {
-			this.getPkCombatting().setCanAttack(true);
-			return;
-		}
-
-		// -----------------------------
-		// "Struggle" attack has 100% of precision (used when no more PPs remaining on
-		// other attacks, etc.)
-		// -----------------------------
-		if (atkAttacker.getId() == 165) {
-			this.getPkCombatting().setCanAttack(true);
-			return;
-		}
-
-		// -----------------------------
-		// GUILLOTINE (GUILLOTINA) / HORN DRILL (PERFORADOR)
-		// -----------------------------
-		if (atkAttacker.getId() == 12 || atkAttacker.getId() == 32) {
-			accuracyFactor = (atkAttacker.getPrecision() / atkAttacker.getPrecision()); // don't take into account
-																						// Pokemon levels (cause all
-			// are on the same lvl)
-		}
-		// -----------------------------
-		// RETREAT POKEMON (STOMP/ ROLLING KICK/ HEADBUTT/ BITE)
-		// -----------------------------
-		else if ((atkAttacker.getId() == 23 || atkAttacker.getId() == 27 || atkAttacker.getId() == 29
-				|| atkAttacker.getId() == 44) && this.getPkFacing().getHasUsedMinimize()) {
-			accuracyFactor = (atkAttacker.getPrecision() / 100f)
-					* (getEvasionOrAccuracy(this.getPkCombatting(), 1) / 1f);
-		}
-		// Other attacks
-		else {
-			accuracyFactor = (atkAttacker.getPrecision() / 100f)
-					* (getEvasionOrAccuracy(this.getPkCombatting(), 1) / getEvasionOrAccuracy(this.getPkFacing(), 2));
-		}
-
-		// ----------------------------------
-		// APPLY ABILITY MODIFIERS (ACCURACY) (ex : 14_Compound_Eyes)
-		accuracyFactor = applyAccuracyAbilities(accuracyFactor);
 
 		// Reset CanAttack if doesn't enter in any case
-		this.getPkCombatting().setCanAttack(false);
+		attacker.denyAttack();
+
+		float accuracyFactor = calculateAccuracyFactor(attacker, defender, atkAttacker);
+
+		resolveAccuracyByContext(attacker, defender, atkAttacker, accuracyFactor, canHitInvulnerable,
+				isAttackerCharging, isDefenderCharging);
+	}
+
+	// -----------------------------
+	// Check if attack is not disabled
+	// -----------------------------
+	private boolean canUseAttack(Pokemon attacker, Attack atkAttacker) {
+		if (isAttackDisabled()) {
+			System.out.println(attacker.getName() + " intentó usar " + attacker.getNextMovement().getName()
+					+ ", pero está anulado!");
+			attacker.denyAttack();
+			return false;
+		}
+		return true;
+	}
+
+	// -----------------------------
+	// Check for attacks that force changes or has 100% of precision
+	// -----------------------------
+	private boolean handleForcedChangeOrIgnorePrecision(Pokemon attacker, Pokemon defender, Attack atkAttacker,
+			boolean canHitInvulnerable, boolean isDefenderCharging) {
+		// 18_Whirlwind / 46_Roar / 54_Mist
+		if (atkAttacker.isForceChange() || atkAttacker.getId() == 54) {
+			if (isDefenderCharging && !canHitInvulnerable) {
+				attacker.denyAttack();
+				System.out.println(attacker.getName() + " usó " + atkAttacker.getName() + ", pero " + defender.getName()
+						+ " evitó el ataque (invulnerable).");
+			} else
+				attacker.allowAttack();
+			return true;
+		}
+
+		if (atkAttacker.alwaysHits()) {
+			attacker.allowAttack();
+			return true;
+		}
+
+		if (atkAttacker.alwaysHeatsUnderWeather(weather)) {
+			attacker.allowAttack();
+			return true;
+		}
+		return false;
+	}
+
+	// -----------------------------
+	// Check for charged attack
+	// -----------------------------
+	private boolean handleChargeStart(Pokemon attacker, Attack atkAttacker, boolean isAttackerCharging) {
+		if (atkAttacker.getCategory() == AttackCategory.CHARGED && !isAttackerCharging) {
+			System.out.println(ANSI_PURPLE + "Probability - Starting a charged attack" + ANSI_RESET);
+
+			attacker.allowAttack();
+			System.out.println(ANSI_PURPLE + attacker.getName() + " utilizará " + atkAttacker.getName()
+					+ " - comienza a cargar el ataque. (bloc 3)" + ANSI_RESET);
+			return true;
+		}
+		return false;
+	}
+
+	// -----------------------------
+	// Calculates accuracy (check if doesn't fails)
+	// -----------------------------
+	private float calculateAccuracyFactor(Pokemon attacker, Pokemon defender, Attack atkAttacker) {
+		float accuracyFactor = 0f;
+
+		// Methods to modify precision of attack, evasion, etc.
+		checkWeatherEffectsForAttacks(this.getWeather(), atkAttacker);
+		attacker.checkStatsForAttacks(atkAttacker);
+
+		if (atkAttacker.isOneHitKO())
+			// don't take into account Pokemon levels (cause all are on the same lvl)
+			accuracyFactor = 1f;
+		// Retreat Pokemon (23_Stomp/ 27_Rolling kick/ 29_Headbutt/ 44_Bite) + defender
+		// is minimized
+		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.getHasUsedMinimize())
+			accuracyFactor = (atkAttacker.getPrecision() / 100f) * (getEvasionOrAccuracy(attacker, 1) / 1f);
+		// Other attacks
+		else
+			accuracyFactor = (atkAttacker.getPrecision() / 100f)
+					* (getEvasionOrAccuracy(attacker, 1) / getEvasionOrAccuracy(defender, 2));
+
+		return accuracyFactor;
+	}
+
+	// -----------------------------
+	// Apply accuracy depending on different cases
+	// -----------------------------
+	private void resolveAccuracyByContext(Pokemon attacker, Pokemon defender, Attack atkAttacker, float accuracyFactor,
+			boolean canHitInvulnerable, boolean isAttackerCharging, boolean isDefenderCharging) {
+		attacker.denyAttack();
 
 		// -----------------------------
 		// BLOC 1 : NORMAL ATTACK
 		// -----------------------------
 		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
-			System.out.println(ANSI_PURPLE + "Probability - Normal attack (defender not charging)" + ANSI_RESET);
-
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
-					"(bloc 1)");
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, attacker, defender, "(bloc 1)");
 			return;
 		}
 
@@ -289,64 +318,32 @@ public class PkVPk {
 		// BLOC 2 : NORMAL ATTACK - CAN HIT INVULNERABLE POKEMON
 		// -----------------------------
 		if (canHitInvulnerable && isDefenderCharging) {
-			System.out
-					.println(ANSI_PURPLE + "Probability - Normal attack can hit while defender charging" + ANSI_RESET);
-
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
-					"(bloc 2)");
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, attacker, defender, "(bloc 2)");
 			return;
 		}
 
 		// -----------------------------
-		// BLOC 3 : FIRST TURN FOR (FROM CHARGING ATTACK)
-		// -----------------------------
-		if (atkAttacker.getCategory() == AttackCategory.CHARGED && !isAttackerCharging) {
-			System.out.println(ANSI_PURPLE + "Probability - Starting a charged attack" + ANSI_RESET);
-
-			pkCombatting.setCanAttack(true);
-			System.out.println(ANSI_PURPLE + this.getPkCombatting().getName() + " utilizará " + atkAttacker.getName()
-					+ " - comienza a cargar el ataque. (bloc 3)" + ANSI_RESET);
-			return;
-		}
-
-		// -----------------------------
-		// BLOC 4 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER NOT CHARGING
+		// BLOC 3 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER NOT CHARGING
 		// -----------------------------
 		if (isAttackerCharging && !isDefenderCharging) {
-			System.out.println(
-					ANSI_PURPLE + "Probability - Charged attack execution (defender not charging)" + ANSI_RESET);
-
-			handleChargedAttackExecution(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
-					"(bloc 4)");
+			handleChargedAttackExecution(accuracyFactor, atkAttacker, attacker, defender, "(bloc 3)");
 			return;
 		}
 
 		// -----------------------------
-		// BLO 5 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER IS CHARGING
+		// BLOC 4 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER IS CHARGING
 		// -----------------------------
 		if (isAttackerCharging && isDefenderCharging) {
-			System.out.println(ANSI_PURPLE + "Probability - Charged vs Charged (attack avoided)" + ANSI_RESET);
-
-			pkCombatting.setCanAttack(false);
-			pkCombatting.setIsChargingAttackForNextRound(false);
-
-			System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
-					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (bloc 5)");
+			attacker.setIsChargingAttackForNextRound(false);
 			return;
 		}
 
 		// -----------------------------
-		// BLOC 6 : OTHER ATTACK AGAINST INVULNERABLE (CANNOT DO DAMMAGE)
+		// BLOC 5 : OTHER ATTACK AGAINST INVULNERABLE (CANNOT DO DAMMAGE)
 		// -----------------------------
 		if (!canHitInvulnerable && isDefenderCharging) {
-
-			System.out.println(ANSI_PURPLE + "Probability - Normal attack fails vs invulnerable defender" + ANSI_RESET);
-
-			pkCombatting.setCanAttack(false);
-			pkCombatting.setIsChargingAttackForNextRound(false);
-
-			System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
-					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (bloc 6)");
+			attacker.setIsChargingAttackForNextRound(false);
+			return;
 		}
 	}
 
@@ -357,18 +354,18 @@ public class PkVPk {
 			String code) {
 
 		if (accuracyFactor >= 1f) {
-			attacker.setCanAttack(true);
+			attacker.allowAttack();
 			return;
 		}
 
 		int rand = (int) (Math.random() * 100);
 
 		if (rand / 100f <= accuracyFactor) {
-			attacker.setCanAttack(true);
+			attacker.allowAttack();
 		} else {
 			System.out.println("accuracy : " + rand / 100f + "(random) => " + accuracyFactor + " (true accuracy)");
 			atk.setPp(atk.getPp() - 1);
-			attacker.setCanAttack(false);
+			attacker.denyAttack();
 
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName()
 					+ " evitó el ataque jijijija. " + code);
@@ -393,17 +390,17 @@ public class PkVPk {
 			String code) {
 
 		if (accuracyFactor >= 1f) {
-			attacker.setCanAttack(true);
+			attacker.allowAttack();
 			return;
 		}
 
 		int rand = (int) (Math.random() * 100);
 
 		if (rand / 100f <= accuracyFactor) {
-			attacker.setCanAttack(true);
+			attacker.allowAttack();
 		} else {
 			atk.setPp(atk.getPp() - 1);
-			attacker.setCanAttack(false);
+			attacker.denyAttack();
 			attacker.setIsChargingAttackForNextRound(false);
 
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName() + " (Id:"
@@ -601,7 +598,7 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			if (abilityDefender.getId() == 5 && !abilityDefender.getAlreadyUsedOnEnter()
-					&& (attackAttacker.getIsOneHitKO())) {
+					&& (attackAttacker.isOneHitKO())) {
 				defender.setPs(1f);
 				abilityDefender.setAlreadyUsedOnEnter(true);
 				System.out.println(defender.getName() + " (Id:" + defender.getId()
@@ -941,7 +938,7 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			if (abilityDefender.getId() == 5 && !abilityDefender.getAlreadyUsedOnEnter()
-					&& (attackAttacker.getIsOneHitKO())) {
+					&& (attackAttacker.isOneHitKO())) {
 				defender.setPs(1f);
 				abilityDefender.setAlreadyUsedOnEnter(true);
 				System.out.println(defender.getName() + " (Id:" + defender.getId()
@@ -2318,11 +2315,12 @@ public class PkVPk {
 	// -----------------------------
 	// Gets if last attack from Pokemon combating used is disabled
 	// -----------------------------
-	public boolean isAttackDisabled(Pokemon pk, Attack selectedAttack) {
-		if (pk.hasActiveStatusCondition(StatusConditions.DISABLE)) {
-			State disableStatus = pk.getStatusCondition();
+	public boolean isAttackDisabled() {
+		Pokemon attacker = this.getPkCombatting();
+		if (this.getPkCombatting().hasActiveStatusCondition(StatusConditions.DISABLE)) {
+			State disableStatus = attacker.getStatusCondition();
 
-			if (disableStatus.getAttackDisabled() == pk.getNextMovement())
+			if (disableStatus.getAttackDisabled() == attacker.getNextMovement())
 				return true;
 		}
 		return false;
@@ -2361,11 +2359,9 @@ public class PkVPk {
 	// Change attacks depending on weather
 	// -----------------------------
 	private void checkWeatherEffectsForAttacks(Weather weather, Attack attack) {
-		if (weather == Weather.SUN) {
-			if (attack.getId() == 87) {
+		if (weather == Weather.SUN)
+			if (attack.getId() == 87)
 				attack.setPrecision(50);
-			}
-		}
 	}
 
 	// -----------------------------
@@ -2410,9 +2406,9 @@ public class PkVPk {
 	// -----------------------------
 	private float applyAccuracyAbilities(float accuracy) {
 		Ability ability = this.getPkCombatting().getAbilitySelected();
-		if (ability != null && ability.getId() == 14) {
+		if (ability != null && ability.getId() == 14)
 			accuracy *= 1.3f;
-		}
+
 		// max 1f
 		return Math.min(accuracy, 1.0f);
 	}
@@ -2463,7 +2459,7 @@ public class PkVPk {
 
 				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
 					abilityAttacker.getEffect().afterAttack(null, attacker, defender, attack, damage,
-							attack.getPercentageFlinched(), this.getIsACriticAttack(), weather, isWeatherSuppressed);
+							effect.getProbability(), this.getIsACriticAttack(), weather, isWeatherSuppressed);
 				} else
 					defender.setHasRetreated(true);
 				break;
