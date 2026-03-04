@@ -1,9 +1,7 @@
 package pokemon.model;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
@@ -39,6 +37,7 @@ public class Attack {
 	private boolean hitsDuringInvulnerable;
 	private Weather guaranteedWeather;
 	private boolean forceChange;
+	private boolean isPunchMove;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -67,6 +66,7 @@ public class Attack {
 		this.hitsDuringInvulnerable = false;
 		this.guaranteedWeather = Weather.NONE;
 		this.forceChange = false;
+		this.isPunchMove = false;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -93,6 +93,7 @@ public class Attack {
 		this.hitsDuringInvulnerable = false;
 		this.guaranteedWeather = Weather.NONE;
 		this.forceChange = false;
+		this.isPunchMove = false;
 	}
 
 	public Attack(Attack attack) {
@@ -116,11 +117,12 @@ public class Attack {
 		this.hasSecondaryEffect = attack.hasSecondaryEffect;
 		this.canHitWhileInvulnerable = attack.canHitWhileInvulnerable;
 		this.secondaryEffects = attack.secondaryEffects;
-		this.alwaysHits = false;
-		this.ignoresAccuracy = false;
-		this.hitsDuringInvulnerable = false;
-		this.guaranteedWeather = Weather.NONE;
-		this.forceChange = false;
+		this.alwaysHits = attack.alwaysHits;
+		this.ignoresAccuracy = attack.ignoresAccuracy;
+		this.hitsDuringInvulnerable = attack.hitsDuringInvulnerable;
+		this.guaranteedWeather = attack.guaranteedWeather;
+		this.forceChange = attack.forceChange;
+		this.isPunchMove = attack.isPunchMove;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -329,6 +331,14 @@ public class Attack {
 
 	public void setForceChange(boolean forceChange) {
 		this.forceChange = forceChange;
+	}
+
+	public boolean isPunchMove() {
+		return isPunchMove;
+	}
+
+	public void setPunchMove(boolean isPunchMove) {
+		this.isPunchMove = isPunchMove;
 	}
 
 	// ==================================== METHODS

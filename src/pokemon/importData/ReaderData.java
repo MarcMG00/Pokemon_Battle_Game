@@ -801,6 +801,8 @@ public class ReaderData {
 				setAttackAlwaysHeatswithWeather(attack);
 				// Set if attack forces to change Pokemon
 				setAttackForceChange(attack);
+				// Set if attack is punch type
+				setAttackIsPunch(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -1374,6 +1376,42 @@ public class ReaderData {
 			break;
 		default:
 			attack.setForceChange(false);
+		}
+	}
+
+	// -----------------------------
+	// Set if the attack is a punch move (used for 89_Iron_fist ability)
+	// -----------------------------
+	private static void setAttackIsPunch(Attack attack) {
+		switch (attack.getId()) {
+		case 838:
+		case 818:
+		case 742:
+		case 327:
+		case 817:
+		case 359:
+		case 665:
+		case 5:
+		case 264:
+		case 418:
+		case 4:
+		case 223:
+		case 409:
+		case 7:
+		case 889:
+		case 8:
+		case 612:
+		case 857:
+		case 146:
+		case 309:
+		case 325:
+		case 9:
+		case 721:
+		case 183:
+			attack.setPunchMove(true);
+			break;
+		default:
+			attack.setPunchMove(false);
 		}
 	}
 
