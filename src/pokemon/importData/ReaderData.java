@@ -166,26 +166,19 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] pks = line.split(",");
 
-				if (pokemon.size() == 809) {
-
+				if (pokemon.size() == 809)
 					break;
-
-				} else {
-
+				else {
 					Pokemon pokemonToAdd = new Pokemon(Integer.parseInt(pks[0]), pks[1], Integer.parseInt(pks[2]),
 							Integer.parseInt(pks[3]), Integer.parseInt(pks[4]), Integer.parseInt(pks[5]),
 							Integer.parseInt(pks[6]), Integer.parseInt(pks[7]));
 
 					// Gets first ability (all Pokemon have at least one ability)
 					if (!pks[12].isEmpty()) {
-
 						for (PokemonType pkty : types) {
-
 							if (pkty.getId() == Integer.parseInt(pks[12])) {
-
 								pokemonToAdd.addType(pkty);
 								pokemonToAdd.addInitialType(pkty);
 							}
@@ -194,18 +187,14 @@ public class ReaderData {
 
 					// Gets the other type (if a Pokemon has 2 types)
 					if (pks.length == 14) {
-
 						// It detects a " " " at the end of the second type, so we remove it : we have
 						// 17" instead of 17
 //							pks[13] = pks[13].substring(0, pks[13].length() - 1);
 
 						// Gets second type
 						if (!pks[13].isEmpty()) {
-
 							for (PokemonType pkty : types) {
-
 								if (pkty.getId() == Integer.parseInt(pks[13])) {
-
 									pokemonToAdd.addType(pkty);
 									pokemonToAdd.addInitialType(pkty);
 								}
@@ -222,12 +211,11 @@ public class ReaderData {
 			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
 				System.out.println("Finished reading readPokemon");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file  : " + e.getMessage());
@@ -251,15 +239,10 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] ablty = line.split(",");
-
-				if (this.getAbilities().size() == 309) {
-
+				if (this.getAbilities().size() == 309)
 					break;
-
-				} else {
-
+				else {
 					Ability abilityToAdd = new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]);
 					setAbilityEffect(abilityToAdd);
 
@@ -271,12 +254,12 @@ public class ReaderData {
 			System.out.println("Exception reading the file : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
+
 				System.out.println("Finished reading readAbilities");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file  : " + e.getMessage());
@@ -300,7 +283,6 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				Optional<Pokemon> pkOpt;
 				String[] abltysPk = line.split(",", -1);
 
@@ -308,61 +290,38 @@ public class ReaderData {
 				pkOpt = pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(abltysPk[0])).findFirst();
 
 				if (pkOpt.isPresent()) {
-
 					// Gets first ability (all Pokemon have at least one ability)
 					if (!abltysPk[8].isEmpty()) {
-
 						for (Ability ablty : this.getAbilities()) {
-
-							if (ablty.getId() == Integer.parseInt(abltysPk[8])) {
-
+							if (ablty.getId() == Integer.parseInt(abltysPk[8]))
 								pkOpt.get().addNormalAbility(ablty);
-
-							}
 						}
 					}
 
 					// Gets other abilities (if a Pokemon has more)
 					if (abltysPk.length > 9) {
-
 						// Gets second ability
 						if (!abltysPk[9].isEmpty()) {
-
 							for (Ability ablty : this.getAbilities()) {
-
-								if (ablty.getId() == Integer.parseInt(abltysPk[9])) {
-
+								if (ablty.getId() == Integer.parseInt(abltysPk[9]))
 									pkOpt.get().addNormalAbility(ablty);
-
-								}
 							}
 						}
 
 						// Gets hidden ability
 						if (!abltysPk[10].isEmpty()) {
-
 							for (Ability ablty : this.getAbilities()) {
-
-								if (ablty.getId() == Integer.parseInt(abltysPk[10])) {
-
+								if (ablty.getId() == Integer.parseInt(abltysPk[10]))
 									pkOpt.get().addHiddenAbility(ablty);
-
-								}
 							}
 						}
 
 						// Gets second hidden ability : only one Pokemon at the moment
 						if (abltysPk.length == 12) {
-
 							if (!abltysPk[11].isEmpty()) {
-
 								for (Ability ablty : this.getAbilities()) {
-
-									if (ablty.getId() == Integer.parseInt(abltysPk[11])) {
-
+									if (ablty.getId() == Integer.parseInt(abltysPk[11]))
 										pkOpt.get().addHiddenAbility(ablty);
-
-									}
 								}
 							}
 						}
@@ -373,12 +332,12 @@ public class ReaderData {
 			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
+
 				System.out.println("Finished reading addAbsForEachPokemon");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file  : " + e.getMessage());
@@ -402,7 +361,6 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				Optional<Pokemon> pkOpt;
 				String[] typesRead = line.split(",");
 
@@ -414,37 +372,25 @@ public class ReaderData {
 				pkOpt = pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(typesRead[0])).findFirst();
 
 				if (pkOpt.isPresent()) {
-
 					// Gets first ability (all Pokemon have at least one ability)
 					if (!typesRead[12].isEmpty()) {
-
 						for (PokemonType pkty : types) {
-
-							if (pkty.getId() == Integer.parseInt(typesRead[12])) {
-
+							if (pkty.getId() == Integer.parseInt(typesRead[12]))
 								pkOpt.get().addType(pkty);
-
-							}
 						}
 					}
 
 					// Gets the other type (if a Pokemon has 2 types)
 					if (typesRead.length == 14) {
-
 						// It detects a " at the end of the second type, so we remove it => ex : we have
 						// 17" instead of 17
 						typesRead[13] = typesRead[13].substring(0, typesRead[13].length() - 1);
 
 						// Gets second type
 						if (!typesRead[13].isEmpty()) {
-
 							for (PokemonType pkty : types) {
-
-								if (pkty.getId() == Integer.parseInt(typesRead[13])) {
-
+								if (pkty.getId() == Integer.parseInt(typesRead[13]))
 									pkOpt.get().addType(pkty);
-
-								}
 							}
 						}
 					}
@@ -454,12 +400,13 @@ public class ReaderData {
 			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
+
+				System.out.println("Finished reading readAddTypesForEachPokemon");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file  : " + e.getMessage());
 			}
@@ -483,12 +430,10 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] pkTypes = line.split(",");
 
-				if (types.size() == 18) {
+				if (types.size() == 18)
 					break;
-				}
 
 				PokemonType pkType = new PokemonType(Integer.parseInt(pkTypes[0]), pkTypes[1].toUpperCase());
 
@@ -515,8 +460,10 @@ public class ReaderData {
 			try {
 				if (fileReader != null)
 					fileReader.close();
+
 				if (bufferedReader != null)
 					bufferedReader.close();
+
 				System.out.println("Finished reading readPkTypes");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file : " + e.getMessage());
@@ -534,7 +481,6 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] type = line.split(",");
 
 				String typeName = type[1];
@@ -550,7 +496,6 @@ public class ReaderData {
 						{ "No tiene efecto", type[6] } };
 
 				for (String[] pair : keysAndColumns) {
-
 					String key = pair[0];
 					String raw = pair[1];
 
@@ -564,6 +509,7 @@ public class ReaderData {
 					for (String idStr : ids) {
 						int id = Integer.parseInt(idStr);
 						pType = typeById.get(id);
+
 						if (pType != null)
 							effects.add(pType);
 					}
@@ -756,7 +702,6 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] attacks = line.split(",");
 
 				Attack attack = new Attack(Integer.parseInt(attacks[0]), attacks[1], attacks[2].toUpperCase(),
@@ -766,19 +711,11 @@ public class ReaderData {
 				// Some attacks can have 2 bases (so we split with ";")
 				String[] bs = attacks[7].split(";");
 
-				if (bs.length > 1) {
-
-					for (String s : bs) {
-
+				if (bs.length > 1)
+					for (String s : bs)
 						attack.addBase(s);
-
-					}
-
-				} else {
-
+				else
 					attack.addBase(bs[0]);
-
-				}
 
 				// Set the type of the attack to his Pokemon type instead of a string
 				attack.transformStrTypeToPokemonType(types);
@@ -812,12 +749,12 @@ public class ReaderData {
 			System.out.println("Exception reading the file : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+				
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
+				
 				System.out.println("Finished reading readAttacks");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file : " + e.getMessage());
@@ -836,7 +773,6 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] cols = line.split(",");
 
 				int pokemonId = Integer.parseInt(cols[0]);

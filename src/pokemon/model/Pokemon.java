@@ -829,6 +829,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if is debilitated
+	// -----------------------------
+	public boolean isDebilitated() {
+		return this.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED;
+	}
+
+	// -----------------------------
 	// Restart stats after some attacks... (cause not accumulated)
 	// -----------------------------
 	public void restartParametersEffect() {

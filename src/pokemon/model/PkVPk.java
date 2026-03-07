@@ -1,7 +1,5 @@
 package pokemon.model;
 
-import java.util.Set;
-
 import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
@@ -306,41 +304,31 @@ public class PkVPk {
 			boolean canHitInvulnerable, boolean isAttackerCharging, boolean isDefenderCharging) {
 		attacker.denyAttack();
 
-		// -----------------------------
 		// BLOC 1 : NORMAL ATTACK
-		// -----------------------------
 		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
 			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, attacker, defender, "(bloc 1)");
 			return;
 		}
 
-		// -----------------------------
 		// BLOC 2 : NORMAL ATTACK - CAN HIT INVULNERABLE POKEMON
-		// -----------------------------
 		if (canHitInvulnerable && isDefenderCharging) {
 			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, attacker, defender, "(bloc 2)");
 			return;
 		}
 
-		// -----------------------------
 		// BLOC 3 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER NOT CHARGING
-		// -----------------------------
 		if (isAttackerCharging && !isDefenderCharging) {
 			handleChargedAttackExecution(accuracyFactor, atkAttacker, attacker, defender, "(bloc 3)");
 			return;
 		}
 
-		// -----------------------------
 		// BLOC 4 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER IS CHARGING
-		// -----------------------------
 		if (isAttackerCharging && isDefenderCharging) {
 			attacker.setIsChargingAttackForNextRound(false);
 			return;
 		}
 
-		// -----------------------------
 		// BLOC 5 : OTHER ATTACK AGAINST INVULNERABLE (CANNOT DO DAMMAGE)
-		// -----------------------------
 		if (!canHitInvulnerable && isDefenderCharging) {
 			attacker.setIsChargingAttackForNextRound(false);
 			return;
@@ -360,9 +348,9 @@ public class PkVPk {
 
 		int rand = (int) (Math.random() * 100);
 
-		if (rand / 100f <= accuracyFactor) {
+		if (rand / 100f <= accuracyFactor)
 			attacker.allowAttack();
-		} else {
+		else {
 			System.out.println("accuracy : " + rand / 100f + "(random) => " + accuracyFactor + " (true accuracy)");
 			atk.setPp(atk.getPp() - 1);
 			attacker.denyAttack();
@@ -396,9 +384,9 @@ public class PkVPk {
 
 		int rand = (int) (Math.random() * 100);
 
-		if (rand / 100f <= accuracyFactor) {
+		if (rand / 100f <= accuracyFactor)
 			attacker.allowAttack();
-		} else {
+		else {
 			atk.setPp(atk.getPp() - 1);
 			attacker.denyAttack();
 			attacker.setIsChargingAttackForNextRound(false);

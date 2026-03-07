@@ -199,7 +199,6 @@ public class Player {
 
 		// Filter all the damage information for each type of the Pokemon facing
 		for (PokemonType facingType : pkFacing) {
-
 			effectPerTypesFiltered = effectPerTypes.entrySet().stream()
 					.filter(ef -> ef.getKey().equalsIgnoreCase(facingType.getName()))
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -209,7 +208,6 @@ public class Player {
 
 		// If Pokemon facing has 2 types
 		if (effectPerTypesCopy.size() == 2) {
-
 			fillDamageTypeLists(effectPerTypesCopy, noRepeatedAttackTypes, hasNoEffect, lotDamageRepeatedTypes,
 					normalDamageRepeatedTypes, lowDamageRepeatedTypes);
 
@@ -217,42 +215,32 @@ public class Player {
 			Map<String, Long> finalLittleDammageRepeatedTypes = countDuplicates(lowDamageRepeatedTypes);
 
 			for (Attack finalAttack : this.getPkCombatting().getFourPrincipalAttacks()) {
-
 				boolean isPicked = false;
 
 				if (hasNoEffect.contains(finalAttack.getStrTypeToPkType())
-						&& !iaHasNoEffectAttacks.contains(finalAttack)) {
-
+						&& !iaHasNoEffectAttacks.contains(finalAttack))
 					iaHasNoEffectAttacks.add(finalAttack);
-
-				} else {
-
+				else {
 					// Affects both types strongly
 					isPicked = addIfDoubleType(finalAttack, finalLotDammageRepeatedTypes, iaLotDamageAttacks);
 					isPicked |= addIfDoubleType(finalAttack, finalLittleDammageRepeatedTypes, iaLowAttacks);
 
 					// If not picked, apply single-type logic
 					if (!isPicked) {
-
 						if (finalLittleDammageRepeatedTypes
 								.containsKey(finalAttack.getStrTypeToPkType().getName().toUpperCase())
-								&& !iaLowAttacks.contains(finalAttack)) {
-
+								&& !iaLowAttacks.contains(finalAttack))
 							iaLowAttacks.add(finalAttack);
 
-						} else if (finalLotDammageRepeatedTypes
+						else if (finalLotDammageRepeatedTypes
 								.containsKey(finalAttack.getStrTypeToPkType().getName().toUpperCase())
 								&& normalDamageRepeatedTypes
 										.contains(finalAttack.getStrTypeToPkType().getName().toUpperCase())
-								&& !iaLotDamageAttacks.contains(finalAttack)) {
-
+								&& !iaLotDamageAttacks.contains(finalAttack))
 							iaLotDamageAttacks.add(finalAttack);
 
-						} else if (!iaNormalDamageAttacks.contains(finalAttack)) {
-
+						else if (!iaNormalDamageAttacks.contains(finalAttack))
 							iaNormalDamageAttacks.add(finalAttack);
-
-						}
 					}
 				}
 			}
@@ -261,30 +249,24 @@ public class Player {
 		// If Pokemon facing has 1 type
 		else {
 			for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> ef : effectPerTypesCopy.entrySet()) {
-
 				for (Attack finalAttack : this.getPkCombatting().getFourPrincipalAttacks()) {
 
 					if (ef.getValue().get("Le rebientan").contains(finalAttack.getStrTypeToPkType())
 							&& !iaLotDamageAttacks.contains(finalAttack)
-							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
-
+							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType()))
 						iaLotDamageAttacks.add(finalAttack);
 
-					} else if (ef.getValue().get("Le Rebientan poco").contains(finalAttack.getStrTypeToPkType())
+					else if (ef.getValue().get("Le Rebientan poco").contains(finalAttack.getStrTypeToPkType())
 							&& !iaLowAttacks.contains(finalAttack)
-							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
-
+							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType()))
 						iaLowAttacks.add(finalAttack);
 
-					} else if (hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
-
+					else if (hasNoEffect.contains(finalAttack.getStrTypeToPkType()))
 						iaHasNoEffectAttacks.add(finalAttack);
 
-					} else if (!iaNormalDamageAttacks.contains(finalAttack)
-							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType())) {
-
+					else if (!iaNormalDamageAttacks.contains(finalAttack)
+							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType()))
 						iaNormalDamageAttacks.add(finalAttack);
-					}
 				}
 			}
 		}
@@ -584,11 +566,11 @@ public class Player {
 
 		PokemonType attackType = atk.getStrTypeToPkType();
 
-		// 1️⃣ Efectividad real
+		// 1 - Real effectiveness
 		float effectiveness = getEffectiveness(attackType, defender);
 		atk.setEffectivenessAgainstPkFacing(effectiveness);
 
-		// 2️⃣ STAB
+		// 2 - Stab
 		float bonus = attacker.getTypes().contains(attackType) ? 1.5f : 1f;
 		atk.setBonus(bonus);
 	}
