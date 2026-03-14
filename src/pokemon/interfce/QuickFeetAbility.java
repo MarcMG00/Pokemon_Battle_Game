@@ -1,6 +1,5 @@
 package pokemon.interfce;
 
-import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 import pokemon.model.Attack;
 import pokemon.model.Game;
@@ -15,9 +14,7 @@ public class QuickFeetAbility implements AbilityEffect {
 
 		// If defender got a status condition and not already activated => increase by
 		// 50% the speed
-		if (!defender.getIsUsingAbility()
-				&& (defender.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS
-						|| !defender.getEphemeralStates().isEmpty())) {
+		if (!defender.getIsUsingAbility() && (defender.hasStatusCondition() || defender.hasEphemeralStatus())) {
 			defender.setSpeed(defender.getSpeed() * 1.5f);
 			defender.setIsUsingAbility(true);
 			System.out.println(defender.getName()
@@ -28,8 +25,7 @@ public class QuickFeetAbility implements AbilityEffect {
 	@Override
 	public void endOfTurn(Game game, Pokemon owner) {
 		// If Pokemon has no more any kind of statuses => set again initial speed
-		if (owner.getIsUsingAbility() && (owner.getStatusCondition().getStatusCondition() == StatusConditions.NO_STATUS
-				&& owner.getEphemeralStates().isEmpty())) {
+		if (owner.getIsUsingAbility() && (owner.hasStatusCondition() || owner.hasEphemeralStatus())) {
 			owner.setSpeed(owner.getInitialSpeed());
 			owner.setIsUsingAbility(false);
 			System.out.println(owner.getName()

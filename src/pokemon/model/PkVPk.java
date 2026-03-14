@@ -1,6 +1,7 @@
 package pokemon.model;
 
 import pokemon.enums.AttackCategory;
+import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
@@ -178,175 +179,159 @@ public class PkVPk {
 	// -----------------------------
 	// Gets the probability of attacking
 	// -----------------------------
-	public void getProbabilityOfAttacking(Weather weather) {
-
-		boolean isAttackerCharging = this.getPkCombatting().getIsChargingAttackForNextRound();
-		boolean isDefenderCharging = this.getPkFacing().getIsChargingAttackForNextRound();
-
-		Attack atkAttacker = this.getPkCombatting().getNextMovement();
-		Attack atkDefender = this.getPkFacing().getNextMovement();
+	public void resolveAttack() {
+		Pokemon attacker = this.getPkCombatting();
+		Pokemon defender = this.getPkFacing();
+		Attack atkAttacker = attacker.getNextMovement();
+		Attack atkDefender = defender.getNextMovement();
+		boolean isAttackerCharging = attacker.getIsChargingAttackForNextRound();
+		boolean isDefenderCharging = defender.getIsChargingAttackForNextRound();
 
 		boolean canHitInvulnerable = atkDefender == null
 				|| atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
 
-		float accuracyFactor = 0f;
-
-		checkWeatherEffectsForAttacks(weather, atkAttacker);
-		this.getPkCombatting().checkStatsForAttacks(atkAttacker);
-
-		// -----------------------------
-		// Check if an attack is not disabled (attacks disabled cannot be used, even for
-		// charged attacks, they are instantly disabled)
-		// -----------------------------
-		if (isAttackDisabled(this.getPkCombatting(), this.getPkCombatting().getNextMovement())) {
-			System.out.println(this.getPkCombatting().getName() + " intentó usar "
-					+ this.getPkCombatting().getNextMovement().getName() + ", pero está anulado!");
-
-			this.getPkCombatting().setCanAttack(false);
+		// 1 - Check if an attack is not disabled (attacks disabled cannot be used, even
+		// for charged attacks, they are instantly disabled)
+		if (!canUseAttack(attacker, atkAttacker)) {
 			return;
 		}
 
-		// -----------------------------
-		// WHIRLWIND (REMOLINO) / ROAR (RUGIDO) / MIST (NEBLINA)
-		// -----------------------------
-		if (atkAttacker.getId() == 18 || atkAttacker.getId() == 46 || atkAttacker.getId() == 54) {
-
-			// If Pokemon facing is invulnerable, cannot do the attack
-			if (isDefenderCharging && !canHitInvulnerable) {
-				this.getPkCombatting().setCanAttack(false);
-				System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ", pero "
-						+ this.getPkFacing().getName() + " evitó el ataque (invulnerable).");
-			} else {
-				// Asserts all the time
-				this.getPkCombatting().setCanAttack(true);
-			}
-
+		// 2 - Special cases that ignore precision
+		if (handleForcedChangeOrIgnorePrecision(attacker, defender, atkAttacker, canHitInvulnerable,
+				isDefenderCharging)) {
 			return;
 		}
 
-		// For almost all the attacks from "otros", it has 100% of accuracy
-		if (atkAttacker.getId() == 14 || atkAttacker.getId() == 74) {
-			this.getPkCombatting().setCanAttack(true);
+		// 3 - Charged attack (first turn)
+		if (handleChargeStart(attacker, atkAttacker, isAttackerCharging)) {
 			return;
 		}
-
-		// Some attacks with adequate weather hit all the time (Thunder, etc.)
-		if (weather == Weather.RAIN && atkAttacker.getId() == 87) {
-			this.getPkCombatting().setCanAttack(true);
-			return;
-		}
-
-		// -----------------------------
-		// "Struggle" attack has 100% of precision (used when no more PPs remaining on
-		// other attacks, etc.)
-		// -----------------------------
-		if (atkAttacker.getId() == 165) {
-			this.getPkCombatting().setCanAttack(true);
-			return;
-		}
-
-		// -----------------------------
-		// GUILLOTINE (GUILLOTINA) / HORN DRILL (PERFORADOR)
-		// -----------------------------
-		if (atkAttacker.getId() == 12 || atkAttacker.getId() == 32) {
-			accuracyFactor = (atkAttacker.getPrecision() / atkAttacker.getPrecision()); // don't take into account
-																						// Pokemon levels (cause all
-			// are on the same lvl)
-		}
-		// -----------------------------
-		// RETREAT POKEMON (STOMP/ ROLLING KICK/ HEADBUTT/ BITE)
-		// -----------------------------
-		else if ((atkAttacker.getId() == 23 || atkAttacker.getId() == 27 || atkAttacker.getId() == 29
-				|| atkAttacker.getId() == 44) && this.getPkFacing().getHasUsedMinimize()) {
-			accuracyFactor = (atkAttacker.getPrecision() / 100f)
-					* (getEvasionOrAccuracy(this.getPkCombatting(), 1) / 1f);
-		}
-		// Other attacks
-		else {
-			accuracyFactor = (atkAttacker.getPrecision() / 100f)
-					* (getEvasionOrAccuracy(this.getPkCombatting(), 1) / getEvasionOrAccuracy(this.getPkFacing(), 2));
-		}
-
-		// ----------------------------------
-		// APPLY ABILITY MODIFIERS (ACCURACY) (ex : 14_Compound_Eyes)
-		accuracyFactor = applyAccuracyAbilities(accuracyFactor);
 
 		// Reset CanAttack if doesn't enter in any case
-		this.getPkCombatting().setCanAttack(false);
+		attacker.denyAttack();
 
-		// -----------------------------
-		// BLOC 1 : NORMAL ATTACK
-		// -----------------------------
-		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
-			System.out.println(ANSI_PURPLE + "Probability - Normal attack (defender not charging)" + ANSI_RESET);
+		float accuracyFactor = calculateAccuracyFactor(attacker, defender, atkAttacker);
 
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
-					"(bloc 1)");
-			return;
+		resolveAccuracyByContext(attacker, defender, atkAttacker, accuracyFactor, canHitInvulnerable,
+				isAttackerCharging, isDefenderCharging);
+	}
+
+	// -----------------------------
+	// Check if attack is not disabled
+	// -----------------------------
+	private boolean canUseAttack(Pokemon attacker, Attack atkAttacker) {
+		if (isAttackDisabled()) {
+			System.out.println(attacker.getName() + " intentó usar " + attacker.getNextMovement().getName()
+					+ ", pero está anulado!");
+			attacker.denyAttack();
+			return false;
+		}
+		return true;
+	}
+
+	// -----------------------------
+	// Check for attacks that force changes or has 100% of precision
+	// -----------------------------
+	private boolean handleForcedChangeOrIgnorePrecision(Pokemon attacker, Pokemon defender, Attack atkAttacker,
+			boolean canHitInvulnerable, boolean isDefenderCharging) {
+		// 18_Whirlwind / 46_Roar / 54_Mist
+		if (atkAttacker.isForceChange() || atkAttacker.getId() == 54) {
+			if (isDefenderCharging && !canHitInvulnerable) {
+				attacker.denyAttack();
+				System.out.println(attacker.getName() + " usó " + atkAttacker.getName() + ", pero " + defender.getName()
+						+ " evitó el ataque (invulnerable).");
+			} else
+				attacker.allowAttack();
+			return true;
 		}
 
-		// -----------------------------
-		// BLOC 2 : NORMAL ATTACK - CAN HIT INVULNERABLE POKEMON
-		// -----------------------------
-		if (canHitInvulnerable && isDefenderCharging) {
-			System.out
-					.println(ANSI_PURPLE + "Probability - Normal attack can hit while defender charging" + ANSI_RESET);
-
-			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
-					"(bloc 2)");
-			return;
+		if (atkAttacker.alwaysHits()) {
+			attacker.allowAttack();
+			return true;
 		}
 
-		// -----------------------------
-		// BLOC 3 : FIRST TURN FOR (FROM CHARGING ATTACK)
-		// -----------------------------
+		if (atkAttacker.alwaysHeatsUnderWeather(weather)) {
+			attacker.allowAttack();
+			return true;
+		}
+		return false;
+	}
+
+	// -----------------------------
+	// Check for charged attack
+	// -----------------------------
+	private boolean handleChargeStart(Pokemon attacker, Attack atkAttacker, boolean isAttackerCharging) {
 		if (atkAttacker.getCategory() == AttackCategory.CHARGED && !isAttackerCharging) {
 			System.out.println(ANSI_PURPLE + "Probability - Starting a charged attack" + ANSI_RESET);
 
-			pkCombatting.setCanAttack(true);
-			System.out.println(ANSI_PURPLE + this.getPkCombatting().getName() + " utilizará " + atkAttacker.getName()
+			attacker.allowAttack();
+			System.out.println(ANSI_PURPLE + attacker.getName() + " utilizará " + atkAttacker.getName()
 					+ " - comienza a cargar el ataque. (bloc 3)" + ANSI_RESET);
+			return true;
+		}
+		return false;
+	}
+
+	// -----------------------------
+	// Calculates accuracy (check if doesn't fails)
+	// -----------------------------
+	private float calculateAccuracyFactor(Pokemon attacker, Pokemon defender, Attack atkAttacker) {
+		float accuracyFactor = 0f;
+
+		// Methods to modify precision of attack, evasion, etc.
+		checkWeatherEffectsForAttacks(this.getWeather(), atkAttacker);
+		attacker.checkStatsForAttacks(atkAttacker);
+
+		if (atkAttacker.isOneHitKO())
+			// don't take into account Pokemon levels (cause all are on the same lvl)
+			accuracyFactor = 1f;
+		// Retreat Pokemon (23_Stomp/ 27_Rolling kick/ 29_Headbutt/ 44_Bite) + defender
+		// is minimized
+		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.getHasUsedMinimize())
+			accuracyFactor = (atkAttacker.getPrecision() / 100f) * (getEvasionOrAccuracy(attacker, 1) / 1f);
+		// Other attacks
+		else
+			accuracyFactor = (atkAttacker.getPrecision() / 100f)
+					* (getEvasionOrAccuracy(attacker, 1) / getEvasionOrAccuracy(defender, 2));
+
+		return accuracyFactor;
+	}
+
+	// -----------------------------
+	// Apply accuracy depending on different cases
+	// -----------------------------
+	private void resolveAccuracyByContext(Pokemon attacker, Pokemon defender, Attack atkAttacker, float accuracyFactor,
+			boolean canHitInvulnerable, boolean isAttackerCharging, boolean isDefenderCharging) {
+		attacker.denyAttack();
+
+		// BLOC 1 : NORMAL ATTACK
+		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, attacker, defender, "(bloc 1)");
 			return;
 		}
 
-		// -----------------------------
-		// BLOC 4 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER NOT CHARGING
-		// -----------------------------
+		// BLOC 2 : NORMAL ATTACK - CAN HIT INVULNERABLE POKEMON
+		if (canHitInvulnerable && isDefenderCharging) {
+			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, attacker, defender, "(bloc 2)");
+			return;
+		}
+
+		// BLOC 3 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER NOT CHARGING
 		if (isAttackerCharging && !isDefenderCharging) {
-			System.out.println(
-					ANSI_PURPLE + "Probability - Charged attack execution (defender not charging)" + ANSI_RESET);
-
-			handleChargedAttackExecution(accuracyFactor, atkAttacker, this.getPkCombatting(), this.getPkFacing(),
-					"(bloc 4)");
+			handleChargedAttackExecution(accuracyFactor, atkAttacker, attacker, defender, "(bloc 3)");
 			return;
 		}
 
-		// -----------------------------
-		// BLO 5 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER IS CHARGING
-		// -----------------------------
+		// BLOC 4 : SECOND TURN (FROM CHARGING ATTACK) - DEFENDER IS CHARGING
 		if (isAttackerCharging && isDefenderCharging) {
-			System.out.println(ANSI_PURPLE + "Probability - Charged vs Charged (attack avoided)" + ANSI_RESET);
-
-			pkCombatting.setCanAttack(false);
-			pkCombatting.setIsChargingAttackForNextRound(false);
-
-			System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
-					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (bloc 5)");
+			attacker.setIsChargingAttackForNextRound(false);
 			return;
 		}
 
-		// -----------------------------
-		// BLOC 6 : OTHER ATTACK AGAINST INVULNERABLE (CANNOT DO DAMMAGE)
-		// -----------------------------
+		// BLOC 5 : OTHER ATTACK AGAINST INVULNERABLE (CANNOT DO DAMMAGE)
 		if (!canHitInvulnerable && isDefenderCharging) {
-
-			System.out.println(ANSI_PURPLE + "Probability - Normal attack fails vs invulnerable defender" + ANSI_RESET);
-
-			pkCombatting.setCanAttack(false);
-			pkCombatting.setIsChargingAttackForNextRound(false);
-
-			System.out.println(this.getPkCombatting().getName() + " usó " + atkAttacker.getName() + ". "
-					+ this.getPkFacing().getName() + " evitó el ataque jijijija. (bloc 6)");
+			attacker.setIsChargingAttackForNextRound(false);
+			return;
 		}
 	}
 
@@ -357,18 +342,18 @@ public class PkVPk {
 			String code) {
 
 		if (accuracyFactor >= 1f) {
-			attacker.setCanAttack(true);
+			attacker.allowAttack();
 			return;
 		}
 
 		int rand = (int) (Math.random() * 100);
 
-		if (rand / 100f <= accuracyFactor) {
-			attacker.setCanAttack(true);
-		} else {
+		if (rand / 100f <= accuracyFactor)
+			attacker.allowAttack();
+		else {
 			System.out.println("accuracy : " + rand / 100f + "(random) => " + accuracyFactor + " (true accuracy)");
 			atk.setPp(atk.getPp() - 1);
-			attacker.setCanAttack(false);
+			attacker.denyAttack();
 
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName()
 					+ " evitó el ataque jijijija. " + code);
@@ -393,17 +378,17 @@ public class PkVPk {
 			String code) {
 
 		if (accuracyFactor >= 1f) {
-			attacker.setCanAttack(true);
+			attacker.allowAttack();
 			return;
 		}
 
 		int rand = (int) (Math.random() * 100);
 
-		if (rand / 100f <= accuracyFactor) {
-			attacker.setCanAttack(true);
-		} else {
+		if (rand / 100f <= accuracyFactor)
+			attacker.allowAttack();
+		else {
 			atk.setPp(atk.getPp() - 1);
-			attacker.setCanAttack(false);
+			attacker.denyAttack();
 			attacker.setIsChargingAttackForNextRound(false);
 
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName() + " (Id:"
@@ -415,7 +400,6 @@ public class PkVPk {
 	// Gets the attack effect and apply damage
 	// -----------------------------
 	public void doAttackEffect(Weather weather, boolean isMistEffectActivated) {
-
 		Pokemon attacker = this.getPkCombatting();
 		Pokemon defender = this.getPkFacing();
 
@@ -601,7 +585,7 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			if (abilityDefender.getId() == 5 && !abilityDefender.getAlreadyUsedOnEnter()
-					&& (attackAttacker.getIsOneHitKO())) {
+					&& (attackAttacker.isOneHitKO())) {
 				defender.setPs(1f);
 				abilityDefender.setAlreadyUsedOnEnter(true);
 				System.out.println(defender.getName() + " (Id:" + defender.getId()
@@ -752,16 +736,12 @@ public class PkVPk {
 
 			// Check if the Pokemon facing doesn't have the status Trapped (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
-
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
 				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
-
 				System.out.println(this.getPkFacing().getName() + " quedó atrapado");
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(trapped);
+				defender.addEphemeralStatus(StatusConditions.TRAPPED, trapped);
 			}
 
 			defender.setPs(defender.getPs() - dmg);
@@ -945,7 +925,7 @@ public class PkVPk {
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
 			if (abilityDefender.getId() == 5 && !abilityDefender.getAlreadyUsedOnEnter()
-					&& (attackAttacker.getIsOneHitKO())) {
+					&& (attackAttacker.isOneHitKO())) {
 				defender.setPs(1f);
 				abilityDefender.setAlreadyUsedOnEnter(true);
 				System.out.println(defender.getName() + " (Id:" + defender.getId()
@@ -987,16 +967,13 @@ public class PkVPk {
 
 			// Check if the Pokemon facing doesn't have the status Trapped (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
 
 				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
-
 				System.out.println(defender.getName() + " quedó atrapado");
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(trapped);
+				defender.addEphemeralStatus(StatusConditions.TRAPPED, trapped);
 			}
 
 			defender.setPs(defender.getPs() - dmg);
@@ -1036,17 +1013,15 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			if (!attacker.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK)) {
+			if (!attacker.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
 
 				nbTurnsHoldingStatus = getRandomInt(2, 5, StatusConditions.TRAPPEDBYOWNATTACK);
-
 				System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 						+ " usará el mismo ataque durante " + nbTurnsHoldingStatus + " turnos.");
 
 				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
-
-				attacker.addEphemeralState(trappedByOwnAttack);
+				defender.addEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK, trappedByOwnAttack);
+				;
 
 				// Only removes PP when choosing the attack
 				attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1264,23 +1239,19 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker))
 				break;
-			}
 
 			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
-
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.ASLEEP);
 
 				System.out.println(
 						defender.getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
 
 				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(asleep);
+				defender.addEphemeralStatus(StatusConditions.ASLEEP, asleep);
 			} else {
 				System.out.println(defender.getName() + " ya está dormido!");
 			}
@@ -1292,26 +1263,22 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED, attackAttacker)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.CONFUSED, attackAttacker))
 				break;
-			}
 
 			// Check if the Pokemon facing doesn't have the status Confused (is a status
 			// that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.CONFUSED))) {
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.CONFUSED)) {
 
 				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.CONFUSED);
 
 				System.out.println(defender.getName() + " está confuso por " + nbTurnsHoldingStatus + " turnos");
 
 				State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(confused);
-			} else {
+				defender.addEphemeralStatus(StatusConditions.CONFUSED, confused);
+			} else
 				System.out.println(defender.getName() + " ya está confuso!");
-			}
 			break;
 
 		// Bomba sónica/Sonic boom (tested)
@@ -1340,20 +1307,14 @@ public class PkVPk {
 				break;
 			}
 
-			// Gets if existing a disable state (cause needs to be replaced)
-			State previousDisableState = defender.getEphemeralStates().stream()
-					.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
-
-			if (previousDisableState != null) {
-				defender.getEphemeralStates().remove(previousDisableState);
-			}
+			if (defender.hasActiveStatusCondition(StatusConditions.DISABLE))
+				defender.setStatusCondition(new State());
 
 			nbTurnsHoldingStatus = getRandomInt(4, 7, null);
 
 			State attackDisabled = new State(StatusConditions.DISABLE, nbTurnsHoldingStatus + 1);
 			attackDisabled.setAttackDisabled(lastAttack);
-
-			defender.addEphemeralState(attackDisabled);
+			defender.setStatusCondition(attackDisabled);
 
 			System.out.println(defender.getName() + " no podrá usar " + lastAttack.getName() + " por "
 					+ nbTurnsHoldingStatus + " turnos");
@@ -1701,20 +1662,15 @@ public class PkVPk {
 
 				attacker.setIsDraining(true);
 
-				if (!(defender.getEphemeralStates().stream()
-						.anyMatch(e -> e.getStatusCondition() == StatusConditions.DRAINEDALLTURNS))) {
-
+				if (!defender.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
 					System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " fue drenado");
 
 					State drainedAllTurns = new State(StatusConditions.DRAINEDALLTURNS, 0);
-
-					this.getPkFacing().addEphemeralState(drainedAllTurns);
-				} else {
+					this.getPkFacing().addEphemeralStatus(StatusConditions.DRAINEDALLTURNS, drainedAllTurns);
+				} else
 					System.out.println(defender.getName() + " ya está drenado");
-				}
-			} else {
+			} else
 				System.out.println(defender.getName() + " no puede estar drenado ya que es de tipo planta");
-			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
@@ -1854,26 +1810,21 @@ public class PkVPk {
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
 
-			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker)) {
+			if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, attackAttacker))
 				break;
-			}
 
 			// Check if the Pokemon facing doesn't have the status Asleep (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
-
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 				nbTurnsHoldingStatus = getRandomInt(1, 7, StatusConditions.ASLEEP);
 
 				System.out.println(
 						defender.getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
 
 				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(asleep);
-			} else {
+				defender.addEphemeralStatus(StatusConditions.ASLEEP, asleep);
+			} else
 				System.out.println(defender.getName() + " ya está dormido!");
-			}
 			break;
 
 		// Danza pétalo/Petal dance (tested)
@@ -1882,17 +1833,14 @@ public class PkVPk {
 
 			dmg = doDammage();
 
-			if (!(attacker.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPEDBYOWNATTACK))) {
-
+			if (!attacker.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
 				nbTurnsHoldingStatus = getRandomInt(2, 5, StatusConditions.TRAPPEDBYOWNATTACK);
 
 				System.out.println(
 						attacker.getName() + " usará el mismo ataque durante " + nbTurnsHoldingStatus + " turnos.");
 
 				State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, nbTurnsHoldingStatus + 1);
-
-				attacker.addEphemeralState(trappedByOwnAttack);
+				defender.addEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK, trappedByOwnAttack);
 			}
 
 			attackAttacker.setPp(attackAttacker.getPp() - 1);
@@ -1945,16 +1893,13 @@ public class PkVPk {
 
 			// Check if the Pokemon facing doesn't have the status Trapped (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(defender.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.TRAPPED))) {
-
+			if (!defender.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
 				nbTurnsHoldingStatus = getRandomInt(4, 5, StatusConditions.TRAPPED);
 
 				System.out.println(defender.getName() + " quedó atrapado");
 
 				State trapped = new State(StatusConditions.TRAPPED, nbTurnsHoldingStatus + 1);
-
-				defender.addEphemeralState(trapped);
+				defender.addEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK, trapped);
 			}
 
 			defender.setPs(defender.getPs() - dmg);
@@ -2026,15 +1971,13 @@ public class PkVPk {
 
 		if (dmg != 0f || dmgToSum != 0f) {
 			// Set damage from physical attack => used for attacks like "Counter", etc.
-			if (dmg != 0 && attacker.getPhysicalAttacks() != null
+			if (dmg != 0f && attacker.getPhysicalAttacks() != null
 					&& attacker.getPhysicalAttacks().stream().anyMatch(a -> a.getId() == attackAttacker.getId()))
-
-			{
 				defender.setDamageReceived(dmg);
-			} else if (attacker.getPhysicalAttacks() != null
-					&& attacker.getPhysicalAttacks().stream().anyMatch(a -> a.getId() == attackAttacker.getId())) {
+			else if (attacker.getPhysicalAttacks() != null
+					&& attacker.getPhysicalAttacks().stream().anyMatch(a -> a.getId() == attackAttacker.getId()))
 				defender.setDamageReceived(dmgToSum);
-			}
+
 			defender.setHasReceivedDamage(true);
 
 			// Apply secondary effects (status conditions, ephemeral status, flinch, reduce
@@ -2049,14 +1992,12 @@ public class PkVPk {
 		// Apply abilities after attacking
 		applyAbilityAfterDamage(attacker, defender, attackAttacker, dmg, weather, isWeatherSuppressed);
 
-		if (defender.getPs() <= 0) {
+		if (defender.getPs() <= 0)
 			defender.setStatusCondition(new State(StatusConditions.DEBILITATED));
-		}
 
 		// Get status debilitated for Pokemon combating
-		if (attacker.getPs() <= 0) {
+		if (attacker.getPs() <= 0)
 			attacker.setStatusCondition(new State(StatusConditions.DEBILITATED));
-		}
 
 		this.setIsACriticAttack(false);
 	}
@@ -2065,224 +2006,186 @@ public class PkVPk {
 	// Apply damage
 	// -----------------------------
 	public float doDammage() {
+		Pokemon attacker = this.getPkCombatting();
+		Pokemon defender = this.getPkFacing();
+		Attack attack = attacker.getNextMovement();
 
-		// There is a random variation when attacking (the total damage is not the same
-		// every time)
-		int randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
+		float modifiedPower = calculateModifiedPower(attacker, defender, attack);
 
-		// Weather can affect on effectiveness of the attack
-		float weatherModifier = getWeatherModifier(this.getPkCombatting().getNextMovement());
+		float baseDamage = calculateBaseDamage(attacker, defender, attack, modifiedPower);
+		float damageAfterCrit = applyCriticalIfNeeded(attacker, attack, baseDamage);
+		float finalDamage = applyDefensiveAbilities(defender, attacker, attack, damageAfterCrit);
 
-		boolean isSpecialAttack = this.getPkCombatting().getNextMovement().getBases().contains("especial");
+		System.out.println("Damage to " + defender.getName() + " : " + finalDamage);
 
-		// Attack from attacker
-		Attack attack = this.getPkCombatting().getNextMovement();
-
-		float dmg = 0;
-
-		// If ability is 37_Huge_Power/ 74_Pure_Power and it's a physical attack => set
-		// Power *2
-		if ((this.getPkCombatting().getAbilitySelected().getId() == 37
-				|| this.getPkCombatting().getAbilitySelected().getId() == 74) && attack.getBases().contains("fisico")) {
-			attack.setPower(attack.getPower() * 2f);
-		}
-
-		// If ability is 65_Overgrow and it's a grass attack => set Power *50% more
-		if (this.getPkCombatting().getAbilitySelected().getId() == 65 && attack.getStrTypeToPkType().getId() == 12
-				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
-			attack.setPower(attack.getPower() * 1.5f);
-			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
-					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Espesura");
-		}
-
-		// If ability is 66_Blaze and it's a fire attack => set Power *50% more
-		if (this.getPkCombatting().getAbilitySelected().getId() == 66 && attack.getStrTypeToPkType().getId() == 7
-				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
-			attack.setPower(attack.getPower() * 1.5f);
-			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
-					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Mar llamas");
-		}
-
-		// If ability is 67_Torrent and it's a water attack => set Power *50% more
-		if (this.getPkCombatting().getAbilitySelected().getId() == 66 && attack.getStrTypeToPkType().getId() == 2
-				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
-			attack.setPower(attack.getPower() * 1.5f);
-			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
-					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Torrente");
-		}
-
-		// If ability is 68_Swarm and it's a fire attack => set Power *50% more
-		if (this.getPkCombatting().getAbilitySelected().getId() == 68 && attack.getStrTypeToPkType().getId() == 3
-				&& (this.getPkCombatting().getPs() <= this.getPkCombatting().getInitialPs() / 3)) {
-			attack.setPower(attack.getPower() * 1.5f);
-			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
-					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Enjambre");
-		}
-
-		// If ability is 79_Rivalry => set Power *25% more/less
-		if (this.getPkCombatting().getAbilitySelected().getId() == 79) {
-			// Same sex => more
-			if (this.getPkFacing().getSex() == this.getPkCombatting().getSex()) {
-				attack.setPower(attack.getPower() * 1.25f);
-				System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
-						+ this.getPkCombatting().getId() + ")" + "aumentó su ataque gracias a su habilidad Rivalidad");
-			} else {
-				attack.setPower(attack.getPower() * 0.75f);
-				System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
-						+ this.getPkCombatting().getId() + ")"
-						+ "disminuyó su ataque a causa de su habilidad Rivalidad");
-			}
-		}
-
-		// If ability is 89_Iron_Fist and fist attack => set Power *20% more
-		if (this.getPkCombatting().getAbilitySelected().getId() == 89
-				&& (this.getPkCombatting().getNextMovement().getId() == 838
-						|| this.getPkCombatting().getNextMovement().getId() == 818
-						|| this.getPkCombatting().getNextMovement().getId() == 742
-						|| this.getPkCombatting().getNextMovement().getId() == 327
-						|| this.getPkCombatting().getNextMovement().getId() == 817
-						|| this.getPkCombatting().getNextMovement().getId() == 359
-						|| this.getPkCombatting().getNextMovement().getId() == 665
-						|| this.getPkCombatting().getNextMovement().getId() == 5
-						|| this.getPkCombatting().getNextMovement().getId() == 264
-						|| this.getPkCombatting().getNextMovement().getId() == 418
-						|| this.getPkCombatting().getNextMovement().getId() == 4
-						|| this.getPkCombatting().getNextMovement().getId() == 223
-						|| this.getPkCombatting().getNextMovement().getId() == 409
-						|| this.getPkCombatting().getNextMovement().getId() == 7
-						|| this.getPkCombatting().getNextMovement().getId() == 889
-						|| this.getPkCombatting().getNextMovement().getId() == 8
-						|| this.getPkCombatting().getNextMovement().getId() == 612
-						|| this.getPkCombatting().getNextMovement().getId() == 857
-						|| this.getPkCombatting().getNextMovement().getId() == 146
-						|| this.getPkCombatting().getNextMovement().getId() == 309
-						|| this.getPkCombatting().getNextMovement().getId() == 325
-						|| this.getPkCombatting().getNextMovement().getId() == 9
-						|| this.getPkCombatting().getNextMovement().getId() == 721
-						|| this.getPkCombatting().getNextMovement().getId() == 183)) {
-			attack.setPower(attack.getPower() * 1.2f);
-			System.out.println(this.getPkCombatting().getName() + this.getPkCombatting().getName() + " (Id:"
-					+ this.getPkCombatting().getId() + ")" + "aumentó su ataque dada su habilidad Puño férreo");
-		}
-
-		// If ability is 91_Adaptable and attack same type as pokemon typew => set Power
-		// *1,75
-		if (this.getPkCombatting().getAbilitySelected().getId() == 91 && this.getPkCombatting().getTypes()
-				.contains(this.getPkCombatting().getNextMovement().getStrTypeToPkType())) {
-			attack.setPower(attack.getPower() * 1.75f);
-			System.out.println(this.getPkCombatting().getName() + " (Id:" + this.getPkCombatting().getId() + ")"
-					+ " aumentó su ataque dada su habilidad Adaptable");
-		}
-
-		if (isSpecialAttack) {
-			// Apply special damage
-			dmg = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier
-					* randomVariation
-					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveSpecialAttack() * attack.getPower())
-							/ (25f * this.getPkFacing().getEffectiveSpecialDefense()) + 2f);
-
-			// Apply normal damage
-		} else {
-
-			dmg = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier
-					* randomVariation
-					* (((0.2f * 100f + 1f) * this.getPkCombatting().getEffectiveAttack() * attack.getPower())
-							/ (25f * this.getPkFacing().getEffectiveDefense()) + 2f);
-		}
-
-		// 18_Flash_Fire boost
-		if (this.getPkCombatting().getIsFireBoostActive() && attack.getStrTypeToPkType().getId() == 7) {
-			dmg *= 1.5f;
-		}
-
-		System.out.println("Damage to Pokemon facing (" + this.getPkFacing().getName() + " (Id:"
-				+ this.getPkFacing().getId() + ")" + ") : " + dmg);
-
-		// If it's critic, damage x2
-		if (attack.getId() == 13) {
-			boolean isHighCritic30 = getHighCriticity30();
-
-			// 30/100 of probabilities to have a critic attack
-			if (isHighCritic30) {
-
-				// 97_Sniper ability does *3 damage
-				if (this.getPkCombatting().getAbilitySelected().getId() == 97) {
-					dmg = dmg * 3;
-				} else {
-					dmg = dmg * 2;
-				}
-				System.out.println("Fue un golpe crítico - 30");
-				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
-			}
-		} else if (attack.getId() == 2 || attack.getId() == 75) {
-			boolean isHighCritic40 = getHighCriticity40();
-
-			// 40/100 of probabilities to have a critic attack
-			if (isHighCritic40) {
-
-				// 97_Sniper ability does *3 damage
-				if (this.getPkCombatting().getAbilitySelected().getId() == 97) {
-					dmg = dmg * 3;
-				} else {
-					dmg = dmg * 2;
-				}
-				System.out.println("Fue un golpe crítico - 40");
-				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
-			}
-		} else {
-			boolean isCritic = getCriticity();
-
-			if (isCritic) {
-
-				// 97_Sniper ability does *3 damage
-				if (this.getPkCombatting().getAbilitySelected().getId() == 97) {
-					dmg = dmg * 3;
-				} else {
-					dmg = dmg * 2;
-				}
-				System.out.println("Fue un golpe crítico");
-				System.out.println("Damage to Pokemon facing with critic (" + this.getPkFacing().getName() + " (Id:"
-						+ this.getPkFacing().getId() + ")" + ") : " + dmg);
-			}
-		}
-
-		// Cannot be defeated by one hit KO or by one attack if PS are on max (5_Sturdy
-		// ability)
-		if (this.getPkFacing().getAbilitySelected().getId() == 5
-				&& !this.getPkFacing().getAbilitySelected().getAlreadyUsedOnEnter()
-				&& (this.getPkFacing().getInitialPs() == this.getPkFacing().getPs()
-						&& dmg >= this.getPkFacing().getPs())) {
-			dmg = this.getPkFacing().getInitialPs() - 1f;
-			this.getPkFacing().getAbilitySelected().setAlreadyUsedOnEnter(true);
-			System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId()
-					+ "), se quedó a un PS gracias a la habilidad Robustez - check en doDammage()");
-		}
-
-		// Ability 47_Thick_Fat or 85_Heatproof reduces damage by 2 (only if attack type
-		// it's fire or ice type)
-		if ((this.getPkFacing().getAbilitySelected().getId() == 47
-				|| this.getPkFacing().getAbilitySelected().getId() == 85)
-				&& (attack.getStrTypeToPkType().getId() == 7 || attack.getStrTypeToPkType().getId() == 9)) {
-			dmg = dmg / 2;
-			System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId()
-					+ "), recibió la mitad de daño dada su habilidad "
-					+ this.getPkFacing().getAbilitySelected().getName());
-		}
-
-		// 87_Dry_Skin with a fire attack, do 25% more damage
-		if (this.getPkFacing().getAbilitySelected().getId() == 87 && attack.getStrTypeToPkType().getId() == 7) {
-			dmg *= 1.25f;
-			System.out.println(this.getPkFacing().getName() + " (Id:" + this.getPkFacing().getId()
-					+ "), recibirá más daño dada su habilidad " + this.getPkFacing().getAbilitySelected().getName());
-		}
-
-		return dmg;
+		return finalDamage;
 	}
 
 	// -----------------------------
-	// Gets if an attack is critic (x2 of damage)
+	// Modify power depending on abilities from attacker
+	// -----------------------------
+	private float calculateModifiedPower(Pokemon attacker, Pokemon defender, Attack attack) {
+		float power = attack.getPower();
+		Ability ability = attacker.getAbilitySelected();
+
+		power *= applyPhysicalAbilities(ability, attack);
+		power *= applyBoostAbilitiesFromReducedPS(attacker, ability, attack);
+		power *= applyRivalry(attacker, defender, ability);
+		power *= applyIronFist(ability, attack);
+		power *= applyAdaptable(attacker, ability, attack);
+
+		return power;
+	}
+
+	// -----------------------------
+	// Apply physical abilities (physical attacks)
+	// -----------------------------
+	private float applyPhysicalAbilities(Ability ability, Attack attack) {
+		// 37_Huge_Power/ 74_Pure_Power
+		if ((ability.getId() == 37 || ability.getId() == 74) && attack.getBases().contains("fisico"))
+			return 2f;
+
+		return 1f;
+	}
+
+	// -----------------------------
+	// Apply booster abilities (activated when some remaining PS)
+	// -----------------------------
+	private float applyBoostAbilitiesFromReducedPS(Pokemon attacker, Ability ability, Attack attack) {
+		if (attacker.getPs() > attacker.getInitialPs() / 3)
+			return 1f;
+
+		int abilityId = ability.getId();
+		int attackType = attack.getStrTypeToPkType().getId();
+
+		if ((abilityId == 65 && attackType == 12) || // 65_Overgrow (grass)
+				(abilityId == 66 && attackType == 7) || // 66_Blaze (fire)
+				(abilityId == 67 && attackType == 2) || // 67_Torrent (water)
+				(abilityId == 68 && attackType == 3)) { // 68_Swarm (bug)
+
+			System.out.println(attacker.getName() + " potenciado por habilidad " + ability.getName());
+			return 1.5f;
+		}
+
+		return 1f;
+	}
+
+	// -----------------------------
+	// Apply 79_Rivalry ability
+	// -----------------------------
+	private float applyRivalry(Pokemon attacker, Pokemon defender, Ability ability) {
+		if (ability.getId() != 79)
+			return 1f;
+
+		if (attacker.getSex() == defender.getSex())
+			return 1.25f;
+		else
+			return 0.75f;
+	}
+
+	// -----------------------------
+	// Apply 89_Iron_Fist ability
+	// -----------------------------
+	private float applyIronFist(Ability ability, Attack attack) {
+		if (ability.getId() != 89)
+			return 1f;
+
+		if (attack.isPunchMove())
+			return 1.2f;
+
+		return 1f;
+	}
+
+	// -----------------------------
+	// Apply 91_Adaptable ability
+	// -----------------------------
+	private float applyAdaptable(Pokemon attacker, Ability ability, Attack attack) {
+		if (ability.getId() == 91 && attacker.getTypes().contains(attack.getStrTypeToPkType()))
+			return 1.75f;
+
+		return 1f;
+	}
+
+	// -----------------------------
+	// Calculate base damage
+	// -----------------------------
+	private float calculateBaseDamage(Pokemon attacker, Pokemon defender, Attack attack, float power) {
+		boolean isSpecial = attack.getBases().contains("especial");
+		float randomVariation = (float) (85 + Math.random() * 15);
+		float weatherModifier = getWeatherModifier(attack);
+
+		float attackStat = isSpecial ? attacker.getEffectiveSpecialAttack() : attacker.getEffectiveAttack();
+
+		float defenseStat = isSpecial ? defender.getEffectiveSpecialDefense() : defender.getEffectiveDefense();
+
+		float base = (((0.2f * 100f + 1f) * attackStat * power) / (25f * defenseStat) + 2f);
+
+		float damage = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier
+				* randomVariation * base;
+
+		// 18_Flash_Fire boost ability
+		if (attacker.getIsFireBoostActive() && attack.getStrTypeToPkType().getId() == 7)
+			damage *= 1.5f;
+
+		return damage;
+	}
+
+	// -----------------------------
+	// Apply critical damage by probabilities
+	// -----------------------------
+	private float applyCriticalIfNeeded(Pokemon attacker, Attack attack, float damage) {
+		Ability ability = attacker.getAbilitySelected();
+		boolean isCrit;
+
+		if (attack.getId() == 13)
+			isCrit = getHighCriticity30();
+		else if (attack.getId() == 2 || attack.getId() == 75)
+			isCrit = getHighCriticity40();
+		else
+			isCrit = getCriticity();
+
+		if (!isCrit)
+			return damage;
+
+		if (ability.getId() == 97) // 97_Sniper ability does *3 damage
+			return damage * 3f;
+
+		return damage * 2f;
+	}
+
+	// -----------------------------
+	// Apply defensive abilities
+	// -----------------------------
+	private float applyDefensiveAbilities(Pokemon defender, Pokemon attacker, Attack attack, float damage) {
+		Ability defAbility = defender.getAbilitySelected();
+		int abilityId = defAbility.getId();
+		int attackTypeId = attack.getStrTypeToPkType().getId();
+
+		boolean isFire = attackTypeId == 7;
+		boolean isIce = attackTypeId == 9;
+
+		// 5_Sturdy ability cannot be defeated by one hit KO or by one attack if PS are
+		// on max
+		if (abilityId == 5 && !defAbility.getAlreadyUsedOnEnter() && defender.getInitialPs() == defender.getPs()
+				&& damage >= defender.getPs()) {
+			defAbility.setAlreadyUsedOnEnter(true);
+			return defender.getInitialPs() - 1f;
+		}
+
+		// 47_Thick_Fat ability/ 85_Heatproof reduces damage by 2 (only if attack type
+		// it's fire or ice type)
+		if ((abilityId == 47 && (isFire || isIce)) || (abilityId == 85 && isFire))
+			return damage / 2f;
+
+		// 87_Dry_Skin ability with a fire attack, do 25% more damage
+		if (abilityId == 87 && attack.getStrTypeToPkType().getId() == 7)
+			return damage * 1.25f;
+
+		return damage;
+	}
+
+	// -----------------------------
+	// Gets if an attack is critic (x2 of damage) => 10% of probabilities
 	// -----------------------------
 	public boolean getCriticity() {
 		int randomCritic = (int) (Math.random() * 100);
@@ -2290,14 +2193,14 @@ public class PkVPk {
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10) {
 			this.setIsACriticAttack(true);
-			return this.canReceiveCriticity();
+			return this.canReceiveCriticalAttacks();
 		}
 
 		return false;
 	}
 
 	// -----------------------------
-	// Gets if an attack is critic (x2 of damage)
+	// Gets if an attack is critic (x2 of damage) => 30% of probabilities
 	// -----------------------------
 	public boolean getHighCriticity30() {
 		int randomCritic = (int) (Math.random() * 100);
@@ -2305,14 +2208,14 @@ public class PkVPk {
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 30) {
 			this.setIsACriticAttack(true);
-			return this.canReceiveCriticity();
+			return this.canReceiveCriticalAttacks();
 		}
 
 		return false;
 	}
 
 	// -----------------------------
-	// Gets if an attack is critic (x2 of damage)
+	// Gets if an attack is critic (x2 of damage) => 40% of probabilities
 	// -----------------------------
 	public boolean getHighCriticity40() {
 		int randomCritic = (int) (Math.random() * 100);
@@ -2320,15 +2223,18 @@ public class PkVPk {
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 40) {
 			this.setIsACriticAttack(true);
-			return this.canReceiveCriticity();
+			return this.canReceiveCriticalAttacks();
 		}
 
 		return false;
 	}
 
-	public boolean canReceiveCriticity() {
-		// Cannot recieve critic damage because of ability 4_Battle_Armor /
-		// 75_Shell_Armor
+	// -----------------------------
+	// Check if defender can receive critical attacks
+	// -----------------------------
+	public boolean canReceiveCriticalAttacks() {
+		// 4_Battle_Armor / 75_Shell_Armor cannot recieve critic damage because of
+		// ability
 		if (this.getPkFacing().getAbilitySelected().getId() == 4
 				|| this.getPkFacing().getAbilitySelected().getId() == 75) {
 			System.out.println(this.getPkFacing().getName() + " no puede recibir ataques críticos dada su habilidad "
@@ -2357,15 +2263,13 @@ public class PkVPk {
 	// -----------------------------
 	// Gets if last attack from Pokemon combating used is disabled
 	// -----------------------------
-	public boolean isAttackDisabled(Pokemon pk, Attack selectedAttack) {
+	public boolean isAttackDisabled() {
+		Pokemon attacker = this.getPkCombatting();
+		if (this.getPkCombatting().hasActiveStatusCondition(StatusConditions.DISABLE)) {
+			State disableStatus = attacker.getStatusCondition();
 
-		State disableState = pk.getEphemeralStates().stream()
-				.filter(e -> e.getStatusCondition() == StatusConditions.DISABLE).findFirst().orElse(null);
-
-		if (disableState != null) {
-			if (disableState.getAttackDisabled() == pk.getNextMovement()) {
+			if (disableStatus.getAttackDisabled() == attacker.getNextMovement())
 				return true;
-			}
 		}
 		return false;
 	}
@@ -2378,9 +2282,8 @@ public class PkVPk {
 		Weather weather = this.getWeather();
 		boolean isWeatherSuppresed = this.getIsWeatherSuppressed();
 
-		if (isWeatherSuppresed) {
+		if (isWeatherSuppresed)
 			return 1.0f;
-		}
 
 		if (weather == Weather.RAIN) {
 			if (attack.getStrTypeToPkType().getId() == 2) // Water
@@ -2403,11 +2306,9 @@ public class PkVPk {
 	// Change attacks depending on weather
 	// -----------------------------
 	private void checkWeatherEffectsForAttacks(Weather weather, Attack attack) {
-		if (weather == Weather.SUN) {
-			if (attack.getId() == 87) {
+		if (weather == Weather.SUN)
+			if (attack.getId() == 87)
 				attack.setPrecision(50);
-			}
-		}
 	}
 
 	// -----------------------------
@@ -2448,23 +2349,10 @@ public class PkVPk {
 	}
 
 	// -----------------------------
-	// Apply accuracy attack due to abilities, etc.
-	// -----------------------------
-	private float applyAccuracyAbilities(float accuracy) {
-		Ability ability = this.getPkCombatting().getAbilitySelected();
-		if (ability != null && ability.getId() == 14) {
-			accuracy *= 1.3f;
-		}
-		// max 1f
-		return Math.min(accuracy, 1.0f);
-	}
-
-	// -----------------------------
 	// Do secondary effects from attacks (set status conditions, flinch, etc)
 	// -----------------------------
 	private void applySecondaryEffects(Attack attack, Pokemon attacker, Pokemon defender, Weather weather,
 			boolean isWeatherSuppressed, float damage, boolean isMistEffectActivated) {
-
 		Ability abilityAttacker = attacker.getAbilitySelected();
 
 		double probabilityGettingStatus = Math.random();
@@ -2474,77 +2362,42 @@ public class PkVPk {
 			return;
 
 		for (SecondaryEffect effect : attack.getSecondaryEffects()) {
-
 			double finalProbability = getFinalSecondaryEffectProbability(effect, attacker);
 
-			if (probabilityGettingStatus > finalProbability) {
+			if (probabilityGettingStatus > finalProbability)
 				continue;
-			}
 
 			switch (effect.getType()) {
 			case STATUS_CONDITION:
 				defender.trySetStatus(new State(effect.getStatus()), weather, isWeatherSuppressed, attack);
 				break;
-
 			case EPHEMERAL_STATUS:
-				if (!defender.trySetEphemeralStatus(effect.getStatus(), attack)) {
+				StatusConditions status = effect.getStatus();
+
+				if (!defender.trySetEphemeralStatus(status, attack))
 					break;
-				}
 
-				// Check if the Pokemon facing doesn't have the current ephemeral status
-				if (!(defender.getEphemeralStates().stream()
-						.anyMatch(e -> e.getStatusCondition() == effect.getStatus()))) {
+				if (!defender.hasActiveEphemeralStatus(status)) {
 
-					nbTurnsHoldingStatus = getRandomInt(1, 7, effect.getStatus());
+					nbTurnsHoldingStatus = getRandomInt(1, 7, status);
+					State state = new State(status, nbTurnsHoldingStatus + 1);
 
-					State state = new State(effect.getStatus(), nbTurnsHoldingStatus + 1);
+					defender.addEphemeralStatus(status, state);
 
-					defender.addEphemeralState(state);
-
-					switch (effect.getStatus()) {
-					case CONFUSED:
-						System.out.println(
-								defender.getName() + " estará confuso por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					case CURSED:
-						System.out.println(
-								defender.getName() + " estará maldito por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					case INFATUATED:
-						System.out.println(
-								defender.getName() + " estará enamorado por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					case SEEDED:
-						System.out.println(
-								defender.getName() + " estará drenado por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					case PERISH_SONG:
-						System.out.println(
-								defender.getName() + " ...canto mortal... por " + nbTurnsHoldingStatus + " turnos");
-						break;
-
-					default:
-						break;
-					}
+					System.out.println(defender.getName() + " estará " + status.getMessage() + " por "
+							+ nbTurnsHoldingStatus + " turnos");
 				}
 				break;
-
 			case FLINCH:
 				if (!defender.canBeFlinched())
 					break;
 
 				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
 					abilityAttacker.getEffect().afterAttack(null, attacker, defender, attack, damage,
-							attack.getPercentageFlinched(), this.getIsACriticAttack(), weather, isWeatherSuppressed);
-				} else {
+							effect.getProbability(), this.getIsACriticAttack(), weather, isWeatherSuppressed);
+				} else
 					defender.setHasRetreated(true);
-				}
 				break;
-
 			case STAT_DROP:
 				defender.modifyStatStage(effect.getStat(), effect.getStages(), isMistEffectActivated);
 				break;

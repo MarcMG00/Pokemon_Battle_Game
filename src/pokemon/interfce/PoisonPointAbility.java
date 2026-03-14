@@ -14,18 +14,16 @@ public class PoisonPointAbility implements AbilityEffect {
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
-		if (attacker.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
+		if (attacker.hasActiveStatusCondition(StatusConditions.POISONED))
 			return;
-		}
 
 		// Attack must make contact
 		if (!attack.getMakesContact())
 			return;
 
 		// Probability
-		if (Math.random() >= POISONED_CHANCE) {
+		if (Math.random() >= POISONED_CHANCE)
 			return;
-		}
 
 		// Try to apply paralysis
 		attacker.trySetStatus(new State(StatusConditions.POISONED), null, false, attack);

@@ -18,6 +18,7 @@ public class State {
 
 	public State() {
 		this.statusCondition = StatusConditions.NO_STATUS;
+		this.canMoveStatusCondition = true;
 		this.nbTurns = 0;
 		this.percentToBeDefrosted = 10;
 		this.attackDisabled = new Attack();

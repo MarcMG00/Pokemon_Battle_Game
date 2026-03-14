@@ -1,5 +1,6 @@
 package pokemon.interfce;
 
+import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.Weather;
 import pokemon.model.Attack;
 import pokemon.model.Game;
@@ -18,7 +19,7 @@ public class StenchAbility implements AbilityEffect {
 			return;
 
 		// 2 - Adds probability to flinch if attack already can flinch
-		if (attack.getPercentageFlinched() == 0)
+		if (!attack.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH))
 			return;
 
 		// 3 - The defender can be flinched

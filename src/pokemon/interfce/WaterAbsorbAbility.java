@@ -11,14 +11,12 @@ public class WaterAbsorbAbility implements AbilityEffect {
 	public boolean beforeDamage(Game game, Pokemon attacker, Pokemon defender, Attack attack) {
 
 		// Only water movements
-		if (!attack.getType().equals("AGUA")) {
+		if (!attack.getType().equals("AGUA"))
 			return true;
-		}
 
 		// Attack has to do damage
-		if (attack.getPower() <= 0) {
+		if (attack.getPower() <= 0)
 			return true;
-		}
 
 		System.out.println(defender.getName() + " absorbió la agua gracias a la habilidad Absorbe agua");
 
