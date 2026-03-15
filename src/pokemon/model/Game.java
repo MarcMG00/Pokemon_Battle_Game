@@ -1825,6 +1825,10 @@ public class Game {
 
 		// Sand storm
 		if (this.getCurrentWeather() == Weather.SANDSTORM) {
+			// 98_Magic_Guard annuls secondary damage effects
+			if (pokemon.getAbilitySelected().getId() == 98)
+				return;
+
 			// If Pokemon is steel, rock, ground => don't affect
 			if (pokemon.getTypes().stream()
 					.noneMatch(t -> (t.getId() == 1) || (t.getId() == 14) || (t.getId() == 16))) {
@@ -1846,6 +1850,10 @@ public class Game {
 
 		// Sun
 		if (this.getCurrentWeather() == Weather.SUN) {
+			// 98_Magic_Guard annuls secondary damage effects
+			if (pokemon.getAbilitySelected().getId() == 98)
+				return;
+
 			// 87_Dry_Skin
 			if (abPokemon.getId() == 87) {
 				// Reduces current PS by 12.5%
@@ -1870,8 +1878,8 @@ public class Game {
 			// 87_Dry_Skin
 			if (abPokemon.getId() == 87) {
 				// Rises current PS by 12.5%
-				float reducePs = pokemon.getInitialPs() * 0.125f;
-				pokemon.setPs(pokemon.getPs() + reducePs);
+				float risePs = pokemon.getInitialPs() * 0.125f;
+				pokemon.setPs(pokemon.getPs() + risePs);
 				System.out.println(pokemon.getName() + " (Id:" + pokemon.getId() + "), recupera PS dada su habilidad "
 						+ abPokemon.getName() + " (está LLOVIENDO)");
 			}

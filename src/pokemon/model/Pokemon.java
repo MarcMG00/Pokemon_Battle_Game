@@ -1103,6 +1103,10 @@ public class Pokemon {
 	// Do effect from BURNED state (end of the turn)
 	// -----------------------------
 	public void doBurnedEffectEndTurn() {
+		// 98_Magic_Guard annuls secondary damage effects
+		if (this.getAbilitySelected().getId() == 98)
+			return;
+
 		if (this.hasActiveStatusCondition(StatusConditions.BURNED)) {
 			// Reduces current PS by 6.25%
 			float reducePs = this.getInitialPs() * 0.0625f;
@@ -1156,6 +1160,10 @@ public class Pokemon {
 	// Do effect from POISONED state (end of the turn)
 	// -----------------------------
 	public void doPoisonedEffectEndTurn() {
+		// 98_Magic_Guard annuls secondary damage effects
+		if (this.getAbilitySelected().getId() == 98)
+			return;
+
 		if (this.hasActiveStatusCondition(StatusConditions.POISONED)) {
 			// 90_Poison_Heal ability heals 12,5% of initial PS
 			if (this.getAbilitySelected().getId() == 90) {
@@ -1228,6 +1236,10 @@ public class Pokemon {
 	// Do effect from TRAPPED state (end of the turn)
 	// -----------------------------
 	public void doTrappedEffect() {
+		// 98_Magic_Guard annuls secondary damage effects
+		if (this.getAbilitySelected().getId() == 98)
+			return;
+
 		if (this.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
 			State trappedStatus = this.getEphemeralStatus(StatusConditions.TRAPPED);
 
@@ -1255,6 +1267,10 @@ public class Pokemon {
 	// Do effect from DRAINED ALL TURNS state (end of the turn) => affects to enemy
 	// -----------------------------
 	public void doDrainedAllTurnsEffect(Pokemon defender) {
+		// 98_Magic_Guard annuls secondary damage effects
+		if (this.getAbilitySelected().getId() == 98)
+			return;
+
 		if (this.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
 			State drainedAllTurnsStaus = this.getEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
 
@@ -1535,6 +1551,10 @@ public class Pokemon {
 	// Check if can be flinched
 	// -----------------------------
 	public boolean canBeFlinched() {
+		// 98_Magic_Guard annuls secondary damage effects (only by struggle attack)
+		if (this.getAbilitySelected().getId() == 98 && this.getNextMovement().getId() != 165)
+			return false;
+
 		if (this.getAbilitySelected().getId() == 39) {
 			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
 					+ " no pudo retroceder dada su habilidad Fuerza mental");

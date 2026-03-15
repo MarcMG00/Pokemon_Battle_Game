@@ -25,7 +25,7 @@ public class PoisonPointAbility implements AbilityEffect {
 		if (Math.random() >= POISONED_CHANCE)
 			return;
 
-		// Try to apply paralysis
+		// Try to apply poison
 		attacker.trySetStatus(new State(StatusConditions.POISONED), null, false, attack);
 		System.out.println(attacker.getName() + " fue envenenado por la habilidad punto tóxico del Pokémon rival");
 	}

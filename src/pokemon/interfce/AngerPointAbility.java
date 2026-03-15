@@ -10,7 +10,6 @@ public class AngerPointAbility implements AbilityEffect {
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
-		// How to check if got a critic attack ?
 		// 1️ - The attack has to retreat defender
 		if (!isACriticAttack || defender.getAttackStage() >= 6)
 			return;

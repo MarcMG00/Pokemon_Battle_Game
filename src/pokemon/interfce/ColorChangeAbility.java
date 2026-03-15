@@ -22,7 +22,7 @@ public class ColorChangeAbility implements AbilityEffect {
 		if (defender.getHasSubstitute())
 			return;
 
-		// Attacker doesn't have to have Sheer force
+		// Attacker doesn't have to have 125_Sheer_force
 		Ability atkAbility = attacker.getAbilitySelected();
 		if (atkAbility != null && atkAbility.getId() == 125)
 			return;
