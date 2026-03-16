@@ -362,7 +362,7 @@ public class Attack {
 	// Check if attack always hits under the specific weather
 	// -----------------------------
 	public boolean alwaysHeatsUnderWeather(Weather weather) {
-		return this.getGuaranteedWeather() == weather;
+		return this.getGuaranteedWeather() != Weather.NONE && this.getGuaranteedWeather() == weather;
 	}
 
 	// -----------------------------

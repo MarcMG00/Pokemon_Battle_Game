@@ -250,10 +250,11 @@ public class PkVPk {
 			return true;
 		}
 
-		if (atkAttacker.alwaysHeatsUnderWeather(weather)) {
+		if (atkAttacker.alwaysHeatsUnderWeather(this.getWeather())) {
 			attacker.allowAttack();
 			return true;
 		}
+
 		return false;
 	}
 
@@ -302,7 +303,9 @@ public class PkVPk {
 	// -----------------------------
 	private void resolveAccuracyByContext(Pokemon attacker, Pokemon defender, Attack atkAttacker, float accuracyFactor,
 			boolean canHitInvulnerable, boolean isAttackerCharging, boolean isDefenderCharging) {
-		attacker.denyAttack();
+
+		if (ApplyNoGuardAbility(attacker, defender))
+			return;
 
 		// BLOC 1 : NORMAL ATTACK
 		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
@@ -394,6 +397,21 @@ public class PkVPk {
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName() + " (Id:"
 					+ defender.getId() + ")" + " evitó el ataque jijijija. " + code);
 		}
+	}
+
+	// -----------------------------
+	// Check if 99_No_Guard ability is in game
+	// -----------------------------
+	private boolean ApplyNoGuardAbility(Pokemon attacker, Pokemon defender) {
+		// 99_No_Guard allows to attack every time (whether is the defender or the
+		// attacker that has the ability)
+		if (attacker.getAbilitySelected().getId() == 99 || defender.getAbilitySelected().getId() == 99) {
+			System.out.println(attacker.getName() + " puede atacar gracias a la habilidad Indefenso en juego");
+			attacker.allowAttack();
+			return true;
+		}
+
+		return false;
 	}
 
 	// -----------------------------
