@@ -25,16 +25,14 @@ public class Attack {
 	private PokemonType strTypeToPkType;
 	private float effectivenessAgainstPkFacing;
 	private float bonus;
-	private AttackCategory category = AttackCategory.NORMAL;
+	private AttackCategory category;
 	private List<Integer> canHitWhileInvulnerable = new ArrayList<>();
 	private boolean canRecieveDamage;
 	private boolean isOneHitKO;
 	private boolean makesContact;
-	private boolean hasSecondaryEffect;
 	private List<SecondaryEffect> secondaryEffects = new ArrayList<>();
 	private boolean alwaysHits;
 	private boolean ignoresAccuracy;
-	private boolean hitsDuringInvulnerable;
 	private Weather guaranteedWeather;
 	private boolean forceChange;
 	private boolean isPunchMove;
@@ -60,13 +58,13 @@ public class Attack {
 		this.canRecieveDamage = false;
 		this.isOneHitKO = false;
 		this.makesContact = false;
-		this.hasSecondaryEffect = false;
+		this.canHitWhileInvulnerable = new ArrayList<>();
 		this.alwaysHits = false;
 		this.ignoresAccuracy = false;
-		this.hitsDuringInvulnerable = false;
 		this.guaranteedWeather = Weather.NONE;
 		this.forceChange = false;
 		this.isPunchMove = false;
+		this.category = AttackCategory.NORMAL;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -87,13 +85,14 @@ public class Attack {
 		this.canRecieveDamage = false;
 		this.isOneHitKO = false;
 		this.makesContact = false;
-		this.hasSecondaryEffect = false;
+		this.canHitWhileInvulnerable = new ArrayList<>();
+		this.secondaryEffects = new ArrayList<>();
 		this.alwaysHits = false;
 		this.ignoresAccuracy = false;
-		this.hitsDuringInvulnerable = false;
 		this.guaranteedWeather = Weather.NONE;
 		this.forceChange = false;
 		this.isPunchMove = false;
+		this.category = AttackCategory.NORMAL;
 	}
 
 	public Attack(Attack attack) {
@@ -114,15 +113,14 @@ public class Attack {
 		this.canRecieveDamage = attack.canRecieveDamage;
 		this.isOneHitKO = attack.isOneHitKO;
 		this.makesContact = attack.makesContact;
-		this.hasSecondaryEffect = attack.hasSecondaryEffect;
 		this.canHitWhileInvulnerable = attack.canHitWhileInvulnerable;
 		this.secondaryEffects = attack.secondaryEffects;
 		this.alwaysHits = attack.alwaysHits;
 		this.ignoresAccuracy = attack.ignoresAccuracy;
-		this.hitsDuringInvulnerable = attack.hitsDuringInvulnerable;
 		this.guaranteedWeather = attack.guaranteedWeather;
 		this.forceChange = attack.forceChange;
 		this.isPunchMove = attack.isPunchMove;
+		this.category = attack.category;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -277,14 +275,6 @@ public class Attack {
 		this.makesContact = makesContact;
 	}
 
-	public boolean getHasSecondaryEffect() {
-		return hasSecondaryEffect;
-	}
-
-	public void setHasSecondaryEffect(boolean hasSecondaryEffect) {
-		this.hasSecondaryEffect = hasSecondaryEffect;
-	}
-
 	public List<SecondaryEffect> getSecondaryEffects() {
 		return secondaryEffects;
 	}
@@ -307,14 +297,6 @@ public class Attack {
 
 	public void setIgnoresAccuracy(boolean ignoresAccuracy) {
 		this.ignoresAccuracy = ignoresAccuracy;
-	}
-
-	public boolean isHitsDuringInvulnerable() {
-		return hitsDuringInvulnerable;
-	}
-
-	public void setHitsDuringInvulnerable(boolean hitsDuringInvulnerable) {
-		this.hitsDuringInvulnerable = hitsDuringInvulnerable;
 	}
 
 	public Weather getGuaranteedWeather() {

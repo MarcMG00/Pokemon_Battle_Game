@@ -207,6 +207,10 @@ public class PkVPk {
 			return;
 		}
 
+		// 4 - Check for 99_Magic_Guard ability (always hits)
+		if (ApplyNoGuardAbility(attacker, defender))
+			return;
+
 		// Reset CanAttack if doesn't enter in any case
 		attacker.denyAttack();
 
@@ -304,9 +308,6 @@ public class PkVPk {
 	private void resolveAccuracyByContext(Pokemon attacker, Pokemon defender, Attack atkAttacker, float accuracyFactor,
 			boolean canHitInvulnerable, boolean isAttackerCharging, boolean isDefenderCharging) {
 
-		if (ApplyNoGuardAbility(attacker, defender))
-			return;
-
 		// BLOC 1 : NORMAL ATTACK
 		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
 			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, attacker, defender, "(bloc 1)");
@@ -334,6 +335,8 @@ public class PkVPk {
 		// BLOC 5 : OTHER ATTACK AGAINST INVULNERABLE (CANNOT DO DAMMAGE)
 		if (!canHitInvulnerable && isDefenderCharging) {
 			attacker.setIsChargingAttackForNextRound(false);
+			System.out.println(attacker.getName() + " usó " + atkAttacker.getName() + ", pero " + defender.getName()
+					+ " evitó el ataque (invulnerable). jijijija");
 			return;
 		}
 	}

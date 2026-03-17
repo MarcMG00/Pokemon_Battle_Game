@@ -1412,7 +1412,7 @@ public class Pokemon {
 
 		if (ability != null) {
 			// 19_Shield_Dust doesn't allow to get secondary effects
-			if (attackAttacker.getHasSecondaryEffect() && ability.getId() == 19) {
+			if (attackAttacker.hasSecondaryEffect() && ability.getId() == 19) {
 				System.out.println(this.getName()
 						+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
 				return false;
@@ -1504,7 +1504,7 @@ public class Pokemon {
 			return true;
 
 		// 19_Shield_Dust doesn't allow to get secondary effects
-		if (attackAttacker.getHasSecondaryEffect() && ability.getId() == 19) {
+		if (attackAttacker.hasSecondaryEffect() && ability.getId() == 19) {
 			System.out.println(this.getName()
 					+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
 			return false;
