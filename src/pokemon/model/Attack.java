@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pokemon.enums.AttackCategory;
+import pokemon.enums.SecondaryEffectType;
+import pokemon.enums.Weather;
 
 public class Attack {
 
@@ -23,15 +25,17 @@ public class Attack {
 	private PokemonType strTypeToPkType;
 	private float effectivenessAgainstPkFacing;
 	private float bonus;
-	private AttackCategory category = AttackCategory.NORMAL;
+	private AttackCategory category;
 	private List<Integer> canHitWhileInvulnerable = new ArrayList<>();
 	private boolean canRecieveDamage;
-	private double percentageFlinch;
 	private boolean isOneHitKO;
 	private boolean makesContact;
-	private boolean hasSecondaryEffect;
-	private boolean reduceStats;
 	private List<SecondaryEffect> secondaryEffects = new ArrayList<>();
+	private boolean alwaysHits;
+	private boolean ignoresAccuracy;
+	private Weather guaranteedWeather;
+	private boolean forceChange;
+	private boolean isPunchMove;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -52,11 +56,15 @@ public class Attack {
 		this.effectivenessAgainstPkFacing = 0;
 		this.bonus = 0;
 		this.canRecieveDamage = false;
-		this.percentageFlinch = 0d;
 		this.isOneHitKO = false;
 		this.makesContact = false;
-		this.hasSecondaryEffect = false;
-		this.reduceStats = false;
+		this.canHitWhileInvulnerable = new ArrayList<>();
+		this.alwaysHits = false;
+		this.ignoresAccuracy = false;
+		this.guaranteedWeather = Weather.NONE;
+		this.forceChange = false;
+		this.isPunchMove = false;
+		this.category = AttackCategory.NORMAL;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -75,11 +83,16 @@ public class Attack {
 		this.effectivenessAgainstPkFacing = 0;
 		this.bonus = 0;
 		this.canRecieveDamage = false;
-		this.percentageFlinch = 0d;
 		this.isOneHitKO = false;
 		this.makesContact = false;
-		this.hasSecondaryEffect = false;
-		this.reduceStats = false;
+		this.canHitWhileInvulnerable = new ArrayList<>();
+		this.secondaryEffects = new ArrayList<>();
+		this.alwaysHits = false;
+		this.ignoresAccuracy = false;
+		this.guaranteedWeather = Weather.NONE;
+		this.forceChange = false;
+		this.isPunchMove = false;
+		this.category = AttackCategory.NORMAL;
 	}
 
 	public Attack(Attack attack) {
@@ -98,13 +111,16 @@ public class Attack {
 		this.effectivenessAgainstPkFacing = attack.effectivenessAgainstPkFacing;
 		this.bonus = attack.bonus;
 		this.canRecieveDamage = attack.canRecieveDamage;
-		this.percentageFlinch = attack.percentageFlinch;
 		this.isOneHitKO = attack.isOneHitKO;
 		this.makesContact = attack.makesContact;
-		this.hasSecondaryEffect = attack.hasSecondaryEffect;
-		this.reduceStats = attack.reduceStats;
 		this.canHitWhileInvulnerable = attack.canHitWhileInvulnerable;
 		this.secondaryEffects = attack.secondaryEffects;
+		this.alwaysHits = attack.alwaysHits;
+		this.ignoresAccuracy = attack.ignoresAccuracy;
+		this.guaranteedWeather = attack.guaranteedWeather;
+		this.forceChange = attack.forceChange;
+		this.isPunchMove = attack.isPunchMove;
+		this.category = attack.category;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -227,14 +243,6 @@ public class Attack {
 		this.canRecieveDamage = canRecieveDamage;
 	}
 
-	public double getPercentageFlinched() {
-		return percentageFlinch;
-	}
-
-	public void setPercentageFlinched(double percentageFlinch) {
-		this.percentageFlinch = percentageFlinch;
-	}
-
 	public float getInitialPower() {
 		return initialPower;
 	}
@@ -251,7 +259,7 @@ public class Attack {
 		this.initialPrecision = initialPrecision;
 	}
 
-	public boolean getIsOneHitKO() {
+	public boolean isOneHitKO() {
 		return isOneHitKO;
 	}
 
@@ -267,28 +275,52 @@ public class Attack {
 		this.makesContact = makesContact;
 	}
 
-	public boolean getHasSecondaryEffect() {
-		return hasSecondaryEffect;
-	}
-
-	public void setHasSecondaryEffect(boolean hasSecondaryEffect) {
-		this.hasSecondaryEffect = hasSecondaryEffect;
-	}
-
-	public boolean getReduceStats() {
-		return reduceStats;
-	}
-
-	public void setReduceStats(boolean reduceStats) {
-		this.reduceStats = reduceStats;
-	}
-
 	public List<SecondaryEffect> getSecondaryEffects() {
 		return secondaryEffects;
 	}
 
 	public void setSecondaryEffectsNull() {
 		this.secondaryEffects = null;
+	}
+
+	public boolean alwaysHits() {
+		return alwaysHits;
+	}
+
+	public void setAlwaysHits(boolean alwaysHits) {
+		this.alwaysHits = alwaysHits;
+	}
+
+	public boolean isIgnoresAccuracy() {
+		return ignoresAccuracy;
+	}
+
+	public void setIgnoresAccuracy(boolean ignoresAccuracy) {
+		this.ignoresAccuracy = ignoresAccuracy;
+	}
+
+	public Weather getGuaranteedWeather() {
+		return guaranteedWeather;
+	}
+
+	public void setGuaranteedWeather(Weather guaranteedWeather) {
+		this.guaranteedWeather = guaranteedWeather;
+	}
+
+	public boolean isForceChange() {
+		return forceChange;
+	}
+
+	public void setForceChange(boolean forceChange) {
+		this.forceChange = forceChange;
+	}
+
+	public boolean isPunchMove() {
+		return isPunchMove;
+	}
+
+	public void setPunchMove(boolean isPunchMove) {
+		this.isPunchMove = isPunchMove;
 	}
 
 	// ==================================== METHODS
@@ -309,9 +341,38 @@ public class Attack {
 	}
 
 	// -----------------------------
+	// Check if attack always hits under the specific weather
+	// -----------------------------
+	public boolean alwaysHeatsUnderWeather(Weather weather) {
+		return this.getGuaranteedWeather() != Weather.NONE && this.getGuaranteedWeather() == weather;
+	}
+
+	// -----------------------------
 	// Add secondary effect
 	// -----------------------------
-	public void addSecondaryEffect(SecondaryEffect secondaryEffect) {
-		this.getSecondaryEffects().add(secondaryEffect);
+	public void addSecondaryEffect(SecondaryEffect effect) {
+		this.getSecondaryEffects().add(effect);
+	}
+
+	// -----------------------------
+	// Check if has a specific secondary effect
+	// -----------------------------
+	public boolean hasSecondaryEffect() {
+		return this.getSecondaryEffects() != null;
+	}
+
+	// -----------------------------
+	// Check if has a specific secondary effect
+	// -----------------------------
+	public boolean hasActiveSecondaryEffect(SecondaryEffectType effectType) {
+		return this.getSecondaryEffects() != null
+				&& this.getSecondaryEffects().stream().anyMatch(e -> e.getType() == effectType);
+	}
+
+	// -----------------------------
+	// Get all the secondary effects from a effect type
+	// -----------------------------
+	public List<SecondaryEffect> getSecondaryEffectsOfType(SecondaryEffectType effectType) {
+		return this.getSecondaryEffects().stream().filter(e -> e.getType() == effectType).toList();
 	}
 }

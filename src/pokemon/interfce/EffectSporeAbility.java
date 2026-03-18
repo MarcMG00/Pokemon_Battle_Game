@@ -12,7 +12,7 @@ public class EffectSporeAbility implements AbilityEffect {
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double percentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		// Attack must make contact
 		if (!attack.getMakesContact())
@@ -29,8 +29,7 @@ public class EffectSporeAbility implements AbilityEffect {
 		if (Math.random() <= STATUS_PROBABILITY) {
 			// Check if the attacker doesn't have the status Asleep (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!(attacker.getEphemeralStates().stream()
-					.anyMatch(e -> e.getStatusCondition() == StatusConditions.ASLEEP))) {
+			if (!attacker.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 				System.out.println(attacker.getName() + " fue dormido por la habilidad Efecto espora");
 
 				int nbTurnsHoldingStatus;
@@ -42,7 +41,7 @@ public class EffectSporeAbility implements AbilityEffect {
 
 				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
 
-				attacker.addEphemeralState(asleep);
+				attacker.addEphemeralStatus(StatusConditions.ASLEEP, asleep);
 			}
 			return;
 		}
@@ -50,7 +49,7 @@ public class EffectSporeAbility implements AbilityEffect {
 		// Poisoned status
 		if (Math.random() <= STATUS_PROBABILITY) {
 			// Already has a status
-			if (attacker.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS)
+			if (attacker.hasStatusCondition())
 				return;
 
 			System.out.println(attacker.getName() + " fue envenenado por la habilidad Efecto espora");
@@ -61,7 +60,7 @@ public class EffectSporeAbility implements AbilityEffect {
 		// Paralyzed status
 		if (Math.random() <= STATUS_PROBABILITY) {
 			// Already has a status
-			if (attacker.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS)
+			if (attacker.hasStatusCondition())
 				return;
 
 			System.out.println(attacker.getName() + " fue paralizado por la habilidad Efecto espora");

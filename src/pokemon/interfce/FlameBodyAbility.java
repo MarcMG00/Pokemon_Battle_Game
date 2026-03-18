@@ -12,20 +12,18 @@ public class FlameBodyAbility implements AbilityEffect {
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
-		if (attacker.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
+		if (attacker.hasActiveStatusCondition(StatusConditions.BURNED))
 			return;
-		}
 
 		// Attack must make contact
 		if (!attack.getMakesContact())
 			return;
 
 		// Probability
-		if (Math.random() >= BURNED_CHANCE) {
+		if (Math.random() >= BURNED_CHANCE)
 			return;
-		}
 
 		// Try to apply burned
 		attacker.trySetStatus(new State(StatusConditions.BURNED), null, false, attack);

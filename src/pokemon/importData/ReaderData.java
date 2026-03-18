@@ -13,31 +13,40 @@ import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
-import pokemon.interfce.BattleArmorAbility;
+import pokemon.enums.Weather;
+import pokemon.interfce.AirLockAbility;
+import pokemon.interfce.AngerPointAbility;
 import pokemon.interfce.CloudNineAbility;
 import pokemon.interfce.ColorChangeAbility;
 import pokemon.interfce.CuteCharmAbility;
+import pokemon.interfce.DownloadAbility;
 import pokemon.interfce.DrizzleAbility;
 import pokemon.interfce.DroughtAbility;
+import pokemon.interfce.DrySkinAbility;
 import pokemon.interfce.EffectSporeAbility;
 import pokemon.interfce.EmptyAbility;
 import pokemon.interfce.FlameBodyAbility;
 import pokemon.interfce.FlashFireAbility;
 import pokemon.interfce.ForecastAbility;
+import pokemon.interfce.HydratationAbility;
 import pokemon.interfce.IntimidateAbility;
 import pokemon.interfce.LevitateAbility;
 import pokemon.interfce.LightningRodAbility;
 import pokemon.interfce.MinusAbility;
+import pokemon.interfce.MotorDriveAbility;
 import pokemon.interfce.NaturalCureAbility;
+import pokemon.interfce.NormalizeAbility;
 import pokemon.interfce.PlusAbility;
 import pokemon.interfce.PoisonPointAbility;
 import pokemon.interfce.PressureAbility;
+import pokemon.interfce.QuickFeetAbility;
 import pokemon.interfce.RainDishAbility;
 import pokemon.interfce.RoughSkinAbility;
 import pokemon.interfce.SandStreamAbility;
 import pokemon.interfce.ShedSkinAbility;
 import pokemon.interfce.SpeedBoostAbility;
 import pokemon.interfce.StaticAbility;
+import pokemon.interfce.SteadfastAbility;
 import pokemon.interfce.StenchAbility;
 import pokemon.interfce.SynchronizeAbility;
 import pokemon.interfce.TraceAbility;
@@ -157,26 +166,19 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] pks = line.split(",");
 
-				if (pokemon.size() == 809) {
-
+				if (pokemon.size() == 809)
 					break;
-
-				} else {
-
+				else {
 					Pokemon pokemonToAdd = new Pokemon(Integer.parseInt(pks[0]), pks[1], Integer.parseInt(pks[2]),
 							Integer.parseInt(pks[3]), Integer.parseInt(pks[4]), Integer.parseInt(pks[5]),
 							Integer.parseInt(pks[6]), Integer.parseInt(pks[7]));
 
 					// Gets first ability (all Pokemon have at least one ability)
 					if (!pks[12].isEmpty()) {
-
 						for (PokemonType pkty : types) {
-
 							if (pkty.getId() == Integer.parseInt(pks[12])) {
-
 								pokemonToAdd.addType(pkty);
 								pokemonToAdd.addInitialType(pkty);
 							}
@@ -185,18 +187,14 @@ public class ReaderData {
 
 					// Gets the other type (if a Pokemon has 2 types)
 					if (pks.length == 14) {
-
 						// It detects a " " " at the end of the second type, so we remove it : we have
 						// 17" instead of 17
 //							pks[13] = pks[13].substring(0, pks[13].length() - 1);
 
 						// Gets second type
 						if (!pks[13].isEmpty()) {
-
 							for (PokemonType pkty : types) {
-
 								if (pkty.getId() == Integer.parseInt(pks[13])) {
-
 									pokemonToAdd.addType(pkty);
 									pokemonToAdd.addInitialType(pkty);
 								}
@@ -213,12 +211,11 @@ public class ReaderData {
 			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
 				System.out.println("Finished reading readPokemon");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file  : " + e.getMessage());
@@ -242,15 +239,10 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] ablty = line.split(",");
-
-				if (this.getAbilities().size() == 309) {
-
+				if (this.getAbilities().size() == 309)
 					break;
-
-				} else {
-
+				else {
 					Ability abilityToAdd = new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]);
 					setAbilityEffect(abilityToAdd);
 
@@ -262,12 +254,12 @@ public class ReaderData {
 			System.out.println("Exception reading the file : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
+
 				System.out.println("Finished reading readAbilities");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file  : " + e.getMessage());
@@ -291,69 +283,45 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				Optional<Pokemon> pkOpt;
-				String[] abltysPk = line.split(",");
+				String[] abltysPk = line.split(",", -1);
 
 				// Gets the current Pokemon of the line from the Pokemon list
 				pkOpt = pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(abltysPk[0])).findFirst();
 
 				if (pkOpt.isPresent()) {
-
 					// Gets first ability (all Pokemon have at least one ability)
 					if (!abltysPk[8].isEmpty()) {
-
 						for (Ability ablty : this.getAbilities()) {
-
-							if (ablty.getId() == Integer.parseInt(abltysPk[8])) {
-
+							if (ablty.getId() == Integer.parseInt(abltysPk[8]))
 								pkOpt.get().addNormalAbility(ablty);
-
-							}
 						}
 					}
 
 					// Gets other abilities (if a Pokemon has more)
 					if (abltysPk.length > 9) {
-
 						// Gets second ability
 						if (!abltysPk[9].isEmpty()) {
-
 							for (Ability ablty : this.getAbilities()) {
-
-								if (ablty.getId() == Integer.parseInt(abltysPk[9])) {
-
+								if (ablty.getId() == Integer.parseInt(abltysPk[9]))
 									pkOpt.get().addNormalAbility(ablty);
-
-								}
 							}
 						}
 
 						// Gets hidden ability
 						if (!abltysPk[10].isEmpty()) {
-
 							for (Ability ablty : this.getAbilities()) {
-
-								if (ablty.getId() == Integer.parseInt(abltysPk[10])) {
-
+								if (ablty.getId() == Integer.parseInt(abltysPk[10]))
 									pkOpt.get().addHiddenAbility(ablty);
-
-								}
 							}
 						}
 
 						// Gets second hidden ability : only one Pokemon at the moment
 						if (abltysPk.length == 12) {
-
 							if (!abltysPk[11].isEmpty()) {
-
 								for (Ability ablty : this.getAbilities()) {
-
-									if (ablty.getId() == Integer.parseInt(abltysPk[11])) {
-
+									if (ablty.getId() == Integer.parseInt(abltysPk[11]))
 										pkOpt.get().addHiddenAbility(ablty);
-
-									}
 								}
 							}
 						}
@@ -364,12 +332,12 @@ public class ReaderData {
 			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
+
 				System.out.println("Finished reading addAbsForEachPokemon");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file  : " + e.getMessage());
@@ -393,7 +361,6 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				Optional<Pokemon> pkOpt;
 				String[] typesRead = line.split(",");
 
@@ -405,37 +372,25 @@ public class ReaderData {
 				pkOpt = pokemon.stream().filter(pk -> pk.getId() == Integer.parseInt(typesRead[0])).findFirst();
 
 				if (pkOpt.isPresent()) {
-
 					// Gets first ability (all Pokemon have at least one ability)
 					if (!typesRead[12].isEmpty()) {
-
 						for (PokemonType pkty : types) {
-
-							if (pkty.getId() == Integer.parseInt(typesRead[12])) {
-
+							if (pkty.getId() == Integer.parseInt(typesRead[12]))
 								pkOpt.get().addType(pkty);
-
-							}
 						}
 					}
 
 					// Gets the other type (if a Pokemon has 2 types)
 					if (typesRead.length == 14) {
-
 						// It detects a " at the end of the second type, so we remove it => ex : we have
 						// 17" instead of 17
 						typesRead[13] = typesRead[13].substring(0, typesRead[13].length() - 1);
 
 						// Gets second type
 						if (!typesRead[13].isEmpty()) {
-
 							for (PokemonType pkty : types) {
-
-								if (pkty.getId() == Integer.parseInt(typesRead[13])) {
-
+								if (pkty.getId() == Integer.parseInt(typesRead[13]))
 									pkOpt.get().addType(pkty);
-
-								}
 							}
 						}
 					}
@@ -445,12 +400,13 @@ public class ReaderData {
 			System.out.println("Exception reading the file  : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
+
+				System.out.println("Finished reading readAddTypesForEachPokemon");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file  : " + e.getMessage());
 			}
@@ -474,12 +430,10 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] pkTypes = line.split(",");
 
-				if (types.size() == 18) {
+				if (types.size() == 18)
 					break;
-				}
 
 				PokemonType pkType = new PokemonType(Integer.parseInt(pkTypes[0]), pkTypes[1].toUpperCase());
 
@@ -506,8 +460,10 @@ public class ReaderData {
 			try {
 				if (fileReader != null)
 					fileReader.close();
+
 				if (bufferedReader != null)
 					bufferedReader.close();
+
 				System.out.println("Finished reading readPkTypes");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file : " + e.getMessage());
@@ -525,7 +481,6 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] type = line.split(",");
 
 				String typeName = type[1];
@@ -541,7 +496,6 @@ public class ReaderData {
 						{ "No tiene efecto", type[6] } };
 
 				for (String[] pair : keysAndColumns) {
-
 					String key = pair[0];
 					String raw = pair[1];
 
@@ -555,6 +509,7 @@ public class ReaderData {
 					for (String idStr : ids) {
 						int id = Integer.parseInt(idStr);
 						pType = typeById.get(id);
+
 						if (pType != null)
 							effects.add(pType);
 					}
@@ -747,38 +702,26 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] attacks = line.split(",");
 
 				Attack attack = new Attack(Integer.parseInt(attacks[0]), attacks[1], attacks[2].toUpperCase(),
 						Integer.parseInt(attacks[3]), Integer.parseInt(attacks[4]), Integer.parseInt(attacks[5]),
 						attacks[6]);
 
-				putPercentageFlinchAttacks(attack);
-
 				// Some attacks can have 2 bases (so we split with ";")
 				String[] bs = attacks[7].split(";");
 
-				if (bs.length > 1) {
-
-					for (String s : bs) {
-
+				if (bs.length > 1)
+					for (String s : bs)
 						attack.addBase(s);
-
-					}
-
-				} else {
-
+				else
 					attack.addBase(bs[0]);
-
-				}
 
 				// Set the type of the attack to his Pokemon type instead of a string
 				attack.transformStrTypeToPokemonType(types);
 
 				// Add the attacks that can hit while Pokemon facing is invulnerable
-				putCanHitInvulnerableAttacks(attack);
-
+				setCanHitInvulnerableAttacks(attack);
 				// Set the category type of the attack
 				setCategoryAttackType(attack);
 				// Set the attack is One-Hit KO
@@ -787,6 +730,16 @@ public class ReaderData {
 				setAttackMakesContact(attack);
 				// Set the attack if has secondary effects
 				setAttackHasSecondaryEffects(attack);
+				// Set the attack if always hits
+				setAttackAlwaysHits(attack);
+				// Set the attack can hurt its self if fails
+				setCanRecieveDamageFailAttacks(attack);
+				// Set attack always hits under a specific weather
+				setAttackAlwaysHeatswithWeather(attack);
+				// Set if attack forces to change Pokemon
+				setAttackForceChange(attack);
+				// Set if attack is punch type
+				setAttackIsPunch(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -796,12 +749,12 @@ public class ReaderData {
 			System.out.println("Exception reading the file : " + e.getMessage());
 		} finally {
 			try {
-				if (fileReader != null) {
+				if (fileReader != null)
 					fileReader.close();
-				}
-				if (bufferedReader != null) {
+				
+				if (bufferedReader != null)
 					bufferedReader.close();
-				}
+				
 				System.out.println("Finished reading readAttacks");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file : " + e.getMessage());
@@ -820,7 +773,6 @@ public class ReaderData {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-
 				String[] cols = line.split(",");
 
 				int pokemonId = Integer.parseInt(cols[0]);
@@ -973,76 +925,13 @@ public class ReaderData {
 //		}
 
 	// -----------------------------
-	// Add the attacks that can hit while Pokemon facing is invulnerable
-	// -----------------------------
-	public static void putCanHitInvulnerableAttacks(Attack attack) {
-		List<Integer> canHitWhileInvulnerable = new ArrayList<>();
-
-		switch (attack.getId()) {
-		case 16:
-		case 87:
-		case 239:
-		case 327:
-		case 479:
-		case 542:
-			canHitWhileInvulnerable.add(19);
-			break;
-		}
-
-		// Some charged attacks can be hit by all the movements (13_Razor_Wind /
-		// 76_Solar_Beam)
-		canHitWhileInvulnerable.add(13);
-		canHitWhileInvulnerable.add(76);
-
-		attack.setCanHitWhileInvulnerable(canHitWhileInvulnerable);
-	}
-
-	// -----------------------------
-	// Set attack that can hurt Pokemon owner if fails
-	// -----------------------------
-	public static void putCanRecieveDamageFailAttacks(Attack attack) {
-		switch (attack.getId()) {
-		case 26:
-			attack.setCanRecieveDamage(true);
-			break;
-		}
-	}
-
-	// -----------------------------
-	// Set percentage of flinch/retreat to attack
-	// -----------------------------
-	public void putPercentageFlinchAttacks(Attack attack) {
-		switch (attack.getId()) {
-		case 23:
-		case 27:
-		case 29:
-		case 44:
-			attack.setPercentageFlinched(0.30d);
-			break;
-		default:
-			attack.setPercentageFlinched(0d);
-		}
-	}
-
-	// -----------------------------
-	// Set the category type of the attack
-	// -----------------------------
-	public void setCategoryAttackType(Attack attack) {
-		switch (attack.getId()) {
-		case 19:
-			attack.setCategory(AttackCategory.CHARGED);
-			break;
-		default:
-			attack.setCategory(AttackCategory.NORMAL);
-		}
-	}
-
-	// -----------------------------
 	// Set the ability effect of the attack
 	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
-	// / 60 (when applying objects)
+	// / 60 (when applying objects) / 82 (when applying objects) / 80 (to complete)
+	// / 83 (to complete) / 84 (when applying
+	// objects) / 90 (to complete)
 	// -----------------------------
-	public void setAbilityEffect(Ability ability) {
+	private static void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
 		// Hedor/Stench
 		case 1:
@@ -1056,10 +945,6 @@ public class ReaderData {
 		// Impulso/Speed boost
 		case 3:
 			ability.setEffect(new SpeedBoostAbility());
-			break;
-		// Armadura batalla/Battle armor
-		case 4:
-			ability.setEffect(new BattleArmorAbility());
 			break;
 		// Electricidad estática/Static
 		case 9:
@@ -1167,15 +1052,100 @@ public class ReaderData {
 			ability.setEffect(new DroughtAbility());
 			ability.setIsWeatherType(true);
 			break;
+		// Esclusa de aire/Air lock
+		case 76:
+			ability.setEffect(new AirLockAbility());
+			break;
+		// Electromotor/Motor drive
+		case 78:
+			ability.setEffect(new MotorDriveAbility());
+			break;
+		// Impasible/Steadfast
+		case 80:
+			ability.setEffect(new SteadfastAbility());
+			break;
+		// Irascible/Anger point
+		case 83:
+			ability.setEffect(new AngerPointAbility());
+			break;
+		// Piel seca/Dry skin
+		case 87:
+			ability.setEffect(new DrySkinAbility());
+			break;
+		// Descarga/Download
+		case 88:
+			ability.setEffect(new DownloadAbility());
+			break;
+		// Hidratación/Hydratation
+		case 93:
+			ability.setEffect(new HydratationAbility());
+			break;
+		// Pies rápidos/Quick feet
+		case 95:
+			ability.setEffect(new QuickFeetAbility());
+			break;
+		// Normalidad/Normalize
+		case 96:
+			ability.setEffect(new NormalizeAbility());
+			break;
 		default:
 			ability.setEffect(new EmptyAbility());
 		}
 	}
 
 	// -----------------------------
-	// Set if attack is one hit KO
+	// Add the attacks that can hit while Pokemon facing is invulnerable
 	// -----------------------------
-	public void setAttackIsOneHit(Attack attack) {
+	private static void setCanHitInvulnerableAttacks(Attack attack) {
+		List<Integer> canHitWhileInvulnerable = new ArrayList<>();
+
+		switch (attack.getId()) {
+		case 16:
+		case 87:
+		case 239:
+		case 327:
+		case 479:
+		case 542:
+			canHitWhileInvulnerable.add(19);
+			break;
+		}
+
+		// Some charged attacks can be hit by all the movements (13_Razor_Wind /
+		// 76_Solar_Beam)
+		canHitWhileInvulnerable.add(13);
+		canHitWhileInvulnerable.add(76);
+
+		attack.setCanHitWhileInvulnerable(canHitWhileInvulnerable);
+	}
+
+	// -----------------------------
+	// Set the attack if can hurt Pokemon owner if it fails
+	// -----------------------------
+	private static void setCanRecieveDamageFailAttacks(Attack attack) {
+		switch (attack.getId()) {
+		case 26:
+			attack.setCanRecieveDamage(true);
+			break;
+		}
+	}
+
+	// -----------------------------
+	// Set the category type of the attack
+	// -----------------------------
+	private static void setCategoryAttackType(Attack attack) {
+		switch (attack.getId()) {
+		case 19:
+			attack.setCategory(AttackCategory.CHARGED);
+			break;
+		default:
+			attack.setCategory(AttackCategory.NORMAL);
+		}
+	}
+
+	// -----------------------------
+	// Set if the attack is one hit KO
+	// -----------------------------
+	private static void setAttackIsOneHit(Attack attack) {
 		switch (attack.getId()) {
 		case 12:
 		case 32:
@@ -1187,19 +1157,17 @@ public class ReaderData {
 	}
 
 	// -----------------------------
-	// Set if attack is one hit KO
+	// Set if the attack is one hit KO
 	// -----------------------------
-	public void setAttackMakesContact(Attack attack) {
-		if (attack.getBases() != null && attack.getBases().contains("fisico")) {
+	private static void setAttackMakesContact(Attack attack) {
+		if (attack.getBases() != null && attack.getBases().contains("fisico"))
 			attack.setMakesContact(true);
-		}
 	}
 
 	// -----------------------------
-	// Set if attack has secondary effects
+	// Set if the attack has secondary effects
 	// -----------------------------
-	public void setAttackHasSecondaryEffects(Attack attack) {
-
+	private static void setAttackHasSecondaryEffects(Attack attack) {
 		SecondaryEffect secondaryEffect = new SecondaryEffect();
 
 		switch (attack.getId()) {
@@ -1248,7 +1216,7 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 51:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.DEFENSE, -1, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.DEFENSE, 1, 0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 52:
@@ -1273,11 +1241,11 @@ public class ReaderData {
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 61:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.SPEED, -1, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.SPEED, 1, 0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 62:
-			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.ATTACK, -1, 0.10);
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.ATTACK, 1, 0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
 		case 84:
@@ -1302,42 +1270,100 @@ public class ReaderData {
 	}
 
 	// -----------------------------
+	// Set if attack always hits
+	// -----------------------------
+	private static void setAttackAlwaysHits(Attack attack) {
+		switch (attack.getId()) {
+		case 14:
+		case 18:
+		case 46:
+		case 74:
+		case 54:
+		case 165: // "Struggle" attack has 100% of precision (used when no more PPs remaining on
+					// other attacks, etc.)
+			attack.setAlwaysHits(true);
+			break;
+		default:
+			attack.setAlwaysHits(false);
+		}
+	}
+
+	// -----------------------------
+	// Set if the attack always hits with a specific weather
+	// -----------------------------
+	private static void setAttackAlwaysHeatswithWeather(Attack attack) {
+		switch (attack.getId()) {
+		case 87:
+			attack.setGuaranteedWeather(Weather.RAIN);
+			break;
+		default:
+			attack.setGuaranteedWeather(Weather.NONE);
+		}
+	}
+
+	// -----------------------------
+	// Set if the attack forces the Pokemon rival to change
+	// -----------------------------
+	private static void setAttackForceChange(Attack attack) {
+		switch (attack.getId()) {
+		case 18:
+		case 46:
+			attack.setForceChange(true);
+			break;
+		default:
+			attack.setForceChange(false);
+		}
+	}
+
+	// -----------------------------
+	// Set if the attack is a punch move (used for 89_Iron_fist ability)
+	// -----------------------------
+	private static void setAttackIsPunch(Attack attack) {
+		switch (attack.getId()) {
+		case 838:
+		case 818:
+		case 742:
+		case 327:
+		case 817:
+		case 359:
+		case 665:
+		case 5:
+		case 264:
+		case 418:
+		case 4:
+		case 223:
+		case 409:
+		case 7:
+		case 889:
+		case 8:
+		case 612:
+		case 857:
+		case 146:
+		case 309:
+		case 325:
+		case 9:
+		case 721:
+		case 183:
+			attack.setPunchMove(true);
+			break;
+		default:
+			attack.setPunchMove(false);
+		}
+	}
+
+	// -----------------------------
 	// Parse string to int
 	// -----------------------------
 	private ArrayList<Integer> parseIntList(String value) {
-
 		ArrayList<Integer> list = new ArrayList<>();
 
-		if (value == null || value.equals("0") || value.isEmpty()) {
+		if (value == null || value.equals("0") || value.isEmpty())
 			return list;
-		}
 
 		String[] values = value.split(";");
-		for (String v : values) {
+		for (String v : values)
 			list.add(Integer.parseInt(v.trim()));
-		}
 
 		return list;
 	}
-
-	// -----------------------------
-	// Set if attack reduce stats
-	// -----------------------------
-	public void setReduceStatsAttack(Attack attack) {
-		switch (attack.getId()) {
-		case 28:
-		case 39:
-		case 43:
-		case 45:
-		case 51:
-		case 61:
-		case 62:
-		case 81:
-			attack.setReduceStats(true);
-			break;
-		default:
-			attack.setReduceStats(false);
-		}
-	}
-
 }

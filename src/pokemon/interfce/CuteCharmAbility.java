@@ -12,12 +12,10 @@ public class CuteCharmAbility implements AbilityEffect {
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
-		if (defender.getEphemeralStates().stream()
-				.anyMatch(e -> e.getStatusCondition() == StatusConditions.INFATUATED)) {
+		if (defender.hasActiveEphemeralStatus(StatusConditions.INFATUATED))
 			return;
-		}
 
 		// Attack must make contact
 		if (!attack.getMakesContact())
@@ -36,7 +34,7 @@ public class CuteCharmAbility implements AbilityEffect {
 
 		State infatuated = new State(StatusConditions.INFATUATED, nbTurnsHoldingStatus + 1);
 
-		defender.addEphemeralState(infatuated);
+		defender.addEphemeralStatus(StatusConditions.INFATUATED, infatuated);
 
 		System.out.println(attacker.getName() + " cayó enamorado por la habilidad Gran encanto del Pokémon rival");
 	}

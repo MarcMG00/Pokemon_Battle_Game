@@ -1,5 +1,6 @@
 package pokemon.interfce;
 
+import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.Weather;
 import pokemon.model.Attack;
 import pokemon.model.Game;
@@ -11,17 +12,22 @@ public class StenchAbility implements AbilityEffect {
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double percentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		// 1️ - The attack has to do damage
 		if (dmg == 0f)
 			return;
 
 		// 2 - Adds probability to flinch if attack already can flinch
-		if (attack.getPercentageFlinched() == 0)
+		if (!attack.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH))
 			return;
 
 		// 3 - The defender can be flinched
+		// 98_Magic_Guard annuls secondary damage effects
+		if (defender.getAbilitySelected().getId() == 98)
+			return;
+
+		// 4 - The defender can be intimidated
 		if (defender.getAbilitySelected().getId() == 39) {
 			System.out.println(
 					defender.getName() + " no se intimidó gracias a " + defender.getAbilitySelected().getName());
