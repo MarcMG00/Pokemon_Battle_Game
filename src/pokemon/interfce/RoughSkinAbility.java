@@ -8,8 +8,12 @@ import pokemon.model.Pokemon;
 public class RoughSkinAbility implements AbilityEffect {
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
+		// 98_Magic_Guard annuls secondary damage effects
+		if (defender.getAbilitySelected().getId() == 98)
+			return;
+		
 		// Attack must make contact
 		if (!attack.getMakesContact())
 			return;

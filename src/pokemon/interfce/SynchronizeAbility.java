@@ -10,35 +10,32 @@ import pokemon.model.State;
 public class SynchronizeAbility implements AbilityEffect {
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double percentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		// Attacks that counter ability (Misty terrain / Safeguard)
 		if (attack.getId() == 581 || attack.getId() == 219)
 			return;
 
 		// Already has a status
-		if (attacker.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS)
+		if (attacker.hasStatusCondition())
 			return;
 
 		// Poisoned status
-		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
-
+		if (defender.hasActiveStatusCondition(StatusConditions.POISONED)) {
 			System.out.println(attacker.getName() + " fue envenenado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.POISONED));
 			return;
 		}
 
 		// Burned status
-		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.BURNED) {
-
+		if (defender.hasActiveStatusCondition(StatusConditions.BURNED)) {
 			System.out.println(attacker.getName() + " fue quemado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.BURNED));
 			return;
 		}
 
 		// Paralyzed status
-		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
-
+		if (defender.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			System.out.println(attacker.getName() + " fue paralizado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.PARALYZED));
 			return;

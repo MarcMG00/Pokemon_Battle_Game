@@ -12,14 +12,12 @@ public class FlashFireAbility implements AbilityEffect {
 	public boolean beforeDamage(Game game, Pokemon attacker, Pokemon defender, Attack attack) {
 
 		// Only fire movements
-		if (attack.getStrTypeToPkType().getId() != 7) {
+		if (attack.getStrTypeToPkType().getId() != 7)
 			return true;
-		}
 
 		// If Pokemon frozen => don't activate the ability
-		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.FROZEN) {
+		if (defender.hasActiveStatusCondition(StatusConditions.FROZEN))
 			return true;
-		}
 
 		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + attack.getName());
 
@@ -38,10 +36,10 @@ public class FlashFireAbility implements AbilityEffect {
 
 	@Override
 	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, Weather weather, boolean isWeatherSuppressed) {
+			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 		// If Pokemon frozen => don't activate the ability
-		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.FROZEN) {
-			defender.setStatusCondition(new State(StatusConditions.NO_STATUS));
+		if (defender.hasActiveStatusCondition(StatusConditions.FROZEN)) {
+			defender.setStatusCondition(new State());
 			System.out.println(defender.getName() + " se descongeló!");
 		}
 	}
