@@ -48,6 +48,7 @@ import pokemon.abilityInterface.TraceAbility;
 import pokemon.abilityInterface.VoltAbsorbAbility;
 import pokemon.abilityInterface.WaterAbsorbAbility;
 import pokemon.abilityInterface.WonderGuardAbility;
+import pokemon.attackInterface.AttackEffect;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
@@ -55,6 +56,7 @@ import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
+import pokemon.model.DamageService;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 import pokemon.model.SecondaryEffect;
@@ -751,10 +753,10 @@ public class ReaderData {
 			try {
 				if (fileReader != null)
 					fileReader.close();
-				
+
 				if (bufferedReader != null)
 					bufferedReader.close();
-				
+
 				System.out.println("Finished reading readAttacks");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file : " + e.getMessage());
@@ -1101,10 +1103,19 @@ public class ReaderData {
 
 		switch (attack.getId()) {
 		case 16:
+			canHitWhileInvulnerable.add(19);
+			canHitWhileInvulnerable.add(340);
+			canHitWhileInvulnerable.add(507);
+		case 57:
+			canHitWhileInvulnerable.add(291);
 		case 87:
+			canHitWhileInvulnerable.add(19);
 		case 239:
+			canHitWhileInvulnerable.add(19);
 		case 327:
+			canHitWhileInvulnerable.add(19);
 		case 479:
+			canHitWhileInvulnerable.add(19);
 		case 542:
 			canHitWhileInvulnerable.add(19);
 			break;

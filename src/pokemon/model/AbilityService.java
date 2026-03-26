@@ -1,5 +1,7 @@
 package pokemon.model;
 
+import pokemon.enums.Weather;
+
 public class AbilityService {
 	private final Game game;
 
@@ -155,5 +157,34 @@ public class AbilityService {
 			return;
 
 		ability.getEffect().endOfTurn(game, pk);
+	}
+
+	// -----------------------------
+	// Do ability effect after attacking
+	// -----------------------------
+	public void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg, Weather weather,
+			boolean isWeatherSuppressed, boolean isCriticalAttack) {
+
+		// Attacker ability
+		Ability attackerAbility = attacker.getAbilitySelected();
+
+		// 54_Truant ability (can't do anything next round)
+		if (attackerAbility != null && attackerAbility.getId() == 54) {
+			System.out.println(attacker.getName() + " (" + attacker.getId() + ") "
+					+ "no popdrá atacar o cambiarse en el siguiente turno a causa de "
+					+ attacker.getAbilitySelected().getName());
+			attacker.setCanDonAnythingNextRound(false);
+		}
+
+		// Damage must be done
+		if (dmg <= 0)
+			return;
+
+		// Defender ability
+		Ability defenderAbility = defender.getAbilitySelected();
+		if (defenderAbility != null) {
+			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, isCriticalAttack,
+					weather, isWeatherSuppressed);
+		}
 	}
 }

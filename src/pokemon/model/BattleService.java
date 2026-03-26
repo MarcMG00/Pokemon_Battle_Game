@@ -22,7 +22,6 @@ public class BattleService {
 	}
 
 	public void startBattle() {
-
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
 
@@ -33,7 +32,6 @@ public class BattleService {
 		weatherService.applyEntryWeatherAbilities();
 
 		while (ia.getPokemon().size() >= 1 && player.getPokemon().size() >= 1) {
-
 			System.out.println("----------------------------------");
 			System.out.println("Let's start round nº : " + nbRound);
 			System.out.println("----------------------------------");
@@ -49,20 +47,15 @@ public class BattleService {
 
 			int attackChoice = (playerIsCharging || playerIsTrapped) ? 1 : attackService.getPlayerChoice(sc);
 
-			if (attackChoice == 1) {
-
+			if (attackChoice == 1)
 				attackService.handleAttackTurn(sc);
-
-			} else {
-
+			else {
 				if (ia.getPkCombatting().getAbilitySelected().getId() == 23) {
-
 					System.out.println("No puedes cambiar de Pokémon a causa de Sombra trampa");
 
 					nbRound--;
 
 				} else {
-
 					boolean cancelled = !attackService.handleChangeTurn(sc);
 
 					if (cancelled) {

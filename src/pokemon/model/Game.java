@@ -9,8 +9,6 @@ import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 
-import pokemon.enums.AttackCategory;
-import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 import pokemon.importData.ReaderData;
 import pokemon.importData.ScrappingWeb;
@@ -43,7 +41,6 @@ public class Game {
 	private Map<Integer, PokemonType> typeById = new HashMap<>();
 	private Map<Integer, Pokemon> pokemonById = new HashMap<>();
 	private Map<Integer, Attack> attackById = new HashMap<>();
-	private PkVPk battleVS;
 	private ScrappingWeb scrappingWeb;
 	private WritterData writterData;
 	private ReaderData readerData;
@@ -74,7 +71,6 @@ public class Game {
 		this.typeById = new HashMap<>();
 		this.pokemonById = new HashMap<>();
 		this.attackById = new HashMap<>();
-		this.battleVS = new PkVPk();
 		this.scrappingWeb = new ScrappingWeb();
 		this.writterData = new WritterData();
 		this.readerData = new ReaderData();
@@ -197,14 +193,6 @@ public class Game {
 
 	public void setAttackById(Map<Integer, Attack> attackById) {
 		this.attackById = attackById;
-	}
-
-	public PkVPk getBattleVS() {
-		return battleVS;
-	}
-
-	public void setBattleVS(PkVPk battleVS) {
-		this.battleVS = battleVS;
 	}
 
 	public ScrappingWeb getScrappingWeb() {

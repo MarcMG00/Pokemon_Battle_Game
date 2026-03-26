@@ -295,8 +295,8 @@ public class Pokemon {
 		return ps;
 	}
 
-	public void setPs(float f) {
-		this.ps = f;
+	public void setPs(float ps) {
+		this.ps = ps;
 	}
 
 	public float getAttack() {
@@ -1674,6 +1674,28 @@ public class Pokemon {
 		// 55_Hustle ability reduces precision by 20%
 		if (pkAbility.getId() == 55 && this.getNextMovement().getBases().contains("fisico"))
 			atkAttacker.setPrecision(atkAttacker.getPrecision() * 0.8f);
+	}
+	
+	// -----------------------------
+	// Get stage from specific stat
+	// -----------------------------
+	public int getStage(StatType stat) {
+		switch (stat) {
+		case ATTACK:
+			return getAttackStage();
+		case SPECIAL_ATTACK:
+			return getSpecialAttackStage();
+		case DEFENSE:
+			return getDefenseStage();
+		case SPECIAL_DEFENSE:
+			return getSpecialDefenseStage();
+		case PRECISION:
+			return getPrecisionStage();
+		case SPEED:
+			return getSpeedStage();
+		default:
+			throw new IllegalArgumentException("Unknown stat " + stat);
+		}
 	}
 
 	// -----------------------------
