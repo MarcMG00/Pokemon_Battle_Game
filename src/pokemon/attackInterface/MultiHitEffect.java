@@ -3,16 +3,19 @@ package pokemon.attackInterface;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
 import pokemon.model.DamageService;
+import pokemon.model.HelperService;
 
 public class MultiHitEffect implements AttackEffect {
 	private final DamageService damageService;
+	private final HelperService helperService;
 	private int minHits;
 	private int maxHits;
 
-	public MultiHitEffect(DamageService damageService, int minHits, int maxHits) {
+	public MultiHitEffect(HelperService helperService, DamageService damageService, int minHits, int maxHits) {
 		this.minHits = minHits;
 		this.maxHits = maxHits;
 		this.damageService = damageService;
+		this.helperService = helperService;
 	}
 
 	@Override
@@ -23,12 +26,13 @@ public class MultiHitEffect implements AttackEffect {
 				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
 
 		int hits = ctx.attacker.getAbilitySelected().getId() == 92 ? maxHits
-				: ctx.helperService.randomInt(minHits, maxHits);
+				: helperService.randomInt(minHits, maxHits);
 
 		float totalDamage = 0;
 
 		for (int i = 0; i < hits; i++) {
-			totalDamage += damageService.doDammage(ctx);
+			AttackResult hitResult = damageService.doDamage(ctx);
+			totalDamage += hitResult.getDamage();
 		}
 		result.addDamage(totalDamage);
 
@@ -36,7 +40,7 @@ public class MultiHitEffect implements AttackEffect {
 
 		ctx.attack.setPp(ctx.attack.getPp() - 1);
 		ctx.defender.setPs(ctx.defender.getPs() - totalDamage);
-		
+
 		return result;
 	}
 }

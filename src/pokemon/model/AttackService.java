@@ -114,12 +114,17 @@ public class AttackService {
 		attackEffects.put(87, simpleDamage); // Trueno/Thunder (tested)
 
 		// Multi-hit attacks (normal damage)
-		attackEffects.put(3, new MultiHitEffect(damageService, 1, 5)); // Doble bofetón/Double slap (tested)
-		attackEffects.put(4, new MultiHitEffect(damageService, 1, 5)); // Puño cometa/Comet punch (tested)
-		attackEffects.put(24, new MultiHitEffect(damageService, 2, 2)); // Doble patada/Double kick (tested)
-		attackEffects.put(31, new MultiHitEffect(damageService, 1, 5)); // Ataque furia/Fury attack (tested)
-		attackEffects.put(41, new MultiHitEffect(damageService, 2, 2)); // Doble ataque/Twineedle (tested)
-		attackEffects.put(42, new MultiHitEffect(damageService, 1, 5)); // Pin misil/Pin missile (tested)
+		attackEffects.put(3, new MultiHitEffect(helperService, damageService, 1, 5)); // Doble bofetón/Double slap
+																						// (tested)
+		attackEffects.put(4, new MultiHitEffect(helperService, damageService, 1, 5)); // Puño cometa/Comet punch
+																						// (tested)
+		attackEffects.put(24, new MultiHitEffect(helperService, damageService, 2, 2)); // Doble patada/Double kick
+																						// (tested)
+		attackEffects.put(31, new MultiHitEffect(helperService, damageService, 1, 5)); // Ataque furia/Fury attack
+																						// (tested)
+		attackEffects.put(41, new MultiHitEffect(helperService, damageService, 2, 2)); // Doble ataque/Twineedle
+																						// (tested)
+		attackEffects.put(42, new MultiHitEffect(helperService, damageService, 1, 5)); // Pin misil/Pin missile (tested)
 
 		// Charge attacks
 		AttackEffect chargeAttackDamage = new ChargeAttackEffect(damageService);
@@ -142,7 +147,7 @@ public class AttackService {
 		attackEffects.put(46, new ForceSwitchEffect()); // Rugido/Roar (tested)
 
 		// Trapped effect
-		AttackEffect trappedDamage = new TrappedEffect(damageService);
+		AttackEffect trappedDamage = new TrappedEffect(helperService, damageService);
 		attackEffects.put(20, trappedDamage); // Atadura/Bind (tested)
 		attackEffects.put(35, trappedDamage); // Constricción/Wrap (tested)
 		attackEffects.put(83, trappedDamage); // Giro fuego/Fire spin (tested)
@@ -164,15 +169,16 @@ public class AttackService {
 		attackEffects.put(66, new RecoilDamageEffect(damageService, 0.25f)); // Sumisión/Submission (tested)
 
 		// Trapped by own attack effect
-		attackEffects.put(37, new TrappedByOwnAttackEffect(damageService, 2, 5)); // Saña/Thrash (tested)
-		attackEffects.put(80, new TrappedByOwnAttackEffect(damageService, 2, 5)); // Danza pétalo/Petal dance (tested)
+		attackEffects.put(37, new TrappedByOwnAttackEffect(helperService, damageService, 2, 5)); // Saña/Thrash (tested)
+		attackEffects.put(80, new TrappedByOwnAttackEffect(helperService, damageService, 2, 5)); // Danza pétalo/Petal
+																									// dance (tested)
 
 		// Sleep effect
-		attackEffects.put(47, new SleepEffect(1, 7)); // Canto/Sing (tested)
-		attackEffects.put(79, new SleepEffect(1, 7)); // Somnífero/Sleep powder (tested)
+		attackEffects.put(47, new SleepEffect(helperService, 1, 7)); // Canto/Sing (tested)
+		attackEffects.put(79, new SleepEffect(helperService, 1, 7)); // Somnífero/Sleep powder (tested)
 
 		// Confused effect
-		attackEffects.put(48, new ConfusedEffect(1, 7)); // Supersónico/Supersonic (tested)
+		attackEffects.put(48, new ConfusedEffect(helperService, 1, 7)); // Supersónico/Supersonic (tested)
 
 		// Fixed damage effect
 		attackEffects.put(49, new FixedDamageEffect(20f)); // Bomba sónica/Sonic boom (tested)
@@ -180,7 +186,7 @@ public class AttackService {
 		attackEffects.put(82, new FixedDamageEffect(40f)); // Furia dragón/Dragon rage (tested)
 
 		// Anulación/Disable (tested)
-		attackEffects.put(50, new DisableAttackEffect(4, 7));
+		attackEffects.put(50, new DisableAttackEffect(helperService, 4, 7));
 
 		// Neblina/Mist (tested)
 		attackEffects.put(54, new MistEffect());
@@ -338,33 +344,17 @@ public class AttackService {
 			int attackId = sc.nextInt();
 			sc.useDelimiter(";|\r?\n|\r");
 
-			if (!hasAttack(player, attackId)) {
+			if (!player.getPkCombatting().hasAttack(attackId)) {
 				System.out.println("Escoge un ataque que tenga el Pokémon.");
 				continue;
 			}
 
-			if (!hasPP(player, attackId)) {
+			if (!player.getPkCombatting().hasPP(attackId)) {
 				System.out.println("No tienes más PP para este ataque. Escoge otro.");
 				continue;
 			}
-
 			return attackId;
 		}
-	}
-
-	// -----------------------------
-	// Check if Pokemon has the attack chosen
-	// -----------------------------
-	private boolean hasAttack(Player player, int attackId) {
-		return player.getPkCombatting().getFourIdAttacks().contains(attackId);
-	}
-
-	// -----------------------------
-	// Check attack chosen has PP remaining
-	// -----------------------------
-	private boolean hasPP(Player player, int attackId) {
-		Attack atk = player.getPkCombatting().getNextMovementById(attackId);
-		return atk.getPp() > 0;
 	}
 
 	// -----------------------------
@@ -389,6 +379,7 @@ public class AttackService {
 		// Normal status IA
 		System.out.println(ANSI_YELLOW + "Estado normal del Pokémon de la máquina : "
 				+ game.getIA().getPkCombatting().getStatusCondition().getStatusCondition() + ANSI_RESET);
+
 		// Ephemeral status IA
 		System.out.println(ANSI_YELLOW + "Estados efímeros del Pokémon de la máquina : " + ANSI_RESET);
 		if (game.getIA().getPkCombatting().hasEphemeralStatus()) {
@@ -705,7 +696,7 @@ public class AttackService {
 	}
 
 	// -----------------------------
-	// Initialize new battle (Pk vs Pk)
+	// Initialize new battle (Attack context)
 	// -----------------------------
 	private AttackContext initializeBattle(Player attacker, Player defender) {
 		AttackContext ctx = buildContext(attacker, defender);
@@ -778,7 +769,7 @@ public class AttackService {
 	private AttackContext buildContext(Player attacker, Player defender) {
 		return new AttackContext(attacker.getPkCombatting(), attacker.getPkFacing(), attacker, defender,
 				attacker.getPkCombatting().getNextMovement(), game.getCurrentWeather(), game.getisWeatherSuppressed(),
-				game.getMistIsActivated(), false, helperService);
+				game.getMistIsActivated(), false);
 	}
 
 	// -----------------------------
@@ -795,14 +786,14 @@ public class AttackService {
 
 			ctx.defender.setHasReceivedDamage(true);
 
-			applySecondaryEffects(ctx, dmg);
+			applySecondaryEffects(ctx, result, dmg);
 		}
 
 		reinitializeAttackStats(ctx.attack);
 		ctx.attacker.reinitializeStatsAfterAttack();
 
-		abilityService.applyAbilityAfterDamage(ctx.attacker, ctx.defender, ctx.attack, result.getDamage(), ctx.weather,
-				ctx.isWeatherSuppressed, ctx.isCriticalAttack);
+		abilityService.applyAbilityAfterDamage(ctx.attacker, ctx.defender, ctx.attack, result.getDamage(),
+				result.isCriticalAttack(), ctx.weather, ctx.isWeatherSuppressed);
 
 		if (ctx.defender.getPs() <= 0)
 			ctx.defender.setStatusCondition(new State(StatusConditions.DEBILITATED));
@@ -814,7 +805,7 @@ public class AttackService {
 	// -----------------------------
 	// Do secondary effects from attacks (set status conditions, flinch, etc)
 	// -----------------------------
-	private void applySecondaryEffects(AttackContext ctx, float dmg) {
+	private void applySecondaryEffects(AttackContext ctx, AttackResult result, float dmg) {
 		Ability abilityAttacker = ctx.attacker.getAbilitySelected();
 
 		double probabilityGettingStatus = Math.random();
@@ -857,12 +848,12 @@ public class AttackService {
 
 				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
 					abilityAttacker.getEffect().afterAttack(null, ctx.attacker, ctx.defender, ctx.attack, dmg,
-							effect.getProbability(), ctx.isCriticalAttack, ctx.weather, ctx.isWeatherSuppressed);
+							effect.getProbability(), result.isCriticalAttack(), ctx.weather, ctx.isWeatherSuppressed);
 				} else
 					ctx.defender.setHasRetreated(true);
 				break;
 			case STAT_DROP:
-				ctx.defender.modifyStatStage(effect.getStat(), effect.getStages(), ctx.isMistEffectActivated);
+				ctx.defender.reduceStatStage(effect.getStat(), effect.getStages(), ctx.isMistEffectActivated);
 				break;
 			default:
 				break;

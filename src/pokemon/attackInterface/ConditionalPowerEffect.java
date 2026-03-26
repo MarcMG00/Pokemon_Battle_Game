@@ -15,8 +15,6 @@ public class ConditionalPowerEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
-		AttackResult result = new AttackResult();
-
 		System.out.println(
 				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
 
@@ -26,12 +24,12 @@ public class ConditionalPowerEffect implements AttackEffect {
 				&& ctx.attack.getCanHitWhileInvulnerable().contains(ctx.defender.getNextMovement().getId()))
 			ctx.attack.setPower(ctx.attack.getPower() * multiplier);
 
-		float dmg = damageService.doDammage(ctx);
+		AttackResult result = damageService.doDamage(ctx);
+		float dmg = result.getDamage();
 
 		ctx.attack.setPp(ctx.attack.getPp() - 1);
 		ctx.defender.setPs(ctx.defender.getPs() - dmg);
 
-		result.addDamage(dmg);
 		return result;
 	}
 }

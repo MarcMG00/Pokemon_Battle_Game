@@ -162,8 +162,8 @@ public class AbilityService {
 	// -----------------------------
 	// Do ability effect after attacking
 	// -----------------------------
-	public void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg, Weather weather,
-			boolean isWeatherSuppressed, boolean isCriticalAttack) {
+	public void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg, boolean isCriticalAttack, Weather weather,
+			boolean isWeatherSuppressed) {
 
 		// Attacker ability
 		Ability attackerAbility = attacker.getAbilitySelected();

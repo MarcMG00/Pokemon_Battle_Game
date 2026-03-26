@@ -13,8 +13,6 @@ public class WeightDamageEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
-		AttackResult result = new AttackResult();
-
 		System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó Patada baja");
 
 		// Set power of the attack depending on the weight of the Pokemon facing
@@ -31,12 +29,12 @@ public class WeightDamageEffect implements AttackEffect {
 		else
 			ctx.attack.setPower(120);
 
-		float dmg = damageService.doDammage(ctx);
+		AttackResult result = damageService.doDamage(ctx);
+		float dmg = result.getDamage();
 
 		ctx.attack.setPp(ctx.attack.getPp() - 1);
 		ctx.defender.setPs(ctx.defender.getPs() - dmg);
 
-		result.addDamage(dmg);
 		return result;
 	}
 

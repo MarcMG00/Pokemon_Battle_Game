@@ -3,24 +3,18 @@ package pokemon.model;
 import pokemon.enums.Weather;
 
 public class AttackContext {
-	public Pokemon attacker;
-	public Pokemon defender;
-	public Player attackingPlayer;
-	public Player defendingPlayer;
-
-	public Attack attack;
-
-	public Weather weather;
-	public boolean isWeatherSuppressed;
-	public boolean isMistEffectActivated;
-
-	public boolean isCriticalAttack;
-
-	public HelperService helperService;
+	public final Pokemon attacker;
+	public final Pokemon defender;
+	public final Player attackingPlayer;
+	public final Player defendingPlayer;
+	public final Attack attack;
+	public final Weather weather;
+	public final boolean isWeatherSuppressed;
+	public final boolean isMistEffectActivated;
 
 	public AttackContext(Pokemon attacker, Pokemon defender, Player attackingPlayer, Player defendingPlayer,
 			Attack attack, Weather weather, boolean isWeatherSuppressed, boolean isMistEffectActivated,
-			boolean isCriticalAttack, HelperService helperService) {
+			boolean isCriticalAttack) {
 
 		this.attacker = attacker;
 		this.defender = defender;
@@ -30,7 +24,5 @@ public class AttackContext {
 		this.weather = weather;
 		this.isWeatherSuppressed = isWeatherSuppressed;
 		this.isMistEffectActivated = isMistEffectActivated;
-		this.isCriticalAttack = isCriticalAttack;
-		this.helperService = helperService;
 	}
 }

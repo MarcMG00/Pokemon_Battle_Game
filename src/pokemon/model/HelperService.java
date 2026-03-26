@@ -9,7 +9,7 @@ public class HelperService {
 	}
 
 	// -----------------------------
-	// Gets number of turns to get asleep state
+	// Gets number of turns (applying abilities conditions)
 	// -----------------------------
 	public int randomTurnsAbilitiesConditions(int min, int max, AttackContext ctx) {
 		int nbTurnsHoldingStatus = randomInt(min, max);

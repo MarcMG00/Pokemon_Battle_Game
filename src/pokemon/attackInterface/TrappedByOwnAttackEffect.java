@@ -9,26 +9,28 @@ import pokemon.model.State;
 
 public class TrappedByOwnAttackEffect implements AttackEffect {
 	private final DamageService damageService;
+	private final HelperService helperService;
 	private final int minTurns;
 	private final int maxTurns;
 
-	public TrappedByOwnAttackEffect(DamageService damageService, int minTurns, int maxTurns) {
+	public TrappedByOwnAttackEffect(HelperService helperService, DamageService damageService, int minTurns,
+			int maxTurns) {
 		this.damageService = damageService;
+		this.helperService = helperService;
 		this.minTurns = minTurns;
 		this.maxTurns = maxTurns;
 	}
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
-		AttackResult result = new AttackResult();
-
 		System.out.println(
 				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
 
-		float dmg = damageService.doDammage(ctx);
+		AttackResult result = damageService.doDamage(ctx);
+		float dmg = result.getDamage();
 
 		if (!ctx.attacker.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
-			int turns = ctx.helperService.randomInt(minTurns, maxTurns);
+			int turns = helperService.randomInt(minTurns, maxTurns);
 
 			System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")"
 					+ " usará el mismo ataque durante " + turns + " turnos.");
@@ -42,7 +44,6 @@ public class TrappedByOwnAttackEffect implements AttackEffect {
 
 		ctx.defender.setPs(ctx.defender.getPs() - dmg);
 
-		result.addDamage(dmg);
 		return result;
 	}
 }

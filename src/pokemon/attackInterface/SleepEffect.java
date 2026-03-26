@@ -3,16 +3,19 @@ package pokemon.attackInterface;
 import pokemon.enums.StatusConditions;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
+import pokemon.model.HelperService;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
 public class SleepEffect implements AttackEffect {
 	private final int minTurns;
 	private final int maxTurns;
+	private final HelperService helperService;
 
-	public SleepEffect(int minTurns, int maxTurns) {
+	public SleepEffect(HelperService helperService, int minTurns, int maxTurns) {
 		this.minTurns = minTurns;
 		this.maxTurns = maxTurns;
+		this.helperService = helperService;
 	}
 
 	@Override
@@ -34,7 +37,7 @@ public class SleepEffect implements AttackEffect {
 		if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, ctx.attack))
 			return result;
 
-		int turns = ctx.helperService.randomTurnsAbilitiesConditions(minTurns, maxTurns, ctx);
+		int turns = helperService.randomTurnsAbilitiesConditions(minTurns, maxTurns, ctx);
 		System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " cayó en un sueño profundo por "
 				+ turns + " turnos");
 

@@ -725,15 +725,6 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 84).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 38).findFirst().get());
-
-			// Adds the Ids of attacks chosed in a list
-//			for (Attack ataChosed : player.getPkCombatting().getFourPrincipalAttacks()) {
-//
-//				player.getPkCombatting().addIdAttack(ataChosed.getId());
-//
-//			}
-			for (Attack ataChosed : pk.getFourPrincipalAttacks())
-				pk.addIdAttack(ataChosed.getId());
 		}
 
 		pkCount = new HashMap<Integer, Integer>();
@@ -793,9 +784,6 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
 
-			// Adds the Ids of attacks chosen in a list
-			for (Attack ataChosed : this.getIA().getPkCombatting().getFourPrincipalAttacks())
-				this.getIA().getPkCombatting().addIdAttack(ataChosed.getId());
 		}
 
 		// Select an ability for each Pokemon list

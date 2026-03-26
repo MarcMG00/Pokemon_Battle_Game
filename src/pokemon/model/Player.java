@@ -101,13 +101,6 @@ public class Player {
 			rand = new Random();
 			pk.addAttacks(pk.getSpecialAttacks().get(rand.nextInt(pk.getSpecialAttacks().size())));
 
-			// Adds the Ids of attacks chosen in a list
-			for (Attack attackChosen : pk.getFourPrincipalAttacks()) {
-
-				pk.addIdAttack(attackChosen.getId());
-
-			}
-
 			System.out.println("fin PK");
 		}
 	}

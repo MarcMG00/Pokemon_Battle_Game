@@ -13,12 +13,11 @@ public class AbsorbEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
-		AttackResult result = new AttackResult();
-
 		System.out.println(
 				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
 
-		float dmg = damageService.doDammage(ctx);
+		AttackResult result = damageService.doDamage(ctx);
+		float dmg = result.getDamage();
 
 		ctx.attack.setPp(ctx.attack.getPp() - 1);
 
@@ -42,7 +41,6 @@ public class AbsorbEffect implements AttackEffect {
 				}
 			}
 		}
-		result.addDamage(dmg);
 		return result;
 	}
 }

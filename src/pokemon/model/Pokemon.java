@@ -42,7 +42,7 @@ public class Pokemon {
 	private ArrayList<Attack> normalAttacks;
 	private ArrayList<Attack> lowAttacks;
 	private ArrayList<Attack> notEffectAttacks;
-	private ArrayList<Integer> fourIdAttacks;
+	// private ArrayList<Integer> fourIdAttacks;
 	private int precisionPoints;
 	private int evasionPoints;
 	private State statusCondition;
@@ -108,7 +108,6 @@ public class Pokemon {
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
 		this.notEffectAttacks = new ArrayList<>();
-		this.fourIdAttacks = new ArrayList<>();
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
 		this.isChargingAttackForNextRound = false;
@@ -168,7 +167,6 @@ public class Pokemon {
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
 		this.notEffectAttacks = new ArrayList<>();
-		this.fourIdAttacks = new ArrayList<>();
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
 		this.isChargingAttackForNextRound = false;
@@ -228,7 +226,6 @@ public class Pokemon {
 		this.otherAttacks = (ArrayList<Attack>) pokemon.otherAttacks.stream().map(Attack::new)
 				.collect(Collectors.toList());
 		this.fourPrincipalAttacks = new ArrayList<>(); // starts empty
-		this.fourIdAttacks = new ArrayList<>();
 
 		this.nextMovement = null;
 		this.lotDamageAttacks = (ArrayList<Attack>) pokemon.lotDamageAttacks.stream().map(Attack::new)
@@ -489,14 +486,6 @@ public class Pokemon {
 
 	public void setNotEffectAttacks(ArrayList<Attack> notEffectAttacks) {
 		this.notEffectAttacks = notEffectAttacks;
-	}
-
-	public ArrayList<Integer> getFourIdAttacks() {
-		return fourIdAttacks;
-	}
-
-	public void setFourIdAttacks(ArrayList<Integer> fourIdAttacks) {
-		this.fourIdAttacks = fourIdAttacks;
 	}
 
 	public int getPrecisionStage() {
@@ -769,11 +758,6 @@ public class Pokemon {
 	// Adds the four principal attacks to Pokemon
 	public void addAttacks(Attack attack) {
 		this.fourPrincipalAttacks.add(attack);
-	}
-
-	// Adds the four final attacks Ids to Pokemon
-	public void addIdAttack(Integer idAtck) {
-		this.fourIdAttacks.add(idAtck);
 	}
 
 	// ==================================== METHODS
@@ -1566,90 +1550,49 @@ public class Pokemon {
 	// -----------------------------
 	// Modify stat stage from rival attacks
 	// -----------------------------
-	public void modifyStatStage(StatType stat, int stages, boolean isMistEffectActivated) {
-		// 29_Clear_Body / 73_White_Smoke abilities cannot be reduced stats
-		if (this.getAbilitySelected().getId() == 29 || this.getAbilitySelected().getId() == 73) {
-			System.out.println("Las estats de " + this.getName() + " (Id:" + this.getId() + ")"
-					+ " no pueden bajar dada su la habilidad " + this.getAbilitySelected().getName());
+	public void reduceStatStage(StatType stat, int stages, boolean isMistEffectActivated) {
+		if (cannotReduceStat(stat))
+			return;
+
+		if (isMistEffectActivated) {
+			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pudo bajar las estadísticas gracias a Neblina");
 			return;
 		}
 
-		if (!isMistEffectActivated) {
-			switch (stat) {
-			case ATTACK:
-				// 52_Hyper_Cutter ability
-				if (this.getAbilitySelected().getId() == 52) {
-					System.out.println("El ataque de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
-					break;
-				}
+		if (getStage(stat) <= -6) {
+			System.out.println(stat + " de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
+			return;
+		}
 
-				if (this.getAttackStage() <= -6) {
-					System.out.println(
-							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.ATTACK, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque!");
-				}
-				break;
-			case SPECIAL_ATTACK:
-				if (this.getSpecialAttackStage() <= -6) {
-					System.out.println("El ataque especial de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.SPECIAL_ATTACK, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque especial!");
-				}
-				break;
-			case DEFENSE:
-				if (this.getDefenseStage() <= -6) {
-					System.out.println(
-							"La defensa de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.DEFENSE, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa!");
-				}
-				break;
-			case SPECIAL_DEFENSE:
-				if (this.getSpecialDefenseStage() <= -6) {
-					System.out.println("La defensa especial de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.SPECIAL_DEFENSE, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa especial!");
-				}
-				break;
-			case PRECISION:
-				// 35_Illuminate/ 51_Keen_Eye ability
-				if (this.getAbilitySelected().getId() == 35 || this.getAbilitySelected().getId() == 51) {
-					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
-					break;
-				}
+		setStageValueStats(stat, stages, true);
+		System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su " + stat);
+	}
 
-				if (this.getPrecisionStage() <= -6) {
-					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.PRECISION, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su precisión!");
-				}
-				break;
-			case SPEED:
-				if (this.getSpeedStage() <= -6) {
-					System.out.println("La velocidad de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.SPEED, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su velocidad!");
-				}
-				break;
-			case NONE:
-				break;
-			}
-		} else
-			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
-					+ " no pudo bajar las estadísticas a causa de Neblina");
+	private boolean cannotReduceStat(StatType stat) {
+		Ability ability = this.getAbilitySelected();
+
+		// 29_Clear_Body / 73_White_Smoke abilities cannot be reduced stats
+		if (ability.getId() == 29 || ability.getId() == 73) {
+			System.out.println("Las estats de " + this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pueden bajar dada su la habilidad " + this.getAbilitySelected().getName());
+			return true;
+		}
+
+		// 52_Hyper_Cutter ability
+		if (stat == StatType.ATTACK && ability.getId() == 52) {
+			System.out.println("El ataque de " + this.getName() + " (Id:" + this.getId() + ")"
+					+ " no puede bajar dada su " + this.getAbilitySelected().getName());
+			return true;
+		}
+
+		// 35_Illuminate/ 51_Keen_Eye ability
+		if (stat == StatType.PRECISION && (ability.getId() == 35 || ability.getId() == 51)) {
+			System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
+					+ " no puede bajar dada su " + this.getAbilitySelected().getName());
+			return true;
+		}
+		return false;
 	}
 
 	// -----------------------------
@@ -1675,7 +1618,7 @@ public class Pokemon {
 		if (pkAbility.getId() == 55 && this.getNextMovement().getBases().contains("fisico"))
 			atkAttacker.setPrecision(atkAttacker.getPrecision() * 0.8f);
 	}
-	
+
 	// -----------------------------
 	// Get stage from specific stat
 	// -----------------------------
@@ -1764,5 +1707,20 @@ public class Pokemon {
 	// -----------------------------
 	public void allowAttack() {
 		this.setCanAttack(true);
+	}
+
+	// -----------------------------
+	// Check if Pokemon has the attack chosen
+	// -----------------------------
+	public boolean hasAttack(int attackId) {
+		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.getId() == attackId);
+	}
+
+	// -----------------------------
+	// Check attack chosen has PP remaining
+	// -----------------------------
+	public boolean hasPP(int attackId) {
+		Attack atk = this.getNextMovementById(attackId);
+		return atk.getPp() > 0;
 	}
 }

@@ -3,23 +3,38 @@ package pokemon.model;
 import pokemon.enums.Weather;
 
 public class DamageService {
+	private static class CriticalResult {
+		float damage;
+		boolean isCritical;
+
+		CriticalResult(float damage, boolean isCritical) {
+			this.damage = damage;
+			this.isCritical = isCritical;
+		}
+	}
+
 	// -----------------------------
 	// Apply damage
 	// -----------------------------
-	public float doDammage(AttackContext ctx) {
+	public AttackResult doDamage(AttackContext ctx) {
+		AttackResult result = new AttackResult();
+
 		Pokemon attacker = ctx.attacker;
 		Pokemon defender = ctx.defender;
 		Attack attack = attacker.getNextMovement();
 
 		float modifiedPower = calculateModifiedPower(attacker, defender, attack);
-
 		float baseDamage = calculateBaseDamage(attacker, defender, attack, modifiedPower, ctx);
-		float damageAfterCrit = applyCriticalIfNeeded(attacker, attack, baseDamage, ctx);
+		CriticalResult critResult = applyCriticalIfNeeded(attacker, attack, baseDamage, ctx);
+
+		float damageAfterCrit = critResult.damage;
 		float finalDamage = applyDefensiveAbilities(defender, attacker, attack, damageAfterCrit);
 
-		System.out.println("Damage to " + defender.getName() + " : " + finalDamage);
+		System.out.println("Damage to " + defender.getName() + " (Id:" + defender.getId() + ")" + " : " + finalDamage);
 
-		return finalDamage;
+		result.addDamage(finalDamage);
+		result.setCritical(critResult.isCritical);
+		return result;
 	}
 
 	// -----------------------------
@@ -67,7 +82,6 @@ public class DamageService {
 			System.out.println(attacker.getName() + " potenciado por habilidad " + ability.getName());
 			return 1.5f;
 		}
-
 		return 1f;
 	}
 
@@ -135,7 +149,7 @@ public class DamageService {
 	// -----------------------------
 	// Apply critical damage by probabilities
 	// -----------------------------
-	private float applyCriticalIfNeeded(Pokemon attacker, Attack attack, float damage, AttackContext ctx) {
+	private CriticalResult applyCriticalIfNeeded(Pokemon attacker, Attack attack, float damage, AttackContext ctx) {
 		Ability ability = attacker.getAbilitySelected();
 		boolean isCrit;
 
@@ -147,12 +161,14 @@ public class DamageService {
 			isCrit = getCriticity(ctx);
 
 		if (!isCrit)
-			return damage;
+			return new CriticalResult(damage, false);
+
+		System.out.println("Fue un golpe crítico");
 
 		if (ability.getId() == 97) // 97_Sniper ability does *3 damage
-			return damage * 3f;
+			return new CriticalResult(damage * 3f, true);
 
-		return damage * 2f;
+		return new CriticalResult(damage * 2f, true);
 	}
 
 	// -----------------------------
@@ -210,7 +226,6 @@ public class DamageService {
 			if (ctx.attack.getStrTypeToPkType().getId() == 2) // Water
 				return 0.5f;
 		}
-
 		return 1.0f;
 	}
 
@@ -222,10 +237,8 @@ public class DamageService {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10) {
-			ctx.isCriticalAttack = true;
 			return this.canReceiveCriticalAttacks(ctx);
 		}
-
 		return false;
 	}
 
@@ -237,10 +250,8 @@ public class DamageService {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 30) {
-			ctx.isCriticalAttack = true;
 			return this.canReceiveCriticalAttacks(ctx);
 		}
-
 		return false;
 	}
 
@@ -252,10 +263,8 @@ public class DamageService {
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 40) {
-			ctx.isCriticalAttack = true;
 			return this.canReceiveCriticalAttacks(ctx);
 		}
-
 		return false;
 	}
 

@@ -48,12 +48,11 @@ public class StatusService {
 		return (secondTurnCharged || normalAttack) && pk.getCanDonAnythingNextRound();
 	}
 
-	/*
-	 * ------------------------- Helper: Evaluate states BEFORE ordering "who should
-	 * attack first" decision. Some states decrease their turn at the beginning of
-	 * the turn and apply effects for example when paralyzed, it reduces speed
-	 * -------------------------
-	 */
+	// -----------------------------
+	// Helper: Evaluate states BEFORE ordering "who should attack first" decision.
+	// Some states decrease their turn at the beginning of the turn and apply
+	// effects for example when paralyzed, it reduces speed
+	// -----------------------------
 	public void evaluateStatusStartOfTurn(Pokemon pk) {
 		pk.doFrozenEffect();
 		pk.doBurnedEffectStartTurn();
@@ -70,11 +69,10 @@ public class StatusService {
 		pkB.removeStates();
 	}
 
-	/*
-	 * ------------------------- Helper: Evaluate states BEFORE attacking. Some
-	 * states influence the probability of attacking, for example when confused,
-	 * paralyzed, etc. -------------------------
-	 */
+	// -----------------------------
+	// Helper: Evaluate states BEFORE attacking. Some states influence the
+	// probability of attacking, for example when confused, paralyzed, etc.
+	// -----------------------------
 	public boolean canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
 		pk.canAttackFrozen();
 		pk.checkCanMoveParalyzed();
@@ -106,10 +104,9 @@ public class StatusService {
 		return faintedPlayers;
 	}
 
-	/*
-	 * ------------------------- Helper: Reduce number of turns remaining on states
-	 * -------------------------
-	 */
+	// -----------------------------
+	// Helper: Reduce number of turns remaining on states
+	// -----------------------------
 	public StatusResult reduceNumberTurnsEffects(Player playerAttacker, Player playerDefender) {
 		// Normal status
 		playerAttacker.getPkCombatting().doBurnedEffectEndTurn();

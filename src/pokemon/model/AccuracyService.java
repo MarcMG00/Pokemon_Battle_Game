@@ -161,7 +161,6 @@ public class AccuracyService {
 			attacker.allowAttack();
 			return true;
 		}
-
 		return false;
 	}
 
@@ -316,7 +315,6 @@ public class AccuracyService {
 			attacker.allowAttack();
 			return true;
 		}
-
 		return false;
 	}
 
