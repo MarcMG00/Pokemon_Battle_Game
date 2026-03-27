@@ -162,8 +162,8 @@ public class AbilityService {
 	// -----------------------------
 	// Do ability effect after attacking
 	// -----------------------------
-	public void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg, boolean isCriticalAttack, Weather weather,
-			boolean isWeatherSuppressed) {
+	public void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg,
+			boolean isCriticalAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		// Attacker ability
 		Ability attackerAbility = attacker.getAbilitySelected();
@@ -185,6 +185,23 @@ public class AbilityService {
 		if (defenderAbility != null) {
 			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, isCriticalAttack,
 					weather, isWeatherSuppressed);
+		}
+	}
+
+	// -----------------------------
+	// Apply abilities concerning the attack of the Pokemon
+	// -----------------------------
+	public void applyPowerAttackModifiers(AttackContext ctx) {
+		Ability ability = ctx.attacker.getAbilitySelected();
+
+		if (ability == null)
+			return;
+
+		switch (ability.getId()) {
+		case 96: // Normalidad/ Normalize
+			// Increase power 20% more
+			ctx.setPower(ctx.getPower() * 1.2f);
+			break;
 		}
 	}
 }

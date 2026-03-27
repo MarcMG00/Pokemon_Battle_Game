@@ -57,25 +57,23 @@ public class WeatherService {
 	// -----------------------------
 	// Apply modifying stats from weather
 	// -----------------------------
-	public void applyStatsFromWeather() {
-		Ability abilityPkPlayer = game.getPlayer().getPkCombatting().getAbilitySelected();
-		Ability abilityPkIA = game.getIA().getPkCombatting().getAbilitySelected();
+	public void applyStatsFromWeather(TurnContext turnCtx) {
+		Weather weather = game.getCurrentWeather();
 
-		// 33_Swift_Swim (player)
-		if (abilityPkPlayer != null && abilityPkPlayer.getId() != 5000 && abilityPkPlayer.getId() == 33)
-			game.getPlayer().getPkCombatting().setSpeed(game.getPlayer().getPkCombatting().getSpeed() * 2);
+		for (Pokemon pk : turnCtx.getPokemons()) {
+			Ability ability = pk.getAbilitySelected();
 
-		// 33_Swift_Swim (IA)
-		if (abilityPkIA != null && abilityPkIA.getId() != 5000 && abilityPkIA.getId() == 33)
-			game.getIA().getPkCombatting().setSpeed(game.getIA().getPkCombatting().getSpeed() * 2);
+			if (ability == null || ability.getId() == 5000)
+				continue;
 
-		// 34_Chlorophyll (player)
-		if (abilityPkPlayer != null && abilityPkPlayer.getId() != 5000 && abilityPkPlayer.getId() == 34)
-			game.getPlayer().getPkCombatting().setSpeed(game.getPlayer().getPkCombatting().getSpeed() * 2);
+			// 33_Swift_Swim
+			if (ability.getId() == 33 && weather == Weather.RAIN)
+				turnCtx.multiplySpeed(pk, 2f);
 
-		// 34_Chlorophyll (IA)
-		if (abilityPkIA != null && abilityPkIA.getId() != 5000 && abilityPkIA.getId() == 34)
-			game.getIA().getPkCombatting().setSpeed(game.getIA().getPkCombatting().getSpeed() * 2);
+			// 34_Chlorophyll
+			if (ability.getId() == 34 && weather == Weather.SUN)
+				turnCtx.multiplySpeed(pk, 2f);
+		}
 	}
 
 	// -----------------------------

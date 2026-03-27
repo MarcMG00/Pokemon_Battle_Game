@@ -36,8 +36,6 @@ public class BattleService {
 			System.out.println("Let's start round nº : " + nbRound);
 			System.out.println("----------------------------------");
 
-			weatherService.applyStatsFromWeather();
-
 			Pokemon pkPlayer = player.getPkCombatting();
 
 			boolean playerIsCharging = pkPlayer.getIsChargingAttackForNextRound();

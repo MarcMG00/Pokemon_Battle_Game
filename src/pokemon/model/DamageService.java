@@ -21,9 +21,10 @@ public class DamageService {
 
 		Pokemon attacker = ctx.attacker;
 		Pokemon defender = ctx.defender;
-		Attack attack = attacker.getNextMovement();
+		Attack attack = ctx.attack;
+		float power = ctx.getPower();
 
-		float modifiedPower = calculateModifiedPower(attacker, defender, attack);
+		float modifiedPower = calculateModifiedPower(attacker, defender, attack, power);
 		float baseDamage = calculateBaseDamage(attacker, defender, attack, modifiedPower, ctx);
 		CriticalResult critResult = applyCriticalIfNeeded(attacker, attack, baseDamage, ctx);
 
@@ -40,8 +41,7 @@ public class DamageService {
 	// -----------------------------
 	// Modify power depending on abilities from attacker
 	// -----------------------------
-	private float calculateModifiedPower(Pokemon attacker, Pokemon defender, Attack attack) {
-		float power = attack.getPower();
+	private float calculateModifiedPower(Pokemon attacker, Pokemon defender, Attack attack, float power) {
 		Ability ability = attacker.getAbilitySelected();
 
 		power *= applyPhysicalAbilities(ability, attack);
@@ -124,7 +124,7 @@ public class DamageService {
 	// -----------------------------
 	// Calculate base damage
 	// -----------------------------
-	private float calculateBaseDamage(Pokemon attacker, Pokemon defender, Attack attack, float power,
+	private float calculateBaseDamage(Pokemon attacker, Pokemon defender, Attack attack, float modifiedPower,
 			AttackContext ctx) {
 		boolean isSpecial = attack.getBases().contains("especial");
 		float randomVariation = (float) (85 + Math.random() * 15);
@@ -134,7 +134,7 @@ public class DamageService {
 
 		float defenseStat = isSpecial ? defender.getEffectiveSpecialDefense() : defender.getEffectiveDefense();
 
-		float base = (((0.2f * 100f + 1f) * attackStat * power) / (25f * defenseStat) + 2f);
+		float base = (((0.2f * 100f + 1f) * attackStat * modifiedPower) / (25f * defenseStat) + 2f);
 
 		float damage = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier
 				* randomVariation * base;

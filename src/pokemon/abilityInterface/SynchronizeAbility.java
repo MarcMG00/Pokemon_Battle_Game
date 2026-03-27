@@ -21,7 +21,8 @@ public class SynchronizeAbility implements AbilityEffect {
 			return;
 
 		// Poisoned status
-		if (defender.hasActiveStatusCondition(StatusConditions.POISONED)) {
+		if (defender.hasActiveStatusCondition(StatusConditions.POISONED)
+				|| defender.hasActiveStatusCondition(StatusConditions.BADLY_POISONED)) {
 			System.out.println(attacker.getName() + " fue envenenado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.POISONED));
 			return;

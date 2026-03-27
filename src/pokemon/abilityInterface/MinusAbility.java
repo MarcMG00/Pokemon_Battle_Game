@@ -7,11 +7,9 @@ public class MinusAbility implements AbilityEffect {
 	@Override
 	public void onSwitchIn(Game game, Pokemon owner, Pokemon defender) {
 		// Check if player has another Pokemon with "Plus" ability
-		if (owner.getOwner().getPokemon().stream().anyMatch(pk -> pk.getAbilitySelected().getId() == 57)) {
-			owner.setSpecialAttack(owner.getSpecialAttack() * 1.5f);
+		if (owner.getOwner().getPokemon().stream().anyMatch(pk -> pk.getAbilitySelected().getId() == 57))
 			System.out.println("El ataque especial de " + owner.getName() + " aumentó gracias a "
 					+ owner.getAbilitySelected().getName());
-		}
 
 	}
 
@@ -19,9 +17,7 @@ public class MinusAbility implements AbilityEffect {
 	public void onSwitchOut(Game game, Pokemon owner) {
 
 		// Reset special attack
-		if (owner.getOwner().getPokemon().stream().anyMatch(pk -> pk.getAbilitySelected().getId() == 57)) {
-			owner.setSpecialAttack(owner.getInitialSpecialAttack());
+		if (owner.getOwner().getPokemon().stream().anyMatch(pk -> pk.getAbilitySelected().getId() == 57))
 			System.out.println("El ataque especial de " + owner.getName() + " volvió a la normalidad");
-		}
 	}
 }

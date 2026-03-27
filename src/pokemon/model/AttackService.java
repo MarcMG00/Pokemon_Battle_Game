@@ -249,7 +249,15 @@ public class AttackService {
 
 		printPokemonStates();
 
-		statusService.evaluateStartTurnStatuses();
+		Pokemon playerPk = game.getPlayer().getPkCombatting();
+		Pokemon iaPk = game.getIA().getPkCombatting();
+
+		TurnContext turnCtx = buildTurnContext();
+		turnCtx.setSpeed(playerPk, playerPk.getEffectiveSpeed());
+		turnCtx.setSpeed(iaPk, iaPk.getEffectiveSpeed());
+		weatherService.applyStatsFromWeather(turnCtx);
+
+		statusService.evaluateStartTurnStatuses(playerPk, iaPk, turnCtx);
 
 		preparePlayerAttack(attackId);
 
@@ -258,7 +266,7 @@ public class AttackService {
 		prepareIAAttack();
 
 		// Execute the attack sequence (ordering uses current canAttack and speed)
-		handleNormalAttackSequence(sc);
+		handleNormalAttackSequence(sc, playerPk, iaPk, turnCtx);
 
 		abilityService.applyAbilitiesBeforeEndTurn();
 
@@ -271,6 +279,10 @@ public class AttackService {
 		resetTurnParameters();
 
 		weatherService.applyWeatherEffects(sc);
+	}
+
+	private TurnContext buildTurnContext() {
+		return new TurnContext();
 	}
 
 	// -----------------------------
@@ -441,23 +453,23 @@ public class AttackService {
 	// -----------------------------
 	// Handle normal attack sequence
 	// -----------------------------
-	private void handleNormalAttackSequence(Scanner sc) {
-		boolean playerFirst = playerCanAttackFirst();
+	private void handleNormalAttackSequence(Scanner sc, Pokemon playerPk, Pokemon iaPk, TurnContext turnCtx) {
+		boolean playerFirst = playerCanAttackFirst(playerPk, iaPk, turnCtx);
 
-		System.out.println(ANSI_RED + "Velocidad normal jugador : " + game.getPlayer().getPkCombatting().getSpeed()
-				+ " / Velocidad efectiva : " + game.getPlayer().getPkCombatting().getEffectiveSpeed() + ANSI_RESET);
-		System.out.println(ANSI_RED + "Velocidad normal IA : " + game.getIA().getPkCombatting().getSpeed()
-				+ " / Velocidad efectiva : " + game.getIA().getPkCombatting().getEffectiveSpeed() + ANSI_RESET);
+		System.out.println(ANSI_RED + "Velocidad normal jugador : " + playerPk.getSpeed() + " / Velocidad efectiva : "
+				+ turnCtx.getSpeed(playerPk) + ANSI_RESET);
+		System.out.println(ANSI_RED + "Velocidad normal IA : " + iaPk.getSpeed() + " / Velocidad efectiva : "
+				+ turnCtx.getSpeed(iaPk) + ANSI_RESET);
 
 		Player first = playerFirst ? game.getPlayer() : game.getIA();
 		Player second = playerFirst ? game.getIA() : game.getPlayer();
 
 		// 1. Get order of players
-		boolean turnShouldEnd = attackAndCheckIfTurnEnds(first, second, sc);
+		boolean turnShouldEnd = attackAndCheckIfTurnEnds(first, second, sc, turnCtx);
 
 		// 2. Second player attacks if turn can continue
 		if (!turnShouldEnd) {
-			attackAndCheckIfTurnEnds(second, first, sc);
+			attackAndCheckIfTurnEnds(second, first, sc, turnCtx);
 		}
 
 		// 3. Reset the flinch/retreat
@@ -468,15 +480,14 @@ public class AttackService {
 	// -----------------------------
 	// Player attack first
 	// -----------------------------
-	private boolean playerCanAttackFirst() {
-		return game.getPlayer().getPkCombatting().getCanAttack() && game.getPlayer().getPkCombatting()
-				.getEffectiveSpeed() >= game.getIA().getPkCombatting().getEffectiveSpeed();
+	private boolean playerCanAttackFirst(Pokemon playerPk, Pokemon iaPk, TurnContext ctx) {
+		return playerPk.getCanAttack() && ctx.getSpeed(playerPk) >= ctx.getSpeed(iaPk);
 	}
 
 	// -----------------------------
 	// Check if Pokemon can attack + do retaliation
 	// -----------------------------
-	private boolean attackAndCheckIfTurnEnds(Player attacker, Player defender, Scanner sc) {
+	private boolean attackAndCheckIfTurnEnds(Player attacker, Player defender, Scanner sc, TurnContext turnCtx) {
 		// 1. Check early exit conditions (retreat / dead / forced switch)
 		if (handlePreAttackInterruptions(attacker, defender, sc))
 			return true;
@@ -486,7 +497,7 @@ public class AttackService {
 			return false;
 
 		// 3. Execute attack or recovery
-		executeAttackPhase(attacker);
+		executeAttackPhase(attacker, turnCtx);
 
 		// After an attack, if defender was charging a charged attack (like Fly) but is
 		// prevented (cannot attack),
@@ -547,14 +558,14 @@ public class AttackService {
 	// -----------------------------
 	// Execute attack or recovery depending on Pokemon state
 	// -----------------------------
-	private void executeAttackPhase(Player attacker) {
+	private void executeAttackPhase(Player attacker, TurnContext turnCtx) {
 		Pokemon pk = attacker.getPkCombatting();
 
 		if (pk.getCanDonAnythingNextRound()) {
 			if (attacker == game.getPlayer())
-				handleRetaliation(game.getPlayer(), game.getIA());
+				handleRetaliation(game.getPlayer(), game.getIA(), turnCtx);
 			else
-				handleRetaliation(game.getIA(), game.getPlayer());
+				handleRetaliation(game.getIA(), game.getPlayer(), turnCtx);
 		} else
 			handleRecoveryTurn(pk);
 	}
@@ -668,7 +679,7 @@ public class AttackService {
 	// -----------------------------
 	// Handle retaliation (generic for player or IA)
 	// -----------------------------
-	private void handleRetaliation(Player attacker, Player defender) {
+	private void handleRetaliation(Player attacker, Player defender, TurnContext turnCtx) {
 		Pokemon pkAttacker = attacker.getPkCombatting();
 
 		if (pkAttacker.isDebilitated()) {
@@ -677,6 +688,7 @@ public class AttackService {
 		}
 
 		AttackContext ctx = initializeBattle(attacker, defender);
+		ctx.turnContext = turnCtx;
 
 		if (!pkAttacker.getCanAttack()) {
 			handleCannotAttack(pkAttacker, attacker == game.getPlayer());
@@ -753,6 +765,8 @@ public class AttackService {
 		if (effect == null)
 			throw new IllegalStateException("No effect defined for attack " + ctx.attack.getId());
 
+		abilityService.applyPowerAttackModifiers(ctx);
+
 		// Gets the attack effect and apply damage
 		AttackResult result = effect.execute(ctx);
 
@@ -789,7 +803,6 @@ public class AttackService {
 			applySecondaryEffects(ctx, result, dmg);
 		}
 
-		reinitializeAttackStats(ctx.attack);
 		ctx.attacker.reinitializeStatsAfterAttack();
 
 		abilityService.applyAbilityAfterDamage(ctx.attacker, ctx.defender, ctx.attack, result.getDamage(),
@@ -846,10 +859,10 @@ public class AttackService {
 				if (!ctx.defender.canBeFlinched())
 					break;
 
-				if (abilityAttacker != null && abilityAttacker.getId() == 1) {
+				if (abilityAttacker != null && abilityAttacker.getId() == 1)
 					abilityAttacker.getEffect().afterAttack(null, ctx.attacker, ctx.defender, ctx.attack, dmg,
 							effect.getProbability(), result.isCriticalAttack(), ctx.weather, ctx.isWeatherSuppressed);
-				} else
+				else
 					ctx.defender.setHasRetreated(true);
 				break;
 			case STAT_DROP:
@@ -868,19 +881,10 @@ public class AttackService {
 		double probability = effect.getProbability();
 
 		Ability ability = attacker.getAbilitySelected();
-		if (ability != null && ability.getId() == 32) {
+		if (ability != null && ability.getId() == 32)
 			probability *= 2;
-		}
 
 		return Math.min(probability, 1.0); // never > 100%
-	}
-
-	// -----------------------------
-	// Reset parameters from attacks (to avoid problems each turn)
-	// -----------------------------
-	private void reinitializeAttackStats(Attack attack) {
-		attack.setPrecision(attack.getInitialPrecision());
-		attack.setPower(attack.getInitialPower());
 	}
 
 	// -----------------------------
@@ -916,12 +920,16 @@ public class AttackService {
 
 		Pokemon pkIA = game.getIA().getPkCombatting();
 
-		statusService.evaluateStatusStartOfTurn(pkIA);
+		TurnContext turnCtx = buildTurnContext();
+		turnCtx.setSpeed(pkIA, pkIA.getEffectiveSpeed());
+		weatherService.applyStatsFromWeather(turnCtx);
+
+		statusService.evaluateStatusStartOfTurn(pkIA, turnCtx);
 		statusService.canAttackEvaluatingAllStatesToAttack(pkIA);
 
 		if (pkIA.getCanDonAnythingNextRound()) {
 			prepareIAIfPossible(pkIA);
-			handleChangeSequence(sc); // only IA attacks
+			handleChangeSequence(sc, turnCtx); // only IA attacks
 		} else
 			handleIANotAbleToAct(pkIA);
 
@@ -960,8 +968,8 @@ public class AttackService {
 	// -----------------------------
 	// Handle change sequence
 	// -----------------------------
-	private void handleChangeSequence(Scanner sc) {
-		handleRetaliation(game.getIA(), game.getPlayer());
+	private void handleChangeSequence(Scanner sc, TurnContext turnCtx) {
+		handleRetaliation(game.getIA(), game.getPlayer(), turnCtx);
 		checkForcedPokemonChange(sc);
 	}
 

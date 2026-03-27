@@ -22,7 +22,7 @@ public class ConditionalPowerEffect implements AttackEffect {
 		// invulnerable
 		if (ctx.defender.getIsChargingAttackForNextRound()
 				&& ctx.attack.getCanHitWhileInvulnerable().contains(ctx.defender.getNextMovement().getId()))
-			ctx.attack.setPower(ctx.attack.getPower() * multiplier);
+			ctx.setPower(ctx.getPower() * multiplier);
 
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();

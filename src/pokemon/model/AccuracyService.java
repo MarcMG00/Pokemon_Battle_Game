@@ -21,7 +21,7 @@ public class AccuracyService {
 	public void resolveAttack(AttackContext ctx) {
 		Pokemon attacker = ctx.attacker;
 		Pokemon defender = ctx.defender;
-		Attack atkAttacker = attacker.getNextMovement();
+		Attack atkAttacker = ctx.attack;
 		Attack atkDefender = defender.getNextMovement();
 		boolean isAttackerCharging = attacker.getIsChargingAttackForNextRound();
 		boolean isDefenderCharging = defender.getIsChargingAttackForNextRound();
@@ -64,7 +64,6 @@ public class AccuracyService {
 	// is for evasion)
 	// -----------------------------
 	public float getEvasionOrAccuracy(AttackContext ctx, Pokemon pk, int t) {
-
 		int evAcu = 0;
 		float resultEvAcu = 1;
 
@@ -128,8 +127,7 @@ public class AccuracyService {
 	// -----------------------------
 	private boolean canUseAttack(AttackContext ctx, Pokemon attacker, Attack atkAttacker) {
 		if (isAttackDisabled(ctx)) {
-			System.out.println(attacker.getName() + " intentó usar " + attacker.getNextMovement().getName()
-					+ ", pero está anulado!");
+			System.out.println(attacker.getName() + " intentó usar " + ctx.attack.getName() + ", pero está anulado!");
 			attacker.denyAttack();
 			return false;
 		}
@@ -186,8 +184,8 @@ public class AccuracyService {
 		float accuracyFactor = 0f;
 
 		// Methods to modify precision of attack, evasion, etc.
-		checkWeatherEffectsForAttacks(ctx.weather, atkAttacker);
-		attacker.checkStatsForAttacks(atkAttacker);
+		checkWeatherEffectsForAttacks(ctx);
+		checkStatsForAttacks(ctx);
 
 		if (atkAttacker.isOneHitKO())
 			// don't take into account Pokemon levels (cause all are on the same lvl)
@@ -195,10 +193,10 @@ public class AccuracyService {
 		// Retreat Pokemon (23_Stomp/ 27_Rolling kick/ 29_Headbutt/ 44_Bite) + defender
 		// is minimized
 		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.getHasUsedMinimize())
-			accuracyFactor = (atkAttacker.getPrecision() / 100f) * (getEvasionOrAccuracy(ctx, attacker, 1) / 1f);
+			accuracyFactor = (ctx.precision / 100f) * (getEvasionOrAccuracy(ctx, attacker, 1) / 1f);
 		// Other attacks
 		else
-			accuracyFactor = (atkAttacker.getPrecision() / 100f)
+			accuracyFactor = (ctx.precision / 100f)
 					* (getEvasionOrAccuracy(ctx, attacker, 1) / getEvasionOrAccuracy(ctx, defender, 2));
 
 		return accuracyFactor;
@@ -248,7 +246,6 @@ public class AccuracyService {
 	// -----------------------------
 	private void handleNormalAccuracyCheck(float accuracyFactor, Attack atk, Pokemon attacker, Pokemon defender,
 			String code) {
-
 		if (accuracyFactor >= 1f) {
 			attacker.allowAttack();
 			return;
@@ -267,7 +264,7 @@ public class AccuracyService {
 					+ " evitó el ataque jijijija. " + code);
 
 			// Some attacks that can fail, hurts the attacker (Jump kick, etc.)
-			if (attacker.getNextMovement().getCanRecieveDamage()) {
+			if (atk.getCanRecieveDamage()) {
 				float attackerInitialPs = attacker.getInitialPs();
 
 				float recoil = attackerInitialPs / 2f;
@@ -284,7 +281,6 @@ public class AccuracyService {
 	// -----------------------------
 	private void handleChargedAttackExecution(float accuracyFactor, Attack atk, Pokemon attacker, Pokemon defender,
 			String code) {
-
 		if (accuracyFactor >= 1f) {
 			attacker.allowAttack();
 			return;
@@ -326,7 +322,7 @@ public class AccuracyService {
 		if (attacker.hasActiveStatusCondition(StatusConditions.DISABLE)) {
 			State disableStatus = attacker.getStatusCondition();
 
-			if (disableStatus.getAttackDisabled() == attacker.getNextMovement())
+			if (disableStatus.getAttackDisabled() == ctx.attack)
 				return true;
 		}
 		return false;
@@ -335,9 +331,24 @@ public class AccuracyService {
 	// -----------------------------
 	// Change attacks depending on weather
 	// -----------------------------
-	private void checkWeatherEffectsForAttacks(Weather weather, Attack attack) {
-		if (weather == Weather.SUN)
-			if (attack.getId() == 87)
-				attack.setPrecision(50);
+	private void checkWeatherEffectsForAttacks(AttackContext ctx) {
+		if (ctx.weather == Weather.SUN)
+			if (ctx.attack.getId() == 87)
+				ctx.precision = 50f;
+	}
+
+	// -----------------------------
+	// Change attacks depending on abilities, etc.
+	// -----------------------------
+	private void checkStatsForAttacks(AttackContext ctx) {
+		Ability pkAbility = ctx.attacker.getAbilitySelected();
+
+		// 14_Compound_Eyes ability rises precision by 30%
+		if (pkAbility.getId() == 14)
+			ctx.precision *= 1.3f;
+
+		// 55_Hustle ability reduces precision by 20%
+		if (pkAbility.getId() == 55 && ctx.attack.getBases().contains("fisico"))
+			ctx.precision *= 0.8f;
 	}
 }
