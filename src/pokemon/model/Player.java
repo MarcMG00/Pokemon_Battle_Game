@@ -268,7 +268,7 @@ public class Player {
 		this.getPkCombatting().setLotDamageAttacks(iaLotDamageAttacks);
 		this.getPkCombatting().setNormalAttacks(iaNormalDamageAttacks);
 		this.getPkCombatting().setLowAttacks(iaLowAttacks);
-		this.getPkCombatting().setNotEffectAttacks(iaHasNoEffectAttacks);
+		this.getPkCombatting().setNoEffectAttacks(iaHasNoEffectAttacks);
 	}
 
 	// -----------------------------

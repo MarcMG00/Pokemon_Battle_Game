@@ -12,13 +12,13 @@ public class BattleService {
 	private final AbilityService abilityService;
 	private final WeatherService weatherService;
 
-	public BattleService(Game game, Player player, Player ia) {
-		this.player = player;
-		this.ia = ia;
+	public BattleService(BattleContext battleCtx) {
+		this.player = battleCtx.getPlayer();
+		this.ia = battleCtx.getIa();
 
-		this.attackService = new AttackService(game);
-		this.abilityService = new AbilityService(game);
-		this.weatherService = new WeatherService(game);
+		this.attackService = new AttackService(battleCtx);
+		this.abilityService = new AbilityService(battleCtx);
+		this.weatherService = new WeatherService(battleCtx);
 	}
 
 	public void startBattle() {

@@ -1,7 +1,7 @@
 package pokemon.abilityInterface;
 
 import pokemon.enums.StatusConditions;
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
@@ -9,8 +9,7 @@ public class ShedSkinAbility implements AbilityEffect {
 	private static final double REMOVE_STATE_CHANCE = 0.30d;
 
 	@Override
-	public void beforeEndOfTurn(Game game, Pokemon owner) {
-
+	public void beforeEndOfTurn(BattleContext battleCtx, Pokemon owner) {
 		if (Math.random() <= REMOVE_STATE_CHANCE) {
 			// Remove some status conditions and ephemeral status before it does effect
 			if (owner.hasActiveStatusCondition(StatusConditions.FROZEN)

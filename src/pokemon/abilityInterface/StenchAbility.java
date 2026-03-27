@@ -3,7 +3,7 @@ package pokemon.abilityInterface;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.Weather;
 import pokemon.model.Attack;
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
 public class StenchAbility implements AbilityEffect {
@@ -11,9 +11,8 @@ public class StenchAbility implements AbilityEffect {
 	private static final double FLINCH_CHANCE = 0.10d;
 
 	@Override
-	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
+	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
-
 		// 1️ - The attack has to do damage
 		if (dmg == 0f)
 			return;

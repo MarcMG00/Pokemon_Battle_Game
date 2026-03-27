@@ -2,14 +2,13 @@ package pokemon.abilityInterface;
 
 import pokemon.enums.Weather;
 import pokemon.model.Attack;
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
 public class SteadfastAbility implements AbilityEffect {
 	@Override
-	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
+	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
-
 		// 1️ - The attack has to retreat defender
 		if (!defender.getHasRetreated())
 			return;

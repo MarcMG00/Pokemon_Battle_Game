@@ -41,7 +41,7 @@ public class Pokemon {
 	private ArrayList<Attack> lotDamageAttacks;
 	private ArrayList<Attack> normalAttacks;
 	private ArrayList<Attack> lowAttacks;
-	private ArrayList<Attack> notEffectAttacks;
+	private ArrayList<Attack> noEffectAttacks;
 	// private ArrayList<Integer> fourIdAttacks;
 	private int precisionPoints;
 	private int evasionPoints;
@@ -106,7 +106,7 @@ public class Pokemon {
 		this.lotDamageAttacks = new ArrayList<>();
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
-		this.notEffectAttacks = new ArrayList<>();
+		this.noEffectAttacks = new ArrayList<>();
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
 		this.isChargingAttackForNextRound = false;
@@ -164,7 +164,7 @@ public class Pokemon {
 		this.lotDamageAttacks = new ArrayList<>();
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
-		this.notEffectAttacks = new ArrayList<>();
+		this.noEffectAttacks = new ArrayList<>();
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
 		this.isChargingAttackForNextRound = false;
@@ -230,7 +230,7 @@ public class Pokemon {
 		this.normalAttacks = (ArrayList<Attack>) pokemon.normalAttacks.stream().map(Attack::new)
 				.collect(Collectors.toList());
 		this.lowAttacks = (ArrayList<Attack>) pokemon.lowAttacks.stream().map(Attack::new).collect(Collectors.toList());
-		this.notEffectAttacks = (ArrayList<Attack>) pokemon.notEffectAttacks.stream().map(Attack::new)
+		this.noEffectAttacks = (ArrayList<Attack>) pokemon.noEffectAttacks.stream().map(Attack::new)
 				.collect(Collectors.toList());
 
 		this.precisionPoints = 0;
@@ -296,104 +296,52 @@ public class Pokemon {
 		return attack;
 	}
 
-	public void setAttack(float attack) {
-		this.attack = attack;
-	}
-
 	public float getDef() {
 		return def;
-	}
-
-	public void setDef(float def) {
-		this.def = def;
 	}
 
 	public float getSpeed() {
 		return speed;
 	}
 
-	public void setSpeed(float speed) {
-		this.speed = speed;
-	}
-
 	public float getSpecialAttack() {
 		return specialAttack;
-	}
-
-	public void setSpecialAttack(float specialAttack) {
-		this.specialAttack = specialAttack;
 	}
 
 	public float getSpecialDefense() {
 		return specialDefense;
 	}
 
-	public void setSpecialDefense(float specialDefense) {
-		this.specialDefense = specialDefense;
-	}
-
 	public float getInitialPs() {
 		return initialPs;
-	}
-
-	public void setInitialPs(float initialPs) {
-		this.initialPs = initialPs;
 	}
 
 	public float getInitialAttack() {
 		return initialAttack;
 	}
 
-	public void setInitialAttack(float initialAttack) {
-		this.initialAttack = initialAttack;
-	}
-
 	public float getInitialDef() {
 		return initialDef;
-	}
-
-	public void setInitialDef(float initialDef) {
-		this.initialDef = initialDef;
 	}
 
 	public float getInitialSpeed() {
 		return initialSpeed;
 	}
 
-	public void setInitialSpeed(float initialSpeed) {
-		this.initialSpeed = initialSpeed;
-	}
-
 	public float getInitialSpecialAttack() {
 		return initialSpecialAttack;
-	}
-
-	public void setInitialSpecialAttack(float initialSpecialAttack) {
-		this.initialSpecialAttack = initialSpecialAttack;
 	}
 
 	public float getInitialSpecialDefense() {
 		return initialSpecialDefense;
 	}
 
-	public void setInitialSpecialDefense(float initialSpecialDefense) {
-		this.initialSpecialDefense = initialSpecialDefense;
-	}
-
 	public ArrayList<Ability> getNormalAbilities() {
 		return normalAbilities;
 	}
 
-	public void setNormalAbilities(ArrayList<Ability> normalAbilities) {
-		this.normalAbilities = normalAbilities;
-	}
-
 	public ArrayList<Ability> getHiddenAbilities() {
 		return hiddenAbilities;
-	}
-
-	public void setHiddenAbilities(ArrayList<Ability> hiddenAbilities) {
-		this.hiddenAbilities = hiddenAbilities;
 	}
 
 	public ArrayList<PokemonType> getTypes() {
@@ -408,32 +356,16 @@ public class Pokemon {
 		return initialTypes;
 	}
 
-	public void setInitialTypes(ArrayList<PokemonType> initialTypes) {
-		this.initialTypes = initialTypes;
-	}
-
 	public ArrayList<Attack> getPhysicalAttacks() {
 		return physicalAttacks;
-	}
-
-	public void setPhysicalAttacks(ArrayList<Attack> physicalAttacks) {
-		this.physicalAttacks = physicalAttacks;
 	}
 
 	public ArrayList<Attack> getSpecialAttacks() {
 		return specialAttacks;
 	}
 
-	public void setSpecialAttacks(ArrayList<Attack> specialAttacks) {
-		this.specialAttacks = specialAttacks;
-	}
-
 	public ArrayList<Attack> getOtherAttacks() {
 		return otherAttacks;
-	}
-
-	public void setOtherAttacks(ArrayList<Attack> otherAttacks) {
-		this.otherAttacks = otherAttacks;
 	}
 
 	public ArrayList<Attack> getFourPrincipalAttacks() {
@@ -476,12 +408,12 @@ public class Pokemon {
 		this.lowAttacks = lowAttacks;
 	}
 
-	public ArrayList<Attack> getNotEffectAttacks() {
-		return notEffectAttacks;
+	public ArrayList<Attack> getNoEffectAttacks() {
+		return noEffectAttacks;
 	}
 
-	public void setNotEffectAttacks(ArrayList<Attack> notEffectAttacks) {
-		this.notEffectAttacks = notEffectAttacks;
+	public void setNoEffectAttacks(ArrayList<Attack> noEffectAttacks) {
+		this.noEffectAttacks = noEffectAttacks;
 	}
 
 	public int getPrecisionStage() {
@@ -510,10 +442,6 @@ public class Pokemon {
 
 	public Map<StatusConditions, State> getEphemeralStatuses() {
 		return ephemeralStatuses;
-	}
-
-	public void setEphemeralStatuses(Map<StatusConditions, State> ephemeralStatuses) {
-		this.ephemeralStatuses = ephemeralStatuses;
 	}
 
 	public boolean getIsChargingAttackForNextRound() {
@@ -608,10 +536,6 @@ public class Pokemon {
 		return weight;
 	}
 
-	public void setWeight(int weight) {
-		this.weight = weight;
-	}
-
 	public boolean getHasReceivedDamage() {
 		return hasReceivedDamage;
 	}
@@ -696,10 +620,6 @@ public class Pokemon {
 		return sex;
 	}
 
-	public void setSex(Sex sex) {
-		this.sex = sex;
-	}
-
 	public boolean getIsAttackBoostedFromDownloadAbility() {
 		return isAttackBoostedFromDownloadAbility;
 	}
@@ -707,6 +627,9 @@ public class Pokemon {
 	public void setIsAttackBoostedFromDownloadAbility(boolean isAttackBoostedFromDownloadAbility) {
 		this.isAttackBoostedFromDownloadAbility = isAttackBoostedFromDownloadAbility;
 	}
+
+	// ==================================== METHODS
+	// ====================================
 
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
@@ -747,9 +670,6 @@ public class Pokemon {
 	public void addAttacks(Attack attack) {
 		this.fourPrincipalAttacks.add(attack);
 	}
-
-	// ==================================== METHODS
-	// ====================================
 
 	// -----------------------------
 	// Check if has normal status conditions
@@ -1578,14 +1498,6 @@ public class Pokemon {
 			return true;
 		}
 		return false;
-	}
-
-	// -----------------------------
-	// Reset stats from attacks (to avoid problems each turn) => because of some
-	// boosts, etc.
-	// -----------------------------
-	public void reinitializeStatsAfterAttack() {
-		this.setAttack(this.getInitialAttack());
 	}
 
 	// -----------------------------

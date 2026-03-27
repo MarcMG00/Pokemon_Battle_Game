@@ -3,10 +3,10 @@ package pokemon.model;
 import pokemon.enums.Weather;
 
 public class AbilityService {
-	private final Game game;
+	private final BattleContext battleCtx;
 
-	public AbilityService(Game game) {
-		this.game = game;
+	public AbilityService(BattleContext battleCtx) {
+		this.battleCtx = battleCtx;
 	}
 
 	// -----------------------------
@@ -20,15 +20,15 @@ public class AbilityService {
 			return;
 
 		if (p1Trace && !p2Trace)
-			p1.getAbilitySelected().getEffect().onSwitchIn(game, p1, p2);
+			p1.getAbilitySelected().getEffect().onSwitchIn(battleCtx, p1, p2);
 		else if (p2Trace && !p1Trace)
-			p2.getAbilitySelected().getEffect().onSwitchIn(game, p2, p1);
+			p2.getAbilitySelected().getEffect().onSwitchIn(battleCtx, p2, p1);
 		else {
 			// Speed comparison
 			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
 			Pokemon faster = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
-			slower.getAbilitySelected().getEffect().onSwitchIn(game, slower, faster);
-			faster.getAbilitySelected().getEffect().onSwitchIn(game, faster, slower);
+			slower.getAbilitySelected().getEffect().onSwitchIn(battleCtx, slower, faster);
+			faster.getAbilitySelected().getEffect().onSwitchIn(battleCtx, faster, slower);
 		}
 	}
 
@@ -43,18 +43,18 @@ public class AbilityService {
 			return;
 
 		if (!p1HasWeatherType)
-			p1.getAbilitySelected().getEffect().onSwitchIn(game, p1, p2);
+			p1.getAbilitySelected().getEffect().onSwitchIn(battleCtx, p1, p2);
 
 		if (!p2HasWeatherType)
-			p2.getAbilitySelected().getEffect().onSwitchIn(game, p2, p1);
+			p2.getAbilitySelected().getEffect().onSwitchIn(battleCtx, p2, p1);
 	}
 
 	// -----------------------------
 	// 42_Magnet_Pull ability doesn't allow to change Pokemon that are steel type
 	// -----------------------------
 	public boolean isBlockedByMagnetPull(boolean isPlayer) {
-		Player player = isPlayer ? game.getIA() : game.getPlayer();
-		Pokemon pk = isPlayer ? game.getPlayer().getPkCombatting() : game.getIA().getPkCombatting();
+		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
+		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 
 		if (pk.getAbilitySelected().getId() == 42
 				&& player.getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 1)) {
@@ -71,8 +71,8 @@ public class AbilityService {
 	// not Fly type or has not the ability levitate or is not levitating)
 	// -----------------------------
 	public boolean isBlockedByArenaTrap(boolean isPlayer) {
-		Player player = isPlayer ? game.getIA() : game.getPlayer();
-		Pokemon pk = isPlayer ? game.getPlayer().getPkCombatting() : game.getIA().getPkCombatting();
+		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
+		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 
 		if (pk.getAbilitySelected().getId() == 71
 				&& (!player.getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 18)
@@ -96,14 +96,14 @@ public class AbilityService {
 		if (abilityEntering == null || abilityEntering.getId() == 5000)
 			return;
 
-		abilityEntering.getEffect().onSwitchIn(game, entering, defender);
+		abilityEntering.getEffect().onSwitchIn(battleCtx, entering, defender);
 
-		abilityEntering.getEffect().onBattleStart(game, entering);
+		abilityEntering.getEffect().onBattleStart(battleCtx, entering);
 
 		// For example for 59_Foceast ability
 		// If 36_Trace (copies ability) => needs to be applied
 		// abilityEntering.getEffect().duringBattle(this, entering, defender);
-		abilityDefendering.getEffect().duringBattle(game, defender, entering);
+		abilityDefendering.getEffect().duringBattle(battleCtx, defender, entering);
 	}
 
 	// -----------------------------
@@ -116,15 +116,15 @@ public class AbilityService {
 		if (ability == null || ability.getId() == 5000)
 			return;
 
-		ability.getEffect().onSwitchOut(game, leaving);
+		ability.getEffect().onSwitchOut(battleCtx, leaving);
 	}
 
 	// -----------------------------
 	// Apply abilities before the end of the turn
 	// -----------------------------
 	public void applyAbilitiesBeforeEndTurn() {
-		applyBeforeEndTurnAbility(game.getPlayer().getPkCombatting());
-		applyBeforeEndTurnAbility(game.getIA().getPkCombatting());
+		applyBeforeEndTurnAbility(battleCtx.getPlayer().getPkCombatting());
+		applyBeforeEndTurnAbility(battleCtx.getIa().getPkCombatting());
 	}
 
 	// -----------------------------
@@ -136,15 +136,15 @@ public class AbilityService {
 				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 61))
 			return;
 
-		ability.getEffect().beforeEndOfTurn(game, pk);
+		ability.getEffect().beforeEndOfTurn(battleCtx, pk);
 	}
 
 	// -----------------------------
 	// Apply abilities at the end of turn
 	// -----------------------------
 	public void applyEndTurnAbilities() {
-		applyEndTurnAbility(game.getPlayer().getPkCombatting());
-		applyEndTurnAbility(game.getIA().getPkCombatting());
+		applyEndTurnAbility(battleCtx.getPlayer().getPkCombatting());
+		applyEndTurnAbility(battleCtx.getIa().getPkCombatting());
 	}
 
 	// -----------------------------
@@ -156,7 +156,7 @@ public class AbilityService {
 				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 44))
 			return;
 
-		ability.getEffect().endOfTurn(game, pk);
+		ability.getEffect().endOfTurn(battleCtx, pk);
 	}
 
 	// -----------------------------

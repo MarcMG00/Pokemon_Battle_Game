@@ -1,12 +1,12 @@
 package pokemon.abilityInterface;
 
 import pokemon.model.Attack;
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
 public class LevitateAbility implements AbilityEffect {
 	@Override
-	public boolean beforeDamage(Game game, Pokemon attacker, Pokemon defender, Attack attack) {
+	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack) {
 		// Only movements that are not Ground type
 		if (attack.getStrTypeToPkType().getId() != 16)
 			return true;

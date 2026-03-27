@@ -5,14 +5,14 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class SwitchPokemonService {
-	private final Game game;
+	private final BattleContext battleCtx;
 	private final StatusService statusService;
 	private final AbilityService abilityService;
 
-	public SwitchPokemonService(Game game) {
-		this.game = game;
-		this.statusService = new StatusService(game);
-		this.abilityService = new AbilityService(game);
+	public SwitchPokemonService(BattleContext battleCtx) {
+		this.battleCtx = battleCtx;
+		this.statusService = new StatusService(battleCtx);
+		this.abilityService = new AbilityService(battleCtx);
 	}
 
 	// -----------------------------
@@ -36,8 +36,8 @@ public class SwitchPokemonService {
 	// Update Pokemon facing when a new one is entering on combat
 	// -----------------------------
 	public void updatePkFacingAfterSwitch() {
-		game.getPlayer().setPkFacing(game.getIA().getPkCombatting());
-		game.getIA().setPkFacing(game.getPlayer().getPkCombatting());
+		battleCtx.getPlayer().setPkFacing(battleCtx.getIa().getPkCombatting());
+		battleCtx.getIa().setPkFacing(battleCtx.getPlayer().getPkCombatting());
 	}
 
 	// -----------------------------
@@ -73,7 +73,7 @@ public class SwitchPokemonService {
 	// -----------------------------
 	private void printChangeMenu() {
 		System.out.println("\n--- Cambio de Pokémon ---");
-		game.getPlayer().printPokemonInfo();
+		battleCtx.getPlayer().printPokemonInfo();
 		System.out.println("Escribe el ID del Pokémon a usar o '0' para cancelar : ");
 	}
 
@@ -97,7 +97,7 @@ public class SwitchPokemonService {
 	// Find Pokemon by ID
 	// -----------------------------
 	private Optional<Pokemon> findPokemonById(int id) {
-		return game.getPlayer().getPokemon().stream().filter(p -> p.getId() == id).findFirst();
+		return battleCtx.getPlayer().getPokemon().stream().filter(p -> p.getId() == id).findFirst();
 	}
 
 	// -----------------------------
@@ -129,23 +129,23 @@ public class SwitchPokemonService {
 	// Perform Pokemon switch
 	// -----------------------------
 	private void performSwitch(Pokemon selected) {
-		Pokemon current = game.getPlayer().getPkCombatting();
+		Pokemon current = battleCtx.getPlayer().getPkCombatting();
 
 		resetPokemonBeforeSwitch(current);
 
 		// Remove drained ALL STATUS state (cause player changed)
-		statusService.clearDrainEffects(current, game.getIA().getPkCombatting());
+		statusService.clearDrainEffects(current, battleCtx.getIa().getPkCombatting());
 
 		System.out.println("Jugador eligió a " + selected.getName());
 
 		// Update Pokemon combating
 		selected.setJustEnteredBattle(true);
-		game.getPlayer().setPkCombatting(selected);
+		battleCtx.getPlayer().setPkCombatting(selected);
 
 		updatePkFacingAfterSwitch();
 
 		// Update weather ability if any
-		abilityService.applyEntryAbilityOnSwitch(selected, game.getIA().getPkCombatting());
+		abilityService.applyEntryAbilityOnSwitch(selected, battleCtx.getIa().getPkCombatting());
 
 		refreshAttackOrders();
 	}
@@ -154,7 +154,8 @@ public class SwitchPokemonService {
 	// Chech Pokemon selected is not the one already on the field
 	// -----------------------------
 	private boolean isInvalidPokemonChoice(int id) {
-		if (game.getPlayer().getPkCombatting().getId() == id && !game.getPlayer().getPkCombatting().isDebilitated()) {
+		if (battleCtx.getPlayer().getPkCombatting().getId() == id
+				&& !battleCtx.getIa().getPkCombatting().isDebilitated()) {
 			System.out.println("Ese Pokémon ya está combatiendo.");
 			return true;
 		}
@@ -165,8 +166,8 @@ public class SwitchPokemonService {
 	// Put attacks from damage level
 	// -----------------------------
 	public void refreshAttackOrders() {
-		game.getIA().orderAttacksFromDammageLevelPokemon(game.getEffectPerTypes());
-		game.getPlayer().orderAttacksFromDammageLevelPokemon(game.getEffectPerTypes());
+		battleCtx.getIa().orderAttacksFromDammageLevelPokemon(battleCtx.getEffectPerTypes());
+		battleCtx.getPlayer().orderAttacksFromDammageLevelPokemon(battleCtx.getEffectPerTypes());
 	}
 
 	// -----------------------------
@@ -189,20 +190,20 @@ public class SwitchPokemonService {
 		}
 
 		// Check from others Pokemon from the team to see a potential better option
-		Pokemon changeTo = game.getIA().decideBestChangePokemon(game.getPlayer().getPkCombatting(),
-				game.getEffectPerTypes());
+		Pokemon changeTo = battleCtx.getIa().decideBestChangePokemon(battleCtx.getPlayer().getPkCombatting(),
+				battleCtx.getEffectPerTypes());
 
 		if (changeTo == null) {
 			System.out.println("IA no tiene un mejor Pokémon al que cambiar");
 			return false; // doesn't exists a better option
 		}
 
-		resetPokemonBeforeSwitch(game.getIA().getPkCombatting());
+		resetPokemonBeforeSwitch(battleCtx.getIa().getPkCombatting());
 
 		System.out.println("IA cambió a " + changeTo.getName());
 
-		game.getIA().setPkCombatting(changeTo);
-		game.getIA().getPkCombatting().setJustEnteredBattle(true);
+		battleCtx.getIa().setPkCombatting(changeTo);
+		battleCtx.getIa().getPkCombatting().setJustEnteredBattle(true);
 
 		updatePkFacingAfterSwitch();
 
@@ -260,7 +261,7 @@ public class SwitchPokemonService {
 		System.out.println(defender.getPkCombatting().getName() + " fue expulsado por "
 				+ defender.getPkFacing().getNextMovement().getName() + ".");
 
-		boolean isPlayer = defender == game.getPlayer();
+		boolean isPlayer = defender == battleCtx.getPlayer();
 
 		System.out
 				.println((isPlayer ? "Jugador" : "IA") + " envía a " + newPk.getName() + " (Id:" + newPk.getId() + ")");
@@ -286,12 +287,12 @@ public class SwitchPokemonService {
 	// Update facing after forced switch
 	// -----------------------------
 	private void updateFacingAfterForcedSwitch(Player defender, Pokemon newPk) {
-		if (defender == game.getPlayer()) {
-			game.getIA().setPkFacing(newPk);
-			game.getPlayer().setPkFacing(game.getIA().getPkCombatting());
+		if (defender == battleCtx.getPlayer()) {
+			battleCtx.getIa().setPkFacing(newPk);
+			battleCtx.getPlayer().setPkFacing(battleCtx.getIa().getPkCombatting());
 		} else {
-			game.getPlayer().setPkFacing(newPk);
-			game.getIA().setPkFacing(game.getPlayer().getPkCombatting());
+			battleCtx.getPlayer().setPkFacing(newPk);
+			battleCtx.getIa().setPkFacing(battleCtx.getPlayer().getPkCombatting());
 		}
 	}
 
@@ -299,6 +300,6 @@ public class SwitchPokemonService {
 	// Get opponent player
 	// -----------------------------
 	private Player getOpponent(Player player) {
-		return player == game.getPlayer() ? game.getIA() : game.getPlayer();
+		return player == battleCtx.getPlayer() ? battleCtx.getIa() : battleCtx.getPlayer();
 	}
 }

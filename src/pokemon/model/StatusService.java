@@ -7,10 +7,10 @@ import pokemon.enums.AttackCategory;
 import pokemon.enums.StatusConditions;
 
 public class StatusService {
-	private final Game game;
+	private final BattleContext battleCtx;
 
-	public StatusService(Game game) {
-		this.game = game;
+	public StatusService(BattleContext battleCtx) {
+		this.battleCtx = battleCtx;
 	}
 
 	// -----------------------------
@@ -87,14 +87,14 @@ public class StatusService {
 	public List<Player> applyTurnStatusReductions() {
 		List<Player> faintedPlayers = new ArrayList<>();
 
-		if (reduceNumberTurnsEffects(game.getPlayer(), game.getIA()).isAttackerFainted())
-			faintedPlayers.add(game.getPlayer());
+		if (reduceNumberTurnsEffects(battleCtx.getPlayer(), battleCtx.getIa()).isAttackerFainted())
+			faintedPlayers.add(battleCtx.getPlayer());
 
-		if (reduceNumberTurnsEffects(game.getIA(), game.getPlayer()).isAttackerFainted())
-			faintedPlayers.add(game.getIA());
+		if (reduceNumberTurnsEffects(battleCtx.getIa(), battleCtx.getPlayer()).isAttackerFainted())
+			faintedPlayers.add(battleCtx.getIa());
 
-		reduceDrainedAllTurnsEffects(game.getPlayer(), game.getIA());
-		reduceDrainedAllTurnsEffects(game.getIA(), game.getPlayer());
+		reduceDrainedAllTurnsEffects(battleCtx.getPlayer(), battleCtx.getIa());
+		reduceDrainedAllTurnsEffects(battleCtx.getIa(), battleCtx.getPlayer());
 
 		return faintedPlayers;
 	}

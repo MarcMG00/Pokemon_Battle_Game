@@ -9,7 +9,6 @@ import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 
-import pokemon.enums.Weather;
 import pokemon.importData.ReaderData;
 import pokemon.importData.ScrappingWeb;
 import pokemon.importData.WritterData;
@@ -44,12 +43,7 @@ public class Game {
 	private ScrappingWeb scrappingWeb;
 	private WritterData writterData;
 	private ReaderData readerData;
-	private boolean mistIsActivated;
-	private int nbTurnsMistActive;
-	private Weather currentWeather = Weather.NONE;
-	private boolean isWeatherSuppressed;
 
-	private final BattleService battleService;
 	private Player player;
 	private IAPlayer IA;
 
@@ -74,10 +68,6 @@ public class Game {
 		this.scrappingWeb = new ScrappingWeb();
 		this.writterData = new WritterData();
 		this.readerData = new ReaderData();
-		this.mistIsActivated = false;
-		this.nbTurnsMistActive = 0;
-		this.isWeatherSuppressed = false;
-		this.battleService = new BattleService(this, player, IA);
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -87,168 +77,68 @@ public class Game {
 		return pokemon;
 	}
 
-	public void setPokemon(ArrayList<Pokemon> pokemon) {
-		this.pokemon = pokemon;
-	}
-
 	public ArrayList<Ability> getAbilities() {
 		return abilities;
-	}
-
-	public void setAbilities(ArrayList<Ability> abilities) {
-		this.abilities = abilities;
 	}
 
 	public HashMap<String, HashMap<String, ArrayList<Ability>>> getAbilitiesPerPokemon() {
 		return abilitiesPerPokemon;
 	}
 
-	public void setAbilitiesPerPokemon(HashMap<String, HashMap<String, ArrayList<Ability>>> abilitiesPerPokemon) {
-		this.abilitiesPerPokemon = abilitiesPerPokemon;
-	}
-
 	public HashMap<String, ArrayList<PokemonType>> getPokemonTypePerPokemon() {
 		return pokemonTypePerPokemon;
-	}
-
-	public void setPokemonTypePerPokemon(HashMap<String, ArrayList<PokemonType>> pokemonTypePerPokemon) {
-		this.pokemonTypePerPokemon = pokemonTypePerPokemon;
 	}
 
 	public ArrayList<PokemonType> getTypes() {
 		return types;
 	}
 
-	public void setTypes(ArrayList<PokemonType> types) {
-		this.types = types;
-	}
-
 	public HashMap<String, HashMap<String, ArrayList<PokemonType>>> getEffectPerTypes() {
 		return effectPerTypes;
-	}
-
-	public void setEffectPerTypes(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
-		this.effectPerTypes = effectPerTypes;
 	}
 
 	public ArrayList<Attack> getAttacks() {
 		return attacks;
 	}
 
-	public void setAttacks(ArrayList<Attack> attacks) {
-		this.attacks = attacks;
-	}
-
 	public HashMap<Integer, HashMap<String, ArrayList<Integer>>> getAttacksPerPokemon() {
 		return attacksPerPokemon;
-	}
-
-	public void setAttacksPerPokemon(HashMap<Integer, HashMap<String, ArrayList<Integer>>> attacksPerPokemon) {
-		this.attacksPerPokemon = attacksPerPokemon;
 	}
 
 	public Player getPlayer() {
 		return player;
 	}
 
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-
 	public IAPlayer getIA() {
 		return IA;
-	}
-
-	public void setIA(IAPlayer IA) {
-		this.IA = IA;
 	}
 
 	public HashMap<String, ArrayList<Pokemon>> getPokemonPerType() {
 		return pokemonPerType;
 	}
 
-	public void setPokemonPerType(HashMap<String, ArrayList<Pokemon>> pokemonPerType) {
-		this.pokemonPerType = pokemonPerType;
-	}
-
 	public Map<Integer, PokemonType> getTypeById() {
 		return typeById;
-	}
-
-	public void setTypeById(Map<Integer, PokemonType> typeById) {
-		this.typeById = typeById;
 	}
 
 	public Map<Integer, Pokemon> getPokemonById() {
 		return pokemonById;
 	}
 
-	public void setPokemonById(Map<Integer, Pokemon> pokemonById) {
-		this.pokemonById = pokemonById;
-	}
-
 	public Map<Integer, Attack> getAttackById() {
 		return attackById;
-	}
-
-	public void setAttackById(Map<Integer, Attack> attackById) {
-		this.attackById = attackById;
 	}
 
 	public ScrappingWeb getScrappingWeb() {
 		return scrappingWeb;
 	}
 
-	public void setScrappingWeb(ScrappingWeb scrappingWeb) {
-		this.scrappingWeb = scrappingWeb;
-	}
-
 	public WritterData getWritterData() {
 		return writterData;
 	}
 
-	public void setWritterData(WritterData writterData) {
-		this.writterData = writterData;
-	}
-
 	public ReaderData getReaderData() {
 		return readerData;
-	}
-
-	public void setReaderData(ReaderData readerData) {
-		this.readerData = readerData;
-	}
-
-	public boolean getMistIsActivated() {
-		return mistIsActivated;
-	}
-
-	public void setMistIsActivated(boolean mistIsActivated) {
-		this.mistIsActivated = mistIsActivated;
-	}
-
-	public int getNbTurnsMistActive() {
-		return nbTurnsMistActive;
-	}
-
-	public void setNbTurnsMistActive(int nbTurnsMistActive) {
-		this.nbTurnsMistActive = nbTurnsMistActive;
-	}
-
-	public Weather getCurrentWeather() {
-		return this.currentWeather;
-	}
-
-	public void setCurrentWeather(Weather currentWeather) {
-		this.currentWeather = currentWeather;
-	}
-
-	public boolean getisWeatherSuppressed() {
-		return isWeatherSuppressed;
-	}
-
-	public void setIsWeatherSuppressed(boolean isWeatherSuppressed) {
-		this.isWeatherSuppressed = isWeatherSuppressed;
 	}
 
 	// ==================================== METHODS
@@ -259,7 +149,6 @@ public class Game {
 	// -----------------------------
 	public void printPokemon() {
 		for (Pokemon pk : this.getPokemon()) {
-
 			System.out.println(pk.getId() + " - " + pk.getName() + " - " + pk.getTypes().size() + " :");
 
 			pk.getTypes().forEach(tp -> {
@@ -294,14 +183,11 @@ public class Game {
 		Optional<PokemonType> pkTOpt;
 
 		for (Pokemon pk : this.getPokemon()) {
-
 			// If 2 types, puts the Pokemon in the two different types
 			for (PokemonType pkty : pk.getTypes()) {
-
 				pkTOpt = this.getTypes().stream().filter(t -> t.getId() == pkty.getId()).findFirst();
 
 				if (pkTOpt.isPresent()) {
-
 					switch (pkTOpt.get().getId()) {
 					case 1:
 						steelType.add(pk);
@@ -357,7 +243,6 @@ public class Game {
 					case 18:
 						flyingType.add(pk);
 						break;
-
 					}
 				}
 			}
@@ -655,6 +540,10 @@ public class Game {
 	// Main battle (start battle)
 	// -----------------------------
 	public void launchBattleService() {
+		BattleContext battleCtx = new BattleContext(this.getPlayer(), this.getIA(), this.getEffectPerTypes(),
+				this.getTypes());
+
+		BattleService battleService = new BattleService(battleCtx);
 		battleService.startBattle();
 	}
 

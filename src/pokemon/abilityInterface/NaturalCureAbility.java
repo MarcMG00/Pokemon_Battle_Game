@@ -1,13 +1,13 @@
 package pokemon.abilityInterface;
 
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
 public class NaturalCureAbility implements AbilityEffect {
 
 	@Override
-	public void onSwitchOut(Game game, Pokemon owner) {
+	public void onSwitchOut(BattleContext battleCtx, Pokemon owner) {
 		// Remove status condition and ephemeral status from Pokemon leaving
 		if (owner.hasStatusCondition() || owner.hasEphemeralStatus()) {
 			owner.setStatusCondition(new State());

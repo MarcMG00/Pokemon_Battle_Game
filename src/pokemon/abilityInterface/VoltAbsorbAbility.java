@@ -1,15 +1,14 @@
 package pokemon.abilityInterface;
 
 import pokemon.model.Attack;
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
 public class VoltAbsorbAbility implements AbilityEffect {
 	private static final float HEAL_PERCENT = 0.25f;
 
 	@Override
-	public boolean beforeDamage(Game game, Pokemon attacker, Pokemon defender, Attack attack) {
-
+	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack) {
 		// Only electric movements
 		if (!attack.getType().equals("ELECTRICO"))
 			return true;

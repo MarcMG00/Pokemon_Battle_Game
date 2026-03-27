@@ -2,13 +2,12 @@ package pokemon.abilityInterface;
 
 import pokemon.enums.StatusConditions;
 import pokemon.model.Ability;
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
 public class TraceAbility implements AbilityEffect {
 	@Override
-	public void onSwitchIn(Game game, Pokemon owner, Pokemon defender) {
-
+	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
 		if (defender.getAbilitySelected().getId() == 1) {
 			System.out.println(owner.getName() + " no puede copiar la habilidad de " + defender.getName() + " : "
 					+ defender.getAbilitySelected().getName());
@@ -37,13 +36,13 @@ public class TraceAbility implements AbilityEffect {
 						+ defender.getAbilitySelected().getName());
 			}
 		}
-		owner.getAbilitySelected().getEffect().onBattleStart(game, owner);
-		owner.getAbilitySelected().getEffect().onSwitchIn(game, owner, defender);
+		owner.getAbilitySelected().getEffect().onBattleStart(battleCtx, owner);
+		owner.getAbilitySelected().getEffect().onSwitchIn(battleCtx, owner, defender);
 
 	}
 
 	@Override
-	public void onSwitchOut(Game game, Pokemon owner) {
+	public void onSwitchOut(BattleContext battleCtx, Pokemon owner) {
 		System.out.println(owner.getName() + " dejó de copiar la habilidad del rival");
 		owner.setAbilitySelected(new Ability(owner.getBaseAbility()));
 	}

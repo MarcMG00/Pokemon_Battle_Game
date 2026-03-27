@@ -3,7 +3,7 @@ package pokemon.abilityInterface;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 import pokemon.model.Attack;
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
@@ -11,15 +11,15 @@ public class CuteCharmAbility implements AbilityEffect {
 	private static final double INFATUEATED_CHANCE = 0.30;
 
 	@Override
-	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
+	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
-		if(defender.getAbilitySelected().getId() != 56)
+		if (defender.getAbilitySelected().getId() != 56)
 			return;
-		
-		if(defender.getSex() == attacker.getSex())
+
+		if (defender.getSex() == attacker.getSex())
 			return;
-		
+
 		if (attacker.hasActiveEphemeralStatus(StatusConditions.INFATUATED))
 			return;
 

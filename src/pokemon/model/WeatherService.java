@@ -6,24 +6,24 @@ import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 
 public class WeatherService {
-	private final Game game;
+	private final BattleContext battleCtx;
 	private final StatusService statusService;
 	private final SwitchPokemonService switchPokemonService;
 	private final AbilityService abilityService;
 
-	public WeatherService(Game game) {
-		this.game = game;
-		this.statusService = new StatusService(game);
-		this.switchPokemonService = new SwitchPokemonService(game);
-		this.abilityService = new AbilityService(game);
+	public WeatherService(BattleContext battleCtx) {
+		this.battleCtx = battleCtx;
+		this.statusService = new StatusService(battleCtx);
+		this.switchPokemonService = new SwitchPokemonService(battleCtx);
+		this.abilityService = new AbilityService(battleCtx);
 	}
 
 	// -----------------------------
 	// Sets the weather ability on first combat (if any)
 	// -----------------------------
 	public void applyEntryWeatherAbilities() {
-		Pokemon p1 = game.getPlayer().getPkCombatting();
-		Pokemon p2 = game.getIA().getPkCombatting();
+		Pokemon p1 = battleCtx.getPlayer().getPkCombatting();
+		Pokemon p2 = battleCtx.getIa().getPkCombatting();
 
 		Ability a1 = p1.getAbilitySelected();
 		Ability a2 = p2.getAbilitySelected();
@@ -34,31 +34,31 @@ public class WeatherService {
 
 		if (weatherA1 != null || weatherA2 != null) {
 			if (weatherA1 != null && weatherA2 == null) {
-				weatherA1.getEffect().onBattleStart(game, p1);
+				weatherA1.getEffect().onBattleStart(battleCtx, p1);
 
 			} else if (weatherA2 != null && weatherA1 == null) {
-				weatherA2.getEffect().onBattleStart(game, p2);
+				weatherA2.getEffect().onBattleStart(battleCtx, p2);
 
 			} else {
 				// Slower Pokemon wins if both have weather abilities
 				Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
-				slower.getAbilitySelected().getEffect().onBattleStart(game, slower);
+				slower.getAbilitySelected().getEffect().onBattleStart(battleCtx, slower);
 			}
 		}
 
 		// Weather can be suppressed if 13_Cloud_Nine / 76_Air_Lock
 		if (a1 != null && (a1.getId() == 13 || a1.getId() == 76))
-			a1.getEffect().onBattleStart(game, p1);
+			a1.getEffect().onBattleStart(battleCtx, p1);
 
 		if (a2 != null && (a2.getId() == 13 || a2.getId() == 76))
-			a2.getEffect().onBattleStart(game, p2);
+			a2.getEffect().onBattleStart(battleCtx, p2);
 	}
 
 	// -----------------------------
 	// Apply modifying stats from weather
 	// -----------------------------
 	public void applyStatsFromWeather(TurnContext turnCtx) {
-		Weather weather = game.getCurrentWeather();
+		Weather weather = battleCtx.getWeather();
 
 		for (Pokemon pk : turnCtx.getPokemons()) {
 			Ability ability = pk.getAbilitySelected();
@@ -80,7 +80,7 @@ public class WeatherService {
 	// Apply modifying stats from weather (end of turn)
 	// -----------------------------
 	private void applyStatsFromWeatherEndOfTurn(Pokemon pokemon) {
-		Weather weather = game.getCurrentWeather();
+		Weather weather = battleCtx.getWeather();
 
 		switch (weather) {
 		case SANDSTORM:
@@ -186,11 +186,11 @@ public class WeatherService {
 	// Apply weather effects at the end of the turn
 	// -----------------------------
 	public void applyWeatherEffects(Scanner sc) {
-		applyStatsFromWeatherEndOfTurn(game.getPlayer().getPkCombatting());
-		checkDebilitatedAfterEndTurn(game.getPlayer().getPkCombatting(), game.getPlayer(), sc);
+		applyStatsFromWeatherEndOfTurn(battleCtx.getPlayer().getPkCombatting());
+		checkDebilitatedAfterEndTurn(battleCtx.getPlayer().getPkCombatting(), battleCtx.getPlayer(), sc);
 
-		applyStatsFromWeatherEndOfTurn(game.getIA().getPkCombatting());
-		checkDebilitatedAfterEndTurn(game.getIA().getPkCombatting(), game.getIA(), sc);
+		applyStatsFromWeatherEndOfTurn(battleCtx.getIa().getPkCombatting());
+		checkDebilitatedAfterEndTurn(battleCtx.getIa().getPkCombatting(), battleCtx.getIa(), sc);
 
 		reduceNbTurnsMistActive();
 	}
@@ -209,16 +209,17 @@ public class WeatherService {
 
 		// Force clean of drain effects because one of the Pokemon have died (so it
 		// doesn't matter the order of Pokemon)
-		statusService.clearDrainEffects(game.getPlayer().getPkCombatting(), game.getIA().getPkCombatting());
+		statusService.clearDrainEffects(battleCtx.getPlayer().getPkCombatting(), battleCtx.getIa().getPkCombatting());
 
 		// Force switch
-		if (owner == game.getPlayer()) {
+		if (owner == battleCtx.getPlayer()) {
 			System.out.println("¿Qué Pokémon deberías escoger?");
 			boolean changed = false;
 			while (!changed)
 				changed = switchPokemonService.changePokemon(sc);
 		} else {
-			Pokemon newIA = owner.decideBestChangePokemon(game.getPlayer().getPkCombatting(), game.getEffectPerTypes());
+			Pokemon newIA = owner.decideBestChangePokemon(battleCtx.getPlayer().getPkCombatting(),
+					battleCtx.getEffectPerTypes());
 
 			if (newIA == null)
 				newIA = owner.getPokemon().stream().filter(p -> !p.isDebilitated()).findFirst().orElse(null);
@@ -233,10 +234,10 @@ public class WeatherService {
 				newIA.setJustEnteredBattle(false);
 				owner.setPkCombatting(newIA);
 
-				abilityService.applyEntryAbilityOnSwitch(newIA, game.getPlayer().getPkCombatting());
+				abilityService.applyEntryAbilityOnSwitch(newIA, battleCtx.getPlayer().getPkCombatting());
 
-				game.getPlayer().setPkFacing(newIA);
-				owner.setPkFacing(game.getPlayer().getPkCombatting());
+				battleCtx.getPlayer().setPkFacing(newIA);
+				owner.setPkFacing(battleCtx.getPlayer().getPkCombatting());
 
 				switchPokemonService.refreshAttackOrders();
 			}
@@ -248,15 +249,15 @@ public class WeatherService {
 	// Reduce number of turns of Mist effect
 	// -----------------------------
 	private void reduceNbTurnsMistActive() {
-		if (game.getMistIsActivated()) {
-			game.setNbTurnsMistActive(game.getNbTurnsMistActive() - 1);
+		if (battleCtx.isMistActive()) {
+			battleCtx.setNbTurnsMistActive(battleCtx.getNbTurnsMistActive() - 1);
 
-			if (game.getNbTurnsMistActive() <= 0) {
-				game.setMistIsActivated(false);
+			if (battleCtx.getNbTurnsMistActive() <= 0) {
+				battleCtx.setMistActive(false);
 				System.out.println("La neblina se disipó!");
 			} else
-				System.out
-						.println("Faltan " + game.getNbTurnsMistActive() + " turnos para que la neblina se fuerara XD");
+				System.out.println(
+						"Faltan " + battleCtx.getNbTurnsMistActive() + " turnos para que la neblina se fuerara XD");
 		}
 	}
 }

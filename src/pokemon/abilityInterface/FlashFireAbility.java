@@ -3,14 +3,13 @@ package pokemon.abilityInterface;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 import pokemon.model.Attack;
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
 public class FlashFireAbility implements AbilityEffect {
 	@Override
-	public boolean beforeDamage(Game game, Pokemon attacker, Pokemon defender, Attack attack) {
-
+	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack) {
 		// Only fire movements
 		if (attack.getStrTypeToPkType().getId() != 7)
 			return true;
@@ -35,7 +34,7 @@ public class FlashFireAbility implements AbilityEffect {
 	}
 
 	@Override
-	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
+	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 		// If Pokemon frozen => don't activate the ability
 		if (defender.hasActiveStatusCondition(StatusConditions.FROZEN)) {
@@ -45,7 +44,7 @@ public class FlashFireAbility implements AbilityEffect {
 	}
 
 	@Override
-	public void onSwitchOut(Game game, Pokemon owner) {
+	public void onSwitchOut(BattleContext battleCtx, Pokemon owner) {
 		// Reinitialize the activation of ability
 		owner.setIsFireBoostActive(false);
 	}

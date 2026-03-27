@@ -5,15 +5,14 @@ import java.util.ArrayList;
 import pokemon.enums.Weather;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
-import pokemon.model.Game;
+import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 
 public class ColorChangeAbility implements AbilityEffect {
 	@Override
-	public void afterAttack(Game game, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
+	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
-
 		// Movement has to do damage
 		if (dmg <= 0f)
 			return;
@@ -41,8 +40,7 @@ public class ColorChangeAbility implements AbilityEffect {
 	}
 
 	@Override
-	public void onSwitchOut(Game game, Pokemon owner) {
-
+	public void onSwitchOut(BattleContext battleCtx, Pokemon owner) {
 		// Reinitialize types (ex : Kecleon change types during combat)
 		owner.setTypes(owner.getInitialTypes());
 
