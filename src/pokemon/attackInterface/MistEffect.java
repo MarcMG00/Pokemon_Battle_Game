@@ -9,12 +9,12 @@ public class MistEffect implements AttackEffect {
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
 
-		System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó Neblina");
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó Neblina");
 
-		if (ctx.isMistEffectActivated)
+		if (ctx.isMistActive())
 			System.out.println("No tuvo ningún efecto ya que está en uso");
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		return result;
 	}

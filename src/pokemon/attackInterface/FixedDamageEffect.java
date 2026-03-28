@@ -13,13 +13,13 @@ public class FixedDamageEffect implements AttackEffect {
 	@Override
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
-		
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
-		ctx.defender.setPs(ctx.defender.getPs() - fixedDamage);
-		
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
+
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.getDefender().setPs(ctx.getDefender().getPs() - fixedDamage);
+
 		result.addDamage(fixedDamage);
 		return result;
 	}

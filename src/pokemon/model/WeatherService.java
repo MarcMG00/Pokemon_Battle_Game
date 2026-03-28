@@ -125,10 +125,9 @@ public class WeatherService {
 			return;
 
 		// 87_Dry_Skin & 94_Solar_Power
-		if (ability.getId() == 87 || ability.getId() == 94) {
+		if (ability.getId() == 87 || ability.getId() == 94)
 			applyDamageByPercentage(pokemon, 0.125f, pokemon.getName() + " (Id:" + pokemon.getId()
 					+ "), recibie daño dada su habilidad " + ability.getName() + " (hace SOL)");
-		}
 	}
 
 	// -----------------------------
@@ -141,10 +140,9 @@ public class WeatherService {
 			return;
 
 		// 87_Dry_Skin
-		if (ability.getId() == 87) {
+		if (ability.getId() == 87)
 			applyHealByPercentage(pokemon, 0.125f, pokemon.getName() + " (Id:" + pokemon.getId()
 					+ "), recupera PS dada su habilidad " + ability.getName() + " (está LLOVIENDO)");
-		}
 	}
 
 	// -----------------------------
@@ -187,10 +185,10 @@ public class WeatherService {
 	// -----------------------------
 	public void applyWeatherEffects(Scanner sc) {
 		applyStatsFromWeatherEndOfTurn(battleCtx.getPlayer().getPkCombatting());
-		checkDebilitatedAfterEndTurn(battleCtx.getPlayer().getPkCombatting(), battleCtx.getPlayer(), sc);
+		checkDebilitatedAfterEndTurn(battleCtx.getPlayer(), sc);
 
 		applyStatsFromWeatherEndOfTurn(battleCtx.getIa().getPkCombatting());
-		checkDebilitatedAfterEndTurn(battleCtx.getIa().getPkCombatting(), battleCtx.getIa(), sc);
+		checkDebilitatedAfterEndTurn(battleCtx.getIa(), sc);
 
 		reduceNbTurnsMistActive();
 	}
@@ -198,7 +196,9 @@ public class WeatherService {
 	// -----------------------------
 	// Check if a Pokemon fainted due to end-of-turn effects (weather, poison, burn)
 	// -----------------------------
-	private boolean checkDebilitatedAfterEndTurn(Pokemon pk, Player owner, Scanner sc) {
+	private boolean checkDebilitatedAfterEndTurn(Player owner, Scanner sc) {
+		Pokemon pk = owner.getPkCombatting();
+
 		if (pk.getPs() >= 0)
 			return false;
 

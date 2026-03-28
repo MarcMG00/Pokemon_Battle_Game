@@ -18,15 +18,15 @@ public class StatReduceEffect implements AttackEffect {
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
 
-		Pokemon target = ctx.defender;
+		Pokemon target = ctx.getDefender();
 
 		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+				ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó " + ctx.getAttack().getName());
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		// Mist
-		if (ctx.isMistEffectActivated) {
+		if (ctx.isMistActive()) {
 			System.out.println("No se pueden bajar estadísticas debido a Neblina");
 			return result;
 		}

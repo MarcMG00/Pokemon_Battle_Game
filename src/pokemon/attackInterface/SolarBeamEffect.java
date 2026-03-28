@@ -4,6 +4,7 @@ import pokemon.enums.Weather;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
 import pokemon.model.DamageService;
+import pokemon.model.Pokemon;
 
 public class SolarBeamEffect extends ChargeAttackEffect {
 
@@ -13,52 +14,49 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
+		Pokemon attacker = ctx.getAttacker();
 		AttackResult result = new AttackResult();
 
 		// No charge if sun
-		if (ctx.weather == Weather.SUN && !ctx.isWeatherSuppressed) {
+		if (ctx.getWeather() == Weather.SUN && !ctx.isWeatherSuppressed()) {
 			System.out.println(
-					ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+					attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
 
 			result = damageService.doDamage(ctx);
 			float dmg = result.getDamage();
 
-			ctx.attacker.setIsChargingAttackForNextRound(false);
-			ctx.attack.setPp(ctx.attack.getPp() - 1);
+			attacker.setIsChargingAttackForNextRound(false);
+			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-			ctx.defender.setPs(ctx.defender.getPs() - dmg);
+			ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
 			return result;
 		}
 
 		// First turn charge
-		if (!ctx.attacker.getIsChargingAttackForNextRound()) {
+		if (!attacker.getIsChargingAttackForNextRound()) {
+			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " se prepara para "
+					+ ctx.getAttack().getName());
 
-			System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " se prepara para "
-					+ ctx.attack.getName());
-
-			ctx.attacker.setIsChargingAttackForNextRound(true);
+			attacker.setIsChargingAttackForNextRound(true);
 			return result;
 		}
 
 		// Second turn attack
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
 
 		// Weather reduces power
-		if (!ctx.isWeatherSuppressed
-				&& (ctx.weather == Weather.RAIN || ctx.weather == Weather.HAIL || ctx.weather == Weather.SANDSTORM)) {
-
-			ctx.attack.setPower(ctx.attack.getPower() / 2);
-		}
+		if (!ctx.isWeatherSuppressed() && (ctx.getWeather() == Weather.RAIN || ctx.getWeather() == Weather.HAIL
+				|| ctx.getWeather() == Weather.SANDSTORM))
+			ctx.getAttack().setPower(ctx.getAttack().getPower() / 2);
 
 		result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
-		ctx.attacker.setIsChargingAttackForNextRound(false);
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
+		attacker.setIsChargingAttackForNextRound(false);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		ctx.defender.setPs(ctx.defender.getPs() - dmg);
+		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
 		return result;
 	}

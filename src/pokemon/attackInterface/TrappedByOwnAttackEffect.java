@@ -24,25 +24,25 @@ public class TrappedByOwnAttackEffect implements AttackEffect {
 	@Override
 	public AttackResult execute(AttackContext ctx) {
 		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+				ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó " + ctx.getAttack().getName());
 
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
-		if (!ctx.attacker.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
+		if (!ctx.getAttacker().hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
 			int turns = helperService.randomInt(minTurns, maxTurns);
 
-			System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")"
+			System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")"
 					+ " usará el mismo ataque durante " + turns + " turnos.");
 
 			State trappedByOwnAttack = new State(StatusConditions.TRAPPEDBYOWNATTACK, turns + 1);
-			ctx.defender.addEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK, trappedByOwnAttack);
+			ctx.getDefender().addEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK, trappedByOwnAttack);
 
 			// Only removes PP when choosing the attack
-			ctx.attack.setPp(ctx.attack.getPp() - 1);
+			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 		}
 
-		ctx.defender.setPs(ctx.defender.getPs() - dmg);
+		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
 		return result;
 	}

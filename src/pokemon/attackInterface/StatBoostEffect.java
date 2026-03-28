@@ -16,21 +16,21 @@ public class StatBoostEffect implements AttackEffect {
 	@Override
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
-		
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
 
-		if (ctx.attacker.getAttackStage() >= 6) {
-			System.out.println(stat.name() + " de " + ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")"
-					+ " no puede subir más!");
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
+
+		if (ctx.getAttacker().getAttackStage() >= 6) {
+			System.out.println(stat.name() + " de " + ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId()
+					+ ")" + " no puede subir más!");
 			return result;
 		}
 
-		System.out
-				.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " aumentó su " + stat.name());
-		ctx.attacker.setStageValueStats(stat, stages, false);
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
-		
+		System.out.println(
+				ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su " + stat.name());
+		ctx.getAttacker().setStageValueStats(stat, stages, false);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+
 		return result;
 	}
 }

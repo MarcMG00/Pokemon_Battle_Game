@@ -13,15 +13,15 @@ public class FixedRecoilDamageEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
 
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
-		ctx.defender.setPs(ctx.defender.getPs() - dmg);
+		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 		// Pokemon combating receives 25% of damage from his initial PS
-		ctx.attacker.setPs(ctx.attacker.getInitialPs() - (ctx.attacker.getInitialPs() * 0.25f));
+		ctx.getAttacker().setPs(ctx.getAttacker().getInitialPs() - (ctx.getAttacker().getInitialPs() * 0.25f));
 
 		return result;
 	}

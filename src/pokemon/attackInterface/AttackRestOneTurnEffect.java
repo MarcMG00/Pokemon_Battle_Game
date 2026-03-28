@@ -13,18 +13,18 @@ public class AttackRestOneTurnEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
 
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
-		ctx.defender.setPs(ctx.defender.getPs() - dmg);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
 		// Pokemon combating cannot do anything next round
-		ctx.attacker.setCanDonAnythingNextRound(false);
-		
+		ctx.getAttacker().setCanDonAnythingNextRound(false);
+
 		return result;
 	}
 }

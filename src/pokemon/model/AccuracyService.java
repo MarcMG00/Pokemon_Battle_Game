@@ -19,9 +19,9 @@ public class AccuracyService {
 	// Gets the probability of attacking
 	// -----------------------------
 	public void resolveAttack(AttackContext ctx) {
-		Pokemon attacker = ctx.attacker;
-		Pokemon defender = ctx.defender;
-		Attack atkAttacker = ctx.attack;
+		Pokemon attacker = ctx.getAttacker();
+		Pokemon defender = ctx.getDefender();
+		Attack atkAttacker = ctx.getAttack();
 		Attack atkDefender = defender.getNextMovement();
 		boolean isAttackerCharging = attacker.getIsChargingAttackForNextRound();
 		boolean isDefenderCharging = defender.getIsChargingAttackForNextRound();
@@ -75,7 +75,7 @@ public class AccuracyService {
 			evAcu = pk.getEffectiveEvasion();
 
 			// 80_Snow_Cloak sets 20% more of evasion
-			if (ctx.defender.getAbilitySelected().getId() == 80)
+			if (ctx.getDefender().getAbilitySelected().getId() == 80)
 				evAcu *= 1.2f;
 			break;
 		}
@@ -127,7 +127,8 @@ public class AccuracyService {
 	// -----------------------------
 	private boolean canUseAttack(AttackContext ctx, Pokemon attacker, Attack atkAttacker) {
 		if (isAttackDisabled(ctx)) {
-			System.out.println(attacker.getName() + " intentó usar " + ctx.attack.getName() + ", pero está anulado!");
+			System.out.println(
+					attacker.getName() + " intentó usar " + ctx.getAttack().getName() + ", pero está anulado!");
 			attacker.denyAttack();
 			return false;
 		}
@@ -155,7 +156,7 @@ public class AccuracyService {
 			return true;
 		}
 
-		if (atkAttacker.alwaysHeatsUnderWeather(ctx.weather)) {
+		if (atkAttacker.alwaysHeatsUnderWeather(ctx.getWeather())) {
 			attacker.allowAttack();
 			return true;
 		}
@@ -193,10 +194,10 @@ public class AccuracyService {
 		// Retreat Pokemon (23_Stomp/ 27_Rolling kick/ 29_Headbutt/ 44_Bite) + defender
 		// is minimized
 		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.getHasUsedMinimize())
-			accuracyFactor = (ctx.precision / 100f) * (getEvasionOrAccuracy(ctx, attacker, 1) / 1f);
+			accuracyFactor = (ctx.getPrecision() / 100f) * (getEvasionOrAccuracy(ctx, attacker, 1) / 1f);
 		// Other attacks
 		else
-			accuracyFactor = (ctx.precision / 100f)
+			accuracyFactor = (ctx.getPrecision() / 100f)
 					* (getEvasionOrAccuracy(ctx, attacker, 1) / getEvasionOrAccuracy(ctx, defender, 2));
 
 		return accuracyFactor;
@@ -318,11 +319,11 @@ public class AccuracyService {
 	// Gets if last attack from Pokemon combating used is disabled
 	// -----------------------------
 	public boolean isAttackDisabled(AttackContext ctx) {
-		Pokemon attacker = ctx.attacker;
+		Pokemon attacker = ctx.getAttacker();
 		if (attacker.hasActiveStatusCondition(StatusConditions.DISABLE)) {
 			State disableStatus = attacker.getStatusCondition();
 
-			if (disableStatus.getAttackDisabled() == ctx.attack)
+			if (disableStatus.getAttackDisabled() == ctx.getAttack())
 				return true;
 		}
 		return false;
@@ -332,23 +333,23 @@ public class AccuracyService {
 	// Change attacks depending on weather
 	// -----------------------------
 	private void checkWeatherEffectsForAttacks(AttackContext ctx) {
-		if (ctx.weather == Weather.SUN)
-			if (ctx.attack.getId() == 87)
-				ctx.precision = 50f;
+		if (ctx.getWeather() == Weather.SUN)
+			if (ctx.getAttack().getId() == 87)
+				ctx.setPrecision(50f);
 	}
 
 	// -----------------------------
 	// Change attacks depending on abilities, etc.
 	// -----------------------------
 	private void checkStatsForAttacks(AttackContext ctx) {
-		Ability pkAbility = ctx.attacker.getAbilitySelected();
+		Ability pkAbility = ctx.getAttacker().getAbilitySelected();
 
 		// 14_Compound_Eyes ability rises precision by 30%
 		if (pkAbility.getId() == 14)
-			ctx.precision *= 1.3f;
+			ctx.setPrecision(ctx.getPrecision() * 1.3f);
 
 		// 55_Hustle ability reduces precision by 20%
-		if (pkAbility.getId() == 55 && ctx.attack.getBases().contains("fisico"))
-			ctx.precision *= 0.8f;
+		if (pkAbility.getId() == 55 && ctx.getAttack().getBases().contains("fisico"))
+			ctx.setPrecision(ctx.getPrecision() * 0.8f);
 	}
 }

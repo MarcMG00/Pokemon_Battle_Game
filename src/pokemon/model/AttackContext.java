@@ -3,20 +3,20 @@ package pokemon.model;
 import pokemon.enums.Weather;
 
 public class AttackContext {
-	public final Pokemon attacker;
-	public final Pokemon defender;
-	public final Player attackingPlayer;
-	public final Player defendingPlayer;
-	public final Attack attack;
-	public float power;
-	public float precision;
-	public final Weather weather;
-	public final boolean isWeatherSuppressed;
-	public final boolean isMistEffectActivated;
-	public TurnContext turnContext;
+	private final Pokemon attacker;
+	private final Pokemon defender;
+	private final Player attackingPlayer;
+	private final Player defendingPlayer;
+	private final Attack attack;
+	private float power;
+	private float precision;
+	private Weather weather;
+	private boolean isWeatherSuppressed;
+	private boolean isMistActive;
+	private TurnContext turnContext;
 
 	public AttackContext(Pokemon attacker, Pokemon defender, Player attackingPlayer, Player defendingPlayer,
-			Attack attack, Weather weather, boolean isWeatherSuppressed, boolean isMistEffectActivated,
+			Attack attack, Weather weather, boolean isWeatherSuppressed, boolean isMistActive,
 			boolean isCriticalAttack) {
 
 		this.attacker = attacker;
@@ -26,7 +26,7 @@ public class AttackContext {
 		this.attack = attack;
 		this.weather = weather;
 		this.isWeatherSuppressed = isWeatherSuppressed;
-		this.isMistEffectActivated = isMistEffectActivated;
+		this.isMistActive = isMistActive;
 		this.power = attack.getPower();
 		this.precision = attack.getPrecision();
 	}
@@ -41,5 +41,49 @@ public class AttackContext {
 
 	public float getPrecision() {
 		return precision;
+	}
+
+	public void setPrecision(float precision) {
+		this.precision = precision;
+	}
+
+	public TurnContext getTurnContext() {
+		return turnContext;
+	}
+
+	public void setTurnContext(TurnContext turnContext) {
+		this.turnContext = turnContext;
+	}
+
+	public Pokemon getAttacker() {
+		return attacker;
+	}
+
+	public Pokemon getDefender() {
+		return defender;
+	}
+
+	public Player getAttackingPlayer() {
+		return attackingPlayer;
+	}
+
+	public Player getDefendingPlayer() {
+		return defendingPlayer;
+	}
+
+	public Attack getAttack() {
+		return attack;
+	}
+
+	public Weather getWeather() {
+		return weather;
+	}
+
+	public boolean isWeatherSuppressed() {
+		return isWeatherSuppressed;
+	}
+
+	public boolean isMistActive() {
+		return isMistActive;
 	}
 }

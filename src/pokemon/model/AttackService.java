@@ -253,11 +253,11 @@ public class AttackService {
 		Pokemon iaPk = battleCtx.getIa().getPkCombatting();
 
 		TurnContext turnCtx = buildTurnContext();
-		turnCtx.setSpeed(playerPk, playerPk.getEffectiveSpeed());
-		turnCtx.setSpeed(iaPk, iaPk.getEffectiveSpeed());
+		applyModifierStatsPokemon(playerPk, turnCtx);
+		applyModifierStatsPokemon(iaPk, turnCtx);
 		weatherService.applyStatsFromWeather(turnCtx);
 
-		statusService.evaluateStartTurnStatuses(playerPk, iaPk, turnCtx);
+		statusService.evaluateStartTurnStatuses(playerPk, iaPk);
 
 		preparePlayerAttack(attackId);
 
@@ -281,8 +281,19 @@ public class AttackService {
 		weatherService.applyWeatherEffects(sc);
 	}
 
+	// -----------------------------
+	// Build Turn context
+	// -----------------------------
 	private TurnContext buildTurnContext() {
 		return new TurnContext();
+	}
+
+	// -----------------------------
+	// Apply instantly stats modifiers to Pokemon (get speed, etc.) before starting
+	// checks
+	// -----------------------------
+	private void applyModifierStatsPokemon(Pokemon pk, TurnContext turnCtx) {
+		turnCtx.setSpeed(pk, pk.getEffectiveSpeed());
 	}
 
 	// -----------------------------
@@ -688,7 +699,7 @@ public class AttackService {
 		}
 
 		AttackContext ctx = initializeBattle(attacker, defender);
-		ctx.turnContext = turnCtx;
+		ctx.setTurnContext(turnCtx);
 
 		if (!pkAttacker.getCanAttack()) {
 			handleCannotAttack(pkAttacker, attacker == battleCtx.getPlayer());
@@ -728,14 +739,13 @@ public class AttackService {
 	// Resolve attack
 	// -----------------------------
 	private void resolveAttack(AttackContext ctx, boolean isPlayer) {
-
 		// Get probability of attacking (we already checked for status conditions. Now
 		// we do it for evasion/accuracy)
 		accuracyService.resolveAttack(ctx);
 
 		// Check again cause maybe there are attacks like "Whirlwind" meanwhile Pokemon
 		// facing is invulnerable, etc.
-		if (!ctx.attacker.getCanAttack())
+		if (!ctx.getAttacker().getCanAttack())
 			return;
 
 		System.out.println(ANSI_GREEN + "Pokemon " + (isPlayer ? "player" : "IA") + " can attack" + ANSI_RESET);
@@ -747,23 +757,23 @@ public class AttackService {
 	// Apply attack from attacker (principal damage)
 	// -----------------------------
 	private void executeAttackEffect(AttackContext ctx) {
-		Ability abilityDefender = ctx.attacker.getAbilitySelected();
+		Ability abilityDefender = ctx.getAttacker().getAbilitySelected();
 
 		// Some abilities allows to not to do damage (ex : Volt absorb)
 		if (abilityDefender != null) {
-			boolean continueAttack = abilityDefender.getEffect().beforeDamage(null, ctx.attacker, ctx.defender,
-					ctx.attack);
+			boolean continueAttack = abilityDefender.getEffect().beforeDamage(null, ctx.getAttacker(),
+					ctx.getDefender(), ctx.getAttack());
 
 			if (!continueAttack) {
-				ctx.attack.setPp(ctx.attack.getPp() - 1);
+				ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 				return; // cancel attack
 			}
 		}
 
-		AttackEffect effect = attackEffects.get(ctx.attack.getId());
+		AttackEffect effect = attackEffects.get(ctx.getAttack().getId());
 
 		if (effect == null)
-			throw new IllegalStateException("No effect defined for attack " + ctx.attack.getId());
+			throw new IllegalStateException("No effect defined for attack " + ctx.getAttack().getId());
 
 		abilityService.applyPowerAttackModifiers(ctx);
 
@@ -772,9 +782,9 @@ public class AttackService {
 
 		applyAfterAttack(ctx, result);
 
-		ctx.attacker.setLastUsedAttack(ctx.attacker.getNextMovement());
+		ctx.getAttacker().setLastUsedAttack(ctx.getAttack());
 
-		applyMistIfNeeded(ctx.attacker);
+		applyMistIfNeeded(ctx.getAttacker());
 	}
 
 	// -----------------------------
@@ -794,77 +804,78 @@ public class AttackService {
 		if (result.hasDealtDamage()) {
 			float dmg = result.getDamage();
 
-			if (ctx.attacker.getPhysicalAttacks() != null
-					&& ctx.attacker.getPhysicalAttacks().stream().anyMatch(a -> a.getId() == ctx.attack.getId()))
-				ctx.defender.setDamageReceived(dmg);
+			if (ctx.getAttacker().getPhysicalAttacks() != null && ctx.getAttacker().getPhysicalAttacks().stream()
+					.anyMatch(a -> a.getId() == ctx.getAttack().getId()))
+				ctx.getDefender().setDamageReceived(dmg);
 
-			ctx.defender.setHasReceivedDamage(true);
+			ctx.getDefender().setHasReceivedDamage(true);
 
 			applySecondaryEffects(ctx, result, dmg);
 		}
 
-		abilityService.applyAbilityAfterDamage(ctx.attacker, ctx.defender, ctx.attack, result.getDamage(),
-				result.isCriticalAttack(), ctx.weather, ctx.isWeatherSuppressed);
+		abilityService.applyAbilityAfterDamage(ctx.getAttacker(), ctx.getDefender(), ctx.getAttack(),
+				result.getDamage(), result.isCriticalAttack(), ctx.getWeather(), ctx.isWeatherSuppressed());
 
-		if (ctx.defender.getPs() <= 0)
-			ctx.defender.setStatusCondition(new State(StatusConditions.DEBILITATED));
+		if (ctx.getDefender().getPs() <= 0)
+			ctx.getDefender().setStatusCondition(new State(StatusConditions.DEBILITATED));
 
-		if (ctx.attacker.getPs() <= 0)
-			ctx.attacker.setStatusCondition(new State(StatusConditions.DEBILITATED));
+		if (ctx.getAttacker().getPs() <= 0)
+			ctx.getAttacker().setStatusCondition(new State(StatusConditions.DEBILITATED));
 	}
 
 	// -----------------------------
 	// Do secondary effects from attacks (set status conditions, flinch, etc)
 	// -----------------------------
 	private void applySecondaryEffects(AttackContext ctx, AttackResult result, float dmg) {
-		Ability abilityAttacker = ctx.attacker.getAbilitySelected();
+		Ability abilityAttacker = ctx.getAttacker().getAbilitySelected();
 
 		double probabilityGettingStatus = Math.random();
 		int nbTurnsHoldingStatus;
 
-		if (ctx.attack.getSecondaryEffects() == null)
+		if (ctx.getAttack().getSecondaryEffects() == null)
 			return;
 
-		for (SecondaryEffect effect : ctx.attack.getSecondaryEffects()) {
-			double finalProbability = getFinalSecondaryEffectProbability(effect, ctx.attacker);
+		for (SecondaryEffect effect : ctx.getAttack().getSecondaryEffects()) {
+			double finalProbability = getFinalSecondaryEffectProbability(effect, ctx.getAttacker());
 
 			if (probabilityGettingStatus > finalProbability)
 				continue;
 
 			switch (effect.getType()) {
 			case STATUS_CONDITION:
-				ctx.defender.trySetStatus(new State(effect.getStatus()), ctx.weather, ctx.isWeatherSuppressed,
-						ctx.attack);
+				ctx.getDefender().trySetStatus(new State(effect.getStatus()), ctx.getWeather(),
+						ctx.isWeatherSuppressed(), ctx.getAttack());
 				break;
 			case EPHEMERAL_STATUS:
 				StatusConditions status = effect.getStatus();
 
-				if (!ctx.defender.trySetEphemeralStatus(status, ctx.attack))
+				if (!ctx.getDefender().trySetEphemeralStatus(status, ctx.getAttack()))
 					break;
 
-				if (!ctx.defender.hasActiveEphemeralStatus(status)) {
+				if (!ctx.getDefender().hasActiveEphemeralStatus(status)) {
 
 					nbTurnsHoldingStatus = helperService.randomTurnsAbilitiesConditions(1, 7, ctx);
 					State state = new State(status, nbTurnsHoldingStatus + 1);
 
-					ctx.defender.addEphemeralStatus(status, state);
+					ctx.getDefender().addEphemeralStatus(status, state);
 
-					System.out.println(ctx.defender.getName() + " estará " + status.getMessage() + " por "
+					System.out.println(ctx.getDefender().getName() + " estará " + status.getMessage() + " por "
 							+ nbTurnsHoldingStatus + " turnos");
 				}
 				break;
 			case FLINCH:
-				if (!ctx.defender.canBeFlinched())
+				if (!ctx.getDefender().canBeFlinched())
 					break;
 
 				if (abilityAttacker != null && abilityAttacker.getId() == 1)
-					abilityAttacker.getEffect().afterAttack(null, ctx.attacker, ctx.defender, ctx.attack, dmg,
-							effect.getProbability(), result.isCriticalAttack(), ctx.weather, ctx.isWeatherSuppressed);
+					abilityAttacker.getEffect().afterAttack(null, ctx.getAttacker(), ctx.getDefender(), ctx.getAttack(),
+							dmg, effect.getProbability(), result.isCriticalAttack(), ctx.getWeather(),
+							ctx.isWeatherSuppressed());
 				else
-					ctx.defender.setHasRetreated(true);
+					ctx.getDefender().setHasRetreated(true);
 				break;
 			case STAT_DROP:
-				ctx.defender.reduceStatStage(effect.getStat(), effect.getStages(), ctx.isMistEffectActivated);
+				ctx.getDefender().reduceStatStage(effect.getStat(), effect.getStages(), ctx.isMistActive());
 				break;
 			default:
 				break;
@@ -919,10 +930,10 @@ public class AttackService {
 		Pokemon pkIA = battleCtx.getIa().getPkCombatting();
 
 		TurnContext turnCtx = buildTurnContext();
-		turnCtx.setSpeed(pkIA, pkIA.getEffectiveSpeed());
+		applyModifierStatsPokemon(pkIA, turnCtx);
 		weatherService.applyStatsFromWeather(turnCtx);
 
-		statusService.evaluateStatusStartOfTurn(pkIA, turnCtx);
+		statusService.evaluateStatusStartOfTurn(pkIA);
 		statusService.canAttackEvaluatingAllStatesToAttack(pkIA);
 
 		if (pkIA.getCanDonAnythingNextRound()) {

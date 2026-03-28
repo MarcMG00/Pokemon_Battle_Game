@@ -102,7 +102,6 @@ public class AbilityService {
 
 		// For example for 59_Foceast ability
 		// If 36_Trace (copies ability) => needs to be applied
-		// abilityEntering.getEffect().duringBattle(this, entering, defender);
 		abilityDefendering.getEffect().duringBattle(battleCtx, defender, entering);
 	}
 
@@ -192,7 +191,7 @@ public class AbilityService {
 	// Apply abilities concerning the attack of the Pokemon
 	// -----------------------------
 	public void applyPowerAttackModifiers(AttackContext ctx) {
-		Ability ability = ctx.attacker.getAbilitySelected();
+		Ability ability = ctx.getAttacker().getAbilitySelected();
 
 		if (ability == null)
 			return;

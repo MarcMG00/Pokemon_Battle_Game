@@ -5,6 +5,7 @@ import pokemon.model.Attack;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
 import pokemon.model.HelperService;
+import pokemon.model.Pokemon;
 import pokemon.model.State;
 
 public class DisableAttackEffect implements AttackEffect {
@@ -20,13 +21,14 @@ public class DisableAttackEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
+		Pokemon defender = ctx.getDefender();
 		AttackResult result = new AttackResult();
 
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
 
-		Attack disable = ctx.attacker.getNextMovement();
-		Attack lastAttack = ctx.defender.getLastUsedAttack();
+		Attack disable = ctx.getAttacker().getNextMovement();
+		Attack lastAttack = defender.getLastUsedAttack();
 
 		disable.setPp(disable.getPp() - 1);
 
@@ -36,17 +38,16 @@ public class DisableAttackEffect implements AttackEffect {
 			return result;
 		}
 
-		if (ctx.defender.hasActiveStatusCondition(StatusConditions.DISABLE))
-			ctx.defender.setStatusCondition(new State());
+		if (defender.hasActiveStatusCondition(StatusConditions.DISABLE))
+			defender.setStatusCondition(new State());
 
 		int turns = helperService.randomInt(minTurns, maxTurns);
 
 		State attackDisabled = new State(StatusConditions.DISABLE, turns + 1);
 		attackDisabled.setAttackDisabled(lastAttack);
-		ctx.defender.setStatusCondition(attackDisabled);
+		defender.setStatusCondition(attackDisabled);
 
-		System.out.println(
-				ctx.defender.getName() + " no podrá usar " + lastAttack.getName() + " por " + turns + " turnos");
+		System.out.println(defender.getName() + " no podrá usar " + lastAttack.getName() + " por " + turns + " turnos");
 
 		return result;
 	}

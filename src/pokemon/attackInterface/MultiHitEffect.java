@@ -22,10 +22,10 @@ public class MultiHitEffect implements AttackEffect {
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
 
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
 
-		int hits = ctx.attacker.getAbilitySelected().getId() == 92 ? maxHits
+		int hits = ctx.getAttacker().getAbilitySelected().getId() == 92 ? maxHits
 				: helperService.randomInt(minHits, maxHits);
 
 		float totalDamage = 0;
@@ -38,8 +38,8 @@ public class MultiHitEffect implements AttackEffect {
 
 		System.out.println("Golpeó " + hits + " veces");
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
-		ctx.defender.setPs(ctx.defender.getPs() - totalDamage);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.getDefender().setPs(ctx.getDefender().getPs() - totalDamage);
 
 		return result;
 	}

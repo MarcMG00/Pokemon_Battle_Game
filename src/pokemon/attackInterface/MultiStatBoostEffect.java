@@ -18,30 +18,30 @@ public class MultiStatBoostEffect implements AttackEffect {
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
 
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
 
 		int modifier = 1;
 
 		// Growth special case
-		if (ctx.weather == Weather.SUN && !ctx.isWeatherSuppressed)
+		if (ctx.getWeather() == Weather.SUN && !ctx.isWeatherSuppressed())
 			modifier = 2;
 
 		for (Map.Entry<StatType, Integer> entry : statBoosts.entrySet()) {
-
 			StatType stat = entry.getKey();
 			int stages = entry.getValue() * modifier;
 
-			if (ctx.attacker.getStage(stat) >= 6) {
-				System.out.println(stat + " de " + ctx.attacker.getName() + " no puede subir más!");
+			if (ctx.getAttacker().getStage(stat) >= 6) {
+				System.out.println(stat + " de " + ctx.getAttacker().getName() + " no puede subir más!");
 				continue;
 			}
 
-			ctx.attacker.setStageValueStats(stat, stages, false);
-			System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " aumentó su " + stat);
+			ctx.getAttacker().setStageValueStats(stat, stages, false);
+			System.out.println(
+					ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su " + stat);
 		}
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		return result;
 	}

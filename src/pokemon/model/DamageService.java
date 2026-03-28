@@ -19,9 +19,9 @@ public class DamageService {
 	public AttackResult doDamage(AttackContext ctx) {
 		AttackResult result = new AttackResult();
 
-		Pokemon attacker = ctx.attacker;
-		Pokemon defender = ctx.defender;
-		Attack attack = ctx.attack;
+		Pokemon attacker = ctx.getAttacker();
+		Pokemon defender = ctx.getDefender();
+		Attack attack = ctx.getAttack();
 		float power = ctx.getPower();
 
 		float modifiedPower = calculateModifiedPower(attacker, defender, attack, power);
@@ -207,23 +207,23 @@ public class DamageService {
 	// -----------------------------
 	public float getWeatherModifier(AttackContext ctx) {
 
-		Weather weather = ctx.weather;
-		boolean isWeatherSuppresed = ctx.isWeatherSuppressed;
+		Weather weather = ctx.getWeather();
+		boolean isWeatherSuppresed = ctx.isWeatherSuppressed();
 
 		if (isWeatherSuppresed)
 			return 1.0f;
 
 		if (weather == Weather.RAIN) {
-			if (ctx.attack.getStrTypeToPkType().getId() == 2) // Water
+			if (ctx.getAttack().getStrTypeToPkType().getId() == 2) // Water
 				return 1.5f;
-			if (ctx.attack.getStrTypeToPkType().getId() == 7) // Fire
+			if (ctx.getAttack().getStrTypeToPkType().getId() == 7) // Fire
 				return 0.5f;
 		}
 
 		if (weather == Weather.SUN) {
-			if (ctx.attack.getStrTypeToPkType().getId() == 7) // Fire
+			if (ctx.getAttack().getStrTypeToPkType().getId() == 7) // Fire
 				return 1.5f;
-			if (ctx.attack.getStrTypeToPkType().getId() == 2) // Water
+			if (ctx.getAttack().getStrTypeToPkType().getId() == 2) // Water
 				return 0.5f;
 		}
 		return 1.0f;
@@ -236,9 +236,9 @@ public class DamageService {
 		int randomCritic = (int) (Math.random() * 100);
 
 		// 10% of probabilities to have a critic attack
-		if (randomCritic <= 10) {
+		if (randomCritic <= 10)
 			return this.canReceiveCriticalAttacks(ctx);
-		}
+		
 		return false;
 	}
 
@@ -249,9 +249,9 @@ public class DamageService {
 		int randomCritic = (int) (Math.random() * 100);
 
 		// 10% of probabilities to have a critic attack
-		if (randomCritic <= 30) {
+		if (randomCritic <= 30)
 			return this.canReceiveCriticalAttacks(ctx);
-		}
+		
 		return false;
 	}
 
@@ -262,9 +262,9 @@ public class DamageService {
 		int randomCritic = (int) (Math.random() * 100);
 
 		// 10% of probabilities to have a critic attack
-		if (randomCritic <= 40) {
+		if (randomCritic <= 40)
 			return this.canReceiveCriticalAttacks(ctx);
-		}
+
 		return false;
 	}
 
@@ -274,9 +274,10 @@ public class DamageService {
 	public boolean canReceiveCriticalAttacks(AttackContext ctx) {
 		// 4_Battle_Armor / 75_Shell_Armor cannot recieve critic damage because of
 		// ability
-		if (ctx.defender.getAbilitySelected().getId() == 4 || ctx.defender.getAbilitySelected().getId() == 75) {
-			System.out.println(ctx.defender.getName() + " no puede recibir ataques críticos dada su habilidad "
-					+ ctx.defender.getAbilitySelected().getName());
+		if (ctx.getDefender().getAbilitySelected().getId() == 4
+				|| ctx.getDefender().getAbilitySelected().getId() == 75) {
+			System.out.println(ctx.getDefender().getName() + " no puede recibir ataques críticos dada su habilidad "
+					+ ctx.getDefender().getAbilitySelected().getName());
 			return false;
 		}
 		return true;

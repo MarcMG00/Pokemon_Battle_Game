@@ -3,6 +3,7 @@ package pokemon.attackInterface;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
 import pokemon.model.DamageService;
+import pokemon.model.Pokemon;
 
 public class ChargeAttackEffect implements AttackEffect {
 	protected final DamageService damageService;
@@ -13,29 +14,30 @@ public class ChargeAttackEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
+		Pokemon attacker = ctx.getAttacker();
+
 		AttackResult result = new AttackResult();
 
 		// If not charging => first turn charge the attack
-		if (!ctx.attacker.getIsChargingAttackForNextRound()) {
+		if (!attacker.getIsChargingAttackForNextRound()) {
 			// This attack requires to charge first time for one round
-			System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")"
-					+ " se prepara para realizar " + ctx.attack.getName());
+			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " se prepara para realizar "
+					+ ctx.getAttack().getName());
 
-			ctx.attacker.setIsChargingAttackForNextRound(true);
+			attacker.setIsChargingAttackForNextRound(true);
 			return result;
 		}
 
 		// Apply damage => second turn
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
 
 		result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
-		ctx.attacker.setIsChargingAttackForNextRound(false);
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
+		attacker.setIsChargingAttackForNextRound(false);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		ctx.defender.setPs(ctx.defender.getPs() - dmg);
+		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
 		return result;
 	}

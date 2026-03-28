@@ -12,19 +12,20 @@ public class PoisonEffect implements AttackEffect {
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
 
-		Pokemon attacker = ctx.attacker;
-		Pokemon defender = ctx.defender;
+		Pokemon attacker = ctx.getAttacker();
+		Pokemon defender = ctx.getDefender();
 
-		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.POISONED) {
 			System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " ya está envenenado");
 			return result;
 		}
 
-		defender.trySetStatus(new State(StatusConditions.POISONED), ctx.weather, ctx.isWeatherSuppressed, ctx.attack);
+		defender.trySetStatus(new State(StatusConditions.POISONED), ctx.getWeather(), ctx.isWeatherSuppressed(),
+				ctx.getAttack());
 
 		return result;
 	}

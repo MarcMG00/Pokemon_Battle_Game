@@ -2,29 +2,31 @@ package pokemon.attackInterface;
 
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
+import pokemon.model.Pokemon;
 
 public class CounterAttackEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
+		Pokemon attacker = ctx.getAttacker();
 		AttackResult result = new AttackResult();
 
-		if (ctx.attacker.getHasReceivedDamage()) {
-			System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó Contraataque");
+		if (attacker.getHasReceivedDamage()) {
+			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Contraataque");
 
-			float dmg = ctx.attacker.getDamageReceived() * 2f;
+			float dmg = attacker.getDamageReceived() * 2f;
 			result.addDamage(dmg);
 
-			ctx.attack.setPp(ctx.attack.getPp() - 1);
+			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-			ctx.defender.setPs(ctx.defender.getPs() - dmg);
+			ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
-			System.out.println("Damage to Pokemon facing (" + ctx.defender.getName() + " (Id:" + ctx.defender.getId()
-					+ ")" + ") : " + dmg);
+			System.out.println("Damage to Pokemon facing (" + ctx.getDefender().getName() + " (Id:"
+					+ ctx.getDefender().getId() + ")" + ") : " + dmg);
 		} else
-			System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")"
+			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 					+ " no puede usar Contraataque ya que no recibió ningún ataque físico este turno");
-		
+
 		return result;
 	}
 }

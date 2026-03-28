@@ -15,9 +15,9 @@ public class HelperService {
 		int nbTurnsHoldingStatus = randomInt(min, max);
 
 		// 48_Early_Bird ability
-		if (ctx.defender.getAbilitySelected().getId() == 48) {
+		if (ctx.getDefender().getAbilitySelected().getId() == 48) {
 			nbTurnsHoldingStatus = nbTurnsHoldingStatus / 2;
-			System.out.println(ctx.defender.getName() + " (Id:" + ctx.defender.getId()
+			System.out.println(ctx.getDefender().getName() + " (Id:" + ctx.getDefender().getId()
 					+ "), se quedará dormido la mitad de turnos gracias a su habilidad Madrugar");
 		}
 

@@ -11,28 +11,28 @@ public class LeechSeedEffect implements AttackEffect {
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
 
-		System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó Drenadoras");
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó Drenadoras");
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		// Doesn't affect to grass type
-		if (ctx.defender.getTypes().stream().filter(t -> t.getId() == 12).findAny().isPresent()) {
-			System.out.println(ctx.defender.getName() + " no puede estar drenado ya que es de tipo planta");
+		if (ctx.getDefender().getTypes().stream().filter(t -> t.getId() == 12).findAny().isPresent()) {
+			System.out.println(ctx.getDefender().getName() + " no puede estar drenado ya que es de tipo planta");
 			return result;
 		}
 
-		ctx.attacker.setIsDraining(true);
+		ctx.getAttacker().setIsDraining(true);
 
 		// Cannot be accumulated
-		if (!ctx.defender.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
-			System.out.println(ctx.defender.getName() + " ya está drenado");
+		if (!ctx.getDefender().hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
+			System.out.println(ctx.getDefender().getName() + " ya está drenado");
 			return result;
 		}
 
-		System.out.println(ctx.defender.getName() + " (Id:" + ctx.defender.getId() + ")" + " fue drenado");
+		System.out.println(ctx.getDefender().getName() + " (Id:" + ctx.getDefender().getId() + ")" + " fue drenado");
 
 		State drainedAllTurns = new State(StatusConditions.DRAINEDALLTURNS, 0);
-		ctx.defender.addEphemeralStatus(StatusConditions.DRAINEDALLTURNS, drainedAllTurns);
+		ctx.getDefender().addEphemeralStatus(StatusConditions.DRAINEDALLTURNS, drainedAllTurns);
 
 		return result;
 	}

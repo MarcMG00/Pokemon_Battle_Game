@@ -3,6 +3,7 @@ package pokemon.attackInterface;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
 import pokemon.model.DamageService;
+import pokemon.model.Pokemon;
 
 public class RecoilDamageEffect implements AttackEffect {
 	private final DamageService damageService;
@@ -15,30 +16,31 @@ public class RecoilDamageEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		Pokemon attacker = ctx.getAttacker();
+
+		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
 
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		ctx.defender.setPs(ctx.defender.getPs() - dmg);
+		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
 		// 69_Rock_Head ability is not affected by recoil
-		if (ctx.attacker.getAbilitySelected().getId() == 69) {
-			System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId()
+		if (attacker.getAbilitySelected().getId() == 69) {
+			System.out.println(attacker.getName() + " (Id:" + attacker.getId()
 					+ ") no sufrió daño por retroceso gracias a su habilidad "
-					+ ctx.attacker.getAbilitySelected().getName());
+					+ attacker.getAbilitySelected().getName());
 			return result;
 		}
 
 		float recoil = dmg * recoilPercent;
 
-		ctx.attacker.setPs(ctx.attacker.getPs() - recoil);
+		attacker.setPs(attacker.getPs() - recoil);
 
-		System.out.println(ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ") sufrió daño por retroceso ("
-				+ recoil + ")");
+		System.out.println(
+				attacker.getName() + " (Id:" + attacker.getId() + ") sufrió daño por retroceso (" + recoil + ")");
 
 		return result;
 	}

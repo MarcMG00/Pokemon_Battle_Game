@@ -11,21 +11,22 @@ public class ParalyzeEffect implements AttackEffect {
 	@Override
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
-		
-		Pokemon attacker = ctx.attacker;
-		Pokemon defender = ctx.defender;
 
-		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		Pokemon attacker = ctx.getAttacker();
+		Pokemon defender = ctx.getDefender();
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
+		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
+
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
 			System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " ya está paralizado");
 			return result;
 		}
 
-		defender.trySetStatus(new State(StatusConditions.PARALYZED), ctx.weather, ctx.isWeatherSuppressed, ctx.attack);
-		
+		defender.trySetStatus(new State(StatusConditions.PARALYZED), ctx.getWeather(), ctx.isWeatherSuppressed(),
+				ctx.getAttack());
+
 		return result;
 	}
 

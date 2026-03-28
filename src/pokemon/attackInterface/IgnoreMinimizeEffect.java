@@ -13,18 +13,18 @@ public class IgnoreMinimizeEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
-		System.out.println(
-				ctx.attacker.getName() + " (Id:" + ctx.attacker.getId() + ")" + " usó " + ctx.attack.getName());
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
 
 		// If Pokemon facing has used minimize, set power base of the attack x2
-		if (ctx.defender.getHasUsedMinimize())
-			ctx.attack.setPower(ctx.attack.getPower() * 2);
+		if (ctx.getDefender().getHasUsedMinimize())
+			ctx.getAttack().setPower(ctx.getAttack().getPower() * 2);
 
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
-		ctx.attack.setPp(ctx.attack.getPp() - 1);
-		ctx.defender.setPs(ctx.defender.getPs() - dmg);
+		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
 		return result;
 	}

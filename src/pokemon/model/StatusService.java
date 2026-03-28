@@ -24,12 +24,12 @@ public class StatusService {
 	// -----------------------------
 	// Evaluate Pokemon in combat if need to apply status condition before attacking
 	// -----------------------------
-	public void evaluateStartTurnStatuses(Pokemon playerPk, Pokemon iaPk, TurnContext turnCtx) {
+	public void evaluateStartTurnStatuses(Pokemon playerPk, Pokemon iaPk) {
 		if (shouldEvaluateStatus(playerPk))
-			evaluateStatusStartOfTurn(playerPk, turnCtx);
+			evaluateStatusStartOfTurn(playerPk);
 
 		if (shouldEvaluateStatus(iaPk))
-			evaluateStatusStartOfTurn(iaPk, turnCtx);
+			evaluateStatusStartOfTurn(iaPk);
 	}
 
 	// -----------------------------
@@ -50,7 +50,7 @@ public class StatusService {
 	// Some states decrease their turn at the beginning of the turn and apply
 	// effects for example when paralyzed, it reduces speed
 	// -----------------------------
-	public void evaluateStatusStartOfTurn(Pokemon pk, TurnContext ctx) {
+	public void evaluateStatusStartOfTurn(Pokemon pk) {
 		pk.doFrozenEffect();
 	}
 
