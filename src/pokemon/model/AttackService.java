@@ -492,7 +492,22 @@ public class AttackService {
 	// Player attack first
 	// -----------------------------
 	private boolean playerCanAttackFirst(Pokemon playerPk, Pokemon iaPk, TurnContext ctx) {
-		return playerPk.getCanAttack() && ctx.getSpeed(playerPk) >= ctx.getSpeed(iaPk);
+		if(!playerPk.getCanAttack())
+			return false;
+		
+		if(playerPk.getAbilitySelected().getId() == 100 && iaPk.getAbilitySelected().getId() == 100) {
+			return ctx.getSpeed(playerPk) >= ctx.getSpeed(iaPk);
+		}
+		
+		if(playerPk.getAbilitySelected().getId() == 100 && iaPk.getAbilitySelected().getId() != 100) {
+			return false;
+		}
+		
+		if(playerPk.getAbilitySelected().getId() != 100 && iaPk.getAbilitySelected().getId() == 100) {
+			return true;
+		}
+		
+		return ctx.getSpeed(playerPk) >= ctx.getSpeed(iaPk);
 	}
 
 	// -----------------------------

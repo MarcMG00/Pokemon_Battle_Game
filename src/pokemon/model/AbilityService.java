@@ -203,4 +203,18 @@ public class AbilityService {
 			break;
 		}
 	}
+
+	// -----------------------------
+	// Get priority points from speed (allows to know first Pokemon attacking)
+	// -----------------------------
+	public int getSpeedPriorityModifier(Pokemon pk) {
+		if (pk.getAbilitySelected() == null)
+			return 0;
+
+		// 100_Stall ability => moves last
+		if (pk.getAbilitySelected().getId() == 100)
+			return -1;
+
+		return 0;
+	}
 }
