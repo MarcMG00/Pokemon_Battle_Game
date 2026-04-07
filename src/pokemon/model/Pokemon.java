@@ -41,8 +41,8 @@ public class Pokemon {
 	private ArrayList<Attack> lotDamageAttacks;
 	private ArrayList<Attack> normalAttacks;
 	private ArrayList<Attack> lowAttacks;
-	private ArrayList<Attack> notEffectAttacks;
-	private ArrayList<Integer> fourIdAttacks;
+	private ArrayList<Attack> noEffectAttacks;
+	// private ArrayList<Integer> fourIdAttacks;
 	private int precisionPoints;
 	private int evasionPoints;
 	private State statusCondition;
@@ -71,7 +71,6 @@ public class Pokemon {
 	private boolean isLevitating;
 	private Sex sex;
 	private boolean isAttackBoostedFromDownloadAbility;
-	private boolean isUsingAbility;
 
 	private static final String ANSI_CYAN = "\u001B[36m";
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -107,8 +106,7 @@ public class Pokemon {
 		this.lotDamageAttacks = new ArrayList<>();
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
-		this.notEffectAttacks = new ArrayList<>();
-		this.fourIdAttacks = new ArrayList<>();
+		this.noEffectAttacks = new ArrayList<>();
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
 		this.isChargingAttackForNextRound = false;
@@ -135,7 +133,6 @@ public class Pokemon {
 		this.isLevitating = false;
 		this.sex = Sex.random();
 		this.isAttackBoostedFromDownloadAbility = false;
-		this.isUsingAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
 	}
@@ -167,8 +164,7 @@ public class Pokemon {
 		this.lotDamageAttacks = new ArrayList<>();
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
-		this.notEffectAttacks = new ArrayList<>();
-		this.fourIdAttacks = new ArrayList<>();
+		this.noEffectAttacks = new ArrayList<>();
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
 		this.isChargingAttackForNextRound = false;
@@ -195,7 +191,6 @@ public class Pokemon {
 		this.isLevitating = false;
 		this.sex = Sex.random();
 		this.isAttackBoostedFromDownloadAbility = false;
-		this.isUsingAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
 	}
@@ -228,7 +223,6 @@ public class Pokemon {
 		this.otherAttacks = (ArrayList<Attack>) pokemon.otherAttacks.stream().map(Attack::new)
 				.collect(Collectors.toList());
 		this.fourPrincipalAttacks = new ArrayList<>(); // starts empty
-		this.fourIdAttacks = new ArrayList<>();
 
 		this.nextMovement = null;
 		this.lotDamageAttacks = (ArrayList<Attack>) pokemon.lotDamageAttacks.stream().map(Attack::new)
@@ -236,7 +230,7 @@ public class Pokemon {
 		this.normalAttacks = (ArrayList<Attack>) pokemon.normalAttacks.stream().map(Attack::new)
 				.collect(Collectors.toList());
 		this.lowAttacks = (ArrayList<Attack>) pokemon.lowAttacks.stream().map(Attack::new).collect(Collectors.toList());
-		this.notEffectAttacks = (ArrayList<Attack>) pokemon.notEffectAttacks.stream().map(Attack::new)
+		this.noEffectAttacks = (ArrayList<Attack>) pokemon.noEffectAttacks.stream().map(Attack::new)
 				.collect(Collectors.toList());
 
 		this.precisionPoints = 0;
@@ -267,7 +261,6 @@ public class Pokemon {
 		this.isLevitating = false;
 		this.sex = Sex.random();
 		this.isAttackBoostedFromDownloadAbility = false;
-		this.isUsingAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
 	}
@@ -295,112 +288,60 @@ public class Pokemon {
 		return ps;
 	}
 
-	public void setPs(float f) {
-		this.ps = f;
+	public void setPs(float ps) {
+		this.ps = ps;
 	}
 
 	public float getAttack() {
 		return attack;
 	}
 
-	public void setAttack(float attack) {
-		this.attack = attack;
-	}
-
 	public float getDef() {
 		return def;
-	}
-
-	public void setDef(float def) {
-		this.def = def;
 	}
 
 	public float getSpeed() {
 		return speed;
 	}
 
-	public void setSpeed(float speed) {
-		this.speed = speed;
-	}
-
 	public float getSpecialAttack() {
 		return specialAttack;
-	}
-
-	public void setSpecialAttack(float specialAttack) {
-		this.specialAttack = specialAttack;
 	}
 
 	public float getSpecialDefense() {
 		return specialDefense;
 	}
 
-	public void setSpecialDefense(float specialDefense) {
-		this.specialDefense = specialDefense;
-	}
-
 	public float getInitialPs() {
 		return initialPs;
-	}
-
-	public void setInitialPs(float initialPs) {
-		this.initialPs = initialPs;
 	}
 
 	public float getInitialAttack() {
 		return initialAttack;
 	}
 
-	public void setInitialAttack(float initialAttack) {
-		this.initialAttack = initialAttack;
-	}
-
 	public float getInitialDef() {
 		return initialDef;
-	}
-
-	public void setInitialDef(float initialDef) {
-		this.initialDef = initialDef;
 	}
 
 	public float getInitialSpeed() {
 		return initialSpeed;
 	}
 
-	public void setInitialSpeed(float initialSpeed) {
-		this.initialSpeed = initialSpeed;
-	}
-
 	public float getInitialSpecialAttack() {
 		return initialSpecialAttack;
-	}
-
-	public void setInitialSpecialAttack(float initialSpecialAttack) {
-		this.initialSpecialAttack = initialSpecialAttack;
 	}
 
 	public float getInitialSpecialDefense() {
 		return initialSpecialDefense;
 	}
 
-	public void setInitialSpecialDefense(float initialSpecialDefense) {
-		this.initialSpecialDefense = initialSpecialDefense;
-	}
-
 	public ArrayList<Ability> getNormalAbilities() {
 		return normalAbilities;
 	}
 
-	public void setNormalAbilities(ArrayList<Ability> normalAbilities) {
-		this.normalAbilities = normalAbilities;
-	}
-
 	public ArrayList<Ability> getHiddenAbilities() {
 		return hiddenAbilities;
-	}
-
-	public void setHiddenAbilities(ArrayList<Ability> hiddenAbilities) {
-		this.hiddenAbilities = hiddenAbilities;
 	}
 
 	public ArrayList<PokemonType> getTypes() {
@@ -415,32 +356,16 @@ public class Pokemon {
 		return initialTypes;
 	}
 
-	public void setInitialTypes(ArrayList<PokemonType> initialTypes) {
-		this.initialTypes = initialTypes;
-	}
-
 	public ArrayList<Attack> getPhysicalAttacks() {
 		return physicalAttacks;
-	}
-
-	public void setPhysicalAttacks(ArrayList<Attack> physicalAttacks) {
-		this.physicalAttacks = physicalAttacks;
 	}
 
 	public ArrayList<Attack> getSpecialAttacks() {
 		return specialAttacks;
 	}
 
-	public void setSpecialAttacks(ArrayList<Attack> specialAttacks) {
-		this.specialAttacks = specialAttacks;
-	}
-
 	public ArrayList<Attack> getOtherAttacks() {
 		return otherAttacks;
-	}
-
-	public void setOtherAttacks(ArrayList<Attack> otherAttacks) {
-		this.otherAttacks = otherAttacks;
 	}
 
 	public ArrayList<Attack> getFourPrincipalAttacks() {
@@ -483,20 +408,12 @@ public class Pokemon {
 		this.lowAttacks = lowAttacks;
 	}
 
-	public ArrayList<Attack> getNotEffectAttacks() {
-		return notEffectAttacks;
+	public ArrayList<Attack> getNoEffectAttacks() {
+		return noEffectAttacks;
 	}
 
-	public void setNotEffectAttacks(ArrayList<Attack> notEffectAttacks) {
-		this.notEffectAttacks = notEffectAttacks;
-	}
-
-	public ArrayList<Integer> getFourIdAttacks() {
-		return fourIdAttacks;
-	}
-
-	public void setFourIdAttacks(ArrayList<Integer> fourIdAttacks) {
-		this.fourIdAttacks = fourIdAttacks;
+	public void setNoEffectAttacks(ArrayList<Attack> noEffectAttacks) {
+		this.noEffectAttacks = noEffectAttacks;
 	}
 
 	public int getPrecisionStage() {
@@ -525,10 +442,6 @@ public class Pokemon {
 
 	public Map<StatusConditions, State> getEphemeralStatuses() {
 		return ephemeralStatuses;
-	}
-
-	public void setEphemeralStatuses(Map<StatusConditions, State> ephemeralStatuses) {
-		this.ephemeralStatuses = ephemeralStatuses;
 	}
 
 	public boolean getIsChargingAttackForNextRound() {
@@ -623,10 +536,6 @@ public class Pokemon {
 		return weight;
 	}
 
-	public void setWeight(int weight) {
-		this.weight = weight;
-	}
-
 	public boolean getHasReceivedDamage() {
 		return hasReceivedDamage;
 	}
@@ -711,10 +620,6 @@ public class Pokemon {
 		return sex;
 	}
 
-	public void setSex(Sex sex) {
-		this.sex = sex;
-	}
-
 	public boolean getIsAttackBoostedFromDownloadAbility() {
 		return isAttackBoostedFromDownloadAbility;
 	}
@@ -723,13 +628,8 @@ public class Pokemon {
 		this.isAttackBoostedFromDownloadAbility = isAttackBoostedFromDownloadAbility;
 	}
 
-	public boolean getIsUsingAbility() {
-		return isUsingAbility;
-	}
-
-	public void setIsUsingAbility(boolean isUsingAbility) {
-		this.isUsingAbility = isUsingAbility;
-	}
+	// ==================================== METHODS
+	// ====================================
 
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
@@ -770,14 +670,6 @@ public class Pokemon {
 	public void addAttacks(Attack attack) {
 		this.fourPrincipalAttacks.add(attack);
 	}
-
-	// Adds the four final attacks Ids to Pokemon
-	public void addIdAttack(Integer idAtck) {
-		this.fourIdAttacks.add(idAtck);
-	}
-
-	// ==================================== METHODS
-	// ====================================
 
 	// -----------------------------
 	// Check if has normal status conditions
@@ -839,16 +731,6 @@ public class Pokemon {
 	// Restart stats after some attacks... (cause not accumulated)
 	// -----------------------------
 	public void restartParametersEffect() {
-		// 95_Quick_Feet => don't restart effect (it will when Pokemon will no more have
-		// status conditions)
-		if (this.getAbilitySelected().getId() != 95)
-			this.setSpeed(this.getInitialSpeed());
-
-		this.setAttack(this.getInitialAttack());
-		this.setSpecialAttack(this.getInitialSpecialAttack());
-		this.setDef(this.getInitialDef());
-		this.setSpecialDefense(this.getInitialSpecialDefense());
-
 		// Can move and attack
 		this.getStatusCondition().setCanMoveStatusCondition(true);
 		this.setCanAttack(true);
@@ -865,17 +747,22 @@ public class Pokemon {
 	public float getEffectiveAttack() {
 		int stage = this.getAttackStage();
 		float multiplier;
+		float attack = this.getAttack();
+
+		if (this.hasActiveStatusCondition(StatusConditions.BURNED))
+			// Reduces current damage by 50%
+			attack /= 2f;
 
 		// 55_Hustle ability rises attack by 50%
 		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
-			this.setAttack(this.getAttack() * 1.5f);
+			attack *= 1.5f;
 			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad "
 					+ this.getAbilitySelected().getName());
 		}
 
-		// 62_Guts ability rises attack by 50% (if have some of those status conditions)
+		// 62_Guts ability rises attack by 50%
 		if (this.getAbilitySelected().getId() == 62 && (this.hasStatusCondition() || this.hasEphemeralStatus())) {
-			this.setAttack(this.getAttack() * 1.5f);
+			attack *= 1.5f;
 			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad Agallas");
 		}
 
@@ -884,7 +771,7 @@ public class Pokemon {
 		else
 			multiplier = 2.0f / (2f - stage);
 
-		return this.getAttack() * multiplier;
+		return attack * multiplier;
 	}
 
 	// -----------------------------
@@ -893,10 +780,21 @@ public class Pokemon {
 	public float getEffectiveSpecialAttack() {
 		int stage = this.getSpecialAttackStage();
 		float multiplier;
+		float specialAttack = this.getSpecialAttack();
+
+		// 57_Plus ability
+		if (this.getAbilitySelected().getId() == 57
+				&& this.getOwner().getPokemon().stream().anyMatch(pk -> pk.getAbilitySelected().getId() == 58))
+			specialAttack *= 1.5f;
+
+		// 57_Minus ability
+		if (this.getAbilitySelected().getId() == 58
+				&& this.getOwner().getPokemon().stream().anyMatch(pk -> pk.getAbilitySelected().getId() == 57))
+			specialAttack *= 1.5f;
 
 		// 94_Solar_Power increases special attack by 50%
 		if (this.getAbilitySelected().getId() == 94) {
-			this.setSpecialAttack(this.getSpecialAttack() * 1.5f);
+			specialAttack *= 1.5f;
 			System.out.println(this.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
 		}
 
@@ -905,7 +803,7 @@ public class Pokemon {
 		else
 			multiplier = 2.0f / (2f - stage);
 
-		return this.getSpecialAttack() * multiplier;
+		return specialAttack * multiplier;
 	}
 
 	// -----------------------------
@@ -914,9 +812,12 @@ public class Pokemon {
 	public float getEffectiveDefense() {
 		int stage = this.getDefenseStage();
 		float multiplier;
+		float defense = this.getDef();
 
+		// 63_Marvel_Scale => if has any status condition or ephemeral status, rises
+		// defense
 		if (this.getAbilitySelected().getId() == 63 && (!this.hasStatusCondition() || !this.hasEphemeralStatus())) {
-			this.setDef(this.getDef() * 1.5f);
+			defense *= 1.5f;
 			System.out.println(this.getName() + " aumentó su defensa gracias a su habilidad Escama especial");
 		}
 
@@ -925,7 +826,7 @@ public class Pokemon {
 		else
 			multiplier = 2.0f / (2f - stage);
 
-		return this.getDef() * multiplier;
+		return defense * multiplier;
 	}
 
 	// -----------------------------
@@ -934,28 +835,14 @@ public class Pokemon {
 	public float getEffectiveSpecialDefense() {
 		int stage = this.getSpecialDefenseStage();
 		float multiplier;
+		float specialDefense = this.getSpecialDefense();
 
 		if (stage >= 0)
 			multiplier = (2f + stage) / 2.0f;
 		else
 			multiplier = 2.0f / (2f - stage);
 
-		return this.getSpecialDefense() * multiplier;
-	}
-
-	// -----------------------------
-	// Get effective speed
-	// -----------------------------
-	public float getEffectiveSpeed() {
-		int stage = this.getSpeedStage();
-		float multiplier;
-
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
-
-		return this.getSpeed() * multiplier;
+		return specialDefense * multiplier;
 	}
 
 	// -----------------------------
@@ -1088,18 +975,6 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Do effect from BURNED state (start of the turn)
-	// -----------------------------
-	public void doBurnedEffectStartTurn() {
-		if (this.hasActiveStatusCondition(StatusConditions.BURNED)) {
-			State burnedStatus = this.getStatusCondition();
-			// Reduces current damage by 50%
-			this.setAttack(this.getAttack() / 2f);
-			burnedStatus.setCanMoveStatusCondition(true);
-		}
-	}
-
-	// -----------------------------
 	// Do effect from BURNED state (end of the turn)
 	// -----------------------------
 	public void doBurnedEffectEndTurn() {
@@ -1127,17 +1002,31 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Do effect from PARALYZED state (only start of the turn)
+	// Get effective speed (only start of the turn)
 	// -----------------------------
-	public void doParalyzedEffect() {
+	public float getEffectiveSpeed() {
+		int stage = this.getSpeedStage();
+		float multiplier;
+		float speed = this.getSpeed();
+
 		if (this.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			// 95_Quick_Feet increase doesn't apply reduction of speed (continues with the
 			// 50% increased)
-			if (this.getAbilitySelected().getId() != 95) {
+			if (this.getAbilitySelected().getId() != 95)
 				// Modifies speed of Pokemon (reduces by 50%)
-				this.setSpeed((this.getSpeed() * 50f) / 100f);
-			}
+				speed *= 0.5f;
 		}
+
+		// 95_Quick_Feet increase speed by 50%
+		if (this.getAbilitySelected().getId() == 95 && this.hasStatusCondition() || this.hasEphemeralStatus())
+			speed *= 1.5f;
+
+		if (stage >= 0)
+			multiplier = (2f + stage) / 2.0f;
+		else
+			multiplier = 2.0f / (2f - stage);
+
+		return speed * multiplier;
 	}
 
 	// -----------------------------
@@ -1566,114 +1455,71 @@ public class Pokemon {
 	// -----------------------------
 	// Modify stat stage from rival attacks
 	// -----------------------------
-	public void modifyStatStage(StatType stat, int stages, boolean isMistEffectActivated) {
-		// 29_Clear_Body / 73_White_Smoke abilities cannot be reduced stats
-		if (this.getAbilitySelected().getId() == 29 || this.getAbilitySelected().getId() == 73) {
-			System.out.println("Las estats de " + this.getName() + " (Id:" + this.getId() + ")"
-					+ " no pueden bajar dada su la habilidad " + this.getAbilitySelected().getName());
+	public void reduceStatStage(StatType stat, int stages, boolean isMistEffectActivated) {
+		if (cannotReduceStat(stat))
+			return;
+
+		if (isMistEffectActivated) {
+			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pudo bajar las estadísticas gracias a Neblina");
 			return;
 		}
 
-		if (!isMistEffectActivated) {
-			switch (stat) {
-			case ATTACK:
-				// 52_Hyper_Cutter ability
-				if (this.getAbilitySelected().getId() == 52) {
-					System.out.println("El ataque de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
-					break;
-				}
+		if (getStage(stat) <= -6) {
+			System.out.println(stat + " de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
+			return;
+		}
 
-				if (this.getAttackStage() <= -6) {
-					System.out.println(
-							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.ATTACK, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque!");
-				}
-				break;
-			case SPECIAL_ATTACK:
-				if (this.getSpecialAttackStage() <= -6) {
-					System.out.println("El ataque especial de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.SPECIAL_ATTACK, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque especial!");
-				}
-				break;
-			case DEFENSE:
-				if (this.getDefenseStage() <= -6) {
-					System.out.println(
-							"La defensa de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.DEFENSE, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa!");
-				}
-				break;
-			case SPECIAL_DEFENSE:
-				if (this.getSpecialDefenseStage() <= -6) {
-					System.out.println("La defensa especial de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.SPECIAL_DEFENSE, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa especial!");
-				}
-				break;
-			case PRECISION:
-				// 35_Illuminate/ 51_Keen_Eye ability
-				if (this.getAbilitySelected().getId() == 35 || this.getAbilitySelected().getId() == 51) {
-					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
-					break;
-				}
+		setStageValueStats(stat, stages, true);
+		System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su " + stat);
+	}
 
-				if (this.getPrecisionStage() <= -6) {
-					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.PRECISION, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su precisión!");
-				}
-				break;
-			case SPEED:
-				if (this.getSpeedStage() <= -6) {
-					System.out.println("La velocidad de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.SPEED, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su velocidad!");
-				}
-				break;
-			case NONE:
-				break;
-			}
-		} else
-			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
-					+ " no pudo bajar las estadísticas a causa de Neblina");
+	private boolean cannotReduceStat(StatType stat) {
+		Ability ability = this.getAbilitySelected();
+
+		// 29_Clear_Body / 73_White_Smoke abilities cannot be reduced stats
+		if (ability.getId() == 29 || ability.getId() == 73) {
+			System.out.println("Las estats de " + this.getName() + " (Id:" + this.getId() + ")"
+					+ " no pueden bajar dada su la habilidad " + this.getAbilitySelected().getName());
+			return true;
+		}
+
+		// 52_Hyper_Cutter ability
+		if (stat == StatType.ATTACK && ability.getId() == 52) {
+			System.out.println("El ataque de " + this.getName() + " (Id:" + this.getId() + ")"
+					+ " no puede bajar dada su " + this.getAbilitySelected().getName());
+			return true;
+		}
+
+		// 35_Illuminate/ 51_Keen_Eye ability
+		if (stat == StatType.PRECISION && (ability.getId() == 35 || ability.getId() == 51)) {
+			System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
+					+ " no puede bajar dada su " + this.getAbilitySelected().getName());
+			return true;
+		}
+		return false;
 	}
 
 	// -----------------------------
-	// Reset stats from attacks (to avoid problems each turn) => because of some
-	// boosts, etc.
+	// Get stage from specific stat
 	// -----------------------------
-	public void reinitializeStatsAfterAttack() {
-		this.setAttack(this.getInitialAttack());
-		this.setDef(this.getInitialDef());
-	}
-
-	// -----------------------------
-	// Change attacks depending on abilities, etc.
-	// -----------------------------
-	public void checkStatsForAttacks(Attack atkAttacker) {
-		Ability pkAbility = this.getAbilitySelected();
-
-		// 14_Compound_Eyes ability rises precision by 30%
-		if (pkAbility.getId() == 14)
-			atkAttacker.setPrecision(atkAttacker.getPrecision() * 1.3f);
-
-		// 55_Hustle ability reduces precision by 20%
-		if (pkAbility.getId() == 55 && this.getNextMovement().getBases().contains("fisico"))
-			atkAttacker.setPrecision(atkAttacker.getPrecision() * 0.8f);
+	public int getStage(StatType stat) {
+		switch (stat) {
+		case ATTACK:
+			return getAttackStage();
+		case SPECIAL_ATTACK:
+			return getSpecialAttackStage();
+		case DEFENSE:
+			return getDefenseStage();
+		case SPECIAL_DEFENSE:
+			return getSpecialDefenseStage();
+		case PRECISION:
+			return getPrecisionStage();
+		case SPEED:
+			return getSpeedStage();
+		default:
+			throw new IllegalArgumentException("Unknown stat " + stat);
+		}
 	}
 
 	// -----------------------------
@@ -1742,5 +1588,20 @@ public class Pokemon {
 	// -----------------------------
 	public void allowAttack() {
 		this.setCanAttack(true);
+	}
+
+	// -----------------------------
+	// Check if Pokemon has the attack chosen
+	// -----------------------------
+	public boolean hasAttack(int attackId) {
+		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.getId() == attackId);
+	}
+
+	// -----------------------------
+	// Check attack chosen has PP remaining
+	// -----------------------------
+	public boolean hasPP(int attackId) {
+		Attack atk = this.getNextMovementById(attackId);
+		return atk.getPp() > 0;
 	}
 }

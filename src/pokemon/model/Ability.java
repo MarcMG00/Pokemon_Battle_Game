@@ -1,6 +1,6 @@
 package pokemon.model;
 
-import pokemon.interfce.AbilityEffect;
+import pokemon.abilityInterface.AbilityEffect;
 
 public class Ability {
 

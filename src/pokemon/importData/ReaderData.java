@@ -9,52 +9,54 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import pokemon.abilityInterface.AirLockAbility;
+import pokemon.abilityInterface.AngerPointAbility;
+import pokemon.abilityInterface.CloudNineAbility;
+import pokemon.abilityInterface.ColorChangeAbility;
+import pokemon.abilityInterface.CuteCharmAbility;
+import pokemon.abilityInterface.DownloadAbility;
+import pokemon.abilityInterface.DrizzleAbility;
+import pokemon.abilityInterface.DroughtAbility;
+import pokemon.abilityInterface.DrySkinAbility;
+import pokemon.abilityInterface.EffectSporeAbility;
+import pokemon.abilityInterface.EmptyAbility;
+import pokemon.abilityInterface.FlameBodyAbility;
+import pokemon.abilityInterface.FlashFireAbility;
+import pokemon.abilityInterface.ForecastAbility;
+import pokemon.abilityInterface.HydratationAbility;
+import pokemon.abilityInterface.IntimidateAbility;
+import pokemon.abilityInterface.LevitateAbility;
+import pokemon.abilityInterface.LightningRodAbility;
+import pokemon.abilityInterface.MinusAbility;
+import pokemon.abilityInterface.MotorDriveAbility;
+import pokemon.abilityInterface.NaturalCureAbility;
+import pokemon.abilityInterface.NormalizeAbility;
+import pokemon.abilityInterface.PlusAbility;
+import pokemon.abilityInterface.PoisonPointAbility;
+import pokemon.abilityInterface.PressureAbility;
+import pokemon.abilityInterface.QuickFeetAbility;
+import pokemon.abilityInterface.RainDishAbility;
+import pokemon.abilityInterface.RoughSkinAbility;
+import pokemon.abilityInterface.SandStreamAbility;
+import pokemon.abilityInterface.ShedSkinAbility;
+import pokemon.abilityInterface.SpeedBoostAbility;
+import pokemon.abilityInterface.StaticAbility;
+import pokemon.abilityInterface.SteadfastAbility;
+import pokemon.abilityInterface.StenchAbility;
+import pokemon.abilityInterface.SynchronizeAbility;
+import pokemon.abilityInterface.TraceAbility;
+import pokemon.abilityInterface.VoltAbsorbAbility;
+import pokemon.abilityInterface.WaterAbsorbAbility;
+import pokemon.abilityInterface.WonderGuardAbility;
+import pokemon.attackInterface.AttackEffect;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
-import pokemon.interfce.AirLockAbility;
-import pokemon.interfce.AngerPointAbility;
-import pokemon.interfce.CloudNineAbility;
-import pokemon.interfce.ColorChangeAbility;
-import pokemon.interfce.CuteCharmAbility;
-import pokemon.interfce.DownloadAbility;
-import pokemon.interfce.DrizzleAbility;
-import pokemon.interfce.DroughtAbility;
-import pokemon.interfce.DrySkinAbility;
-import pokemon.interfce.EffectSporeAbility;
-import pokemon.interfce.EmptyAbility;
-import pokemon.interfce.FlameBodyAbility;
-import pokemon.interfce.FlashFireAbility;
-import pokemon.interfce.ForecastAbility;
-import pokemon.interfce.HydratationAbility;
-import pokemon.interfce.IntimidateAbility;
-import pokemon.interfce.LevitateAbility;
-import pokemon.interfce.LightningRodAbility;
-import pokemon.interfce.MinusAbility;
-import pokemon.interfce.MotorDriveAbility;
-import pokemon.interfce.NaturalCureAbility;
-import pokemon.interfce.NormalizeAbility;
-import pokemon.interfce.PlusAbility;
-import pokemon.interfce.PoisonPointAbility;
-import pokemon.interfce.PressureAbility;
-import pokemon.interfce.QuickFeetAbility;
-import pokemon.interfce.RainDishAbility;
-import pokemon.interfce.RoughSkinAbility;
-import pokemon.interfce.SandStreamAbility;
-import pokemon.interfce.ShedSkinAbility;
-import pokemon.interfce.SpeedBoostAbility;
-import pokemon.interfce.StaticAbility;
-import pokemon.interfce.SteadfastAbility;
-import pokemon.interfce.StenchAbility;
-import pokemon.interfce.SynchronizeAbility;
-import pokemon.interfce.TraceAbility;
-import pokemon.interfce.VoltAbsorbAbility;
-import pokemon.interfce.WaterAbsorbAbility;
-import pokemon.interfce.WonderGuardAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
+import pokemon.model.DamageService;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 import pokemon.model.SecondaryEffect;
@@ -751,10 +753,10 @@ public class ReaderData {
 			try {
 				if (fileReader != null)
 					fileReader.close();
-				
+
 				if (bufferedReader != null)
 					bufferedReader.close();
-				
+
 				System.out.println("Finished reading readAttacks");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file : " + e.getMessage());
@@ -1101,10 +1103,19 @@ public class ReaderData {
 
 		switch (attack.getId()) {
 		case 16:
+			canHitWhileInvulnerable.add(19);
+			canHitWhileInvulnerable.add(340);
+			canHitWhileInvulnerable.add(507);
+		case 57:
+			canHitWhileInvulnerable.add(291);
 		case 87:
+			canHitWhileInvulnerable.add(19);
 		case 239:
+			canHitWhileInvulnerable.add(19);
 		case 327:
+			canHitWhileInvulnerable.add(19);
 		case 479:
+			canHitWhileInvulnerable.add(19);
 		case 542:
 			canHitWhileInvulnerable.add(19);
 			break;

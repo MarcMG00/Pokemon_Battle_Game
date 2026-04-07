@@ -101,13 +101,6 @@ public class Player {
 			rand = new Random();
 			pk.addAttacks(pk.getSpecialAttacks().get(rand.nextInt(pk.getSpecialAttacks().size())));
 
-			// Adds the Ids of attacks chosen in a list
-			for (Attack attackChosen : pk.getFourPrincipalAttacks()) {
-
-				pk.addIdAttack(attackChosen.getId());
-
-			}
-
 			System.out.println("fin PK");
 		}
 	}
@@ -275,30 +268,7 @@ public class Player {
 		this.getPkCombatting().setLotDamageAttacks(iaLotDamageAttacks);
 		this.getPkCombatting().setNormalAttacks(iaNormalDamageAttacks);
 		this.getPkCombatting().setLowAttacks(iaLowAttacks);
-		this.getPkCombatting().setNotEffectAttacks(iaHasNoEffectAttacks);
-
-		// System.out.println("Ataques no afectan");
-		// for (Ataque a : this.getPkCombatting().getAtaquesNoAfectan()) {
-		// System.out.println(a.getNombreAta() + " - " +
-		// a.getStrTipoToPkType().getNombreTipo());
-		// }
-		// System.out.println("Ataques rebientan");
-		// for (Ataque a : this.getPkCombatting().getAtaquesRebientan()) {
-		// System.out.println(a.getNombreAta() + " - " +
-		// a.getStrTipoToPkType().getNombreTipo());
-		// }
-		// System.out.println("Ataques normales");
-		// for (Ataque a : this.getPkCombatting().getAtaquesNormales()) {
-		// System.out.println(a.getNombreAta() + " - " +
-		// a.getStrTipoToPkType().getNombreTipo());
-		// }
-		// System.out.println("Ataques debiles");
-		// for (Ataque a : this.getPkCombatting().getAtaquesDebiles()) {
-		// System.out.println(a.getNombreAta() + " - " +
-		// a.getStrTipoToPkType().getNombreTipo());
-		// }
-		// System.out.println("next method");
-		// System.out.println();
+		this.getPkCombatting().setNoEffectAttacks(iaHasNoEffectAttacks);
 	}
 
 	// -----------------------------
@@ -411,12 +381,9 @@ public class Player {
 	// Chooses the attack from machine
 	// -----------------------------
 	public void prepareBestAttackIA(Pokemon pokemonRival) {
-
 		Pokemon attacker = this.getPkCombatting();
 
-		// ------------------------------------
-		// 0️⃣ Si no hay PP en ningún ataque → Struggle
-		// ------------------------------------
+		// If no PPs remaining in any attack => use 165_Struggle
 		boolean hasPP = attacker.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
 
 		if (!hasPP) {
@@ -430,9 +397,7 @@ public class Player {
 		Attack bestNormalAttack = null;
 		Attack bestOtrosAttack = null;
 
-		// ------------------------------------
-		// 1️⃣ Analizar TODOS los ataques posibles
-		// ------------------------------------
+		// Check all possible attacks
 		for (Attack atk : attacker.getFourPrincipalAttacks()) {
 
 			if (atk.getPp() <= 0)
@@ -449,20 +414,20 @@ public class Player {
 
 			float score = effectiveness * stab * power;
 
-			// 🔹 Guardamos el mejor ataque efectivo
+			// Save best attack score
 			if (effectiveness > 1f && score > bestScore) {
 				bestScore = score;
 				bestEffectiveAttack = atk;
 			}
 
-			// 🔹 Guardamos un ataque normal (por si acaso)
+			// Save normal attack (just in case)
 			if (effectiveness > 0f && !atk.getBases().contains("otros")) {
 				if (bestNormalAttack == null) {
 					bestNormalAttack = atk;
 				}
 			}
 
-			// 🔹 Guardamos uno de tipo "otros"
+			// Save an attack from "others"
 			if (atk.getBases().contains("otros")) {
 				if (bestOtrosAttack == null) {
 					bestOtrosAttack = atk;
@@ -471,7 +436,7 @@ public class Player {
 		}
 
 		// ------------------------------------
-		// 2️⃣ Decisión final (según tus reglas)
+		// Final decision
 		// ------------------------------------
 		Attack chosenAttack;
 
@@ -485,12 +450,12 @@ public class Player {
 			chosenAttack = bestOtrosAttack;
 
 		} else {
-			// Último recurso: cualquiera con PP
+			// Last case : any attack with PP
 			chosenAttack = attacker.getFourPrincipalAttacks().stream().filter(a -> a.getPp() > 0).findFirst().get();
 		}
 
 		// ------------------------------------
-		// 3️⃣ Aplicar efectividad y STAB REAL
+		// Apply effectiveness and real STAB
 		// ------------------------------------
 		prepareAttack(chosenAttack, attacker, pokemonRival);
 		attacker.setNextMovement(chosenAttack);
