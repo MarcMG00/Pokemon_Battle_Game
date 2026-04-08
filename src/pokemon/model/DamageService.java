@@ -49,6 +49,8 @@ public class DamageService {
 		power *= applyRivalry(attacker, defender, ability);
 		power *= applyIronFist(ability, attack);
 		power *= applyAdaptable(attacker, ability, attack);
+		power *= applyPowerDependingPowerAttack(ability, attack);
+		power *= applyPowerAttackModifiers(ability);
 
 		return power;
 	}
@@ -117,6 +119,35 @@ public class DamageService {
 	private float applyAdaptable(Pokemon attacker, Ability ability, Attack attack) {
 		if (ability.getId() == 91 && attacker.getTypes().contains(attack.getStrTypeToPkType()))
 			return 1.75f;
+
+		return 1f;
+	}
+
+	// -----------------------------
+	// Apply general abilities concerning the attack of the Pokemon
+	// -----------------------------
+	private float applyPowerAttackModifiers(Ability ability) {
+		if (ability == null)
+			return 1f;
+
+		// Normalidad/ Normalize
+		if (ability.getId() == 96)
+			// Increase power 20% more
+			return 1.2f;
+
+		return 1f;
+	}
+
+	// -----------------------------
+	// Apply 89_Iron_Fist ability
+	// -----------------------------
+	private float applyPowerDependingPowerAttack(Ability ability, Attack attack) {
+		if (ability == null)
+			return 1f;
+
+		// 101_Technician ability
+		if (ability.getId() == 101 && attack.getPower() <= 60f)
+			return 1.5f;
 
 		return 1f;
 	}
@@ -238,7 +269,7 @@ public class DamageService {
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10)
 			return this.canReceiveCriticalAttacks(ctx);
-		
+
 		return false;
 	}
 
@@ -251,7 +282,7 @@ public class DamageService {
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 30)
 			return this.canReceiveCriticalAttacks(ctx);
-		
+
 		return false;
 	}
 

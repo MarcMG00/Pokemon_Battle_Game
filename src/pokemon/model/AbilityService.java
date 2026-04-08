@@ -187,22 +187,6 @@ public class AbilityService {
 		}
 	}
 
-	// -----------------------------
-	// Apply abilities concerning the attack of the Pokemon
-	// -----------------------------
-	public void applyPowerAttackModifiers(AttackContext ctx) {
-		Ability ability = ctx.getAttacker().getAbilitySelected();
-
-		if (ability == null)
-			return;
-
-		switch (ability.getId()) {
-		case 96: // Normalidad/ Normalize
-			// Increase power 20% more
-			ctx.setPower(ctx.getPower() * 1.2f);
-			break;
-		}
-	}
 
 	// -----------------------------
 	// Get priority points from speed (allows to know first Pokemon attacking)

@@ -784,8 +784,6 @@ public class AttackService {
 		if (effect == null)
 			throw new IllegalStateException("No effect defined for attack " + ctx.getAttack().getId());
 
-		abilityService.applyPowerAttackModifiers(ctx);
-
 		// Gets the attack effect and apply damage
 		AttackResult result = effect.execute(ctx);
 
