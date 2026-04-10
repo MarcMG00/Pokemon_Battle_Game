@@ -1297,7 +1297,15 @@ public class Pokemon {
 	// -----------------------------
 	public boolean trySetStatus(State newState, Weather weather, boolean isWeatherSuppressed, Attack attackAttacker) {
 		boolean canBeFrozen = weather != Weather.SUN;
+		boolean isSunny = weather == Weather.SUN;
 		Ability ability = this.getAbilitySelected();
+		
+		// 102_Leaf_Guard
+		if(ability.getId() == 102 && isSunny) {
+			System.out.println(this.getName()
+					+ " no puede verse afectado por problemas de estado persistentes dada su habilidad Defensa hoja");
+			return false;
+		}
 
 		if (ability != null) {
 			// 19_Shield_Dust doesn't allow to get secondary effects
