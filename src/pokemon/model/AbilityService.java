@@ -3,39 +3,10 @@ package pokemon.model;
 import pokemon.enums.Weather;
 
 public class AbilityService {
-	private final BattleContext battleCtx;
-
-	public AbilityService(BattleContext battleCtx) {
-		this.battleCtx = battleCtx;
-	}
-
-	// -----------------------------
-	// Do 36_Trace ability
-	// -----------------------------
-	public void applyTraceOnBattleStart(Pokemon p1, Pokemon p2) {
-		boolean p1Trace = p1.hasAbility(36);
-		boolean p2Trace = p2.hasAbility(36);
-
-		if (!p1Trace && !p2Trace)
-			return;
-
-		if (p1Trace && !p2Trace)
-			p1.getAbilitySelected().getEffect().onSwitchIn(battleCtx, p1, p2);
-		else if (p2Trace && !p1Trace)
-			p2.getAbilitySelected().getEffect().onSwitchIn(battleCtx, p2, p1);
-		else {
-			// Speed comparison
-			Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
-			Pokemon faster = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
-			slower.getAbilitySelected().getEffect().onSwitchIn(battleCtx, slower, faster);
-			faster.getAbilitySelected().getEffect().onSwitchIn(battleCtx, faster, slower);
-		}
-	}
-
 	// -----------------------------
 	// Do start abilities (that are not weather type)
 	// -----------------------------
-	public void applyAbilities(Pokemon p1, Pokemon p2) {
+	public void applyAbilities(BattleContext battleCtx, Pokemon p1, Pokemon p2) {
 		boolean p1HasWeatherType = p1.getAbilitySelected().getIsWeatherType();
 		boolean p2HasWeatherType = p2.getAbilitySelected().getIsWeatherType();
 
@@ -52,7 +23,7 @@ public class AbilityService {
 	// -----------------------------
 	// 42_Magnet_Pull ability doesn't allow to change Pokemon that are steel type
 	// -----------------------------
-	public boolean isBlockedByMagnetPull(boolean isPlayer) {
+	public boolean isBlockedByMagnetPull(BattleContext battleCtx, boolean isPlayer) {
 		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 
@@ -70,7 +41,7 @@ public class AbilityService {
 	// 71_Arena_Trap ability doesn't allow to change Pokemon (only if attacker is
 	// not Fly type or has not the ability levitate or is not levitating)
 	// -----------------------------
-	public boolean isBlockedByArenaTrap(boolean isPlayer) {
+	public boolean isBlockedByArenaTrap(BattleContext battleCtx, boolean isPlayer) {
 		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 
@@ -89,7 +60,7 @@ public class AbilityService {
 	// -----------------------------
 	// Sets the ability during changes (forced or manual) (if any)
 	// -----------------------------
-	public void applyEntryAbilityOnSwitch(Pokemon entering, Pokemon defender) {
+	public void applyEntryAbilityOnSwitch(BattleContext battleCtx, Pokemon entering, Pokemon defender) {
 		Ability abilityEntering = entering.getAbilitySelected();
 		Ability abilityDefendering = defender.getAbilitySelected();
 
@@ -97,8 +68,6 @@ public class AbilityService {
 			return;
 
 		abilityEntering.getEffect().onSwitchIn(battleCtx, entering, defender);
-
-		abilityEntering.getEffect().onBattleStart(battleCtx, entering);
 
 		// For example for 59_Foceast ability
 		// If 36_Trace (copies ability) => needs to be applied
@@ -109,7 +78,7 @@ public class AbilityService {
 	// Remove abilities effects before changing to new pokemon (ex : remove 13 Cloud
 	// Nine)
 	// -----------------------------
-	public void applyExitAbilityOnSwitch(Pokemon leaving) {
+	public void applyExitAbilityOnSwitch(BattleContext battleCtx, Pokemon leaving) {
 		Ability ability = leaving.getBaseAbility();
 
 		if (ability == null || ability.getId() == 5000)
@@ -121,15 +90,16 @@ public class AbilityService {
 	// -----------------------------
 	// Apply abilities before the end of the turn
 	// -----------------------------
-	public void applyAbilitiesBeforeEndTurn() {
-		applyBeforeEndTurnAbility(battleCtx.getPlayer().getPkCombatting());
-		applyBeforeEndTurnAbility(battleCtx.getIa().getPkCombatting());
+	public void applyAbilitiesBeforeEndTurn(BattleContext battleCtx) {
+		applyBeforeEndTurnAbility(battleCtx, true);
+		applyBeforeEndTurnAbility(battleCtx, false);
 	}
 
 	// -----------------------------
 	// Apply ability before end of turn
 	// -----------------------------
-	private void applyBeforeEndTurnAbility(Pokemon pk) {
+	private void applyBeforeEndTurnAbility(BattleContext battleCtx, boolean isPlayer) {
+		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 		Ability ability = pk.getAbilitySelected();
 		if (ability == null || ability.getId() == 5000
 				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 61))
@@ -141,16 +111,18 @@ public class AbilityService {
 	// -----------------------------
 	// Apply abilities at the end of turn
 	// -----------------------------
-	public void applyEndTurnAbilities() {
-		applyEndTurnAbility(battleCtx.getPlayer().getPkCombatting());
-		applyEndTurnAbility(battleCtx.getIa().getPkCombatting());
+	public void applyEndTurnAbilities(BattleContext battleCtx) {
+		applyEndTurnAbility(battleCtx, true);
+		applyEndTurnAbility(battleCtx, false);
 	}
 
 	// -----------------------------
 	// Apply ability on end turn
 	// -----------------------------
-	private void applyEndTurnAbility(Pokemon pk) {
+	private void applyEndTurnAbility(BattleContext battleCtx, boolean isPlayer) {
+		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 		Ability ability = pk.getAbilitySelected();
+		
 		if (ability == null || ability.getId() == 5000
 				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 44))
 			return;
@@ -186,7 +158,6 @@ public class AbilityService {
 					weather, isWeatherSuppressed);
 		}
 	}
-
 
 	// -----------------------------
 	// Get priority points from speed (allows to know first Pokemon attacking)

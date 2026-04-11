@@ -6,9 +6,6 @@ import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
 public interface AbilityEffect {
-	default void onBattleStart(BattleContext battleCtx, Pokemon owner) {
-	}
-
 	default void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
 	}
 

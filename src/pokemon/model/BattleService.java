@@ -5,38 +5,35 @@ import java.util.Scanner;
 import pokemon.enums.StatusConditions;
 
 public class BattleService {
-	private final Player player;
-	private final Player ia;
-
 	private final AttackService attackService;
 	private final AbilityService abilityService;
 	private final WeatherService weatherService;
+	private final BattleContext battleCtx;
 
 	public BattleService(BattleContext battleCtx) {
-		this.player = battleCtx.getPlayer();
-		this.ia = battleCtx.getIa();
+		this.battleCtx = battleCtx;
 
 		this.attackService = new AttackService(battleCtx);
-		this.abilityService = new AbilityService(battleCtx);
+		this.abilityService = new AbilityService();
 		this.weatherService = new WeatherService(battleCtx);
+
 	}
 
 	public void startBattle() {
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
 
-		abilityService.applyTraceOnBattleStart(player.getPkCombatting(), ia.getPkCombatting());
-
-		abilityService.applyAbilities(player.getPkCombatting(), ia.getPkCombatting());
+		abilityService.applyAbilities(battleCtx, battleCtx.getPlayer().getPkCombatting(),
+				battleCtx.getIa().getPkCombatting());
 
 		weatherService.applyEntryWeatherAbilities();
 
-		while (ia.getPokemon().size() >= 1 && player.getPokemon().size() >= 1) {
+		while (battleCtx.getIa().getPokemon().size() >= 1 && battleCtx.getPlayer().getPokemon().size() >= 1) {
 			System.out.println("----------------------------------");
 			System.out.println("Let's start round nº : " + nbRound);
 			System.out.println("----------------------------------");
 
-			Pokemon pkPlayer = player.getPkCombatting();
+			Pokemon pkPlayer = battleCtx.getPlayer().getPkCombatting();
 
 			boolean playerIsCharging = pkPlayer.getIsChargingAttackForNextRound();
 
@@ -48,7 +45,7 @@ public class BattleService {
 			if (attackChoice == 1)
 				attackService.handleAttackTurn(sc);
 			else {
-				if (ia.getPkCombatting().getAbilitySelected().getId() == 23) {
+				if (battleCtx.getIa().getPkCombatting().getAbilitySelected().getId() == 23) {
 					System.out.println("No puedes cambiar de Pokémon a causa de Sombra trampa");
 
 					nbRound--;

@@ -12,14 +12,14 @@ public class SwitchPokemonService {
 	public SwitchPokemonService(BattleContext battleCtx) {
 		this.battleCtx = battleCtx;
 		this.statusService = new StatusService();
-		this.abilityService = new AbilityService(battleCtx);
+		this.abilityService = new AbilityService();
 	}
 
 	// -----------------------------
 	// Reset stats from Pokemon leaving
 	// -----------------------------
 	public void resetPokemonBeforeSwitch(Pokemon pk) {
-		abilityService.applyExitAbilityOnSwitch(pk);
+		abilityService.applyExitAbilityOnSwitch(battleCtx, pk);
 
 		pk.setAttackStage(0);
 		pk.setSpecialAttackStage(0);
@@ -145,7 +145,7 @@ public class SwitchPokemonService {
 		updatePkFacingAfterSwitch();
 
 		// Update weather ability if any
-		abilityService.applyEntryAbilityOnSwitch(selected, battleCtx.getIa().getPkCombatting());
+		abilityService.applyEntryAbilityOnSwitch(battleCtx, selected, battleCtx.getIa().getPkCombatting());
 
 		refreshAttackOrders();
 	}
@@ -175,10 +175,10 @@ public class SwitchPokemonService {
 	// will attack normally
 	// -----------------------------
 	public boolean tryIAChange() {
-		if (abilityService.isBlockedByMagnetPull(true))
+		if (abilityService.isBlockedByMagnetPull(battleCtx, true))
 			return false;
 
-		if (abilityService.isBlockedByArenaTrap(true))
+		if (abilityService.isBlockedByArenaTrap(battleCtx, true))
 			return false;
 
 		// 15% of probability to change Pokemon
@@ -234,7 +234,7 @@ public class SwitchPokemonService {
 
 		printForcedSwitchMessage(defender, newPk);
 
-		performForcedSwitch(defender, newPk);
+		performForcedSwitch(battleCtx, defender, newPk);
 
 		defender.setForceSwitchPokemon(false);
 	}
@@ -270,7 +270,7 @@ public class SwitchPokemonService {
 	// -----------------------------
 	// Perform forced switch
 	// -----------------------------
-	private void performForcedSwitch(Player defender, Pokemon newPk) {
+	private void performForcedSwitch(BattleContext battleCtx, Player defender, Pokemon newPk) {
 		Pokemon current = defender.getPkCombatting();
 
 		resetPokemonBeforeSwitch(current);
@@ -278,7 +278,7 @@ public class SwitchPokemonService {
 		newPk.setJustEnteredBattle(true);
 		defender.setPkCombatting(newPk);
 
-		abilityService.applyEntryAbilityOnSwitch(newPk, getOpponent(defender).getPkCombatting());
+		abilityService.applyEntryAbilityOnSwitch(battleCtx, newPk, getOpponent(defender).getPkCombatting());
 
 		updateFacingAfterForcedSwitch(defender, newPk);
 	}

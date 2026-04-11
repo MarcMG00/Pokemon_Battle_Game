@@ -5,7 +5,7 @@ import pokemon.model.Pokemon;
 
 public class AirLockAbility implements AbilityEffect {
 	@Override
-	public void onBattleStart(BattleContext battleCtx, Pokemon owner) {
+	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
 		// Follows first Pokemon generation rules (only during Pokemon on battle)
 		battleCtx.setWeatherSuppressed(true);
 		System.out.println(owner.getName() + " anuló los efectos del clima con Esclusa de aire");

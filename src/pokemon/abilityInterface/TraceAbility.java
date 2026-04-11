@@ -36,9 +36,7 @@ public class TraceAbility implements AbilityEffect {
 						+ defender.getAbilitySelected().getName());
 			}
 		}
-		owner.getAbilitySelected().getEffect().onBattleStart(battleCtx, owner);
 		owner.getAbilitySelected().getEffect().onSwitchIn(battleCtx, owner, defender);
-
 	}
 
 	@Override

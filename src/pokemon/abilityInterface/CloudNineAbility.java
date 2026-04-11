@@ -5,7 +5,7 @@ import pokemon.model.Pokemon;
 
 public class CloudNineAbility implements AbilityEffect {
 	@Override
-	public void onBattleStart(BattleContext battleCtx, Pokemon owner) {
+	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
 		battleCtx.setWeatherSuppressed(true);
 		System.out.println(owner.getName() + " anuló los efectos del clima con Aclimatación");
 	}

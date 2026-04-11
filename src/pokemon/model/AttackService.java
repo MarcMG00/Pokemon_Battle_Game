@@ -61,7 +61,7 @@ public class AttackService {
 	public AttackService(BattleContext battleCtx) {
 		this.battleCtx = battleCtx;
 		this.statusService = new StatusService();
-		this.abilityService = new AbilityService(battleCtx);
+		this.abilityService = new AbilityService();
 		this.weatherService = new WeatherService(battleCtx);
 		this.switchPokemonService = new SwitchPokemonService(battleCtx);
 		this.damageService = new DamageService();
@@ -268,13 +268,13 @@ public class AttackService {
 		// Execute the attack sequence (ordering uses current canAttack and speed)
 		handleNormalAttackSequence(sc, playerPk, iaPk, turnCtx);
 
-		abilityService.applyAbilitiesBeforeEndTurn();
+		abilityService.applyAbilitiesBeforeEndTurn(battleCtx);
 
 		List<Player> fainted = statusService.applyTurnStatusReductions(battleCtx);
 		for (Player p : fainted)
 			switchPokemonService.handleForcedSwitch(p);
 
-		abilityService.applyEndTurnAbilities();
+		abilityService.applyEndTurnAbilities(battleCtx);
 
 		resetTurnParameters();
 
@@ -689,7 +689,7 @@ public class AttackService {
 
 		switchPokemonService.updatePkFacingAfterSwitch();
 
-		abilityService.applyEntryAbilityOnSwitch(newIA, battleCtx.getPlayer().getPkCombatting());
+		abilityService.applyEntryAbilityOnSwitch(battleCtx, newIA, battleCtx.getPlayer().getPkCombatting());
 
 		switchPokemonService.refreshAttackOrders();
 
@@ -917,10 +917,10 @@ public class AttackService {
 	// Handle attack from IA when player is changing the Pokemon
 	// -----------------------------
 	public boolean handleChangeTurn(Scanner sc) {
-		if (abilityService.isBlockedByMagnetPull(false))
+		if (abilityService.isBlockedByMagnetPull(battleCtx, false))
 			return false;
 
-		if (abilityService.isBlockedByArenaTrap(false))
+		if (abilityService.isBlockedByArenaTrap(battleCtx, false))
 			return false;
 
 		if (!handlePlayerChange(sc))
@@ -1000,7 +1000,7 @@ public class AttackService {
 	// Apply end turn effects, abilities, etc. (only when handling change turn)
 	// -----------------------------
 	private void handleEndTurnSequence(Scanner sc) {
-		abilityService.applyAbilitiesBeforeEndTurn();
+		abilityService.applyAbilitiesBeforeEndTurn(battleCtx);
 
 		statusService.reduceNumberTurnsEffects(battleCtx.getIa(), battleCtx.getPlayer());
 
@@ -1008,7 +1008,7 @@ public class AttackService {
 		battleCtx.getPlayer().getPkCombatting().doDrainedAllTurnsEffect(battleCtx.getIa().getPkCombatting());
 		statusService.reduceDrainedAllTurnsEffects(battleCtx.getPlayer(), battleCtx.getIa());
 
-		abilityService.applyEndTurnAbilities();
+		abilityService.applyEndTurnAbilities(battleCtx);
 
 		resetTurnParameters();
 

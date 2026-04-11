@@ -15,7 +15,7 @@ public class WeatherService {
 		this.battleCtx = battleCtx;
 		this.statusService = new StatusService();
 		this.switchPokemonService = new SwitchPokemonService(battleCtx);
-		this.abilityService = new AbilityService(battleCtx);
+		this.abilityService = new AbilityService();
 	}
 
 	// -----------------------------
@@ -25,33 +25,62 @@ public class WeatherService {
 		Pokemon p1 = battleCtx.getPlayer().getPkCombatting();
 		Pokemon p2 = battleCtx.getIa().getPkCombatting();
 
-		Ability a1 = p1.getAbilitySelected();
-		Ability a2 = p2.getAbilitySelected();
+		applyWeatherAbility(p1, p2);
+		applyWeatherAbility(p2, p1);
 
-		// Abilities that put a weather
-		Ability weatherA1 = (a1 != null && a1.getIsWeatherType()) ? a1 : null;
-		Ability weatherA2 = (a2 != null && a2.getIsWeatherType()) ? a2 : null;
+		applyWeatherSuppression(p1, p2);
+		applyWeatherSuppression(p2, p1);
+	}
 
-		if (weatherA1 != null || weatherA2 != null) {
-			if (weatherA1 != null && weatherA2 == null) {
-				weatherA1.getEffect().onBattleStart(battleCtx, p1);
+	// -----------------------------
+	// Use only weather abilities
+	// -----------------------------
+	private void applyWeatherAbility(Pokemon pk1, Pokemon pk2) {
+		Ability a1 = pk1.getAbilitySelected();
+		Ability a2 = pk2.getAbilitySelected();
 
-			} else if (weatherA2 != null && weatherA1 == null) {
-				weatherA2.getEffect().onBattleStart(battleCtx, p2);
+		Ability weatherA1 = isWeatherAbility(a1) ? a1 : null;
+		Ability weatherA2 = isWeatherAbility(a2) ? a2 : null;
 
-			} else {
-				// Slower Pokemon wins if both have weather abilities
-				Pokemon slower = p1.getSpeed() <= p2.getSpeed() ? p1 : p2;
-				slower.getAbilitySelected().getEffect().onBattleStart(battleCtx, slower);
-			}
+		if (weatherA1 == null && weatherA2 == null)
+			return;
+
+		if (weatherA1 != null && weatherA2 == null) {
+			weatherA1.getEffect().onSwitchIn(battleCtx, pk1, pk2);
+			return;
 		}
 
-		// Weather can be suppressed if 13_Cloud_Nine / 76_Air_Lock
-		if (a1 != null && (a1.getId() == 13 || a1.getId() == 76))
-			a1.getEffect().onBattleStart(battleCtx, p1);
+		if (weatherA2 != null && weatherA1 == null) {
+			weatherA2.getEffect().onSwitchIn(battleCtx, pk2, pk1);
+			return;
+		}
 
-		if (a2 != null && (a2.getId() == 13 || a2.getId() == 76))
-			a2.getEffect().onBattleStart(battleCtx, p2);
+		// Both have weather → slower wins
+		Pokemon slower = pk1.getSpeed() <= pk2.getSpeed() ? pk1 : pk2;
+		Pokemon faster = pk1.getSpeed() > pk2.getSpeed() ? pk1 : pk2;
+
+		slower.getAbilitySelected().getEffect().onSwitchIn(battleCtx, slower, faster);
+	}
+
+	// -----------------------------
+	// Suppress weather ability by 13_Cloud_Nine or 76_Air_Lock
+	// -----------------------------
+	private void applyWeatherSuppression(Pokemon attacker, Pokemon defender) {
+		Ability ability = attacker.getAbilitySelected();
+
+		if (ability == null)
+			return;
+
+		if (ability.getId() == 13 || ability.getId() == 76) {
+			ability.getEffect().onSwitchIn(battleCtx, attacker, defender);
+		}
+	}
+
+	// -----------------------------
+	// Check if ability is wetaher type
+	// -----------------------------
+	private boolean isWeatherAbility(Ability ability) {
+		return ability != null && ability.getIsWeatherType();
 	}
 
 	// -----------------------------
@@ -234,7 +263,7 @@ public class WeatherService {
 				newIA.setJustEnteredBattle(false);
 				owner.setPkCombatting(newIA);
 
-				abilityService.applyEntryAbilityOnSwitch(newIA, battleCtx.getPlayer().getPkCombatting());
+				abilityService.applyEntryAbilityOnSwitch(battleCtx, newIA, battleCtx.getPlayer().getPkCombatting());
 
 				battleCtx.getPlayer().setPkFacing(newIA);
 				owner.setPkFacing(battleCtx.getPlayer().getPkCombatting());
