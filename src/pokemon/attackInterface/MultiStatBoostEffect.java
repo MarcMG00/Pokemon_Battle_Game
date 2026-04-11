@@ -36,6 +36,7 @@ public class MultiStatBoostEffect implements AttackEffect {
 				continue;
 			}
 
+			stages *= ctx.getStatService().applyModifiersNbStage(ctx.getAttacker(), false);
 			ctx.getAttacker().setStageValueStats(stat, stages, false);
 			System.out.println(
 					ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su " + stat);

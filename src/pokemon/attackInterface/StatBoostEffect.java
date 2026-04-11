@@ -26,9 +26,12 @@ public class StatBoostEffect implements AttackEffect {
 			return result;
 		}
 
+		stages *= ctx.getStatService().applyModifiersNbStage(ctx.getAttacker(), false);
+		ctx.getAttacker().setStageValueStats(stat, stages, false);
 		System.out.println(
 				ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su " + stat.name());
-		ctx.getAttacker().setStageValueStats(stat, stages, false);
+
+		
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		return result;

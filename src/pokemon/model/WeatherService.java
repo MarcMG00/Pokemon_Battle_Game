@@ -256,7 +256,7 @@ public class WeatherService {
 			if (newIA != null) {
 				switchPokemonService.resetPokemonBeforeSwitch(owner.getPkCombatting());
 
-				owner.getPkCombatting().removeStates();
+				statusService.removeStates(owner.getPkCombatting());
 
 				System.out.println("IA envía a " + newIA.getName());
 

@@ -3,6 +3,13 @@ package pokemon.model;
 import pokemon.enums.Weather;
 
 public class DamageService {
+
+	private final StatService statService;
+
+	public DamageService() {
+		this.statService = new StatService();
+	}
+
 	private static class CriticalResult {
 		float damage;
 		boolean isCritical;
@@ -161,9 +168,11 @@ public class DamageService {
 		float randomVariation = (float) (85 + Math.random() * 15);
 		float weatherModifier = getWeatherModifier(ctx);
 
-		float attackStat = isSpecial ? attacker.getEffectiveSpecialAttack() : attacker.getEffectiveAttack();
+		float attackStat = isSpecial ? statService.getEffectiveSpecialAttack(attacker)
+				: statService.getEffectiveAttack(attacker);
 
-		float defenseStat = isSpecial ? defender.getEffectiveSpecialDefense() : defender.getEffectiveDefense();
+		float defenseStat = isSpecial ? statService.getEffectiveSpecialDefense(defender)
+				: statService.getEffectiveDefense(defender);
 
 		float base = (((0.2f * 100f + 1f) * attackStat * modifiedPower) / (25f * defenseStat) + 2f);
 

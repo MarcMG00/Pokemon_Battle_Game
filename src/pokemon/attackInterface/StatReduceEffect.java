@@ -7,7 +7,7 @@ import pokemon.model.Pokemon;
 
 public class StatReduceEffect implements AttackEffect {
 	private final StatType stat;
-	private final int stages;
+	private int stages;
 
 	public StatReduceEffect(StatType stat, int stages) {
 		this.stat = stat;
@@ -20,8 +20,8 @@ public class StatReduceEffect implements AttackEffect {
 
 		Pokemon target = ctx.getDefender();
 
-		System.out.println(
-				ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó " + ctx.getAttack().getName());
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
@@ -50,9 +50,10 @@ public class StatReduceEffect implements AttackEffect {
 			return result;
 		}
 
-		System.out.println(target.getName() + " bajó su " + stat);
+		stages *= ctx.getStatService().applyModifiersNbStage(target, true);
 		target.setStageValueStats(stat, stages, true);
 
+		System.out.println(target.getName() + " bajó su " + stat);
 		return result;
 	}
 }

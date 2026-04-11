@@ -15,6 +15,12 @@ public class AccuracyService {
 	private static final String ANSI_WHITE = "\u001B[37m";
 	private static final String ANSI_RESET = "\u001B[0m";
 
+	private final StatService statService;
+
+	public AccuracyService() {
+		this.statService = new StatService();
+	}
+
 	// -----------------------------
 	// Gets the probability of attacking
 	// -----------------------------
@@ -69,10 +75,10 @@ public class AccuracyService {
 
 		switch (t) {
 		case 1:
-			evAcu = pk.getEffectivePrecision();
+			evAcu = statService.getEffectivePrecision(pk);
 			break;
 		case 2:
-			evAcu = pk.getEffectiveEvasion();
+			evAcu = statService.getEffectiveEvasion(pk);
 
 			// 80_Snow_Cloak sets 20% more of evasion
 			if (ctx.getDefender().getAbilitySelected().getId() == 80)

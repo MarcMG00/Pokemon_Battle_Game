@@ -53,6 +53,7 @@ public class AttackService {
 	private final AbilityService abilityService;
 	private final WeatherService weatherService;
 	private final SwitchPokemonService switchPokemonService;
+	private final StatService statService;
 	private DamageService damageService;
 	private Map<Integer, AttackEffect> attackEffects = new HashMap<>();
 	private HelperService helperService;
@@ -64,6 +65,7 @@ public class AttackService {
 		this.abilityService = new AbilityService();
 		this.weatherService = new WeatherService(battleCtx);
 		this.switchPokemonService = new SwitchPokemonService(battleCtx);
+		this.statService = new StatService();
 		this.damageService = new DamageService();
 		this.helperService = new HelperService();
 		this.accuracyService = new AccuracyService();
@@ -293,7 +295,7 @@ public class AttackService {
 	// checks
 	// -----------------------------
 	private void applyModifierStatsPokemon(Pokemon pk, TurnContext turnCtx) {
-		turnCtx.setSpeed(pk, pk.getEffectiveSpeed());
+		turnCtx.setSpeed(pk, statService.getEffectiveSpeed(pk));
 	}
 
 	// -----------------------------
@@ -671,7 +673,7 @@ public class AttackService {
 	private void handleIAPokemonDefeated() {
 		Pokemon pkIA = battleCtx.getIa().getPkCombatting();
 
-		pkIA.removeStates();
+		statusService.removeStates(pkIA);
 
 		System.out.println(pkIA.getName() + " fue derrotado.");
 
@@ -722,7 +724,7 @@ public class AttackService {
 	// Remove states if Pokemon is debilitated
 	// -----------------------------
 	private void handleDebilitatedPokemon(Pokemon pk, boolean isPlayer) {
-		pk.removeStates();
+		statusService.removeStates(pk);
 
 		System.out.println(ANSI_RED + "Pokemon " + (isPlayer ? "player" : "IA") + " is debilitated" + ANSI_RESET);
 	}
@@ -874,7 +876,8 @@ public class AttackService {
 					ctx.getDefender().setHasRetreated(true);
 				break;
 			case STAT_DROP:
-				ctx.getDefender().reduceStatStage(effect.getStat(), effect.getStages(), ctx.isMistActive());
+				statService.reduceStatStage(ctx.getDefender(), effect.getStat(), effect.getStages(),
+						ctx.isMistActive());
 				break;
 			default:
 				break;
@@ -1005,7 +1008,8 @@ public class AttackService {
 		statusService.reduceNumberTurnsEffects(battleCtx.getIa(), battleCtx.getPlayer());
 
 		statusService.reduceDrainedAllTurnsEffects(battleCtx.getIa(), battleCtx.getPlayer());
-		battleCtx.getPlayer().getPkCombatting().doDrainedAllTurnsEffect(battleCtx.getIa().getPkCombatting());
+		statusService.doDrainedAllTurnsEffect(battleCtx.getPlayer().getPkCombatting(),
+				battleCtx.getIa().getPkCombatting());
 		statusService.reduceDrainedAllTurnsEffects(battleCtx.getPlayer(), battleCtx.getIa());
 
 		abilityService.applyEndTurnAbilities(battleCtx);

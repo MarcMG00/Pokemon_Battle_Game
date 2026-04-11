@@ -17,8 +17,9 @@ public class BattleContext {
 
 	private HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes;
 	private ArrayList<PokemonType> types;
-	
+
 	private final StatusService statusService;
+	private final StatService statService;
 
 	public BattleContext(Player player, Player ia,
 			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes, ArrayList<PokemonType> types) {
@@ -27,6 +28,7 @@ public class BattleContext {
 		this.effectPerTypes = effectPerTypes;
 		this.types = types;
 		this.statusService = new StatusService();
+		this.statService = new StatService();
 	}
 
 	public Player getPlayer() {
@@ -79,5 +81,9 @@ public class BattleContext {
 
 	public StatusService getStatusService() {
 		return statusService;
+	}
+
+	public StatService getStatService() {
+		return statService;
 	}
 }
