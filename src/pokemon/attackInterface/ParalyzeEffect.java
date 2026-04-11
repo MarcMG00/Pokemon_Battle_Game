@@ -24,8 +24,8 @@ public class ParalyzeEffect implements AttackEffect {
 			return result;
 		}
 
-		defender.trySetStatus(new State(StatusConditions.PARALYZED), ctx.getWeather(), ctx.isWeatherSuppressed(),
-				ctx.getAttack());
+		ctx.getStatusService().trySetStatus(defender, new State(StatusConditions.PARALYZED), ctx.getWeather(),
+				ctx.isWeatherSuppressed(), ctx.getAttack());
 
 		return result;
 	}

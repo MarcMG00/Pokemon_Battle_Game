@@ -34,14 +34,11 @@ public class ConfusedEffect implements AttackEffect {
 			return result;
 		}
 
-		if (!ctx.getDefender().trySetEphemeralStatus(StatusConditions.CONFUSED, ctx.getAttack()))
-			return result;
-
 		int turns = helperService.randomInt(minTurns, maxTurns);
-		System.out.println(defender.getName() + " está confuso por " + turns + " turnos");
-
 		State confused = new State(StatusConditions.CONFUSED, turns + 1);
-		ctx.getDefender().addEphemeralStatus(StatusConditions.CONFUSED, confused);
+
+		ctx.getStatusService().trySetEphemeralStatus(confused, ctx.getDefender(), StatusConditions.CONFUSED,
+				ctx.getAttack());
 
 		return result;
 	}

@@ -13,7 +13,7 @@ public class WeatherService {
 
 	public WeatherService(BattleContext battleCtx) {
 		this.battleCtx = battleCtx;
-		this.statusService = new StatusService(battleCtx);
+		this.statusService = new StatusService();
 		this.switchPokemonService = new SwitchPokemonService(battleCtx);
 		this.abilityService = new AbilityService(battleCtx);
 	}

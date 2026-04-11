@@ -34,15 +34,10 @@ public class SleepEffect implements AttackEffect {
 			return result;
 		}
 
-		if (!defender.trySetEphemeralStatus(StatusConditions.ASLEEP, ctx.getAttack()))
-			return result;
-
 		int turns = helperService.randomTurnsAbilitiesConditions(minTurns, maxTurns, ctx);
-		System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " cayó en un sueño profundo por "
-				+ turns + " turnos");
-
 		State asleep = new State(StatusConditions.ASLEEP, turns + 1);
-		defender.addEphemeralStatus(StatusConditions.ASLEEP, asleep);
+
+		ctx.getStatusService().trySetEphemeralStatus(asleep, defender, StatusConditions.ASLEEP, ctx.getAttack());
 
 		return result;
 	}

@@ -11,7 +11,7 @@ public class SwitchPokemonService {
 
 	public SwitchPokemonService(BattleContext battleCtx) {
 		this.battleCtx = battleCtx;
-		this.statusService = new StatusService(battleCtx);
+		this.statusService = new StatusService();
 		this.abilityService = new AbilityService(battleCtx);
 	}
 

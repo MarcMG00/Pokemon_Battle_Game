@@ -14,6 +14,7 @@ public class AttackContext {
 	private boolean isWeatherSuppressed;
 	private boolean isMistActive;
 	private TurnContext turnContext;
+	private final StatusService statusService;
 
 	public AttackContext(Pokemon attacker, Pokemon defender, Player attackingPlayer, Player defendingPlayer,
 			Attack attack, Weather weather, boolean isWeatherSuppressed, boolean isMistActive,
@@ -29,6 +30,7 @@ public class AttackContext {
 		this.isMistActive = isMistActive;
 		this.power = attack.getPower();
 		this.precision = attack.getPrecision();
+		this.statusService = new StatusService();
 	}
 
 	public float getPower() {
@@ -85,5 +87,9 @@ public class AttackContext {
 
 	public boolean isMistActive() {
 		return isMistActive;
+	}
+
+	public StatusService getStatusService() {
+		return statusService;
 	}
 }

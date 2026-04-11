@@ -31,15 +31,11 @@ public class CuteCharmAbility implements AbilityEffect {
 		if (Math.random() >= INFATUEATED_CHANCE)
 			return;
 
-		// Try to apply infatuated
-		if (!attacker.trySetEphemeralStatus(StatusConditions.INFATUATED, attack))
-			return;
-
 		int nbTurnsHoldingStatus = 1 + (int) (Math.random() * (7 - 1 + 1));
-
 		State infatuated = new State(StatusConditions.INFATUATED, nbTurnsHoldingStatus + 1);
-
-		attacker.addEphemeralStatus(StatusConditions.INFATUATED, infatuated);
+		
+		// Try to apply infatuated
+		battleCtx.getStatusService().trySetEphemeralStatus(infatuated, attacker, StatusConditions.INFATUATED, attack);
 
 		System.out.println(attacker.getName() + " cayó enamorado por la habilidad Gran encanto del Pokémon rival");
 	}

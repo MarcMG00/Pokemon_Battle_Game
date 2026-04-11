@@ -26,7 +26,7 @@ public class FlameBodyAbility implements AbilityEffect {
 			return;
 
 		// Try to apply burned
-		attacker.trySetStatus(new State(StatusConditions.BURNED), null, false, attack);
+		battleCtx.getStatusService().trySetStatus(attacker, new State(StatusConditions.BURNED), null, false, attack);
 		System.out.println(attacker.getName() + " fue quemado por la habilidad Cuerpo llama del Pokémon rival");
 	}
 }

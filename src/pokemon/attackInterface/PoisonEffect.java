@@ -24,8 +24,8 @@ public class PoisonEffect implements AttackEffect {
 			return result;
 		}
 
-		defender.trySetStatus(new State(StatusConditions.POISONED), ctx.getWeather(), ctx.isWeatherSuppressed(),
-				ctx.getAttack());
+		ctx.getStatusService().trySetStatus(defender, new State(StatusConditions.POISONED), ctx.getWeather(),
+				ctx.isWeatherSuppressed(), ctx.getAttack());
 
 		return result;
 	}

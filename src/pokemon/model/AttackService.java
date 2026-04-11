@@ -60,7 +60,7 @@ public class AttackService {
 
 	public AttackService(BattleContext battleCtx) {
 		this.battleCtx = battleCtx;
-		this.statusService = new StatusService(battleCtx);
+		this.statusService = new StatusService();
 		this.abilityService = new AbilityService(battleCtx);
 		this.weatherService = new WeatherService(battleCtx);
 		this.switchPokemonService = new SwitchPokemonService(battleCtx);
@@ -270,7 +270,7 @@ public class AttackService {
 
 		abilityService.applyAbilitiesBeforeEndTurn();
 
-		List<Player> fainted = statusService.applyTurnStatusReductions();
+		List<Player> fainted = statusService.applyTurnStatusReductions(battleCtx);
 		for (Player p : fainted)
 			switchPokemonService.handleForcedSwitch(p);
 
@@ -850,24 +850,16 @@ public class AttackService {
 
 			switch (effect.getType()) {
 			case STATUS_CONDITION:
-				ctx.getDefender().trySetStatus(new State(effect.getStatus()), ctx.getWeather(),
+				statusService.trySetStatus(ctx.getDefender(), new State(effect.getStatus()), ctx.getWeather(),
 						ctx.isWeatherSuppressed(), ctx.getAttack());
 				break;
 			case EPHEMERAL_STATUS:
 				StatusConditions status = effect.getStatus();
-
-				if (!ctx.getDefender().trySetEphemeralStatus(status, ctx.getAttack()))
-					break;
-
 				if (!ctx.getDefender().hasActiveEphemeralStatus(status)) {
-
 					nbTurnsHoldingStatus = helperService.randomTurnsAbilitiesConditions(1, 7, ctx);
 					State state = new State(status, nbTurnsHoldingStatus + 1);
 
-					ctx.getDefender().addEphemeralStatus(status, state);
-
-					System.out.println(ctx.getDefender().getName() + " estará " + status.getMessage() + " por "
-							+ nbTurnsHoldingStatus + " turnos");
+					ctx.getStatusService().trySetEphemeralStatus(state, ctx.getDefender(), status, ctx.getAttack());
 				}
 				break;
 			case FLINCH:
