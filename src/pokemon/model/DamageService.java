@@ -273,8 +273,10 @@ public class DamageService {
 	// Gets if an attack is critic (x2 of damage) => 10% of probabilities
 	// -----------------------------
 	public boolean getCriticity(AttackContext ctx) {
-		int randomCritic = (int) (Math.random() * 100);
+		double randomCritic = Math.random() * 100d;
 
+		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
+		
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10)
 			return this.canReceiveCriticalAttacks(ctx);
@@ -286,9 +288,11 @@ public class DamageService {
 	// Gets if an attack is critic (x2 of damage) => 30% of probabilities
 	// -----------------------------
 	public boolean getHighCriticity30(AttackContext ctx) {
-		int randomCritic = (int) (Math.random() * 100);
+		double randomCritic = Math.random() * 100d;
 
-		// 10% of probabilities to have a critic attack
+		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
+		
+		// 30% of probabilities to have a critic attack
 		if (randomCritic <= 30)
 			return this.canReceiveCriticalAttacks(ctx);
 
@@ -299,13 +303,26 @@ public class DamageService {
 	// Gets if an attack is critic (x2 of damage) => 40% of probabilities
 	// -----------------------------
 	public boolean getHighCriticity40(AttackContext ctx) {
-		int randomCritic = (int) (Math.random() * 100);
+		double randomCritic = Math.random() * 100d;
 
-		// 10% of probabilities to have a critic attack
+		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
+		
+		// 40% of probabilities to have a critic attack
 		if (randomCritic <= 40)
 			return this.canReceiveCriticalAttacks(ctx);
 
 		return false;
+	}
+	
+	// -----------------------------
+	// Rises probability of getting a critical attack if needed
+	// -----------------------------
+	public double getCriticalIndexIfNeeded(Ability ability) {
+		// 105_Super_Lock rises by 12,5% the probability of getting a critical attack (index 1)
+		if(ability.getId() == 105)
+			return 1d + (12.5d / 100d);
+		
+		return 1d;
 	}
 
 	// -----------------------------
