@@ -768,7 +768,7 @@ public class AttackService {
 	// Apply attack from attacker (principal damage)
 	// -----------------------------
 	private void executeAttackEffect(AttackContext ctx) {
-		Ability abilityDefender = ctx.getAttacker().getAbilitySelected();
+		Ability abilityDefender = ctx.getDefender().getAbilitySelected();
 
 		// Some abilities allows to not to do damage (ex : Volt absorb)
 		if (abilityDefender != null) {
@@ -825,9 +825,13 @@ public class AttackService {
 		abilityService.applyAbilityAfterDamage(ctx.getAttacker(), ctx.getDefender(), ctx.getAttack(),
 				result.getDamage(), result.isCriticalAttack(), ctx.getWeather(), ctx.isWeatherSuppressed());
 
+		// System.out.println("PS actuales de " + ctx.getDefender().getName() + " : " +
+		// ctx.getDefender().getPs());
 		if (ctx.getDefender().getPs() <= 0)
 			ctx.getDefender().setStatusCondition(new State(StatusConditions.DEBILITATED));
 
+		// System.out.println("PS actuales de " + ctx.getAttacker().getName() + " : " +
+		// ctx.getAttacker().getPs());
 		if (ctx.getAttacker().getPs() <= 0)
 			ctx.getAttacker().setStatusCondition(new State(StatusConditions.DEBILITATED));
 	}

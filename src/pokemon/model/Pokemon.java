@@ -60,7 +60,7 @@ public class Pokemon {
 	private boolean canDonAnythingNextRound;
 	private int weight;
 	private boolean hasReceivedDamage;
-	private float damageReceived;
+	private float damageReceived; // Used for physical attacks (because of some abilities, etc.)
 	private boolean isDraining;
 	private Ability AbilitySelected; // main ability that will used only to compare abilities (for example 36_Calc)
 	private boolean justEnteredBattle;

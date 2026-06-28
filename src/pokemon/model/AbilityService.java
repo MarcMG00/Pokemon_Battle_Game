@@ -122,7 +122,7 @@ public class AbilityService {
 	private void applyEndTurnAbility(BattleContext battleCtx, boolean isPlayer) {
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 		Ability ability = pk.getAbilitySelected();
-		
+
 		if (ability == null || ability.getId() == 5000
 				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 44))
 			return;

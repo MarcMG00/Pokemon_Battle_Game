@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import pokemon.abilityInterface.AftermathAbility;
 import pokemon.abilityInterface.AirLockAbility;
 import pokemon.abilityInterface.AngerPointAbility;
 import pokemon.abilityInterface.CloudNineAbility;
@@ -48,7 +49,6 @@ import pokemon.abilityInterface.TraceAbility;
 import pokemon.abilityInterface.VoltAbsorbAbility;
 import pokemon.abilityInterface.WaterAbsorbAbility;
 import pokemon.abilityInterface.WonderGuardAbility;
-import pokemon.attackInterface.AttackEffect;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
@@ -56,7 +56,6 @@ import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
-import pokemon.model.DamageService;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 import pokemon.model.SecondaryEffect;
@@ -1091,6 +1090,10 @@ public class ReaderData {
 		case 96:
 			ability.setEffect(new NormalizeAbility());
 			break;
+		// Detonación/Aftermath
+		case 106:
+			ability.setEffect(new AftermathAbility());
+			break;
 		default:
 			ability.setEffect(new EmptyAbility());
 		}
@@ -1169,7 +1172,7 @@ public class ReaderData {
 	}
 
 	// -----------------------------
-	// Set if the attack is one hit KO
+	// Set if the attack makes contact (physical attack)
 	// -----------------------------
 	private static void setAttackMakesContact(Attack attack) {
 		if (attack.getBases() != null && attack.getBases().contains("fisico"))
