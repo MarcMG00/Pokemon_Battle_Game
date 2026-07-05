@@ -247,7 +247,7 @@ public class WeatherService {
 			while (!changed)
 				changed = switchPokemonService.changePokemon(sc);
 		} else {
-			Pokemon newIA = owner.decideBestChangePokemon(battleCtx.getPlayer().getPkCombatting(),
+			Pokemon newIA = switchPokemonService.decideBestChangePokemon(owner, battleCtx.getPlayer().getPkCombatting(),
 					battleCtx.getEffectPerTypes());
 
 			if (newIA == null)

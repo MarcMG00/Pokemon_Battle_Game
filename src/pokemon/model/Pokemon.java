@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import pokemon.enums.Sex;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
-import pokemon.enums.Weather;
 
 public class Pokemon {
 
@@ -866,5 +865,12 @@ public class Pokemon {
 	public boolean hasPP(int attackId) {
 		Attack atk = this.getNextMovementById(attackId);
 		return atk.getPp() > 0;
+	}
+
+	// -----------------------------
+	// Check if any attack from Pokemon has PP remaining
+	// -----------------------------
+	public boolean hasAnyPPLeft() {
+		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
 	}
 }

@@ -1,8 +1,12 @@
 package pokemon.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+
+import pokemon.enums.StatusConditions;
 
 public class SwitchPokemonService {
 	private final BattleContext battleCtx;
@@ -166,8 +170,10 @@ public class SwitchPokemonService {
 	// Put attacks from damage level
 	// -----------------------------
 	public void refreshAttackOrders() {
-		battleCtx.getIa().orderAttacksFromDammageLevelPokemon(battleCtx.getEffectPerTypes());
-		battleCtx.getPlayer().orderAttacksFromDammageLevelPokemon(battleCtx.getEffectPerTypes());
+		AttackAnalyzer.orderAttacksByDamage(battleCtx.getIa().getPkCombatting(), battleCtx.getIa().getPkFacing(),
+				battleCtx.getEffectPerTypes());
+		AttackAnalyzer.orderAttacksByDamage(battleCtx.getPlayer().getPkCombatting(),
+				battleCtx.getPlayer().getPkFacing(), battleCtx.getEffectPerTypes());
 	}
 
 	// -----------------------------
@@ -190,7 +196,7 @@ public class SwitchPokemonService {
 		}
 
 		// Check from others Pokemon from the team to see a potential better option
-		Pokemon changeTo = battleCtx.getIa().decideBestChangePokemon(battleCtx.getPlayer().getPkCombatting(),
+		Pokemon changeTo = this.decideBestChangePokemon(battleCtx.getIa(), battleCtx.getPlayer().getPkCombatting(),
 				battleCtx.getEffectPerTypes());
 
 		if (changeTo == null) {
@@ -301,5 +307,97 @@ public class SwitchPokemonService {
 	// -----------------------------
 	private Player getOpponent(Player player) {
 		return player == battleCtx.getPlayer() ? battleCtx.getIa() : battleCtx.getPlayer();
+	}
+
+	// -----------------------------
+	// Decides best Pokemon change against Pokemon facing
+	// -----------------------------
+	public Pokemon decideBestChangePokemon(Player player, Pokemon pkPlayerFacing,
+			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
+
+		// 1️ - Random check (15% of probability to change)
+		int random = (int) (Math.random() * 100) + 1;
+		if (random > 15) {
+			return null; // don't change
+		}
+
+		Pokemon currentPkCombatingBeforeChange = player.getPkCombatting();
+
+		// 2️ - Analyze actual attacks from Pokemon combating
+		AttackAnalyzer.orderAttacksByDamage(player.getPkCombatting(), pkPlayerFacing, effectPerTypes);
+		int currentBestDamage = getDamageScore(currentPkCombatingBeforeChange);
+
+		// 3️ - Search other Pokemon form the team (not including Pokemon combating)
+		Pokemon bestCandidate = null;
+		int bestScore = currentBestDamage;
+
+		// Get only Pokemon not debilitated
+		List<Pokemon> pokemonAvailable = player.getPokemon().stream()
+				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+
+		for (Pokemon candidate : pokemonAvailable) {
+
+			if (candidate == currentPkCombatingBeforeChange)
+				continue;
+
+			// Ordenate attacks from the candidate Pokemon vs Pokemon facing
+			player.setPkCombatting(candidate);
+			player.setPkFacing(pkPlayerFacing);
+			AttackAnalyzer.orderAttacksByDamage(player.getPkCombatting(), pkPlayerFacing, effectPerTypes);
+
+			int score = getDamageScore(candidate);
+
+			// Rule 1: Pokemon with STAB super effective
+			if (hasSTABSuperEffective(candidate)) {
+				return candidate;
+			}
+
+			// Rule 2: Pokemon with a very high damage but no STAB
+			if (score > bestScore) {
+				bestScore = score;
+				bestCandidate = candidate;
+			}
+		}
+
+		// Restore real battler before returning!
+		player.setPkCombatting(currentPkCombatingBeforeChange);
+
+		// 4️ - Apply rule 2 if founded something better than actual Pokemon
+		if (bestCandidate != null && bestScore > currentBestDamage) {
+			return bestCandidate;
+		}
+
+		// 5️ - If nothing founded, don't change
+		return null;
+	}
+
+	// -----------------------------
+	// Get damage score from Pokemon candidate
+	// -----------------------------
+	private int getDamageScore(Pokemon pk) {
+		if (!pk.getLotDamageAttacks().isEmpty())
+			return 3; // very high damage
+		if (!pk.getNormalAttacks().isEmpty())
+			return 2; // normal damage
+		if (!pk.getLowAttacks().isEmpty())
+			return 1; // low damage
+
+		return 0; // no effect
+	}
+
+	// -----------------------------
+	// Check if an attack has STAB super effective
+	// -----------------------------
+	private boolean hasSTABSuperEffective(Pokemon pk) {
+
+		for (Attack atk : pk.getLotDamageAttacks()) {
+
+			// "same type" (STAB)
+			if (pk.getTypes().contains(atk.getStrTypeToPkType())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

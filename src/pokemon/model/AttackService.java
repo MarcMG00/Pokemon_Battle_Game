@@ -335,7 +335,7 @@ public class AttackService {
 	// Check if PP remaining on attacks from Pokemon
 	// -----------------------------
 	private boolean hasAnyPPLeft(Pokemon pk) {
-		return battleCtx.getPlayer().hasAnyPPLeft(pk);
+		return pk.hasAnyPPLeft();
 	}
 
 	// -----------------------------
@@ -424,7 +424,8 @@ public class AttackService {
 		Pokemon playerPk = battleCtx.getPlayer().getPkCombatting();
 
 		if (playerPk.getCanDonAnythingNextRound() && !playerPk.getIsChargingAttackForNextRound())
-			battleCtx.getPlayer().prepareBestAttackPlayer(attackId, battleCtx.getIa().getPkCombatting());
+			AttackAnalyzer.prepareBestAttackPlayer(battleCtx.getPlayer(), attackId,
+					battleCtx.getIa().getPkCombatting());
 	}
 
 	// -----------------------------
@@ -460,7 +461,7 @@ public class AttackService {
 		if (pkIA.getIsChargingAttackForNextRound())
 			return; // if charging an attack (like fly), cannot choose another attack
 
-		battleCtx.getIa().prepareBestAttackIA(battleCtx.getPlayer().getPkCombatting());
+		AttackAnalyzer.prepareBestAttackIA(battleCtx.getIa(), battleCtx.getPlayer().getPkCombatting());
 	}
 
 	// -----------------------------
@@ -677,8 +678,8 @@ public class AttackService {
 
 		System.out.println(pkIA.getName() + " fue derrotado.");
 
-		Pokemon newIA = battleCtx.getIa().decideBestChangePokemon(battleCtx.getPlayer().getPkCombatting(),
-				battleCtx.getEffectPerTypes());
+		Pokemon newIA = switchPokemonService.decideBestChangePokemon(battleCtx.getIa(),
+				battleCtx.getPlayer().getPkCombatting(), battleCtx.getEffectPerTypes());
 
 		if (newIA == null)
 			newIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.isDebilitated()).findFirst().get();
@@ -695,7 +696,7 @@ public class AttackService {
 
 		switchPokemonService.refreshAttackOrders();
 
-		battleCtx.getIa().prepareBestAttackIA(battleCtx.getPlayer().getPkCombatting());
+		AttackAnalyzer.prepareBestAttackIA(battleCtx.getIa(), battleCtx.getPlayer().getPkCombatting());
 	}
 
 	// -----------------------------

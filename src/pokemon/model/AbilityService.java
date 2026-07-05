@@ -1,8 +1,62 @@
 package pokemon.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import pokemon.enums.Weather;
 
 public class AbilityService {
+	// -----------------------------
+	// Selected an ability to each Pokemon from player
+	// -----------------------------
+	public void selectAbilityForEachPokemon(Player owner, ArrayList<Ability> abilities) {
+		Random rand = new Random();
+
+		for (Pokemon pk : owner.getPokemon()) {
+			List<Ability> possibleAbilities = new ArrayList<>();
+
+			// 1️ - Decides if takes hidden ability (20%)
+			boolean tryHidden = rand.nextInt(100) < 20;
+
+			if (tryHidden && pk.getHiddenAbilities() != null && !pk.getHiddenAbilities().isEmpty())
+				possibleAbilities.addAll(pk.getHiddenAbilities());
+
+			// 2️ - If empty hidden abilities or no random int => takes normal ability
+			if (possibleAbilities.isEmpty() && pk.getNormalAbilities() != null && !pk.getNormalAbilities().isEmpty())
+				possibleAbilities.addAll(pk.getNormalAbilities());
+
+			// 3️ - Just in case if Pokemon has no abilities
+			if (possibleAbilities.isEmpty() && pk.getHiddenAbilities() != null && !pk.getHiddenAbilities().isEmpty()) {
+				possibleAbilities.addAll(pk.getHiddenAbilities());
+			} else if (possibleAbilities.isEmpty()) {
+				System.out.println(pk.getName() + " no tiene habilidades (ni normales, ni ocultas).");
+				possibleAbilities.addAll(pk.getHiddenAbilities());
+				continue;
+			}
+
+			// 4️ - Gets a random ability from his abilities
+			Ability abilityFromPokemon = possibleAbilities.get(rand.nextInt(possibleAbilities.size()));
+
+			// 5️ - Gets the real ability from global list
+			Ability finalAbility = abilities.stream().filter(a -> a.getId() == abilityFromPokemon.getId()).findFirst()
+					.orElse(null);
+
+			if (finalAbility == null) {
+				System.out.println("Habilidad no encontrada en catálogo global para " + pk.getName() + " (id="
+						+ abilityFromPokemon.getId() + ")");
+				continue;
+			}
+
+			Ability finalAbilityDeepCopy = new Ability(finalAbility);
+			pk.setAbilitySelected(finalAbilityDeepCopy);
+			pk.setBaseAbility(finalAbilityDeepCopy);
+
+			System.out.println(
+					pk.getName() + " (Id:" + pk.getId() + ")" + " obtuvo la habilidad: " + finalAbility.getName());
+		}
+	}
+
 	// -----------------------------
 	// Do start abilities (that are not weather type)
 	// -----------------------------

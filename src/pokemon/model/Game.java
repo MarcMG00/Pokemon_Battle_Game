@@ -47,6 +47,8 @@ public class Game {
 	private Player player;
 	private IAPlayer IA;
 
+	private final AbilityService abilityService;
+
 	// ==================================== CONSTRUCTORS
 	// ====================================
 
@@ -68,6 +70,7 @@ public class Game {
 		this.scrappingWeb = new ScrappingWeb();
 		this.writterData = new WritterData();
 		this.readerData = new ReaderData();
+		this.abilityService = new AbilityService();
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -413,7 +416,7 @@ public class Game {
 		orderAttacksByDamage();
 
 		// IA Prepares best attack against Pokemon player
-		this.getIA().prepareBestAttackIA(this.getPlayer().getPkCombatting());
+		AttackAnalyzer.prepareBestAttackIA(this.getIA(), this.getPlayer().getPkCombatting());
 
 		System.out.println("Next attack from machine :");
 		System.out.println(this.getIA().getPkCombatting().getNextMovement().getName() + " - "
@@ -483,11 +486,11 @@ public class Game {
 	// Put attacks and abilities to all Pokemon on game (player and IA)
 	// -----------------------------
 	private void initializePokemonAttacksAndAbilities() {
-		this.getPlayer().addAttacksForEachPokemon();
-		this.getIA().addAttacksForEachPokemon();
+		AttackAnalyzer.addAttacksForEachPokemon(this.getPlayer());
+		AttackAnalyzer.addAttacksForEachPokemon(this.getIA());
 
-		this.getPlayer().selectAbilityForEachPokemon(this.getAbilities());
-		this.getIA().selectAbilityForEachPokemon(this.getAbilities());
+		abilityService.selectAbilityForEachPokemon(this.getPlayer(), this.getAbilities());
+		abilityService.selectAbilityForEachPokemon(this.getIA(), this.getAbilities());
 	}
 
 	// -----------------------------
@@ -532,8 +535,10 @@ public class Game {
 	// Order attacks for each level of damage (for first turn)
 	// -----------------------------
 	private void orderAttacksByDamage() {
-		this.getIA().orderAttacksFromDammageLevelPokemon(this.getEffectPerTypes());
-		this.getPlayer().orderAttacksFromDammageLevelPokemon(this.getEffectPerTypes());
+		AttackAnalyzer.orderAttacksByDamage(this.getIA().getPkCombatting(), this.getIA().getPkFacing(),
+				this.getEffectPerTypes());
+		AttackAnalyzer.orderAttacksByDamage(this.getPlayer().getPkCombatting(), this.getPlayer().getPkFacing(),
+				this.getEffectPerTypes());
 	}
 
 	// -----------------------------
@@ -554,7 +559,7 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "425,425,425";
+		String allPkPlayer = "454,454,454";
 		String allPkIA = "398,398,398";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
@@ -602,7 +607,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
@@ -610,7 +615,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 8).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 8).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 84).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 38).findFirst().get());
@@ -656,7 +661,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 72).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 34).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
@@ -669,21 +674,24 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 77).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
+//			AttackAnalyzer.addAttacksForEachPokemon(this.getIA());
 
 		}
 
 		// Select an ability for each Pokemon list
-		this.getPlayer().selectAbilityForEachPokemon(this.getAbilities());
-		this.getIA().selectAbilityForEachPokemon(this.getAbilities());
+		abilityService.selectAbilityForEachPokemon(this.getPlayer(), this.getAbilities());
+		abilityService.selectAbilityForEachPokemon(this.getIA(), this.getAbilities());
 
 		// Sets Pokemon facing to each other
 		this.getPlayer().setPkFacing(this.getIA().getPokemon().get(0));
 		this.getIA().setPkFacing(this.getPlayer().getPokemon().get(0));
 
-		this.getIA().orderAttacksFromDammageLevelPokemon(this.getEffectPerTypes());
-		this.getPlayer().orderAttacksFromDammageLevelPokemon(this.getEffectPerTypes());
+		AttackAnalyzer.orderAttacksByDamage(this.getIA().getPkCombatting(), this.getIA().getPkFacing(),
+				this.getEffectPerTypes());
+		AttackAnalyzer.orderAttacksByDamage(this.getPlayer().getPkCombatting(), this.getPlayer().getPkFacing(),
+				this.getEffectPerTypes());
 	}
 }

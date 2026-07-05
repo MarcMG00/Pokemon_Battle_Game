@@ -36,6 +36,7 @@ public class Attack {
 	private Weather guaranteedWeather;
 	private boolean forceChange;
 	private boolean isPunchMove;
+	private boolean isSelfDestruction;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -65,6 +66,7 @@ public class Attack {
 		this.forceChange = false;
 		this.isPunchMove = false;
 		this.category = AttackCategory.NORMAL;
+		this.isSelfDestruction = false;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -93,6 +95,7 @@ public class Attack {
 		this.forceChange = false;
 		this.isPunchMove = false;
 		this.category = AttackCategory.NORMAL;
+		this.isSelfDestruction = false;
 	}
 
 	public Attack(Attack attack) {
@@ -121,6 +124,7 @@ public class Attack {
 		this.forceChange = attack.forceChange;
 		this.isPunchMove = attack.isPunchMove;
 		this.category = attack.category;
+		this.isSelfDestruction = attack.isSelfDestruction;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -322,6 +326,15 @@ public class Attack {
 	public void setPunchMove(boolean isPunchMove) {
 		this.isPunchMove = isPunchMove;
 	}
+	
+	public boolean isSelfDestruction() {
+		return isSelfDestruction;
+	}
+
+	public void setSelfDestruction(boolean isSelfDestruction) {
+		this.isSelfDestruction = isSelfDestruction;
+	}
+	
 
 	// ==================================== METHODS
 	// ====================================

@@ -12,6 +12,7 @@ import java.util.Optional;
 import pokemon.abilityInterface.AftermathAbility;
 import pokemon.abilityInterface.AirLockAbility;
 import pokemon.abilityInterface.AngerPointAbility;
+import pokemon.abilityInterface.AnticipationAbility;
 import pokemon.abilityInterface.CloudNineAbility;
 import pokemon.abilityInterface.ColorChangeAbility;
 import pokemon.abilityInterface.CuteCharmAbility;
@@ -1093,6 +1094,10 @@ public class ReaderData {
 		// Detonación/Aftermath
 		case 106:
 			ability.setEffect(new AftermathAbility());
+			break;
+		// Anticipación/Anticipation
+		case 107:
+			ability.setEffect(new AnticipationAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());
