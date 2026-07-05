@@ -295,9 +295,8 @@ public final class AttackAnalyzer {
 		for (PokemonType defenderType : defender.getTypes()) {
 			int defTypeId = defenderType.getId();
 
-			if (attackType.getNoEffect().contains(defTypeId)) {
+			if (attackType.getNoEffect().contains(defTypeId))
 				return 0f;
-			}
 
 			if (attackType.getPktDoLotDamage().contains(defTypeId)) {
 				effectiveness *= 2f;
@@ -322,8 +321,12 @@ public final class AttackAnalyzer {
 		}
 
 		Attack atk = nextAttack.get();
+		PokemonType attackType = atk.getStrTypeToPkType();
 
-		prepareAttack(atk, owner.getPkCombatting(), pokemonRival);
+		// 1 - Real effectiveness
+		float effectiveness = getEffectiveness(attackType, pokemonRival);
+
+		prepareAttack(atk, owner.getPkCombatting(), effectiveness);
 
 		owner.getPkCombatting().setNextMovement(atk);
 	}
@@ -331,12 +334,13 @@ public final class AttackAnalyzer {
 	// -----------------------------
 	// Prepare best attack
 	// -----------------------------
-	private static void prepareAttack(Attack atk, Pokemon attacker, Pokemon defender) {
-
+	private static void prepareAttack(Attack atk, Pokemon attacker, float effectiveness) {
 		PokemonType attackType = atk.getStrTypeToPkType();
 
-		// 1 - Real effectiveness
-		float effectiveness = getEffectiveness(attackType, defender);
+		// 110_Tinted_Lens ability doubles low effectiveness damage
+		if (attacker.getAbilitySelected().getId() == 110 && effectiveness > 0f && effectiveness < 1f)
+			effectiveness *= 2f;
+
 		atk.setEffectivenessAgainstPkFacing(effectiveness);
 
 		// 2 - Stab
@@ -362,11 +366,12 @@ public final class AttackAnalyzer {
 		float bestScore = -1f;
 
 		Attack bestNormalAttack = null;
+		float bestNormalScore = -1f;
+
 		Attack bestOtrosAttack = null;
 
 		// Check all possible attacks
 		for (Attack atk : attacker.getFourPrincipalAttacks()) {
-
 			if (atk.getPp() <= 0)
 				continue;
 			if (isAttackDisabled(attacker, atk))
@@ -375,23 +380,29 @@ public final class AttackAnalyzer {
 			PokemonType attackType = atk.getStrTypeToPkType();
 
 			float effectiveness = getEffectiveness(attackType, opponent);
+			float effectivenessForScore = effectiveness;
+
+			// 110_Tinted_Lens ability => low effectiveness is treated as neutral for AI
+			// scoring
+			if (attacker.getAbilitySelected().getId() == 110 && effectiveness > 0f && effectiveness < 1f)
+				effectivenessForScore = 1f;
+
 			float stab = attacker.getTypes().contains(attackType) ? 1.5f : 1f;
 
 			float power = atk.getPower() > 0 ? atk.getPower() : 1f;
 
-			float score = effectiveness * stab * power;
+			float score = effectivenessForScore * stab * power;
 
 			// Save best attack score
-			if (effectiveness > 1f && score > bestScore) {
+			if (effectivenessForScore > 1f && score > bestScore) {
 				bestScore = score;
 				bestEffectiveAttack = atk;
 			}
 
 			// Save normal attack (just in case)
-			if (effectiveness > 0f && !atk.getBases().contains("otros")) {
-				if (bestNormalAttack == null) {
-					bestNormalAttack = atk;
-				}
+			if (effectivenessForScore == 1f && !atk.getBases().contains("otros") && score > bestNormalScore) {
+				bestNormalScore = score;
+				bestNormalAttack = atk;
 			}
 
 			// Save an attack from "others"
@@ -419,8 +430,11 @@ public final class AttackAnalyzer {
 			chosenAttack = attacker.getFourPrincipalAttacks().stream().filter(a -> a.getPp() > 0).findFirst().get();
 		}
 
+		// Get again effectiveness => for example for 110_Tinted_Lens ability doubles
+		// low effectiveness damage => but this time from chosen attack
+		float effectiveness = getEffectiveness(chosenAttack.getStrTypeToPkType(), opponent);
 		// Apply effectiveness and real STAB
-		prepareAttack(chosenAttack, attacker, opponent);
+		prepareAttack(chosenAttack, attacker, effectiveness);
 		attacker.setNextMovement(chosenAttack);
 
 		System.out.println("IA eligió: " + chosenAttack.getName() + " | eff="
