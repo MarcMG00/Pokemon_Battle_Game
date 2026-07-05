@@ -932,7 +932,8 @@ public class ReaderData {
 	// / 60 (when applying objects) / 82 (when applying objects) / 80 (to complete)
 	// / 83 (to complete) / 84 (when applying
 	// objects) / 90 (to complete) / 98 (to complete) / 99 (to complete) / 100 (to
-	// complete) / 103 (when applying objects)/ 104 (when having more abilities)
+	// complete) / 103 (when applying objects)/ 104 (when having more abilities) /
+	// 108 (when all attacks will be programmed)
 	// -----------------------------
 	private static void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {

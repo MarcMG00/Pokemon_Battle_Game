@@ -7,8 +7,8 @@ public class DownloadAbility implements AbilityEffect {
 	@Override
 	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
 
-		if (battleCtx.getStatService().getEffectiveDefense(defender) < battleCtx.getStatService()
-				.getEffectiveSpecialDefense(defender)) {
+		if (battleCtx.getStatService().getEffectiveDefense(defender, false) < battleCtx.getStatService()
+				.getEffectiveSpecialDefense(defender, false)) {
 			owner.setAttackStage(Math.min(owner.getAttackStage() + 1, 6));
 			owner.setIsAttackBoostedFromDownloadAbility(true);
 			System.out.println("El ataque de " + owner.getName() + " aumentó gracias a su habilidad Descarga");

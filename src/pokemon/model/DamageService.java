@@ -167,12 +167,16 @@ public class DamageService {
 		boolean isSpecial = attack.getBases().contains("especial");
 		float randomVariation = (float) (85 + Math.random() * 15);
 		float weatherModifier = getWeatherModifier(ctx);
+		// 109_Unaware ability => ignores stages from stats (but no modifiers on
+		// abilities)
+		boolean attackerHasUnaware = attacker.getAbilitySelected().getId() == 109;
+		boolean defenderHasUnaware = defender.getAbilitySelected().getId() == 109;
 
-		float attackStat = isSpecial ? statService.getEffectiveSpecialAttack(attacker)
-				: statService.getEffectiveAttack(attacker);
+		float attackStat = isSpecial ? statService.getEffectiveSpecialAttack(attacker, defenderHasUnaware)
+				: statService.getEffectiveAttack(attacker, defenderHasUnaware);
 
-		float defenseStat = isSpecial ? statService.getEffectiveSpecialDefense(defender)
-				: statService.getEffectiveDefense(defender);
+		float defenseStat = isSpecial ? statService.getEffectiveSpecialDefense(defender, attackerHasUnaware)
+				: statService.getEffectiveDefense(defender, attackerHasUnaware);
 
 		float base = (((0.2f * 100f + 1f) * attackStat * modifiedPower) / (25f * defenseStat) + 2f);
 
@@ -276,7 +280,7 @@ public class DamageService {
 		double randomCritic = Math.random() * 100d;
 
 		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
-		
+
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10)
 			return this.canReceiveCriticalAttacks(ctx);
@@ -291,7 +295,7 @@ public class DamageService {
 		double randomCritic = Math.random() * 100d;
 
 		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
-		
+
 		// 30% of probabilities to have a critic attack
 		if (randomCritic <= 30)
 			return this.canReceiveCriticalAttacks(ctx);
@@ -306,22 +310,23 @@ public class DamageService {
 		double randomCritic = Math.random() * 100d;
 
 		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
-		
+
 		// 40% of probabilities to have a critic attack
 		if (randomCritic <= 40)
 			return this.canReceiveCriticalAttacks(ctx);
 
 		return false;
 	}
-	
+
 	// -----------------------------
 	// Rises probability of getting a critical attack if needed
 	// -----------------------------
 	public double getCriticalIndexIfNeeded(Ability ability) {
-		// 105_Super_Lock rises by 12,5% the probability of getting a critical attack (index 1)
-		if(ability.getId() == 105)
+		// 105_Super_Lock rises by 12,5% the probability of getting a critical attack
+		// (index 1)
+		if (ability.getId() == 105)
 			return 1d + (12.5d / 100d);
-		
+
 		return 1d;
 	}
 

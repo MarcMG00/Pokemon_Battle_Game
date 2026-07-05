@@ -7,7 +7,7 @@ public class StatService {
 	// -----------------------------
 	// Get attack stage for normal attack
 	// -----------------------------
-	public float getEffectiveAttack(Pokemon pk) {
+	public float getEffectiveAttack(Pokemon pk, boolean ignoreStage) {
 		int stage = pk.getAttackStage();
 		float multiplier;
 		float attack = pk.getAttack();
@@ -29,10 +29,13 @@ public class StatService {
 			System.out.println(pk.getName() + " aumentó su ataque gracias a su habilidad Agallas");
 		}
 
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
+		if (!ignoreStage) {
+			if (stage >= 0)
+				multiplier = (2f + stage) / 2f;
+			else
+				multiplier = 2f / (2f - stage);
+		} else
+			multiplier = 1f;
 
 		return attack * multiplier;
 	}
@@ -40,7 +43,7 @@ public class StatService {
 	// -----------------------------
 	// Get effective special attack
 	// -----------------------------
-	public float getEffectiveSpecialAttack(Pokemon pk) {
+	public float getEffectiveSpecialAttack(Pokemon pk, boolean ignoreStage) {
 		int stage = pk.getSpecialAttackStage();
 		float multiplier;
 		float specialAttack = pk.getSpecialAttack();
@@ -61,10 +64,13 @@ public class StatService {
 			System.out.println(pk.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
 		}
 
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
+		if (!ignoreStage) {
+			if (stage >= 0)
+				multiplier = (2f + stage) / 2f;
+			else
+				multiplier = 2f / (2f - stage);
+		} else
+			multiplier = 1f;
 
 		return specialAttack * multiplier;
 	}
@@ -72,7 +78,7 @@ public class StatService {
 	// -----------------------------
 	// Get effective defense
 	// -----------------------------
-	public float getEffectiveDefense(Pokemon pk) {
+	public float getEffectiveDefense(Pokemon pk, boolean ignoreStage) {
 		int stage = pk.getDefenseStage();
 		float multiplier;
 		float defense = pk.getDef();
@@ -84,10 +90,13 @@ public class StatService {
 			System.out.println(pk.getName() + " aumentó su defensa gracias a su habilidad Escama especial");
 		}
 
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
+		if (!ignoreStage) {
+			if (stage >= 0)
+				multiplier = (2f + stage) / 2f;
+			else
+				multiplier = 2f / (2f - stage);
+		} else
+			multiplier = 1f;
 
 		return defense * multiplier;
 	}
@@ -95,15 +104,18 @@ public class StatService {
 	// -----------------------------
 	// Get effective special defense
 	// -----------------------------
-	public float getEffectiveSpecialDefense(Pokemon pk) {
+	public float getEffectiveSpecialDefense(Pokemon pk, boolean ignoreStage) {
 		int stage = pk.getSpecialDefenseStage();
 		float multiplier;
 		float specialDefense = pk.getSpecialDefense();
 
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
+		if (!ignoreStage) {
+			if (stage >= 0)
+				multiplier = (2f + stage) / 2f;
+			else
+				multiplier = 2f / (2f - stage);
+		} else
+			multiplier = 1f;
 
 		return specialDefense * multiplier;
 	}
@@ -111,9 +123,12 @@ public class StatService {
 	// -----------------------------
 	// Get effective precision
 	// -----------------------------
-	public int getEffectivePrecision(Pokemon pk) {
+	public int getEffectivePrecision(Pokemon pk, boolean ignoreStage) {
+		if (ignoreStage)
+			return 0;
+
 		int stage = pk.getPrecisionStage();
-		int precisionPoints = stage > 0 ? stage : 1;
+		int precisionPoints = stage > 0 ? stage : 0;
 
 		return precisionPoints;
 	}
@@ -121,9 +136,9 @@ public class StatService {
 	// -----------------------------
 	// Get effective evasion
 	// -----------------------------
-	public int getEffectiveEvasion(Pokemon pk) {
+	public int getEffectiveEvasion(Pokemon pk, boolean ignoreStage) {
 		int stage = pk.getEvasionStage();
-		int evasionPoints = stage > 0 ? stage : 1;
+		int evasionPoints = stage > 0 ? stage : 0;
 
 		// 77_Tangled_Feed duplicates evasion by 2 if confused
 		if (pk.getAbilitySelected().getId() == 77) {
@@ -133,6 +148,9 @@ public class StatService {
 						+ pk.getAbilitySelected().getName());
 			}
 		}
+
+		if (ignoreStage)
+			return 0;
 
 		return evasionPoints;
 	}

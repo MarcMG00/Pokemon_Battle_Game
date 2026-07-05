@@ -69,16 +69,16 @@ public class AccuracyService {
 	// Knows the evasion or accuracy for the Pokemon selected (1 is for accuracy, 2
 	// is for evasion)
 	// -----------------------------
-	public float getEvasionOrAccuracy(AttackContext ctx, Pokemon pk, int t) {
+	public float getEvasionOrAccuracy(AttackContext ctx, Pokemon pk, int t, boolean ignoreStage) {
 		int evAcu = 0;
 		float resultEvAcu = 1;
 
 		switch (t) {
 		case 1:
-			evAcu = statService.getEffectivePrecision(pk);
+			evAcu = statService.getEffectivePrecision(pk, ignoreStage);
 			break;
 		case 2:
-			evAcu = statService.getEffectiveEvasion(pk);
+			evAcu = statService.getEffectiveEvasion(pk, ignoreStage);
 
 			// 80_Snow_Cloak sets 20% more of evasion
 			if (ctx.getDefender().getAbilitySelected().getId() == 80)
@@ -189,6 +189,10 @@ public class AccuracyService {
 	// -----------------------------
 	private float calculateAccuracyFactor(AttackContext ctx, Pokemon attacker, Pokemon defender, Attack atkAttacker) {
 		float accuracyFactor = 0f;
+		// 109_Unaware ability => ignores stages from stats (but no modifiers on
+		// abilities)
+		boolean attackerHasUnaware = attacker.getAbilitySelected().getId() == 109;
+		boolean defenderHasUnaware = defender.getAbilitySelected().getId() == 109;
 
 		// Methods to modify precision of attack, evasion, etc.
 		checkWeatherEffectsForAttacks(ctx);
@@ -200,11 +204,11 @@ public class AccuracyService {
 		// Retreat Pokemon (23_Stomp/ 27_Rolling kick/ 29_Headbutt/ 44_Bite) + defender
 		// is minimized
 		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.getHasUsedMinimize())
-			accuracyFactor = (ctx.getPrecision() / 100f) * (getEvasionOrAccuracy(ctx, attacker, 1) / 1f);
+			accuracyFactor = (ctx.getPrecision() / 100f) * (getEvasionOrAccuracy(ctx, attacker, 1, defenderHasUnaware) / 1f);
 		// Other attacks
 		else
 			accuracyFactor = (ctx.getPrecision() / 100f)
-					* (getEvasionOrAccuracy(ctx, attacker, 1) / getEvasionOrAccuracy(ctx, defender, 2));
+					* (getEvasionOrAccuracy(ctx, attacker, 1, defenderHasUnaware) / getEvasionOrAccuracy(ctx, defender, 2, attackerHasUnaware));
 
 		return accuracyFactor;
 	}
