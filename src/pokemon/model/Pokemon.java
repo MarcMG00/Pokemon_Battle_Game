@@ -41,7 +41,6 @@ public class Pokemon {
 	private ArrayList<Attack> normalAttacks;
 	private ArrayList<Attack> lowAttacks;
 	private ArrayList<Attack> noEffectAttacks;
-	// private ArrayList<Integer> fourIdAttacks;
 	private int precisionPoints;
 	private int evasionPoints;
 	private State statusCondition;
@@ -70,11 +69,6 @@ public class Pokemon {
 	private boolean isLevitating;
 	private Sex sex;
 	private boolean isAttackBoostedFromDownloadAbility;
-
-	private static final String ANSI_CYAN = "\u001B[36m";
-	private static final String ANSI_RESET = "\u001B[0m";
-	public static final String ANSI_RED = "\u001B[31m";
-	public static final String ANSI_YELLOW = "\u001B[33m";
 
 	// ==================================== CONSTRUCTORS
 	// ====================================

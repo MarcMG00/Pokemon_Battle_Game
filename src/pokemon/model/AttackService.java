@@ -787,14 +787,61 @@ public class AttackService {
 		if (effect == null)
 			throw new IllegalStateException("No effect defined for attack " + ctx.getAttack().getId());
 
-		// Gets the attack effect and apply damage
-		AttackResult result = effect.execute(ctx);
+		// Cannot attack if attack type doesn't affect to rival (and is not an attack
+		// used to attacker, for instance that allows to boost his stats)
+		if (!canUseAttack(ctx)) {
+			System.out.println(ctx.getAttack().getName() + " no afecta al " + ctx.getDefender().getName() + " (Id:"
+					+ ctx.getDefender().getId() + ")" + " rival");
+		} else {
+			// Gets the attack effect and apply damage
+			AttackResult result = effect.execute(ctx);
 
-		applyAfterAttack(ctx, result);
+			applyAfterAttack(ctx, result);
 
-		ctx.getAttacker().setLastUsedAttack(ctx.getAttack());
+			ctx.getAttacker().setLastUsedAttack(ctx.getAttack());
 
-		applyMistIfNeeded(ctx.getAttacker());
+			applyMistIfNeeded(ctx.getAttacker());
+		}
+	}
+
+	// -----------------------------
+	// Check if attack has effect to rival of applied to attacker
+	// -----------------------------
+	private boolean canUseAttack(AttackContext ctx) {
+		Pokemon attacker = ctx.getAttacker();
+		Ability abltyAttacker = attacker.getAbilitySelected();
+		Attack attack = ctx.getAttack();
+
+		// Defender
+		Pokemon defender = ctx.getDefender();
+		boolean isDefenderGhostType = defender.getTypes().stream().anyMatch(t -> t.getId() == 6);
+
+		// Principal effect of the attack
+		boolean attackNoEffectToRival = attacker.getNoEffectAttacks().stream()
+				.anyMatch(a -> a.getId() == attack.getId());
+		boolean isAttackAppliedToAttacker = attack.isAppliedToAttacker();
+
+		// Attack type
+		boolean isAttackNormalType = attack.getStrTypeToPkType().getId() == 11;
+		boolean isAttackFightType = attack.getStrTypeToPkType().getId() == 10;
+
+		// 1. Can use attack if attacker applies it on itself
+		if (isAttackAppliedToAttacker)
+			return true;
+
+		// 2. 113_Scrappy ability => normal and fight type affects to ghost type
+		if (attackNoEffectToRival && abltyAttacker.getId() == 113 && isDefenderGhostType
+				&& (isAttackNormalType || isAttackFightType)) {
+			System.out.println(ctx.getAttacker().getName() + " puede atacar dada su habilidad Intrépido");
+
+			return true;
+		}
+
+		// 3. Last condition => nothing applied, just check if doesn't affect at all
+		if (attackNoEffectToRival)
+			return false;
+
+		return true;
 	}
 
 	// -----------------------------
@@ -877,8 +924,10 @@ public class AttackService {
 					abilityAttacker.getEffect().afterAttack(null, ctx.getAttacker(), ctx.getDefender(), ctx.getAttack(),
 							dmg, effect.getProbability(), result.isCriticalAttack(), ctx.getWeather(),
 							ctx.isWeatherSuppressed());
-				else
+				else {
 					ctx.getDefender().setHasRetreated(true);
+					ctx.getDefender().setCanAttack(false);
+				}
 				break;
 			case STAT_DROP:
 				statService.reduceStatStage(ctx.getDefender(), effect.getStat(), effect.getStages(),

@@ -37,6 +37,7 @@ public class Attack {
 	private boolean forceChange;
 	private boolean isPunchMove;
 	private boolean isSelfDestruction;
+	private boolean isAppliedToAttacker;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -67,6 +68,7 @@ public class Attack {
 		this.isPunchMove = false;
 		this.category = AttackCategory.NORMAL;
 		this.isSelfDestruction = false;
+		this.isAppliedToAttacker = false;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -96,6 +98,7 @@ public class Attack {
 		this.isPunchMove = false;
 		this.category = AttackCategory.NORMAL;
 		this.isSelfDestruction = false;
+		this.isAppliedToAttacker = false;
 	}
 
 	public Attack(Attack attack) {
@@ -125,6 +128,7 @@ public class Attack {
 		this.isPunchMove = attack.isPunchMove;
 		this.category = attack.category;
 		this.isSelfDestruction = attack.isSelfDestruction;
+		this.isAppliedToAttacker = attack.isAppliedToAttacker;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -326,7 +330,7 @@ public class Attack {
 	public void setPunchMove(boolean isPunchMove) {
 		this.isPunchMove = isPunchMove;
 	}
-	
+
 	public boolean isSelfDestruction() {
 		return isSelfDestruction;
 	}
@@ -334,7 +338,14 @@ public class Attack {
 	public void setSelfDestruction(boolean isSelfDestruction) {
 		this.isSelfDestruction = isSelfDestruction;
 	}
-	
+
+	public boolean isAppliedToAttacker() {
+		return isAppliedToAttacker;
+	}
+
+	public void setAppliedToAttacker(boolean isAppliedToAttacker) {
+		this.isAppliedToAttacker = isAppliedToAttacker;
+	}
 
 	// ==================================== METHODS
 	// ====================================

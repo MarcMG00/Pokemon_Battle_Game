@@ -124,24 +124,30 @@ public final class AttackAnalyzer {
 		// If Pokemon facing has 1 type
 		else {
 			for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> ef : effectPerTypesCopy.entrySet()) {
-				for (Attack finalAttack : attacker.getFourPrincipalAttacks()) {
+				ArrayList<PokemonType> rebientan = ef.getValue().get("Le rebientan");
+				ArrayList<PokemonType> rebientanPoco = ef.getValue().get("Le Rebientan poco");
 
-					if (ef.getValue().get("Le rebientan").contains(finalAttack.getStrTypeToPkType())
-							&& !iaLotDamageAttacks.contains(finalAttack)
-							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType()))
+				for (Attack finalAttack : attacker.getFourPrincipalAttacks()) {
+					PokemonType attackType = finalAttack.getStrTypeToPkType();
+
+					if (rebientan != null && rebientan.contains(attackType) && !iaLotDamageAttacks.contains(finalAttack)
+							&& !hasNoEffect.contains(attackType)) {
+
 						iaLotDamageAttacks.add(finalAttack);
 
-					else if (ef.getValue().get("Le Rebientan poco").contains(finalAttack.getStrTypeToPkType())
-							&& !iaLowAttacks.contains(finalAttack)
-							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType()))
+					} else if (rebientanPoco != null && rebientanPoco.contains(attackType)
+							&& !iaLowAttacks.contains(finalAttack) && !hasNoEffect.contains(attackType)) {
+
 						iaLowAttacks.add(finalAttack);
 
-					else if (hasNoEffect.contains(finalAttack.getStrTypeToPkType()))
+					} else if (hasNoEffect.contains(attackType)) {
+
 						iaHasNoEffectAttacks.add(finalAttack);
 
-					else if (!iaNormalDamageAttacks.contains(finalAttack)
-							&& !hasNoEffect.contains(finalAttack.getStrTypeToPkType()))
+					} else if (!iaNormalDamageAttacks.contains(finalAttack) && !hasNoEffect.contains(attackType)) {
+
 						iaNormalDamageAttacks.add(finalAttack);
+					}
 				}
 			}
 		}
@@ -160,10 +166,8 @@ public final class AttackAnalyzer {
 		ArrayList<PokemonType> uniquePkType = new ArrayList<>();
 
 		for (Attack atck : attacker.getFourPrincipalAttacks()) {
-
-			if (!uniquePkType.contains(atck.getStrTypeToPkType())) {
+			if (!uniquePkType.contains(atck.getStrTypeToPkType()))
 				uniquePkType.add(atck.getStrTypeToPkType());
-			}
 		}
 
 		return uniquePkType;
@@ -175,7 +179,6 @@ public final class AttackAnalyzer {
 	private static boolean addIfDoubleType(Attack attack, Map<String, Long> repeatedTypeMap,
 			ArrayList<Attack> targetList) {
 		for (Map.Entry<String, Long> key : repeatedTypeMap.entrySet()) {
-
 			if (key.getKey().equals(attack.getStrTypeToPkType().getName().toUpperCase()) && key.getValue() == 2
 					&& !targetList.contains(attack)) {
 				targetList.add(attack);
@@ -197,41 +200,37 @@ public final class AttackAnalyzer {
 			List<String> lowDamageRepeatedTypes) {
 
 		for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> eftc : effectPerTypesCopy.entrySet()) {
+			ArrayList<PokemonType> noEffectList = eftc.getValue().get("No tiene efecto");
+			ArrayList<PokemonType> lotDamageList = eftc.getValue().get("Le rebientan");
+			ArrayList<PokemonType> lowDamageList = eftc.getValue().get("Le Rebientan poco");
 
 			// Put only types that doesn't hurt
-			if (eftc.getValue().containsKey("No tiene efecto")) {
-				for (PokemonType noEffect : eftc.getValue().get("No tiene efecto")) {
-					if (!hasNoEffect.contains(noEffect)) {
+			if (noEffectList != null) {
+				for (PokemonType noEffect : noEffectList)
+					if (!hasNoEffect.contains(noEffect))
 						hasNoEffect.add(noEffect);
-					}
-				}
 			}
 
 			// Put only types that hurts a lot
-			if (eftc.getValue().containsKey("Le rebientan")) {
-				for (PokemonType lotDamage : eftc.getValue().get("Le rebientan")) {
+			if (lotDamageList != null) {
+				for (PokemonType lotDamage : lotDamageList)
 					lotDamageRepeatedTypes.add(lotDamage.getName().toUpperCase());
-				}
 			}
 
 			// Put only types that hurt a little
-			if (eftc.getValue().containsKey("Le Rebientan poco")) {
-				for (PokemonType lowDamage : eftc.getValue().get("Le Rebientan poco")) {
+			if (lowDamageList != null) {
+				for (PokemonType lowDamage : lowDamageList)
 					lowDamageRepeatedTypes.add(lowDamage.getName().toUpperCase());
-				}
 			}
 
 			// Put normal attacks
 			for (PokemonType pAttck : noRepeatedAttackTypes) {
-				boolean notStrong = eftc.getValue().containsKey("Le rebientan")
-						&& !eftc.getValue().get("Le rebientan").contains(pAttck);
+				boolean notStrong = lotDamageList == null || !lotDamageList.contains(pAttck);
 
-				boolean notWeak = eftc.getValue().containsKey("Le Rebientan poco")
-						&& !eftc.getValue().get("Le Rebientan poco").contains(pAttck);
+				boolean notWeak = lowDamageList == null || !lowDamageList.contains(pAttck);
 
-				if ((notStrong || notWeak) && !hasNoEffect.contains(pAttck)) {
+				if (notStrong && notWeak && !hasNoEffect.contains(pAttck))
 					normalDamageRepeatedTypes.add(pAttck.getName().toUpperCase());
-				}
 			}
 		}
 	}
@@ -295,9 +294,6 @@ public final class AttackAnalyzer {
 		for (PokemonType defenderType : defender.getTypes()) {
 			int defTypeId = defenderType.getId();
 
-			if (attackType.getNoEffect().contains(defTypeId))
-				return 0f;
-
 			if (attackType.getPktDoLotDamage().contains(defTypeId)) {
 				effectiveness *= 2f;
 			} else if (attackType.getPktDoLowDamage().contains(defTypeId)) {
@@ -317,9 +313,8 @@ public final class AttackAnalyzer {
 		Optional<Attack> nextAttack = owner.getPkCombatting().getFourPrincipalAttacks().stream()
 				.filter(a -> a.getId() == attackId).findFirst();
 
-		if (nextAttack.isEmpty()) {
+		if (nextAttack.isEmpty())
 			return;
-		}
 
 		Attack atk = nextAttack.get();
 		PokemonType attackType = atk.getStrTypeToPkType();

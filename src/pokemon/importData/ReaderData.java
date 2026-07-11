@@ -120,10 +120,6 @@ public class ReaderData {
 		return effectPerTypes;
 	}
 
-	public void setEffectPerTypes(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
-		this.effectPerTypes = effectPerTypes;
-	}
-
 	public ArrayList<Attack> getAttacks() {
 		return attacks;
 	}
@@ -476,7 +472,8 @@ public class ReaderData {
 	// -----------------------------
 	// Reads typesList.csv file and adds the effects against other types
 	// -----------------------------
-	public void readPkTypesEffectsToOtherTypes(Map<Integer, PokemonType> typeById) {
+	public void readPkTypesEffectsToOtherTypes(Map<Integer, PokemonType> typeById,
+			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(SAMPLE_CSV_ALL_TYPES))) {
 
 			bufferedReader.readLine(); // skip header
@@ -521,7 +518,7 @@ public class ReaderData {
 				}
 
 				// Save into main dictionary
-				this.getEffectPerTypes().put(typeName, types);
+				effectPerTypes.put(typeName, types);
 			}
 
 			System.out.println("Finished reading readPokeTypeEffectsToOtherTypes");
@@ -742,6 +739,8 @@ public class ReaderData {
 				setAttackForceChange(attack);
 				// Set if attack is punch type
 				setAttackIsPunch(attack);
+				// Set the attack is applied to attacker its self
+				setAttackIsAppliedOnItsSelf(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -933,7 +932,7 @@ public class ReaderData {
 	// / 83 (to complete) / 84 (when applying
 	// objects) / 90 (to complete) / 98 (to complete) / 99 (to complete) / 100 (to
 	// complete) / 103 (when applying objects)/ 104 (when having more abilities) /
-	// 108 (when all attacks will be programmed)
+	// 108 (when all attacks will be programmed) / 112 (when having more attacks)
 	// -----------------------------
 	private static void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
@@ -1183,6 +1182,22 @@ public class ReaderData {
 	private static void setAttackMakesContact(Attack attack) {
 		if (attack.getBases() != null && attack.getBases().contains("fisico"))
 			attack.setMakesContact(true);
+	}
+
+	// -----------------------------
+	// Set if the attack makes contact (physical attack)
+	// -----------------------------
+	private static void setAttackIsAppliedOnItsSelf(Attack attack) {
+		switch (attack.getId()) {
+		case 14:
+		case 74:
+		case 96:
+		case 97:
+			attack.setAppliedToAttacker(true);
+			break;
+		default:
+			attack.setAppliedToAttacker(false);
+		}
 	}
 
 	// -----------------------------
