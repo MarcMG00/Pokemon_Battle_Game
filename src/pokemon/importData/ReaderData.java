@@ -26,6 +26,7 @@ import pokemon.abilityInterface.FlameBodyAbility;
 import pokemon.abilityInterface.FlashFireAbility;
 import pokemon.abilityInterface.ForecastAbility;
 import pokemon.abilityInterface.HydratationAbility;
+import pokemon.abilityInterface.IceBodyAbility;
 import pokemon.abilityInterface.IntimidateAbility;
 import pokemon.abilityInterface.LevitateAbility;
 import pokemon.abilityInterface.LightningRodAbility;
@@ -45,6 +46,7 @@ import pokemon.abilityInterface.SpeedBoostAbility;
 import pokemon.abilityInterface.StaticAbility;
 import pokemon.abilityInterface.SteadfastAbility;
 import pokemon.abilityInterface.StenchAbility;
+import pokemon.abilityInterface.StormDrainAbility;
 import pokemon.abilityInterface.SynchronizeAbility;
 import pokemon.abilityInterface.TraceAbility;
 import pokemon.abilityInterface.VoltAbsorbAbility;
@@ -1099,8 +1101,17 @@ public class ReaderData {
 		case 107:
 			ability.setEffect(new AnticipationAbility());
 			break;
+		// Colector/Storm drain
+		case 114:
+			ability.setEffect(new StormDrainAbility());
+			break;
+		// Gélido/Ice body
+		case 115:
+			ability.setEffect(new IceBodyAbility());
+			break;
 		default:
 			ability.setEffect(new EmptyAbility());
+			break;
 		}
 	}
 
