@@ -42,6 +42,7 @@ import pokemon.abilityInterface.RainDishAbility;
 import pokemon.abilityInterface.RoughSkinAbility;
 import pokemon.abilityInterface.SandStreamAbility;
 import pokemon.abilityInterface.ShedSkinAbility;
+import pokemon.abilityInterface.SnowWarningAbility;
 import pokemon.abilityInterface.SpeedBoostAbility;
 import pokemon.abilityInterface.StaticAbility;
 import pokemon.abilityInterface.SteadfastAbility;
@@ -1108,6 +1109,10 @@ public class ReaderData {
 		// Gélido/Ice body
 		case 115:
 			ability.setEffect(new IceBodyAbility());
+			break;
+		// Nevada/Snow warning
+		case 117:
+			ability.setEffect(new SnowWarningAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());
