@@ -4,20 +4,15 @@ import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class LightningRodAbility implements AbilityEffect {
+public class StormDrainAbility implements AbilityEffect {
 	@Override
 	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack) {
-		// Only electric movements
-		if (!attack.getType().equals("ELECTRICO"))
+		// Only water movements
+		if (!attack.getType().equals("AGUA"))
 			return true;
 
 		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + attack.getName());
-		System.out.println(defender.getName() + " paró la electricidad gracias a la habilidad Pararrayos");
-
-		// If defender is ground type => immunity has preference and doesn't increase
-		// the special attack
-		if (defender.getTypes().stream().anyMatch(t -> t.getId() == 16))
-			return false;
+		System.out.println(defender.getName() + " paró la electricidad gracias a la habilidad Colector");
 
 		// Rises the special attack one point
 		if (defender.getSpecialAttackStage() >= 6)
