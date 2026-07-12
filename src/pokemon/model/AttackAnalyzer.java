@@ -337,8 +337,10 @@ public final class AttackAnalyzer {
 		if (attacker.getAbilitySelected().getId() == 110 && effectiveness > 0f && effectiveness < 1f)
 			effectiveness *= 2f;
 
-		// 111_Filter ability (defender) => reduce super effective attack by 1/4
-		if (defender.getAbilitySelected().getId() == 111 && effectiveness > 1f)
+		// 111_Filter/ 116_Solid_rock ability (defender) => reduce super effective
+		// attack by 1/4
+		if ((defender.getAbilitySelected().getId() == 111 || defender.getAbilitySelected().getId() == 116)
+				&& effectiveness > 1f)
 			effectiveness *= 0.75f;
 
 		atk.setEffectivenessAgainstPkFacing(effectiveness);
@@ -390,8 +392,10 @@ public final class AttackAnalyzer {
 			if (attacker.getAbilitySelected().getId() == 110 && effectiveness > 0f && effectiveness < 1f)
 				effectivenessForScore *= 2f;
 
-			// 111_Filter ability (defender) => reduce super effective attack by 1/4
-			if (defender.getAbilitySelected().getId() == 111 && effectiveness > 1f)
+			// 111_Filter/ 116_Solid_rock ability (defender) => reduce super effective
+			// attack by 1/4
+			if ((defender.getAbilitySelected().getId() == 111 || defender.getAbilitySelected().getId() == 116)
+					&& effectiveness > 1f)
 				effectivenessForScore *= 0.75f;
 
 			float stab = attacker.getTypes().contains(attackType) ? 1.5f : 1f;
