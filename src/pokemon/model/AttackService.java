@@ -25,6 +25,7 @@ import pokemon.attackInterface.OneHitKOEffect;
 import pokemon.attackInterface.ParalyzeEffect;
 import pokemon.attackInterface.PoisonEffect;
 import pokemon.attackInterface.RecoilDamageEffect;
+import pokemon.attackInterface.RecoilDamageIfFailsEffect;
 import pokemon.attackInterface.SimpleDamageEffect;
 import pokemon.attackInterface.SleepEffect;
 import pokemon.attackInterface.SolarBeamEffect;
@@ -89,7 +90,6 @@ public class AttackService {
 		attackEffects.put(21, simpleDamage); // Atizar/Slam (tested)
 		attackEffects.put(22, simpleDamage); // Látigo cepa/Vine whip (tested)
 		attackEffects.put(25, simpleDamage); // Megapatada/Mega kick (tested)
-		attackEffects.put(26, simpleDamage); // Patada salto/Jump kick (tested)
 		attackEffects.put(27, simpleDamage); // Patada giro/Rolling kick (tested)
 		attackEffects.put(29, simpleDamage); // Golpe cabeza/Headbutt (tested)
 		attackEffects.put(30, simpleDamage); // Cornada/Horn attack (tested)
@@ -169,6 +169,10 @@ public class AttackService {
 		attackEffects.put(36, new RecoilDamageEffect(damageService, 0.25f)); // Derribo/Take down (tested)
 		attackEffects.put(38, new RecoilDamageEffect(damageService, 0.33f)); // Doble filo/Dobule-Edge (tested)
 		attackEffects.put(66, new RecoilDamageEffect(damageService, 0.25f)); // Sumisión/Submission (tested)
+
+		// Recoil damage if attacks fails effect
+		AttackEffect recoilDamageIfFails = new RecoilDamageIfFailsEffect(damageService);
+		attackEffects.put(26, recoilDamageIfFails); // Patada salto/Jump kick (tested)
 
 		// Trapped by own attack effect
 		attackEffects.put(37, new TrappedByOwnAttackEffect(helperService, damageService, 2, 5)); // Saña/Thrash (tested)

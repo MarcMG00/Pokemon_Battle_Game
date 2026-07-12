@@ -204,11 +204,12 @@ public class AccuracyService {
 		// Retreat Pokemon (23_Stomp/ 27_Rolling kick/ 29_Headbutt/ 44_Bite) + defender
 		// is minimized
 		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.getHasUsedMinimize())
-			accuracyFactor = (ctx.getPrecision() / 100f) * (getEvasionOrAccuracy(ctx, attacker, 1, defenderHasUnaware) / 1f);
+			accuracyFactor = (ctx.getPrecision() / 100f)
+					* (getEvasionOrAccuracy(ctx, attacker, 1, defenderHasUnaware) / 1f);
 		// Other attacks
 		else
-			accuracyFactor = (ctx.getPrecision() / 100f)
-					* (getEvasionOrAccuracy(ctx, attacker, 1, defenderHasUnaware) / getEvasionOrAccuracy(ctx, defender, 2, attackerHasUnaware));
+			accuracyFactor = (ctx.getPrecision() / 100f) * (getEvasionOrAccuracy(ctx, attacker, 1, defenderHasUnaware)
+					/ getEvasionOrAccuracy(ctx, defender, 2, attackerHasUnaware));
 
 		return accuracyFactor;
 	}
@@ -282,7 +283,8 @@ public class AccuracyService {
 
 				attacker.setPs(attacker.getPs() - recoil);
 
-				System.out.println(attacker.getName() + " se dañó a si mismo jajajaji. (Patada salto)");
+				System.out.println(attacker.getName()
+						+ " se dañó a si mismo jajajaji. (Patada salto, Patada Salto Alta,  Patada Hacha, Plancha Voltaica)");
 			}
 		}
 	}

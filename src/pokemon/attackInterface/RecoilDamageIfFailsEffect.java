@@ -4,10 +4,11 @@ import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
 import pokemon.model.DamageService;
 
-public class IgnoreMinimizeEffect implements AttackEffect {
+public class RecoilDamageIfFailsEffect implements AttackEffect {
+
 	private final DamageService damageService;
 
-	public IgnoreMinimizeEffect(DamageService damageService) {
+	public RecoilDamageIfFailsEffect(DamageService damageService) {
 		this.damageService = damageService;
 	}
 
@@ -16,9 +17,9 @@ public class IgnoreMinimizeEffect implements AttackEffect {
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
-		// If Pokemon facing has used minimize, set power base of the attack x2
-		if (ctx.getDefender().getHasUsedMinimize())
-			ctx.setPower(ctx.getAttack().getPower() * 2);
+		// 120_Reckless rises power by 20%
+		if (ctx.getAttacker().getAbilitySelected().getId() == 120)
+			ctx.setPower(ctx.getPower() * 1.2f);
 
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
@@ -28,4 +29,5 @@ public class IgnoreMinimizeEffect implements AttackEffect {
 
 		return result;
 	}
+
 }
