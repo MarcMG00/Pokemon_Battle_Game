@@ -56,7 +56,7 @@ public class StatusService {
 	// effects for example when paralyzed, it reduces speed
 	// -----------------------------
 	public void evaluateStatusStartOfTurn(Pokemon pk) {
-		doFrozenEffect(pk);
+		doFrozenEffectStartTurn(pk);
 	}
 
 	// -----------------------------
@@ -74,11 +74,11 @@ public class StatusService {
 	// probability of attacking, for example when confused, paralyzed, etc.
 	// -----------------------------
 	public boolean canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
-		canAttackFrozen(pk);
+		canAttackFrozenStartTurn(pk);
 		checkCanMoveParalyzed(pk);
-		canAttackParalyzed(pk);
-		boolean canAttackConfused = canAttackConfused(pk);
-		boolean canAttackAsleep = doAsleepEffect(pk);
+		canAttackParalyzedStartTurn(pk);
+		boolean canAttackConfused = canAttackConfusedStartTurn(pk);
+		boolean canAttackAsleep = doAsleepEffectStartTurn(pk);
 
 		boolean canAttack = pk.getCanAttack() && canAttackConfused && canAttackAsleep;
 		pk.setCanAttack(canAttack);
@@ -111,6 +111,7 @@ public class StatusService {
 		// Normal status
 		doBurnedEffectEndTurn(playerAttacker.getPkCombatting());
 		doPoisonedEffectEndTurn(playerAttacker.getPkCombatting());
+		doAsleepEffectEndTurn(playerAttacker.getPkCombatting(), playerDefender.getPkCombatting());
 		// Ephemeral status
 		doTrappedEffect(playerAttacker.getPkCombatting());
 		putConfusedStateIfNeeded(playerAttacker.getPkCombatting());
@@ -291,7 +292,7 @@ public class StatusService {
 	// Gets if Pokemon can attack because of FROZEN state (check start of the turn
 	// after applying effect of Frozen)
 	// -----------------------------
-	public void canAttackFrozen(Pokemon pk) {
+	public void canAttackFrozenStartTurn(Pokemon pk) {
 		if (pk.hasActiveStatusCondition(StatusConditions.FROZEN)) {
 			if (pk.getStatusCondition().getCanMoveStatusCondition())
 				pk.setCanAttack(true);
@@ -304,7 +305,7 @@ public class StatusService {
 	// Gets if Pokemon can attack because of PARALYZED state (check start of the
 	// turn)
 	// -----------------------------
-	public void canAttackParalyzed(Pokemon pk) {
+	public void canAttackParalyzedStartTurn(Pokemon pk) {
 		if (pk.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			if (pk.getStatusCondition().getCanMoveStatusCondition()) {
 				pk.setCanAttack(true);
@@ -320,7 +321,7 @@ public class StatusService {
 	// Gets if Pokemon can attack because of CONFUSION state (check start of the
 	// turn)
 	// -----------------------------
-	public boolean canAttackConfused(Pokemon pk) {
+	public boolean canAttackConfusedStartTurn(Pokemon pk) {
 		boolean canAttackConfused = true;
 
 		if (pk.hasActiveEphemeralStatus(StatusConditions.CONFUSED)) {
@@ -339,7 +340,7 @@ public class StatusService {
 					System.out.println(pk.getName() + " está tan confuso que se hace dañó a sí mismo!");
 
 					// Standard damage with a power of 40 points
-					float damage = doConfusedDammage(pk);
+					float damage = doConfusedDammageStartTurn(pk);
 					pk.setPs(pk.getPs() - damage);
 
 					if (pk.getPs() <= 0) {
@@ -358,7 +359,7 @@ public class StatusService {
 	// -----------------------------
 	// Do effect from FROZEN state (start of the turn before checking if can attack)
 	// -----------------------------
-	public void doFrozenEffect(Pokemon pk) {
+	public void doFrozenEffectStartTurn(Pokemon pk) {
 		if (pk.hasActiveStatusCondition(StatusConditions.FROZEN)) {
 			State frozenStatus = pk.getStatusCondition();
 
@@ -457,11 +458,11 @@ public class StatusService {
 	// -----------------------------
 	// Do effect from ASLEEP state (start of the turn)
 	// -----------------------------
-	public boolean doAsleepEffect(Pokemon pk) {
+	public boolean doAsleepEffectStartTurn(Pokemon pk) {
 		boolean canAttack = true;
 
-		if (pk.hasActiveStatusCondition(StatusConditions.ASLEEP)) {
-			State asleepStatus = pk.getStatusCondition();
+		if (pk.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
+			State asleepStatus = pk.getEphemeralStatus(StatusConditions.ASLEEP);
 			asleepStatus.setNbTurns(asleepStatus.getNbTurns() - 1);
 
 			if (asleepStatus.getNbTurns() <= 0) {
@@ -486,7 +487,7 @@ public class StatusService {
 	// -----------------------------
 	// Apply confusion damage (only start of the turn)
 	// -----------------------------
-	public float doConfusedDammage(Pokemon pk) {
+	public float doConfusedDammageStartTurn(Pokemon pk) {
 		// There is a random variation when attacking (the total damage is not the same
 		// every time)
 		int randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
@@ -662,6 +663,39 @@ public class StatusService {
 				}
 			}
 		}
+	}
+
+	// -----------------------------
+	// Do effect from ASLEEP state (end of the turn)
+	// -----------------------------
+	public void doAsleepEffectEndTurn(Pokemon attacker, Pokemon defender) {
+		if (applyBadDreamsAbility(attacker, defender))
+			return;
+	}
+
+	// -----------------------------
+	// Apply Bad Dreams ability if needed (end of the turn)
+	// -----------------------------
+	public boolean applyBadDreamsAbility(Pokemon attacker, Pokemon defender) {
+		Ability abltyAttacker = attacker.getAbilitySelected();
+
+		// 123_Bad_dreams ability => needs opponent to be asleep
+		if (abltyAttacker.getId() == 123 && defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
+			// Reduces current PS by 1/8 from max PS
+			float reducePs = defender.getInitialPs() * 0.125f;
+			defender.setPs(defender.getPs() - reducePs);
+
+			System.out.println(
+					defender.getName() + " sufre daño a causa de la habilidad Mal Sueño de " + attacker.getName());
+
+			if (defender.getPs() <= 0) {
+				defender.setStatusCondition(new State(StatusConditions.DEBILITATED));
+				defender.setStatusCondition(new State());
+			}
+			return true;
+		}
+
+		return false;
 	}
 
 	// -----------------------------
