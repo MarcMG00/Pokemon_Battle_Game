@@ -200,6 +200,12 @@ public class StatService {
 	// Modify stat stage from rival attacks
 	// -----------------------------
 	public void reduceStatStage(Pokemon pk, StatType stat, int stages, boolean isMistEffectActivated) {
+		boolean isReduceStatStage = true;
+
+		// 126_Contrary ability reverse the increase or reduce stat stage
+		if (pk.getAbilitySelected().getId() == 126)
+			isReduceStatStage = false;
+
 		if (cannotReduceStat(pk, stat))
 			return;
 
@@ -214,10 +220,11 @@ public class StatService {
 			return;
 		}
 
-		stages *= applyModifiersNbStage(pk, true);
-		pk.setStageValueStats(stat, stages, true);
+		stages *= applyModifiersNbStage(pk, isReduceStatStage);
+		pk.setStageValueStats(stat, stages, isReduceStatStage);
 
-		System.out.println(pk.getName() + " (Id:" + pk.getId() + ")" + " bajó su " + stat);
+		System.out.println(isReduceStatStage ? pk.getName() + " (Id:" + pk.getId() + ")" + " bajó su " + stat
+				: pk.getName() + " (Id:" + pk.getId() + ")" + " aumentó su " + stat);
 	}
 
 	public int applyModifiersNbStage(Pokemon pk, boolean isStatDrop) {

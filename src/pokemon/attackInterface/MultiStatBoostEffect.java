@@ -23,6 +23,12 @@ public class MultiStatBoostEffect implements AttackEffect {
 
 		int modifier = 1;
 
+		boolean isReduceStatStage = false;
+
+		// 126_Contrary ability reverse the increase or reduce stat stage
+		if (ctx.getAttacker().getAbilitySelected().getId() == 126)
+			isReduceStatStage = true;
+
 		// Growth special case
 		if (ctx.getWeather() == Weather.SUN && !ctx.isWeatherSuppressed())
 			modifier = 2;
@@ -36,10 +42,11 @@ public class MultiStatBoostEffect implements AttackEffect {
 				continue;
 			}
 
-			stages *= ctx.getStatService().applyModifiersNbStage(ctx.getAttacker(), false);
-			ctx.getAttacker().setStageValueStats(stat, stages, false);
-			System.out.println(
-					ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su " + stat);
+			stages *= ctx.getStatService().applyModifiersNbStage(ctx.getAttacker(), isReduceStatStage);
+			ctx.getAttacker().setStageValueStats(stat, stages, isReduceStatStage);
+			System.out.println(isReduceStatStage
+					? ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " bajó su " + stat
+					: ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su " + stat);
 		}
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);

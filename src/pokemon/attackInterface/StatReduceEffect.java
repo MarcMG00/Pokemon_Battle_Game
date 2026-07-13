@@ -20,6 +20,12 @@ public class StatReduceEffect implements AttackEffect {
 
 		Pokemon target = ctx.getDefender();
 
+		boolean isReduceStatStage = true;
+
+		// 126_Contrary ability reverse the increase or reduce stat stage
+		if (target.getAbilitySelected().getId() == 126)
+			isReduceStatStage = false;
+
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
@@ -39,6 +45,7 @@ public class StatReduceEffect implements AttackEffect {
 		}
 
 		// Precision
+		// 35_Illuminate and 51_Keen_eye cannot be reduced precision
 		if (stat == StatType.PRECISION
 				&& (target.getAbilitySelected().getId() == 35 || target.getAbilitySelected().getId() == 51)) {
 			System.out.println("La precisión no puede bajar por la habilidad " + target.getAbilitySelected().getName());
@@ -50,10 +57,11 @@ public class StatReduceEffect implements AttackEffect {
 			return result;
 		}
 
-		stages *= ctx.getStatService().applyModifiersNbStage(target, true);
-		target.setStageValueStats(stat, stages, true);
+		stages *= ctx.getStatService().applyModifiersNbStage(target, isReduceStatStage);
+		target.setStageValueStats(stat, stages, isReduceStatStage);
 
-		System.out.println(target.getName() + " bajó su " + stat);
+		System.out.println(
+				isReduceStatStage ? target.getName() + " bajó su " + stat : target.getName() + " aumentó su " + stat);
 		return result;
 	}
 }
