@@ -172,10 +172,12 @@ public class DamageService {
 		boolean attackerHasUnaware = attacker.getAbilitySelected().getId() == 109;
 		boolean defenderHasUnaware = defender.getAbilitySelected().getId() == 109;
 
-		float attackStat = isSpecial ? statService.getEffectiveSpecialAttack(attacker, defenderHasUnaware)
-				: statService.getEffectiveAttack(attacker, defenderHasUnaware);
+		float attackStat = isSpecial
+				? statService.getEffectiveSpecialAttack(attacker, defenderHasUnaware, ctx.getWeather())
+				: statService.getEffectiveAttack(attacker, defenderHasUnaware, ctx.getWeather());
 
-		float defenseStat = isSpecial ? statService.getEffectiveSpecialDefense(defender, attackerHasUnaware)
+		float defenseStat = isSpecial
+				? statService.getEffectiveSpecialDefense(defender, attackerHasUnaware, ctx.getWeather())
 				: statService.getEffectiveDefense(defender, attackerHasUnaware);
 
 		float base = (((0.2f * 100f + 1f) * attackStat * modifiedPower) / (25f * defenseStat) + 2f);

@@ -2,12 +2,13 @@ package pokemon.model;
 
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
+import pokemon.enums.Weather;
 
 public class StatService {
 	// -----------------------------
 	// Get attack stage for normal attack
 	// -----------------------------
-	public float getEffectiveAttack(Pokemon pk, boolean ignoreStage) {
+	public float getEffectiveAttack(Pokemon pk, boolean ignoreStage, Weather weather) {
 		int stage = pk.getAttackStage();
 		float multiplier;
 		float attack = pk.getAttack();
@@ -29,6 +30,12 @@ public class StatService {
 			System.out.println(pk.getName() + " aumentó su ataque gracias a su habilidad Agallas");
 		}
 
+		// 122_Flower_Gift ability increases attack by 50%
+		if (weather == Weather.SUN && pk.getAbilitySelected().getId() == 122) {
+			attack *= 1.5f;
+			System.out.println(pk.getName() + " aumentó su ataque gracias a su habilidad Don Floral");
+		}
+
 		if (!ignoreStage) {
 			if (stage >= 0)
 				multiplier = (2f + stage) / 2f;
@@ -43,7 +50,7 @@ public class StatService {
 	// -----------------------------
 	// Get effective special attack
 	// -----------------------------
-	public float getEffectiveSpecialAttack(Pokemon pk, boolean ignoreStage) {
+	public float getEffectiveSpecialAttack(Pokemon pk, boolean ignoreStage, Weather weather) {
 		int stage = pk.getSpecialAttackStage();
 		float multiplier;
 		float specialAttack = pk.getSpecialAttack();
@@ -59,7 +66,7 @@ public class StatService {
 			specialAttack *= 1.5f;
 
 		// 94_Solar_Power increases special attack by 50%
-		if (pk.getAbilitySelected().getId() == 94) {
+		if (weather == Weather.SUN && pk.getAbilitySelected().getId() == 94) {
 			specialAttack *= 1.5f;
 			System.out.println(pk.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
 		}
@@ -104,10 +111,16 @@ public class StatService {
 	// -----------------------------
 	// Get effective special defense
 	// -----------------------------
-	public float getEffectiveSpecialDefense(Pokemon pk, boolean ignoreStage) {
+	public float getEffectiveSpecialDefense(Pokemon pk, boolean ignoreStage, Weather weather) {
 		int stage = pk.getSpecialDefenseStage();
 		float multiplier;
 		float specialDefense = pk.getSpecialDefense();
+
+		// 122_Flower_Gift ability increases special defense by 50%
+		if (weather == Weather.SUN && pk.getAbilitySelected().getId() == 122) {
+			specialDefense *= 1.5f;
+			System.out.println(pk.getName() + " aumentó su defensa especial gracias a su habilidad Don Floral");
+		}
 
 		if (!ignoreStage) {
 			if (stage >= 0)
