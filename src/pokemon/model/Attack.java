@@ -379,7 +379,7 @@ public class Attack {
 	}
 
 	// -----------------------------
-	// Check if has a specific secondary effect
+	// Check if has a secondary effect
 	// -----------------------------
 	public boolean hasSecondaryEffect() {
 		return this.getSecondaryEffects() != null;

@@ -866,8 +866,9 @@ public class AttackService {
 			float dmg = result.getDamage();
 
 			if (ctx.getAttacker().getPhysicalAttacks() != null && ctx.getAttacker().getPhysicalAttacks().stream()
-					.anyMatch(a -> a.getId() == ctx.getAttack().getId()))
+					.anyMatch(a -> a.getId() == ctx.getAttack().getId())) {
 				ctx.getDefender().setDamageReceived(dmg);
+			}
 
 			ctx.getDefender().setHasReceivedDamage(true);
 
@@ -899,6 +900,14 @@ public class AttackService {
 
 		if (ctx.getAttack().getSecondaryEffects() == null)
 			return;
+
+		// 125_Sheer_force doesn't apply secondary effects (only on opponent)
+		if (abilityAttacker.getId() == 125) {
+			System.out.println(ctx.getDefender().getName()
+					+ " no sufrió ningún efecto secundario dada la habildiad del atacante : "
+					+ abilityAttacker.getName());
+			return;
+		}
 
 		for (SecondaryEffect effect : ctx.getAttack().getSecondaryEffects()) {
 			double finalProbability = getFinalSecondaryEffectProbability(effect, ctx.getAttacker());

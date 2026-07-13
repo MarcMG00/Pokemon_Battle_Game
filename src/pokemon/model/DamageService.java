@@ -57,7 +57,7 @@ public class DamageService {
 		power *= applyIronFist(ability, attack);
 		power *= applyAdaptable(attacker, ability, attack);
 		power *= applyPowerDependingPowerAttack(ability, attack);
-		power *= applyPowerAttackModifiers(ability);
+		power *= applyPowerAttackModifiers(ability, attack);
 
 		return power;
 	}
@@ -133,7 +133,7 @@ public class DamageService {
 	// -----------------------------
 	// Apply general abilities concerning the attack of the Pokemon
 	// -----------------------------
-	private float applyPowerAttackModifiers(Ability ability) {
+	private float applyPowerAttackModifiers(Ability ability, Attack attack) {
 		if (ability == null)
 			return 1f;
 
@@ -141,6 +141,11 @@ public class DamageService {
 		if (ability.getId() == 96)
 			// Increase power 20% more
 			return 1.2f;
+
+		// 125_Sheer_force rises power by 30% if attack has secondary effects
+		if (ability.getId() == 125 && attack.hasSecondaryEffect())
+			// Increase power 30% more
+			return 1.3f;
 
 		return 1f;
 	}
