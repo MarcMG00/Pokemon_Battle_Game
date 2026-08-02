@@ -334,13 +334,12 @@ public final class AttackAnalyzer {
 		PokemonType attackType = atk.getStrTypeToPkType();
 
 		// 110_Tinted_Lens ability (attacker) => low effectiveness is treated as neutral
-		if (attacker.getAbilitySelected().getId() == 110 && effectiveness > 0f && effectiveness < 1f)
+		if (attacker.hasTintedLensAbility() && effectiveness > 0f && effectiveness < 1f)
 			effectiveness *= 2f;
 
 		// 111_Filter/ 116_Solid_rock ability (defender) => reduce super effective
 		// attack by 1/4
-		if ((defender.getAbilitySelected().getId() == 111 || defender.getAbilitySelected().getId() == 116)
-				&& effectiveness > 1f)
+		if ((defender.hasFilterAbility() || defender.hasSolidRockAbility()) && effectiveness > 1f)
 			effectiveness *= 0.75f;
 
 		atk.setEffectivenessAgainstPkFacing(effectiveness);
@@ -389,13 +388,12 @@ public final class AttackAnalyzer {
 			// 110_Tinted_Lens ability (attacker) => low effectiveness is treated as neutral
 			// for AI
 			// scoring
-			if (attacker.getAbilitySelected().getId() == 110 && effectiveness > 0f && effectiveness < 1f)
+			if (attacker.hasTintedLensAbility() && effectiveness > 0f && effectiveness < 1f)
 				effectivenessForScore *= 2f;
 
 			// 111_Filter/ 116_Solid_rock ability (defender) => reduce super effective
 			// attack by 1/4
-			if ((defender.getAbilitySelected().getId() == 111 || defender.getAbilitySelected().getId() == 116)
-					&& effectiveness > 1f)
+			if ((defender.hasFilterAbility() || defender.hasSolidRockAbility()) && effectiveness > 1f)
 				effectivenessForScore *= 0.75f;
 
 			float stab = attacker.getTypes().contains(attackType) ? 1.5f : 1f;

@@ -176,7 +176,7 @@ public class StatusService {
 		switch (newState.getStatusCondition()) {
 		case PARALYZED:
 			// Limber ability prevents paralysis
-			if (pk.getAbilitySelected().getId() == 7) {
+			if (pk.hasLimberAbility()) {
 				System.out.println(pk.getName() + " evitó la parálisis gracias a Flexibilidad");
 				return;
 			} else
@@ -184,7 +184,7 @@ public class StatusService {
 			break;
 		case POISONED:
 			// 17_Immunity ability
-			if (pk.getAbilitySelected().getId() == 17) {
+			if (pk.hasImmunityAbility()) {
 				System.out.println(pk.getName() + " no puede envenenarse dada su habilidad Inmunidad");
 				return;
 			} else
@@ -194,7 +194,7 @@ public class StatusService {
 			break;
 		case FROZEN:
 			// 40_Magma_Armor ability
-			if (pk.getAbilitySelected().getId() == 40) {
+			if (pk.hasMagmaArmorAbility()) {
 				System.out.println(pk.getName() + " no puede ser congelado dada su habilidad Escudo magma");
 				return;
 			}
@@ -220,8 +220,8 @@ public class StatusService {
 			}
 			break;
 		case BURNED:
-			// 41_Water_Vell ability
-			if (pk.getAbilitySelected().getId() == 41) {
+			// 41_Water_Veil ability
+			if (pk.hasWaterVailAbility()) {
 				System.out.println(pk.getName() + " no puede ser quemado dada su habilidad Velo agua");
 				return;
 			}
@@ -386,7 +386,7 @@ public class StatusService {
 	// -----------------------------
 	public void doBurnedEffectEndTurn(Pokemon pk) {
 		// 98_Magic_Guard annuls secondary damage effects
-		if (pk.getAbilitySelected().getId() == 98)
+		if (pk.hasMagicGuardAbility())
 			return;
 
 		if (pk.hasActiveStatusCondition(StatusConditions.BURNED)) {
@@ -394,7 +394,7 @@ public class StatusService {
 			float reducePs = pk.getInitialPs() * 0.0625f;
 
 			// 85_Heatproof ability reduces to half the burned effect
-			if (pk.getAbilitySelected().getId() == 85)
+			if (pk.hasHeatProofAbility())
 				reducePs /= 2;
 
 			pk.setPs(pk.getPs() - reducePs);
@@ -429,12 +429,12 @@ public class StatusService {
 	// -----------------------------
 	public void doPoisonedEffectEndTurn(Pokemon pk) {
 		// 98_Magic_Guard annuls secondary damage effects
-		if (pk.getAbilitySelected().getId() == 98)
+		if (pk.hasMagicGuardAbility())
 			return;
 
 		if (pk.hasActiveStatusCondition(StatusConditions.POISONED)) {
 			// 90_Poison_Heal ability heals 12,5% of initial PS
-			if (pk.getAbilitySelected().getId() == 90) {
+			if (pk.hasPoisonHealAbility()) {
 				float healsPs = pk.getInitialPs() * 0.125f;
 				pk.setPs(Math.min(pk.getPs() + healsPs, pk.getInitialPs()));
 
@@ -505,7 +505,7 @@ public class StatusService {
 	// -----------------------------
 	private void doTrappedEffect(Pokemon pk) {
 		// 98_Magic_Guard annuls secondary damage effects
-		if (pk.getAbilitySelected().getId() == 98)
+		if (pk.hasMagicGuardAbility())
 			return;
 
 		if (pk.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
@@ -536,7 +536,7 @@ public class StatusService {
 	// -----------------------------
 	public void doDrainedAllTurnsEffect(Pokemon attacker, Pokemon defender) {
 		// 98_Magic_Guard annuls secondary damage effects
-		if (attacker.getAbilitySelected().getId() == 98)
+		if (attacker.hasMagicGuardAbility())
 			return;
 
 		if (attacker.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
@@ -545,7 +545,7 @@ public class StatusService {
 			// Turn number "0" allows to avoid applying effect the first turn
 			if (drainedAllTurnsStaus.getNbTurns() != 0) {
 				// Cannot be drained if defender has the ability 64_Liquid_Ooze
-				if (defender.getAbilitySelected().getId() != 64) {
+				if (!defender.hasLiquidOozeAbility()) {
 					// Reduces 12,5% from his initial PS
 					float reducePs = attacker.getInitialPs() * 0.125f;
 					attacker.setPs(attacker.getPs() - reducePs);
@@ -585,7 +585,7 @@ public class StatusService {
 		if (defender.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
 			State drainedAllTurnsStatusDefender = defender.getEphemeralStatuses().get(StatusConditions.DRAINEDALLTURNS);
 
-			if (defender.getAbilitySelected().getId() == 64) {
+			if (defender.hasLiquidOozeAbility()) {
 				// Reduces 12,5% from his initial PS
 				float reducePs = attacker.getInitialPs() * 0.125f;
 				attacker.setPs(attacker.getPs() - reducePs);

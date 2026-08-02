@@ -18,7 +18,7 @@ public class RecoilDamageIfFailsEffect implements AttackEffect {
 				+ ctx.getAttack().getName());
 
 		// 120_Reckless rises power by 20%
-		if (ctx.getAttacker().getAbilitySelected().getId() == 120)
+		if (ctx.getAttacker().hasRecklessAbility())
 			ctx.setPower(ctx.getPower() * 1.2f);
 
 		AttackResult result = damageService.doDamage(ctx);

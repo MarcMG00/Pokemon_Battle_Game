@@ -15,7 +15,7 @@ public class ForceSwitchEffect implements AttackEffect {
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		// 21_Suction_Cups doesn't allow to force change
-		if (ctx.getDefender().getAbilitySelected().getId() == 21) {
+		if (ctx.getDefender().hasSuctionCupsAbility()) {
 			System.out.println(
 					ctx.getDefender().getName() + " no puede ser forzado por el cambio dada su habilidad Ventosas");
 			return result;

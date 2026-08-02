@@ -45,7 +45,7 @@ public class BattleService {
 			if (attackChoice == 1)
 				attackService.handleAttackTurn(sc);
 			else {
-				if (battleCtx.getIa().getPkCombatting().getAbilitySelected().getId() == 23) {
+				if (battleCtx.getIa().getPkCombatting().hasShadowTagAbility()) {
 					System.out.println("No puedes cambiar de Pokémon a causa de Sombra trampa");
 
 					nbRound--;

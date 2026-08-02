@@ -81,8 +81,7 @@ public class AbilityService {
 		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 
-		if (pk.getAbilitySelected().getId() == 42
-				&& player.getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 1)) {
+		if (pk.hasMagnetPullAbility() && player.getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 1)) {
 			System.out.println(player.getPkCombatting().getName() + " (" + player.getPkCombatting().getId()
 					+ ") no puede cambiarse a causa de la habilidad Imán del Pokémon rival");
 
@@ -99,10 +98,8 @@ public class AbilityService {
 		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 
-		if (pk.getAbilitySelected().getId() == 71
-				&& (!player.getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 18)
-						|| player.getPkCombatting().getAbilitySelected().getId() == 26
-						|| player.getPkCombatting().getIsLevitating())) {
+		if (pk.hasArenaTrapAbility() && (!player.getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 18)
+				|| player.getPkCombatting().hasLevitateAbility() || player.getPkCombatting().getIsLevitating())) {
 			System.out.println(player.getPkCombatting().getName() + " (" + player.getPkCombatting().getId()
 					+ ") no puede cambiarse a causa de la habilidad Trampa arena del Pokémon rival");
 
@@ -155,8 +152,7 @@ public class AbilityService {
 	private void applyBeforeEndTurnAbility(BattleContext battleCtx, boolean isPlayer) {
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 		Ability ability = pk.getAbilitySelected();
-		if (ability == null || ability.getId() == 5000
-				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 61))
+		if (ability == null || ability.getId() == 5000 || (pk.getJustEnteredBattle() && !pk.hasShedSkinAbility()))
 			return;
 
 		ability.getEffect().beforeEndOfTurn(battleCtx, pk);
@@ -177,8 +173,7 @@ public class AbilityService {
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 		Ability ability = pk.getAbilitySelected();
 
-		if (ability == null || ability.getId() == 5000
-				|| (pk.getJustEnteredBattle() && pk.getAbilitySelected().getId() != 44))
+		if (ability == null || ability.getId() == 5000 || (pk.getJustEnteredBattle() && !pk.hasRainDishAbility()))
 			return;
 
 		ability.getEffect().endOfTurn(battleCtx, pk);
@@ -221,7 +216,7 @@ public class AbilityService {
 			return 0;
 
 		// 100_Stall ability => moves last
-		if (pk.getAbilitySelected().getId() == 100)
+		if (pk.hasStallAbility())
 			return -1;
 
 		return 0;

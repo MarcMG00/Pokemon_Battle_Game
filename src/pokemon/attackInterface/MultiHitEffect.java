@@ -25,8 +25,7 @@ public class MultiHitEffect implements AttackEffect {
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
-		int hits = ctx.getAttacker().getAbilitySelected().getId() == 92 ? maxHits
-				: helperService.randomInt(minHits, maxHits);
+		int hits = ctx.getAttacker().hasSkillLinkAbility() ? maxHits : helperService.randomInt(minHits, maxHits);
 
 		float totalDamage = 0;
 

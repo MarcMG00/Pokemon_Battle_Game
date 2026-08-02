@@ -81,7 +81,7 @@ public class AccuracyService {
 			evAcu = statService.getEffectiveEvasion(pk, ignoreStage);
 
 			// 80_Snow_Cloak sets 20% more of evasion
-			if (ctx.getDefender().getAbilitySelected().getId() == 80)
+			if (ctx.getDefender().hasSteadfastAbility())
 				evAcu *= 1.2f;
 			break;
 		}
@@ -191,8 +191,8 @@ public class AccuracyService {
 		float accuracyFactor = 0f;
 		// 109_Unaware ability => ignores stages from stats (but no modifiers on
 		// abilities)
-		boolean attackerHasUnaware = attacker.getAbilitySelected().getId() == 109;
-		boolean defenderHasUnaware = defender.getAbilitySelected().getId() == 109;
+		boolean attackerHasUnaware = attacker.hasUnawareAbility();
+		boolean defenderHasUnaware = defender.hasUnawareAbility();
 
 		// Methods to modify precision of attack, evasion, etc.
 		checkWeatherEffectsForAttacks(ctx);
@@ -319,7 +319,7 @@ public class AccuracyService {
 	private boolean ApplyNoGuardAbility(Pokemon attacker, Pokemon defender) {
 		// 99_No_Guard allows to attack every time (whether is the defender or the
 		// attacker that has the ability)
-		if (attacker.getAbilitySelected().getId() == 99 || defender.getAbilitySelected().getId() == 99) {
+		if (attacker.hasNoGuardAbility() || defender.hasNoGuardAbility()) {
 			System.out.println(attacker.getName() + " puede atacar gracias a la habilidad Indefenso en juego");
 			attacker.allowAttack();
 			return true;

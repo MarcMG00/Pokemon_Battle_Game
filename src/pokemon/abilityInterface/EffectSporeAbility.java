@@ -18,7 +18,7 @@ public class EffectSporeAbility implements AbilityEffect {
 			return;
 
 		// Attacker must hace ability 142_Overcoat
-		if (attacker.getAbilitySelected().getId() == 142) {
+		if (attacker.hasOvercoatAbility()) {
 			System.out.println(
 					attacker.getName() + " no puede sufrir efectos de Efecto espora (dada su habilidad Funda)");
 			return;

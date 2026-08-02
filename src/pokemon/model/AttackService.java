@@ -439,7 +439,7 @@ public class AttackService {
 		Pokemon iaPk = battleCtx.getIa().getPkCombatting();
 
 		if (iaPk.getCanDonAnythingNextRound() && !iaPk.getIsChargingAttackForNextRound()
-				&& battleCtx.getPlayer().getPkCombatting().getAbilitySelected().getId() != 23)
+				&& !battleCtx.getPlayer().getPkCombatting().hasShadowTagAbility())
 			switchPokemonService.tryIAChange();
 	}
 
@@ -601,7 +601,7 @@ public class AttackService {
 	// Handle cases where Pokemon cannot act this turn (recharge, ability, etc.)
 	// -----------------------------
 	private void handleRecoveryTurn(Pokemon pk) {
-		if (pk.getAbilitySelected().getId() == 54)
+		if (pk.hasTruantAbility())
 			System.out.println(pk.getName() + " (" + pk.getId() + ") no puede atacar o cambiarse a causa de "
 					+ pk.getAbilitySelected().getName());
 		else
@@ -1033,7 +1033,7 @@ public class AttackService {
 		} else {
 			System.out.println(battleCtx.getPlayer().getPkCombatting().getName() + " ("
 					+ battleCtx.getPlayer().getPkCombatting().getId() + ") "
-					+ (battleCtx.getPlayer().getPkCombatting().getAbilitySelected().getId() == 54
+					+ (battleCtx.getPlayer().getPkCombatting().hasTruantAbility()
 							? "no puede cambiarse este turno a causa de "
 									+ battleCtx.getPlayer().getPkCombatting().getAbilitySelected().getName()
 							: "no puede cambiarse este turno a causa de algún ataque o estado"));
@@ -1056,7 +1056,7 @@ public class AttackService {
 	// turn, etc.)
 	// -----------------------------
 	private void handleIANotAbleToAct(Pokemon pkIA) {
-		if (pkIA.getAbilitySelected().getId() == 54)
+		if (pkIA.hasTruantAbility())
 			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "no puede atacar o cambiarse a causa de "
 					+ pkIA.getAbilitySelected().getName());
 		else

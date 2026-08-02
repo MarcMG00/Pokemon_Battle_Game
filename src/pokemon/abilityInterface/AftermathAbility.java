@@ -10,14 +10,15 @@ public class AftermathAbility implements AbilityEffect {
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
-		// Defender needs to be debilitated + attacker hasn't to have 006_Damp ability + defender needs to receive a physical attack
-		if (defender.getPs() > 0 || attacker.getAbilitySelected().getId() == 6 || !attack.getMakesContact())
+		// Defender needs to be debilitated + attacker hasn't to have 006_Damp ability +
+		// defender needs to receive a physical attack
+		if (defender.getPs() > 0 || attacker.hasDampAbility() || !attack.getMakesContact())
 			return;
 
 		// Remove 25% of max PS from defender
 		float removePS = attacker.getInitialPs() * 0.25f;
 		attacker.setPs(attacker.getPs() - removePS);
-		
+
 		System.out.println(attacker.getName() + " sufrió daño dada la habilidad Detonación de " + defender.getName());
 	}
 }

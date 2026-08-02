@@ -18,20 +18,20 @@ public class StatService {
 			attack /= 2f;
 
 		// 55_Hustle ability rises attack by 50%
-		if (pk.getAbilitySelected().getId() == 55 && pk.getNextMovement().getBases().contains("fisico")) {
+		if (pk.hasHustleAbility() && pk.getNextMovement().getBases().contains("fisico")) {
 			attack *= 1.5f;
 			System.out.println(
 					pk.getName() + " aumentó su ataque gracias a su habilidad " + pk.getAbilitySelected().getName());
 		}
 
 		// 62_Guts ability rises attack by 50%
-		if (pk.getAbilitySelected().getId() == 62 && (pk.hasStatusCondition() || pk.hasEphemeralStatus())) {
+		if (pk.hasGutsAbility() && (pk.hasStatusCondition() || pk.hasEphemeralStatus())) {
 			attack *= 1.5f;
 			System.out.println(pk.getName() + " aumentó su ataque gracias a su habilidad Agallas");
 		}
 
 		// 122_Flower_Gift ability increases attack by 50%
-		if (weather == Weather.SUN && pk.getAbilitySelected().getId() == 122) {
+		if (weather == Weather.SUN && pk.hasFlowerGiftAbility()) {
 			attack *= 1.5f;
 			System.out.println(pk.getName() + " aumentó su ataque gracias a su habilidad Don Floral");
 		}
@@ -56,17 +56,15 @@ public class StatService {
 		float specialAttack = pk.getSpecialAttack();
 
 		// 57_Plus ability
-		if (pk.getAbilitySelected().getId() == 57
-				&& pk.getOwner().getPokemon().stream().anyMatch(pok -> pok.getAbilitySelected().getId() == 58))
+		if (pk.hasPlusAbility() && pk.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasMinusAbility()))
 			specialAttack *= 1.5f;
 
 		// 57_Minus ability
-		if (pk.getAbilitySelected().getId() == 58
-				&& pk.getOwner().getPokemon().stream().anyMatch(pok -> pok.getAbilitySelected().getId() == 57))
+		if (pk.hasMinusAbility() && pk.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasPlusAbility()))
 			specialAttack *= 1.5f;
 
 		// 94_Solar_Power increases special attack by 50%
-		if (weather == Weather.SUN && pk.getAbilitySelected().getId() == 94) {
+		if (weather == Weather.SUN && pk.hasSolarPowerAbility()) {
 			specialAttack *= 1.5f;
 			System.out.println(pk.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
 		}
@@ -92,7 +90,7 @@ public class StatService {
 
 		// 63_Marvel_Scale => if has any status condition or ephemeral status, rises
 		// defense
-		if (pk.getAbilitySelected().getId() == 63 && (!pk.hasStatusCondition() || !pk.hasEphemeralStatus())) {
+		if (pk.hasMarvelScaleAbility() && (!pk.hasStatusCondition() || !pk.hasEphemeralStatus())) {
 			defense *= 1.5f;
 			System.out.println(pk.getName() + " aumentó su defensa gracias a su habilidad Escama especial");
 		}
@@ -117,7 +115,7 @@ public class StatService {
 		float specialDefense = pk.getSpecialDefense();
 
 		// 122_Flower_Gift ability increases special defense by 50%
-		if (weather == Weather.SUN && pk.getAbilitySelected().getId() == 122) {
+		if (weather == Weather.SUN && pk.hasFlowerGiftAbility()) {
 			specialDefense *= 1.5f;
 			System.out.println(pk.getName() + " aumentó su defensa especial gracias a su habilidad Don Floral");
 		}
@@ -154,7 +152,7 @@ public class StatService {
 		int evasionPoints = stage > 0 ? stage : 0;
 
 		// 77_Tangled_Feed duplicates evasion by 2 if confused
-		if (pk.getAbilitySelected().getId() == 77) {
+		if (pk.hasTangledFeetAbility()) {
 			if (pk.hasActiveEphemeralStatus(StatusConditions.CONFUSED)) {
 				evasionPoints = Math.min(evasionPoints * 2, 6);
 				System.out.println(pk.getName() + " aumentó su evasión gracias a su habilidad "
@@ -179,13 +177,13 @@ public class StatService {
 		if (pk.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			// 95_Quick_Feet increase doesn't apply reduction of speed (continues with the
 			// 50% increased)
-			if (pk.getAbilitySelected().getId() != 95)
+			if (!pk.hasQuickFeetAbility())
 				// Modifies speed of Pokemon (reduces by 50%)
 				speed *= 0.5f;
 		}
 
 		// 95_Quick_Feet increase speed by 50%
-		if (pk.getAbilitySelected().getId() == 95 && pk.hasStatusCondition() || pk.hasEphemeralStatus())
+		if (pk.hasQuickFeetAbility() && pk.hasStatusCondition() || pk.hasEphemeralStatus())
 			speed *= 1.5f;
 
 		if (stage >= 0)
@@ -243,7 +241,7 @@ public class StatService {
 	public int applyModifiersNbStage(Pokemon pk, boolean isStatDrop) {
 		// 86_Simple ability duplicates by 2 the stage (whether it's negative or
 		// positive)
-		if (pk.getAbilitySelected().getId() == 86) {
+		if (pk.hasSimpleAbility()) {
 			System.out.println(pk.getName() + " (Id:" + pk.getId() + ") " + (isStatDrop ? "bajó" : "subió")
 					+ " el doble, dada su habilidad " + pk.getAbilitySelected().getName());
 			return 2;

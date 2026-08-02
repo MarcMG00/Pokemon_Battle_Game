@@ -9,7 +9,7 @@ public class QuickFeetAbility implements AbilityEffect {
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
-		if (defender.getAbilitySelected().getId() != 95)
+		if (!defender.hasQuickFeetAbility())
 			return;
 
 		// If defender got a status condition and not already activated => increase by

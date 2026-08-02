@@ -174,8 +174,8 @@ public class DamageService {
 		float weatherModifier = getWeatherModifier(ctx);
 		// 109_Unaware ability => ignores stages from stats (but no modifiers on
 		// abilities)
-		boolean attackerHasUnaware = attacker.getAbilitySelected().getId() == 109;
-		boolean defenderHasUnaware = defender.getAbilitySelected().getId() == 109;
+		boolean attackerHasUnaware = attacker.hasUnawareAbility();
+		boolean defenderHasUnaware = defender.hasUnawareAbility();
 
 		float attackStat = isSpecial
 				? statService.getEffectiveSpecialAttack(attacker, defenderHasUnaware, ctx.getWeather())
@@ -343,8 +343,7 @@ public class DamageService {
 	public boolean canReceiveCriticalAttacks(AttackContext ctx) {
 		// 4_Battle_Armor / 75_Shell_Armor cannot recieve critic damage because of
 		// ability
-		if (ctx.getDefender().getAbilitySelected().getId() == 4
-				|| ctx.getDefender().getAbilitySelected().getId() == 75) {
+		if (ctx.getDefender().hasBattleArmorAbility() || ctx.getDefender().hasShellArmorAbility()) {
 			System.out.println(ctx.getDefender().getName() + " no puede recibir ataques críticos dada su habilidad "
 					+ ctx.getDefender().getAbilitySelected().getName());
 			return false;

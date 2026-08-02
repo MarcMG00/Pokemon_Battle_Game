@@ -38,7 +38,7 @@ public class StatReduceEffect implements AttackEffect {
 		}
 
 		// 29_Clear_Body
-		if (target.getAbilitySelected().getId() == 29) {
+		if (target.hasClearBodyAbility()) {
 			System.out.println(
 					"Las estadísticas no pueden bajar por la habilidad " + target.getAbilitySelected().getName());
 			return result;
@@ -47,7 +47,7 @@ public class StatReduceEffect implements AttackEffect {
 		// Precision
 		// 35_Illuminate and 51_Keen_eye cannot be reduced precision
 		if (stat == StatType.PRECISION
-				&& (target.getAbilitySelected().getId() == 35 || target.getAbilitySelected().getId() == 51)) {
+				&& (target.hasIlluminateAbility() || target.hasKeenEyeAbility())) {
 			System.out.println("La precisión no puede bajar por la habilidad " + target.getAbilitySelected().getName());
 			return result;
 		}

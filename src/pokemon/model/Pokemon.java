@@ -753,10 +753,10 @@ public class Pokemon {
 	// -----------------------------
 	public boolean canBeFlinched() {
 		// 98_Magic_Guard annuls secondary damage effects (only by struggle attack)
-		if (this.getAbilitySelected().getId() == 98 && this.getNextMovement().getId() != 165)
+		if (hasMagicGuardAbility() && this.getNextMovement().getId() != 165)
 			return false;
 
-		if (this.getAbilitySelected().getId() == 39) {
+		if (hasInnerFocusAbility()) {
 			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
 					+ " no pudo retroceder dada su habilidad Fuerza mental");
 			return false;
@@ -869,6 +869,342 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 1_Stench ability
+	// -----------------------------
+	public boolean hasStenchAbility() {
+		return this.getAbilitySelected().getId() == 1;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 4_Battle_armor ability
+	// -----------------------------
+	public boolean hasBattleArmorAbility() {
+		return this.getAbilitySelected().getId() == 4;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 6_Damp ability
+	// -----------------------------
+	public boolean hasDampAbility() {
+		return this.getAbilitySelected().getId() == 6;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 7_Limber ability
+	// -----------------------------
+	public boolean hasLimberAbility() {
+		return this.getAbilitySelected().getId() == 7;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 17_Immunity ability
+	// -----------------------------
+	public boolean hasImmunityAbility() {
+		return this.getAbilitySelected().getId() == 17;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 21_Suction_cups ability
+	// -----------------------------
+	public boolean hasSuctionCupsAbility() {
+		return this.getAbilitySelected().getId() == 21;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 23_Shadow_tag ability
+	// -----------------------------
+	public boolean hasShadowTagAbility() {
+		return this.getAbilitySelected().getId() == 23;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 26_Levitate ability
+	// -----------------------------
+	public boolean hasLevitateAbility() {
+		return this.getAbilitySelected().getId() == 26;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 29_Clear_body ability
+	// -----------------------------
+	public boolean hasClearBodyAbility() {
+		return this.getAbilitySelected().getId() == 29;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 35_Illuminate ability
+	// -----------------------------
+	public boolean hasIlluminateAbility() {
+		return this.getAbilitySelected().getId() == 35;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 39_Inner_Focus ability
+	// -----------------------------
+	public boolean hasInnerFocusAbility() {
+		return this.getAbilitySelected().getId() == 39;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 40_Magma_armor ability
+	// -----------------------------
+	public boolean hasMagmaArmorAbility() {
+		return this.getAbilitySelected().getId() == 40;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 41_Water_vail ability
+	// -----------------------------
+	public boolean hasWaterVailAbility() {
+		return this.getAbilitySelected().getId() == 41;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 42_Magnet_pull ability
+	// -----------------------------
+	public boolean hasMagnetPullAbility() {
+		return this.getAbilitySelected().getId() == 42;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 44_Rain_dish ability
+	// -----------------------------
+	public boolean hasRainDishAbility() {
+		return this.getAbilitySelected().getId() == 44;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 48_Early_bird ability
+	// -----------------------------
+	public boolean hasEarlyBirdAbility() {
+		return this.getAbilitySelected().getId() == 48;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 51_Keen_eye ability
+	// -----------------------------
+	public boolean hasKeenEyeAbility() {
+		return this.getAbilitySelected().getId() == 51;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 54_Truant ability
+	// -----------------------------
+	public boolean hasTruantAbility() {
+		return this.getAbilitySelected().getId() == 54;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 55_Hustle ability
+	// -----------------------------
+	public boolean hasHustleAbility() {
+		return this.getAbilitySelected().getId() == 55;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 56_Cute_charm ability
+	// -----------------------------
+	public boolean hasCuteCharmAbility() {
+		return this.getAbilitySelected().getId() == 56;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 57_Plus ability
+	// -----------------------------
+	public boolean hasPlusAbility() {
+		return this.getAbilitySelected().getId() == 57;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 58_Minus ability
+	// -----------------------------
+	public boolean hasMinusAbility() {
+		return this.getAbilitySelected().getId() == 58;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 59_Forecast ability
+	// -----------------------------
+	public boolean hasForecastAbility() {
+		return this.getAbilitySelected().getId() == 59;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 61_Shed_skin ability
+	// -----------------------------
+	public boolean hasShedSkinAbility() {
+		return this.getAbilitySelected().getId() == 61;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 62_Guts ability
+	// -----------------------------
+	public boolean hasGutsAbility() {
+		return this.getAbilitySelected().getId() == 62;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 63_Marvel_scale ability
+	// -----------------------------
+	public boolean hasMarvelScaleAbility() {
+		return this.getAbilitySelected().getId() == 63;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 64_Liquid_Ooze ability
+	// -----------------------------
+	public boolean hasLiquidOozeAbility() {
+		return this.getAbilitySelected().getId() == 64;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 69_Rock_head ability
+	// -----------------------------
+	public boolean hasRockHeadAbility() {
+		return this.getAbilitySelected().getId() == 69;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 71_Arena_trap ability
+	// -----------------------------
+	public boolean hasArenaTrapAbility() {
+		return this.getAbilitySelected().getId() == 71;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 72_Vital_spirit ability
+	// -----------------------------
+	public boolean hasVitalSpiritAbility() {
+		return this.getAbilitySelected().getId() == 72;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 75_Shell_armor ability
+	// -----------------------------
+	public boolean hasShellArmorAbility() {
+		return this.getAbilitySelected().getId() == 75;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 77_Tangled_feet ability
+	// -----------------------------
+	public boolean hasTangledFeetAbility() {
+		return this.getAbilitySelected().getId() == 77;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 80_Steadfast ability
+	// -----------------------------
+	public boolean hasSteadfastAbility() {
+		return this.getAbilitySelected().getId() == 80;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 85_HeatProof ability
+	// -----------------------------
+	public boolean hasHeatProofAbility() {
+		return this.getAbilitySelected().getId() == 85;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 86_Simple ability
+	// -----------------------------
+	public boolean hasSimpleAbility() {
+		return this.getAbilitySelected().getId() == 86;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 90_Poison_hill ability
+	// -----------------------------
+	public boolean hasPoisonHealAbility() {
+		return this.getAbilitySelected().getId() == 90;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 92_Skill_link ability
+	// -----------------------------
+	public boolean hasSkillLinkAbility() {
+		return this.getAbilitySelected().getId() == 92;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 94_Solar_power ability
+	// -----------------------------
+	public boolean hasSolarPowerAbility() {
+		return this.getAbilitySelected().getId() == 94;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 95_Quick_feet ability
+	// -----------------------------
+	public boolean hasQuickFeetAbility() {
+		return this.getAbilitySelected().getId() == 95;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 98_Magic_Guard ability
+	// -----------------------------
+	public boolean hasMagicGuardAbility() {
+		return this.getAbilitySelected().getId() == 98;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 99_No_guard
+	// -----------------------------
+	public boolean hasNoGuardAbility() {
+		return this.getAbilitySelected().getId() == 99;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 100_Stall ability
+	// -----------------------------
+	public boolean hasStallAbility() {
+		return this.getAbilitySelected().getId() == 100;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 109_Unaware ability
+	// -----------------------------
+	public boolean hasUnawareAbility() {
+		return this.getAbilitySelected().getId() == 109;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 110_Tinted_lens ability
+	// -----------------------------
+	public boolean hasTintedLensAbility() {
+		return this.getAbilitySelected().getId() == 110;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 111_Filter ability
+	// -----------------------------
+	public boolean hasFilterAbility() {
+		return this.getAbilitySelected().getId() == 111;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 116_Solid_rock ability
+	// -----------------------------
+	public boolean hasSolidRockAbility() {
+		return this.getAbilitySelected().getId() == 116;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 120_Reckless ability
+	// -----------------------------
+	public boolean hasRecklessAbility() {
+		return this.getAbilitySelected().getId() == 120;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 122_Flowe_gift ability
+	// -----------------------------
+	public boolean hasFlowerGiftAbility() {
+		return this.getAbilitySelected().getId() == 122;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 126_Contrary ability
 	// -----------------------------
 	public boolean hasContraryAbility() {
@@ -880,5 +1216,12 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasDefiantAbility() {
 		return this.getAbilitySelected().getId() == 128;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 142_Overcoat ability
+	// -----------------------------
+	public boolean hasOvercoatAbility() {
+		return this.getAbilitySelected().getId() == 142;
 	}
 }
