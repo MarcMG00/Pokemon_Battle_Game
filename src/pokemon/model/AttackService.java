@@ -20,7 +20,7 @@ import pokemon.attackInterface.IgnoreMinimizeEffect;
 import pokemon.attackInterface.LeechSeedEffect;
 import pokemon.attackInterface.MistEffect;
 import pokemon.attackInterface.MultiHitEffect;
-import pokemon.attackInterface.MultiStatBoostEffect;
+import pokemon.attackInterface.MultiStatChange;
 import pokemon.attackInterface.OneHitKOEffect;
 import pokemon.attackInterface.ParalyzeEffect;
 import pokemon.attackInterface.PoisonEffect;
@@ -220,7 +220,7 @@ public class AttackService {
 		Map<StatType, Integer> growthStats = new HashMap<>();
 		growthStats.put(StatType.ATTACK, 1);
 		growthStats.put(StatType.SPECIAL_ATTACK, 1);
-		attackEffects.put(74, new MultiStatBoostEffect(growthStats)); // Desarrollo/Growth (tested)
+		attackEffects.put(74, new MultiStatChange(growthStats)); // Desarrollo/Growth (tested)
 
 		// Rayo solar/Solar beam (tested)
 		attackEffects.put(76, new SolarBeamEffect(damageService));

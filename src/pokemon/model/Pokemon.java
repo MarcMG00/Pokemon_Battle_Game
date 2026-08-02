@@ -867,4 +867,18 @@ public class Pokemon {
 	public boolean hasAnyPPLeft() {
 		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
 	}
+
+	// -----------------------------
+	// Check if Pokemon has 126_Contrary ability
+	// -----------------------------
+	public boolean hasContraryAbility() {
+		return this.getAbilitySelected().getId() == 126;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 128_Defiant ability
+	// -----------------------------
+	public boolean hasDefiantAbility() {
+		return this.getAbilitySelected().getId() == 128;
+	}
 }

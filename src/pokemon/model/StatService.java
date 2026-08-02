@@ -199,34 +199,47 @@ public class StatService {
 	// -----------------------------
 	// Modify stat stage from rival attacks
 	// -----------------------------
-	public void reduceStatStage(Pokemon pk, StatType stat, int stages, boolean isMistEffectActivated) {
+	public void reduceStatStage(Pokemon defender, StatType stat, int stages, boolean isMistEffectActivated) {
 		boolean isReduceStatStage = true;
 
 		// 126_Contrary ability reverse the increase or reduce stat stage
-		if (pk.getAbilitySelected().getId() == 126)
+		if (defender.hasContraryAbility())
 			isReduceStatStage = false;
 
-		if (cannotReduceStat(pk, stat))
+		if (cannotReduceStat(defender, stat))
 			return;
 
 		if (isMistEffectActivated) {
+			System.out.println(defender.getName() + " (Id:" + defender.getId() + ")"
+					+ " no pudo bajar las estadísticas gracias a Neblina");
+			return;
+		}
+
+		if (defender.getStage(stat) <= -6) {
 			System.out.println(
-					pk.getName() + " (Id:" + pk.getId() + ")" + " no pudo bajar las estadísticas gracias a Neblina");
+					stat + " de " + defender.getName() + " (Id:" + defender.getId() + ")" + " no puede bajar más!");
 			return;
 		}
 
-		if (pk.getStage(stat) <= -6) {
-			System.out.println(stat + " de " + pk.getName() + " (Id:" + pk.getId() + ")" + " no puede bajar más!");
-			return;
+		stages *= applyModifiersNbStage(defender, isReduceStatStage);
+		defender.setStageValueStats(stat, stages, isReduceStatStage);
+
+		System.out
+				.println(isReduceStatStage ? defender.getName() + " (Id:" + defender.getId() + ")" + " bajó su " + stat
+						: defender.getName() + " (Id:" + defender.getId() + ")" + " aumentó su " + stat);
+
+		// 128_Defiant ability increases by 2 the attack for each stat reduced
+		if (isReduceStatStage && defender.hasDefiantAbility()) {
+			if (defender.getStage(StatType.ATTACK) < 6) {
+				defender.setStageValueStats(StatType.ATTACK, 2, false);
+				System.out.println(defender.getName() + " aumentó mucho su ataque gracias a su habilidad Competitivo");
+			}
 		}
-
-		stages *= applyModifiersNbStage(pk, isReduceStatStage);
-		pk.setStageValueStats(stat, stages, isReduceStatStage);
-
-		System.out.println(isReduceStatStage ? pk.getName() + " (Id:" + pk.getId() + ")" + " bajó su " + stat
-				: pk.getName() + " (Id:" + pk.getId() + ")" + " aumentó su " + stat);
 	}
 
+	// -----------------------------
+	// Return the number of stages to modify the stat
+	// -----------------------------
 	public int applyModifiersNbStage(Pokemon pk, boolean isStatDrop) {
 		// 86_Simple ability duplicates by 2 the stage (whether it's negative or
 		// positive)

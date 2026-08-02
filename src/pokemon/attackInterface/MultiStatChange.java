@@ -7,10 +7,10 @@ import pokemon.enums.Weather;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
 
-public class MultiStatBoostEffect implements AttackEffect {
+public class MultiStatChange implements AttackEffect {
 	private final Map<StatType, Integer> statBoosts;
 
-	public MultiStatBoostEffect(Map<StatType, Integer> statBoosts) {
+	public MultiStatChange(Map<StatType, Integer> statBoosts) {
 		this.statBoosts = statBoosts;
 	}
 
@@ -26,7 +26,7 @@ public class MultiStatBoostEffect implements AttackEffect {
 		boolean isReduceStatStage = false;
 
 		// 126_Contrary ability reverse the increase or reduce stat stage
-		if (ctx.getAttacker().getAbilitySelected().getId() == 126)
+		if (ctx.getAttacker().hasContraryAbility())
 			isReduceStatStage = true;
 
 		// Growth special case

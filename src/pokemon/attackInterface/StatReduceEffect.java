@@ -23,7 +23,7 @@ public class StatReduceEffect implements AttackEffect {
 		boolean isReduceStatStage = true;
 
 		// 126_Contrary ability reverse the increase or reduce stat stage
-		if (target.getAbilitySelected().getId() == 126)
+		if (target.hasContraryAbility())
 			isReduceStatStage = false;
 
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
@@ -62,6 +62,15 @@ public class StatReduceEffect implements AttackEffect {
 
 		System.out.println(
 				isReduceStatStage ? target.getName() + " bajó su " + stat : target.getName() + " aumentó su " + stat);
+
+		// 128_Defiant ability increases by 2 the attack for each stat reduced
+		if (isReduceStatStage && target.hasDefiantAbility()) {
+			if (target.getStage(StatType.ATTACK) < 6) {
+				target.setStageValueStats(StatType.ATTACK, 2, false);
+				System.out.println(target.getName() + " aumentó mucho su ataque gracias a su habilidad Competitivo");
+			}
+		}
+
 		return result;
 	}
 }

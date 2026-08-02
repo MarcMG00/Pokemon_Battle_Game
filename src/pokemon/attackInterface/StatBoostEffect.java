@@ -20,7 +20,7 @@ public class StatBoostEffect implements AttackEffect {
 		boolean isReduceStatStage = false;
 
 		// 126_Contrary ability reverse the increase or reduce stat stage
-		if (ctx.getAttacker().getAbilitySelected().getId() == 126)
+		if (ctx.getAttacker().hasContraryAbility())
 			isReduceStatStage = true;
 
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
