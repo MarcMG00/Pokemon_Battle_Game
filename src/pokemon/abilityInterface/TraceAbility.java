@@ -18,8 +18,7 @@ public class TraceAbility implements AbilityEffect {
 		if (owner.getBaseAbility().getId() != 36)
 			return;
 
-		Ability targetAbility = defender.getAbilitySelected();
-		Ability AbilityDeepCopy = new Ability(targetAbility);
+		Ability AbilityDeepCopy = new Ability(defender.getAbilitySelected());
 
 		owner.setAbilitySelected(AbilityDeepCopy);
 

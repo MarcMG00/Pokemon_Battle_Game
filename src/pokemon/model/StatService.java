@@ -36,6 +36,10 @@ public class StatService {
 			System.out.println(pk.getName() + " aumentó su ataque gracias a su habilidad Don Floral");
 		}
 
+		// 129_Deafeatist ability reduces attack by 50% if PS under 50% of initial PS
+		if (pk.isDefeatistActive())
+			attack /= 2f;
+
 		if (!ignoreStage) {
 			if (stage >= 0)
 				multiplier = (2f + stage) / 2f;
@@ -59,7 +63,7 @@ public class StatService {
 		if (pk.hasPlusAbility() && pk.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasMinusAbility()))
 			specialAttack *= 1.5f;
 
-		// 57_Minus ability
+		// 58_Minus ability
 		if (pk.hasMinusAbility() && pk.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasPlusAbility()))
 			specialAttack *= 1.5f;
 
@@ -68,6 +72,11 @@ public class StatService {
 			specialAttack *= 1.5f;
 			System.out.println(pk.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
 		}
+
+		// 129_Deafeatist ability reduces special attack by 50% if PS under 50% of
+		// initial PS
+		if (pk.isDefeatistActive())
+			specialAttack /= 2f;
 
 		if (!ignoreStage) {
 			if (stage >= 0)
@@ -148,20 +157,11 @@ public class StatService {
 	// Get effective evasion
 	// -----------------------------
 	public int getEffectiveEvasion(Pokemon pk, boolean ignoreStage) {
-		int stage = pk.getEvasionStage();
-		int evasionPoints = stage > 0 ? stage : 0;
-
-		// 77_Tangled_Feed duplicates evasion by 2 if confused
-		if (pk.hasTangledFeetAbility()) {
-			if (pk.hasActiveEphemeralStatus(StatusConditions.CONFUSED)) {
-				evasionPoints = Math.min(evasionPoints * 2, 6);
-				System.out.println(pk.getName() + " aumentó su evasión gracias a su habilidad "
-						+ pk.getAbilitySelected().getName());
-			}
-		}
-
 		if (ignoreStage)
 			return 0;
+
+		int stage = pk.getEvasionStage();
+		int evasionPoints = stage > 0 ? stage : 0;
 
 		return evasionPoints;
 	}
@@ -183,7 +183,7 @@ public class StatService {
 		}
 
 		// 95_Quick_Feet increase speed by 50%
-		if (pk.hasQuickFeetAbility() && pk.hasStatusCondition() || pk.hasEphemeralStatus())
+		if (pk.hasQuickFeetAbility() && (pk.hasStatusCondition() || pk.hasEphemeralStatus()))
 			speed *= 1.5f;
 
 		if (stage >= 0)
@@ -204,7 +204,7 @@ public class StatService {
 		if (defender.hasContraryAbility())
 			isReduceStatStage = false;
 
-		if (cannotReduceStat(defender, stat))
+		if (isStatDropImmune(defender, stat))
 			return;
 
 		if (isMistEffectActivated) {
@@ -250,31 +250,30 @@ public class StatService {
 	}
 
 	// -----------------------------
-	// Check if can reduce stats
+	// Check if can drop stats
 	// -----------------------------
-	private boolean cannotReduceStat(Pokemon pk, StatType stat) {
-		Ability ability = pk.getAbilitySelected();
-
+	public boolean isStatDropImmune(Pokemon pk, StatType stat) {
 		// 29_Clear_Body / 73_White_Smoke abilities cannot be reduced stats
-		if (ability.getId() == 29 || ability.getId() == 73) {
-			System.out.println("Las estats de " + pk.getName() + " (Id:" + pk.getId() + ")"
-					+ " no pueden bajar dada su la habilidad " + pk.getAbilitySelected().getName());
+		if (pk.hasClearBodyAbility() || pk.hasWhiteSmokeAbility())
 			return true;
-		}
 
-		// 52_Hyper_Cutter ability
-		if (stat == StatType.ATTACK && ability.getId() == 52) {
-			System.out.println("El ataque de " + pk.getName() + " (Id:" + pk.getId() + ")" + " no puede bajar dada su "
-					+ pk.getAbilitySelected().getName());
-			return true;
-		}
+		switch (stat) {
+		case ATTACK:
+			return pk.hasHyperCutterAbility();
 
-		// 35_Illuminate/ 51_Keen_Eye ability
-		if (stat == StatType.PRECISION && (ability.getId() == 35 || ability.getId() == 51)) {
-			System.out.println("La precisión de " + pk.getName() + " (Id:" + pk.getId() + ")"
-					+ " no puede bajar dada su " + pk.getAbilitySelected().getName());
-			return true;
+		case PRECISION:
+			return pk.hasKeenEyeAbility() || pk.hasIlluminateAbility();
+
+		default:
+			return false;
 		}
-		return false;
+	}
+
+	// -----------------------------
+	// Check if can be intimidated
+	// -----------------------------
+	public boolean isIntimidateImmune(Pokemon pk) {
+		return pk.hasObliviousAbility() || pk.hasOwnTempoAbility() || pk.hasClearBodyAbility()
+				|| pk.hasInnerFocusAbility();
 	}
 }

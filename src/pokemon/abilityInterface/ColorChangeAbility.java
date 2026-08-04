@@ -3,7 +3,6 @@ package pokemon.abilityInterface;
 import java.util.ArrayList;
 
 import pokemon.enums.Weather;
-import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
@@ -22,8 +21,7 @@ public class ColorChangeAbility implements AbilityEffect {
 			return;
 
 		// Attacker doesn't have to have 125_Sheer_force
-		Ability atkAbility = attacker.getAbilitySelected();
-		if (atkAbility != null && atkAbility.getId() == 125)
+		if (attacker.getAbilitySelected() != null && attacker.hasSheerForceAbility())
 			return;
 
 		// Movement type

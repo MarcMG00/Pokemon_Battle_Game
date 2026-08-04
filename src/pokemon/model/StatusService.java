@@ -149,18 +149,17 @@ public class StatusService {
 			Attack attackAttacker) {
 		boolean canBeFrozen = weather != Weather.SUN;
 		boolean isSunny = weather == Weather.SUN;
-		Ability ability = pk.getAbilitySelected();
 
 		// 102_Leaf_Guard
-		if (ability.getId() == 102 && isSunny) {
+		if (pk.hasLeafGuardAbility() && isSunny) {
 			System.out.println(pk.getName()
 					+ " no puede verse afectado por problemas de estado persistentes dada su habilidad Defensa hoja");
 			return;
 		}
 
-		if (ability != null) {
+		if (pk.getAbilitySelected() != null) {
 			// 19_Shield_Dust doesn't allow to get secondary effects
-			if (attackAttacker.hasSecondaryEffect() && ability.getId() == 19) {
+			if (attackAttacker.hasSecondaryEffect() && pk.hasShieldDustAbility()) {
 				System.out.println(pk.getName()
 						+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
 				return;
@@ -245,12 +244,11 @@ public class StatusService {
 	// Try to put ephemeral status on Pokemon facing
 	// -----------------------------
 	public void trySetEphemeralStatus(State state, Pokemon pk, StatusConditions status, Attack attackAttacker) {
-		Ability ability = pk.getAbilitySelected();
-		if (ability == null)
+		if (pk.getAbilitySelected() == null)
 			return;
 
 		// 19_Shield_Dust doesn't allow to get secondary effects
-		if (attackAttacker.hasSecondaryEffect() && ability.getId() == 19) {
+		if (attackAttacker.hasSecondaryEffect() && pk.hasShieldDustAbility()) {
 			System.out.println(pk.getName()
 					+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
 			return;
@@ -258,8 +256,7 @@ public class StatusService {
 
 		switch (status) {
 		case ASLEEP:
-			// 15_Insomnia, 72_Vital_Spirit
-			if (ability.getId() == 15 || ability.getId() == 72) {
+			if (pk.hasInsomniaAbility() || pk.hasVitalSpiritAbility()) {
 				System.out.println(
 						pk.getName() + " no puede dormirse dada su habilidad " + pk.getAbilitySelected().getName());
 				return;
@@ -267,16 +264,14 @@ public class StatusService {
 				System.out.println(pk.getName() + " se quedó dormido");
 			break;
 		case CONFUSED:
-			// 20_Own_Tempo
-			if (ability.getId() == 20) {
+			if (pk.hasOwnTempoAbility()) {
 				System.out.println(pk.getName() + " no puede confundirse dada su habilidad Ritmo propio");
 				return;
 			} else
 				System.out.println(pk.getName() + " está confuso");
 			break;
 		case INFATUATED:
-			// 12_Oblivious
-			if (ability.getId() == 12) {
+			if (pk.hasObliviousAbility()) {
 				System.out.println(pk.getName() + " no puede enamorarse dada su habilidad Despiste");
 				return;
 			} else
@@ -677,10 +672,9 @@ public class StatusService {
 	// Apply Bad Dreams ability if needed (end of the turn)
 	// -----------------------------
 	public boolean applyBadDreamsAbility(Pokemon attacker, Pokemon defender) {
-		Ability abltyAttacker = attacker.getAbilitySelected();
 
 		// 123_Bad_dreams ability => needs opponent to be asleep
-		if (abltyAttacker.getId() == 123 && defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
+		if (attacker.hasBadDreamsAbility() && defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 			// Reduces current PS by 1/8 from max PS
 			float reducePs = defender.getInitialPs() * 0.125f;
 			defender.setPs(defender.getPs() - reducePs);

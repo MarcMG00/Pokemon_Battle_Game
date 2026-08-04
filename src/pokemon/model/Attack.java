@@ -399,4 +399,130 @@ public class Attack {
 	public List<SecondaryEffect> getSecondaryEffectsOfType(SecondaryEffectType effectType) {
 		return this.getSecondaryEffects().stream().filter(e -> e.getType() == effectType).toList();
 	}
+
+	// -----------------------------
+	// Check if attack is Steel type
+	// -----------------------------
+	public boolean isSteelType() {
+		return this.getStrTypeToPkType().getId() == 1;
+	}
+
+	// -----------------------------
+	// Check if attack is Water type
+	// -----------------------------
+	public boolean isWaterType() {
+		return this.getStrTypeToPkType().getId() == 2;
+	}
+
+	// -----------------------------
+	// Check if attack is Bug type
+	// -----------------------------
+	public boolean isBugType() {
+		return this.getStrTypeToPkType().getId() == 3;
+	}
+
+	// -----------------------------
+	// Check if attack is Dragon type
+	// -----------------------------
+	public boolean isDragonType() {
+		return this.getStrTypeToPkType().getId() == 4;
+	}
+
+	// -----------------------------
+	// Check if attack is Steel type
+	// -----------------------------
+	public boolean isElectricType() {
+		return this.getStrTypeToPkType().getId() == 5;
+	}
+
+	// -----------------------------
+	// Check if attack is Ghost type
+	// -----------------------------
+	public boolean isGhostType() {
+		return this.getStrTypeToPkType().getId() == 6;
+	}
+
+	// -----------------------------
+	// Check if attack is Fire type
+	// -----------------------------
+	public boolean isFireType() {
+		return this.getStrTypeToPkType().getId() == 7;
+	}
+
+	// -----------------------------
+	// Check if attack is Fairy type
+	// -----------------------------
+	public boolean isFairyType() {
+		return this.getStrTypeToPkType().getId() == 8;
+	}
+
+	// -----------------------------
+	// Check if attack is Ice type
+	// -----------------------------
+	public boolean isIceType() {
+		return this.getStrTypeToPkType().getId() == 9;
+	}
+
+	// -----------------------------
+	// Check if attack is Fighting type
+	// -----------------------------
+	public boolean isFightingType() {
+		return this.getStrTypeToPkType().getId() == 10;
+	}
+
+	// -----------------------------
+	// Check if attack is Normal type
+	// -----------------------------
+	public boolean isNormalType() {
+		return this.getStrTypeToPkType().getId() == 11;
+	}
+
+	// -----------------------------
+	// Check if attack is Grass type
+	// -----------------------------
+	public boolean isGrassType() {
+		return this.getStrTypeToPkType().getId() == 12;
+	}
+
+	// -----------------------------
+	// Check if attack is Psychic type
+	// -----------------------------
+	public boolean isPsychicType() {
+		return this.getStrTypeToPkType().getId() == 13;
+	}
+
+	// -----------------------------
+	// Check if attack is Rock type
+	// -----------------------------
+	public boolean isRockType() {
+		return this.getStrTypeToPkType().getId() == 14;
+	}
+
+	// -----------------------------
+	// Check if attack is Dark type
+	// -----------------------------
+	public boolean isDarkType() {
+		return this.getStrTypeToPkType().getId() == 15;
+	}
+
+	// -----------------------------
+	// Check if attack is Ground type
+	// -----------------------------
+	public boolean isGroundType() {
+		return this.getStrTypeToPkType().getId() == 16;
+	}
+
+	// -----------------------------
+	// Check if attack is Poison type
+	// -----------------------------
+	public boolean isPoisonType() {
+		return this.getStrTypeToPkType().getId() == 17;
+	}
+
+	// -----------------------------
+	// Check if attack is Flying type
+	// -----------------------------
+	public boolean isFlyingType() {
+		return this.getStrTypeToPkType().getId() == 18;
+	}
 }

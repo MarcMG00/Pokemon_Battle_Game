@@ -813,7 +813,6 @@ public class AttackService {
 	// -----------------------------
 	private boolean canUseAttack(AttackContext ctx) {
 		Pokemon attacker = ctx.getAttacker();
-		Ability abltyAttacker = attacker.getAbilitySelected();
 		Attack attack = ctx.getAttack();
 
 		// Defender
@@ -825,17 +824,13 @@ public class AttackService {
 				.anyMatch(a -> a.getId() == attack.getId());
 		boolean isAttackAppliedToAttacker = attack.isAppliedToAttacker();
 
-		// Attack type
-		boolean isAttackNormalType = attack.getStrTypeToPkType().getId() == 11;
-		boolean isAttackFightType = attack.getStrTypeToPkType().getId() == 10;
-
 		// 1. Can use attack if attacker applies it on itself
 		if (isAttackAppliedToAttacker)
 			return true;
 
 		// 2. 113_Scrappy ability => normal and fight type affects to ghost type
-		if (attackNoEffectToRival && abltyAttacker.getId() == 113 && isDefenderGhostType
-				&& (isAttackNormalType || isAttackFightType)) {
+		if (attackNoEffectToRival && attacker.hasScrappyAbility() && isDefenderGhostType
+				&& (attack.isNormalType() || attack.isFightingType())) {
 			System.out.println(ctx.getAttacker().getName() + " puede atacar dada su habilidad Intrépido");
 
 			return true;
@@ -958,8 +953,7 @@ public class AttackService {
 	private double getFinalSecondaryEffectProbability(SecondaryEffect effect, Pokemon attacker) {
 		double probability = effect.getProbability();
 
-		Ability ability = attacker.getAbilitySelected();
-		if (ability != null && ability.getId() == 32)
+		if (attacker.getAbilitySelected() != null && attacker.hasSereneGraceAbility())
 			probability *= 2;
 
 		return Math.min(probability, 1.0); // never > 100%

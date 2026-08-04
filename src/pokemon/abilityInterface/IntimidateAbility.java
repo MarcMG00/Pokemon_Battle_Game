@@ -16,8 +16,6 @@ public class IntimidateAbility implements AbilityEffect {
 
 	@Override
 	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
-		Ability targetAbility = defender.getAbilitySelected();
-
 		boolean isReduceStatStage = true;
 
 		System.out.println(owner.getName() + " intimidó a " + defender.getName());
@@ -27,9 +25,9 @@ public class IntimidateAbility implements AbilityEffect {
 			isReduceStatStage = false;
 
 		// Check immunity (Oblivious, Own tempo, etc.)
-		if (targetAbility != null && (targetAbility.getId() == 12 || targetAbility.getId() == 20
-				|| targetAbility.getId() == 29 || targetAbility.getId() == 39)) {
-			System.out.println(defender.getName() + " no se intimidó gracias a " + targetAbility.getName());
+		if (defender.getAbilitySelected() != null && statService.isIntimidateImmune(defender)) {
+			System.out.println(
+					defender.getName() + " no se intimidó gracias a " + defender.getAbilitySelected().getName());
 			return;
 		}
 

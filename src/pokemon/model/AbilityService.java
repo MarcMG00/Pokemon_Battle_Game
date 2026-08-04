@@ -142,14 +142,14 @@ public class AbilityService {
 	// Apply abilities before the end of the turn
 	// -----------------------------
 	public void applyAbilitiesBeforeEndTurn(BattleContext battleCtx) {
-		applyBeforeEndTurnAbility(battleCtx, true);
-		applyBeforeEndTurnAbility(battleCtx, false);
+		applyAbilityBeforeEndTurn(battleCtx, true);
+		applyAbilityBeforeEndTurn(battleCtx, false);
 	}
 
 	// -----------------------------
 	// Apply ability before end of turn
 	// -----------------------------
-	private void applyBeforeEndTurnAbility(BattleContext battleCtx, boolean isPlayer) {
+	private void applyAbilityBeforeEndTurn(BattleContext battleCtx, boolean isPlayer) {
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 		Ability ability = pk.getAbilitySelected();
 		if (ability == null || ability.getId() == 5000 || (pk.getJustEnteredBattle() && !pk.hasShedSkinAbility()))
@@ -184,12 +184,8 @@ public class AbilityService {
 	// -----------------------------
 	public void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			boolean isCriticalAttack, Weather weather, boolean isWeatherSuppressed) {
-
-		// Attacker ability
-		Ability attackerAbility = attacker.getAbilitySelected();
-
 		// 54_Truant ability (can't do anything next round)
-		if (attackerAbility != null && attackerAbility.getId() == 54) {
+		if (attacker.getAbilitySelected() != null && attacker.hasTruantAbility()) {
 			System.out.println(attacker.getName() + " (" + attacker.getId() + ") "
 					+ "no popdrá atacar o cambiarse en el siguiente turno a causa de "
 					+ attacker.getAbilitySelected().getName());

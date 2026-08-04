@@ -71,7 +71,7 @@ public class AccuracyService {
 	// -----------------------------
 	public float getEvasionOrAccuracy(AttackContext ctx, Pokemon pk, int t, boolean ignoreStage) {
 		int evAcu = 0;
-		float resultEvAcu = 1;
+		float resultEvAcu = 1f;
 
 		switch (t) {
 		case 1:
@@ -79,10 +79,6 @@ public class AccuracyService {
 			break;
 		case 2:
 			evAcu = statService.getEffectiveEvasion(pk, ignoreStage);
-
-			// 80_Snow_Cloak sets 20% more of evasion
-			if (ctx.getDefender().hasSteadfastAbility())
-				evAcu *= 1.2f;
 			break;
 		}
 
@@ -354,14 +350,28 @@ public class AccuracyService {
 	// Change attacks depending on abilities, etc.
 	// -----------------------------
 	private void checkStatsForAttacks(AttackContext ctx) {
-		Ability pkAbility = ctx.getAttacker().getAbilitySelected();
-
+		// ATTACKER
 		// 14_Compound_Eyes ability rises precision by 30%
-		if (pkAbility.getId() == 14)
+		if (ctx.getAttacker().hasCompoundEyesAbility())
 			ctx.setPrecision(ctx.getPrecision() * 1.3f);
 
 		// 55_Hustle ability reduces precision by 20%
-		if (pkAbility.getId() == 55 && ctx.getAttack().getBases().contains("fisico"))
+		if (ctx.getAttack().getBases().contains("fisico") && ctx.getAttacker().hasHustleAbility())
 			ctx.setPrecision(ctx.getPrecision() * 0.8f);
+
+		// DEFENDER
+		// 77_Tangled_Feed duplicates evasion by 2 if confused
+		if (ctx.getDefender().isTagledFeetActive()) {
+			ctx.setPrecision(ctx.getPrecision() / 2f);
+			System.out.println(ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
+					+ ctx.getDefender().getAbilitySelected().getName());
+		}
+
+		// 81_Snow_Cloak sets 20% more of evasion if it's snowing
+		if (ctx.getWeather() == Weather.HAIL && ctx.getDefender().hasSnowCloakAbility()) {
+			ctx.setPrecision(ctx.getPrecision() * 0.8f);
+			System.out.println(ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
+					+ ctx.getDefender().getAbilitySelected().getName());
+		}
 	}
 }
