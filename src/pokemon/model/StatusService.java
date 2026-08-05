@@ -131,7 +131,7 @@ public class StatusService {
 		}
 
 		// Force switch if (for example), after getting drained, has no more PS
-		return new StatusResult(playerAttacker.getPkCombatting().isDebilitated());
+		return new StatusResult(playerAttacker.getPkCombatting().isFainted());
 	}
 
 	// -----------------------------
@@ -338,7 +338,7 @@ public class StatusService {
 					float damage = doConfusedDammageStartTurn(pk);
 					pk.setPs(pk.getPs() - damage);
 
-					if (pk.getPs() <= 0) {
+					if (pk.isFainted()) {
 						pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
 						System.out.println(pk.getName() + " quedó debilitado por la confusión!");
 					}
@@ -396,10 +396,8 @@ public class StatusService {
 
 			System.out.println(pk.getName() + " se resiente de la quemadura XD - PS actuales : " + pk.getPs());
 
-			if (pk.getPs() <= 0) {
+			if (pk.isFainted())
 				pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
-				pk.setStatusCondition(new State());
-			}
 		}
 	}
 
@@ -442,10 +440,8 @@ public class StatusService {
 
 				System.out.println(pk.getName() + " está envenenado - PS actuales : " + pk.getPs());
 
-				if (pk.getPs() <= 0) {
+				if (pk.isFainted())
 					pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
-					pk.setStatusCondition(new State());
-				}
 			}
 		}
 	}
@@ -518,10 +514,8 @@ public class StatusService {
 
 				System.out.println(pk.getName() + " está atado y recibe daño");
 
-				if (pk.getPs() <= 0) {
+				if (pk.getPs() <= 0)
 					pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
-					pk.removeEphemeralStatus(StatusConditions.TRAPPED);
-				}
 			}
 		}
 	}
@@ -548,10 +542,8 @@ public class StatusService {
 					System.out.println(
 							attacker.getName() + " está drenado y recibe daño; PS restantes : " + attacker.getPs());
 
-					if (attacker.getPs() <= 0) {
+					if (attacker.isFainted())
 						attacker.setStatusCondition(new State(StatusConditions.DEBILITATED));
-						attacker.removeEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
-					}
 				}
 			}
 		}
@@ -682,10 +674,9 @@ public class StatusService {
 			System.out.println(
 					defender.getName() + " sufre daño a causa de la habilidad Mal Sueño de " + attacker.getName());
 
-			if (defender.getPs() <= 0) {
+			if (defender.isFainted())
 				defender.setStatusCondition(new State(StatusConditions.DEBILITATED));
-				defender.setStatusCondition(new State());
-			}
+
 			return true;
 		}
 

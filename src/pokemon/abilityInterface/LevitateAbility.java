@@ -8,7 +8,7 @@ public class LevitateAbility implements AbilityEffect {
 	@Override
 	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack) {
 		// Only movements that are not Ground type
-		if (attack.getStrTypeToPkType().getId() != 16)
+		if (!attack.isGroundType())
 			return true;
 
 		System.out.println(defender.getName()

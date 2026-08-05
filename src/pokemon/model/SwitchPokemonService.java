@@ -122,7 +122,7 @@ public class SwitchPokemonService {
 	// Check if Pokemon can be selected
 	// -----------------------------
 	private boolean canPokemonBeSelected(Pokemon selected) {
-		if (selected.isDebilitated()) {
+		if (selected.isFainted()) {
 			System.out.println(selected.getName() + " (Id:" + selected.getId() + ") fue debilitado. Escoge otro.");
 			return false;
 		}
@@ -159,7 +159,7 @@ public class SwitchPokemonService {
 	// -----------------------------
 	private boolean isInvalidPokemonChoice(int id) {
 		if (battleCtx.getPlayer().getPkCombatting().getId() == id
-				&& !battleCtx.getIa().getPkCombatting().isDebilitated()) {
+				&& !battleCtx.getIa().getPkCombatting().isFainted()) {
 			System.out.println("Ese Pokémon ya está combatiendo.");
 			return true;
 		}
@@ -249,7 +249,7 @@ public class SwitchPokemonService {
 	// Get available Pokemon for forced switch
 	// -----------------------------
 	private List<Pokemon> getAvailablePokemonForSwitch(Player defender) {
-		return defender.getPokemon().stream().filter(p -> !p.isDebilitated() && p != defender.getPkCombatting())
+		return defender.getPokemon().stream().filter(p -> !p.isFainted() && p != defender.getPkCombatting())
 				.toList();
 	}
 

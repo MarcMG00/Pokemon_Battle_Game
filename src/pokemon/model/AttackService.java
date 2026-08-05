@@ -552,7 +552,7 @@ public class AttackService {
 		}
 
 		// If Pokemon is debilitated, force change and ends turn
-		if (pk.isDebilitated()) {
+		if (pk.isFainted()) {
 			statusService.clearDrainEffects(pk, defender.getPkCombatting());
 			checkForcedPokemonChange(sc);
 			return true;
@@ -627,7 +627,7 @@ public class AttackService {
 		}
 
 		// If defender got debilitated during this attack -> force change and end turn
-		if (defenderPk.isDebilitated()) {
+		if (defenderPk.isFainted()) {
 			statusService.clearDrainEffects(attacker.getPkCombatting(), defenderPk);
 			checkForcedPokemonChange(sc);
 			return true;
@@ -651,11 +651,11 @@ public class AttackService {
 	// -----------------------------
 	private void checkForcedPokemonChange(Scanner sc) {
 		// Player dies
-		if (battleCtx.getPlayer().getPkCombatting().isDebilitated())
+		if (battleCtx.getPlayer().getPkCombatting().isFainted())
 			handlePlayerPokemonDefeated(sc);
 
 		// IA dies
-		if (battleCtx.getIa().getPkCombatting().isDebilitated())
+		if (battleCtx.getIa().getPkCombatting().isFainted())
 			handleIAPokemonDefeated();
 	}
 
@@ -686,7 +686,7 @@ public class AttackService {
 				battleCtx.getPlayer().getPkCombatting(), battleCtx.getEffectPerTypes());
 
 		if (newIA == null)
-			newIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.isDebilitated()).findFirst().get();
+			newIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.isFainted()).findFirst().get();
 
 		switchPokemonService.resetPokemonBeforeSwitch(pkIA);
 
@@ -709,7 +709,7 @@ public class AttackService {
 	private void handleRetaliation(Player attacker, Player defender, TurnContext turnCtx) {
 		Pokemon pkAttacker = attacker.getPkCombatting();
 
-		if (pkAttacker.isDebilitated()) {
+		if (pkAttacker.isFainted()) {
 			handleDebilitatedPokemon(pkAttacker, attacker == battleCtx.getPlayer());
 			return;
 		}

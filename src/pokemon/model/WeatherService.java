@@ -252,7 +252,7 @@ public class WeatherService {
 	private boolean checkDebilitatedAfterEndTurn(Player owner, Scanner sc) {
 		Pokemon pk = owner.getPkCombatting();
 
-		if (pk.getPs() >= 0)
+		if (!pk.isFainted())
 			return false;
 
 		// Mark as debilitated
@@ -275,7 +275,7 @@ public class WeatherService {
 					battleCtx.getEffectPerTypes());
 
 			if (newIA == null)
-				newIA = owner.getPokemon().stream().filter(p -> !p.isDebilitated()).findFirst().orElse(null);
+				newIA = owner.getPokemon().stream().filter(p -> !p.isFainted()).findFirst().orElse(null);
 
 			if (newIA != null) {
 				switchPokemonService.resetPokemonBeforeSwitch(owner.getPkCombatting());

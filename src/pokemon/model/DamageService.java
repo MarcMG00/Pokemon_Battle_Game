@@ -199,7 +199,7 @@ public class DamageService {
 				* randomVariation * base;
 
 		// 18_Flash_Fire boost ability
-		if (attacker.getIsFireBoostActive() && attack.getStrTypeToPkType().getId() == 7)
+		if (attacker.getIsFireBoostActive() && attack.isFireType())
 			damage *= 1.5f;
 
 		return damage;
@@ -234,27 +234,23 @@ public class DamageService {
 	// -----------------------------
 	private float applyDefensiveAbilities(Pokemon defender, Pokemon attacker, Attack attack, float damage) {
 		Ability defAbility = defender.getAbilitySelected();
-		int abilityId = defAbility.getId();
-		int attackTypeId = attack.getStrTypeToPkType().getId();
-
-		boolean isFire = attackTypeId == 7;
-		boolean isIce = attackTypeId == 9;
 
 		// 5_Sturdy ability cannot be defeated by one hit KO or by one attack if PS are
 		// on max
-		if (abilityId == 5 && !defAbility.getAlreadyUsedOnEnter() && defender.getInitialPs() == defender.getPs()
-				&& damage >= defender.getPs()) {
+		if (defender.hasSturdyAbility() && !defAbility.getAlreadyUsedOnEnter() && defender.hasMaxPS()
+				&& damage >= defender.getInitialPs()) {
 			defAbility.setAlreadyUsedOnEnter(true);
 			return defender.getInitialPs() - 1f;
 		}
 
 		// 47_Thick_Fat ability/ 85_Heatproof reduces damage by 2 (only if attack type
 		// it's fire or ice type)
-		if ((abilityId == 47 && (isFire || isIce)) || (abilityId == 85 && isFire))
+		if ((defender.hasThickFatAbility() && (attack.isFireType() || attack.isIceType()))
+				|| (defender.hasHeatProofAbility() && attack.isFireType()))
 			return damage / 2f;
 
 		// 87_Dry_Skin ability with a fire attack, do 25% more damage
-		if (abilityId == 87 && attack.getStrTypeToPkType().getId() == 7)
+		if (defender.hasDrySkinAbility() && attack.isFireType())
 			return damage * 1.25f;
 
 		return damage;
@@ -264,7 +260,6 @@ public class DamageService {
 	// Adds multiplier depending on weather of the game
 	// -----------------------------
 	public float getWeatherModifier(AttackContext ctx) {
-
 		Weather weather = ctx.getWeather();
 		boolean isWeatherSuppresed = ctx.isWeatherSuppressed();
 
@@ -272,16 +267,16 @@ public class DamageService {
 			return 1.0f;
 
 		if (weather == Weather.RAIN) {
-			if (ctx.getAttack().getStrTypeToPkType().getId() == 2) // Water
+			if (ctx.getAttack().isWaterType()) // Water
 				return 1.5f;
-			if (ctx.getAttack().getStrTypeToPkType().getId() == 7) // Fire
+			if (ctx.getAttack().isFireType()) // Fire
 				return 0.5f;
 		}
 
 		if (weather == Weather.SUN) {
-			if (ctx.getAttack().getStrTypeToPkType().getId() == 7) // Fire
+			if (ctx.getAttack().isFireType()) // Fire
 				return 1.5f;
-			if (ctx.getAttack().getStrTypeToPkType().getId() == 2) // Water
+			if (ctx.getAttack().isWaterType()) // Water
 				return 0.5f;
 		}
 		return 1.0f;

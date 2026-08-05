@@ -353,23 +353,23 @@ public class AccuracyService {
 		// ATTACKER
 		// 14_Compound_Eyes ability rises precision by 30%
 		if (ctx.getAttacker().hasCompoundEyesAbility())
-			ctx.setPrecision(ctx.getPrecision() * 1.3f);
+			ctx.multiplyPrecision(1.3f);
 
 		// 55_Hustle ability reduces precision by 20%
 		if (ctx.getAttack().getBases().contains("fisico") && ctx.getAttacker().hasHustleAbility())
-			ctx.setPrecision(ctx.getPrecision() * 0.8f);
+			ctx.multiplyPrecision(0.8f);
 
 		// DEFENDER
 		// 77_Tangled_Feed duplicates evasion by 2 if confused
 		if (ctx.getDefender().isTagledFeetActive()) {
-			ctx.setPrecision(ctx.getPrecision() / 2f);
+			ctx.multiplyPrecision(0.5f);
 			System.out.println(ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
 					+ ctx.getDefender().getAbilitySelected().getName());
 		}
 
 		// 81_Snow_Cloak sets 20% more of evasion if it's snowing
 		if (ctx.getWeather() == Weather.HAIL && ctx.getDefender().hasSnowCloakAbility()) {
-			ctx.setPrecision(ctx.getPrecision() * 0.8f);
+			ctx.multiplyPrecision(0.8f);
 			System.out.println(ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
 					+ ctx.getDefender().getAbilitySelected().getName());
 		}

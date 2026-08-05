@@ -716,8 +716,8 @@ public class Pokemon {
 	// -----------------------------
 	// Check if is debilitated
 	// -----------------------------
-	public boolean isDebilitated() {
-		return this.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED;
+	public boolean isFainted() {
+		return this.getPs() <= 0 || this.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED;
 	}
 
 	// -----------------------------
@@ -875,6 +875,10 @@ public class Pokemon {
 		return this.getPs() < this.getInitialPs() / 3;
 	}
 
+	public boolean hasMaxPS() {
+		return this.getPs() >= this.getInitialPs();
+	}
+
 	// -----------------------------
 	// Check if Pokemon has 1_Stench ability
 	// -----------------------------
@@ -887,6 +891,13 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasBattleArmorAbility() {
 		return this.getAbilitySelected().getId() == 4;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 5_Sturdy ability
+	// -----------------------------
+	public boolean hasSturdyAbility() {
+		return this.getAbilitySelected().getId() == 5;
 	}
 
 	// -----------------------------
@@ -1055,6 +1066,13 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasRainDishAbility() {
 		return this.getAbilitySelected().getId() == 44;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 47_Thick_fat ability
+	// -----------------------------
+	public boolean hasThickFatAbility() {
+		return this.getAbilitySelected().getId() == 47;
 	}
 
 	// -----------------------------

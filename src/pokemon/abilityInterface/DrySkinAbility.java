@@ -22,7 +22,7 @@ public class DrySkinAbility implements AbilityEffect {
 		System.out.println(defender.getName() + " absorbió el agua gracias a la habilidad Piel seca");
 
 		// Heals 25% of max PS
-		if (defender.getPs() < defender.getInitialPs()) {
+		if (!defender.hasMaxPS()) {
 			float heal = defender.getInitialPs() * HEAL_PERCENT;
 			defender.setPs(Math.min(defender.getPs() + heal, defender.getInitialPs()));
 			System.out.println(defender.getName() + " recuperó " + heal + " PS");

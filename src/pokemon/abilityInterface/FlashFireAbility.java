@@ -11,7 +11,7 @@ public class FlashFireAbility implements AbilityEffect {
 	@Override
 	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack) {
 		// Only fire movements
-		if (attack.getStrTypeToPkType().getId() != 7)
+		if (!attack.isFireType())
 			return true;
 
 		// If Pokemon frozen => don't activate the ability

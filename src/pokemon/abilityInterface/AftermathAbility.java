@@ -12,7 +12,7 @@ public class AftermathAbility implements AbilityEffect {
 
 		// Defender needs to be debilitated + attacker hasn't to have 006_Damp ability +
 		// defender needs to receive a physical attack
-		if (defender.getPs() > 0 || attacker.hasDampAbility() || !attack.getMakesContact())
+		if (!defender.isFainted() || attacker.hasDampAbility() || !attack.getMakesContact())
 			return;
 
 		// Remove 25% of max PS from defender
