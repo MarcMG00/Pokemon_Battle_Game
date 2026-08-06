@@ -17,7 +17,7 @@ public class PoisonPointAbility implements AbilityEffect {
 			return;
 
 		// Attack must make contact
-		if (!attack.getMakesContact())
+		if (!attack.getMakesContact() || !defender.getHasReceivedDamage())
 			return;
 
 		// Probability

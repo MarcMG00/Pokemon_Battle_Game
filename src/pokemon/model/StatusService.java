@@ -166,10 +166,8 @@ public class StatusService {
 			}
 		}
 
-		// Get asleep state (because it has a number of turns, it works like an
-		// ephemeral status, but it's a normal status condition)
 		// Already has a status
-		if (pk.hasStatusCondition() || pk.hasActiveEphemeralStatus(StatusConditions.ASLEEP))
+		if (pk.hasStatusCondition())
 			return;
 
 		switch (newState.getStatusCondition()) {
@@ -244,9 +242,6 @@ public class StatusService {
 	// Try to put ephemeral status on Pokemon facing
 	// -----------------------------
 	public void trySetEphemeralStatus(State state, Pokemon pk, StatusConditions status, Attack attackAttacker) {
-		if (pk.getAbilitySelected() == null)
-			return;
-
 		// 19_Shield_Dust doesn't allow to get secondary effects
 		if (attackAttacker.hasSecondaryEffect() && pk.hasShieldDustAbility()) {
 			System.out.println(pk.getName()
@@ -255,6 +250,8 @@ public class StatusService {
 		}
 
 		switch (status) {
+		// ASLEEP state works like an ephemeral status, but it's a normal status
+		// condition)
 		case ASLEEP:
 			if (pk.hasInsomniaAbility() || pk.hasVitalSpiritAbility()) {
 				System.out.println(
@@ -606,13 +603,13 @@ public class StatusService {
 	// Reduce turn from DISABLE state (end of the turn)
 	// -----------------------------
 	private void reduceDisabledAttackTurn(Pokemon pk) {
-		if (pk.hasActiveStatusCondition(StatusConditions.DISABLE)) {
-			State disabledLastaAttackStatus = pk.getStatusCondition();
+		if (pk.hasActiveEphemeralStatus(StatusConditions.DISABLE)) {
+			State disabledLastaAttackStatus = pk.getEphemeralStatus(StatusConditions.DISABLE);
 
 			disabledLastaAttackStatus.setNbTurns(disabledLastaAttackStatus.getNbTurns() - 1);
 
 			if (disabledLastaAttackStatus.getNbTurns() <= 0) {
-				pk.setStatusCondition(new State());
+				pk.removeEphemeralStatus(StatusConditions.DISABLE);
 				System.out.println(pk.getName() + " ya puede volver a usar "
 						+ disabledLastaAttackStatus.getAttackDisabled().getName());
 			} else

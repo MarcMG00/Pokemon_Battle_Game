@@ -38,14 +38,15 @@ public class DisableAttackEffect implements AttackEffect {
 			return result;
 		}
 
-		if (defender.hasActiveStatusCondition(StatusConditions.DISABLE))
-			defender.setStatusCondition(new State());
+		// Reinitialize the disable effect if already applied
+		if (defender.hasActiveEphemeralStatus(StatusConditions.DISABLE))
+			defender.removeEphemeralStatus(StatusConditions.DISABLE);
 
 		int turns = helperService.randomInt(minTurns, maxTurns);
 
 		State attackDisabled = new State(StatusConditions.DISABLE, turns + 1);
 		attackDisabled.setAttackDisabled(lastAttack);
-		defender.setStatusCondition(attackDisabled);
+		defender.addEphemeralStatus(StatusConditions.DISABLE, attackDisabled);
 
 		System.out.println(defender.getName() + " no podrá usar " + lastAttack.getName() + " por " + turns + " turnos");
 

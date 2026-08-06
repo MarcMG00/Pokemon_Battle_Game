@@ -14,7 +14,7 @@ public class RoughSkinAbility implements AbilityEffect {
 			return;
 
 		// Attack must make contact
-		if (!attack.getMakesContact())
+		if (!attack.getMakesContact() || !defender.getHasReceivedDamage())
 			return;
 
 		// Return damage to attacker

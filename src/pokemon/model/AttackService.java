@@ -800,9 +800,9 @@ public class AttackService {
 			// Gets the attack effect and apply damage
 			AttackResult result = effect.execute(ctx);
 
-			applyAfterAttack(ctx, result);
-
 			ctx.getAttacker().setLastUsedAttack(ctx.getAttack());
+
+			applyAfterAttack(ctx, result);
 
 			applyMistIfNeeded(ctx.getAttacker());
 		}
@@ -963,7 +963,7 @@ public class AttackService {
 	// Apply mist effect after attacking (if needed)
 	// -----------------------------
 	private void applyMistIfNeeded(Pokemon pk) {
-		if (pk.getNextMovement().getId() == 54 && !battleCtx.isMistActive()) {
+		if (pk.getNextMovement().isMist() && !battleCtx.isMistActive()) {
 			battleCtx.setMistActive(true);
 			battleCtx.setNbTurnsMistActive(5);
 		}

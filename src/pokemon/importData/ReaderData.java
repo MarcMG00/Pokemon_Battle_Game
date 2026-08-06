@@ -15,6 +15,7 @@ import pokemon.abilityInterface.AngerPointAbility;
 import pokemon.abilityInterface.AnticipationAbility;
 import pokemon.abilityInterface.CloudNineAbility;
 import pokemon.abilityInterface.ColorChangeAbility;
+import pokemon.abilityInterface.CursedBodyAbility;
 import pokemon.abilityInterface.CuteCharmAbility;
 import pokemon.abilityInterface.DownloadAbility;
 import pokemon.abilityInterface.DrizzleAbility;
@@ -1115,6 +1116,10 @@ public class ReaderData {
 		// Nevada/Snow warning
 		case 117:
 			ability.setEffect(new SnowWarningAbility());
+			break;
+		// Cuerpo maldito/Cursed body
+		case 130:
+			ability.setEffect(new CursedBodyAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());

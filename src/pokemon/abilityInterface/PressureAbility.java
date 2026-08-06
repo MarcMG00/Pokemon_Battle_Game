@@ -12,9 +12,9 @@ public class PressureAbility implements AbilityEffect {
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 		// Some conditions don't allow to do remove an extra PP (if charging an attack,
 		// if trapped by own attack, etc.)
-		if ((attacker.getNextMovement().getId() == 19 && attacker.getIsChargingAttackForNextRound())
+		if ((attacker.getNextMovement().isFly() && attacker.getIsChargingAttackForNextRound())
 				|| (attacker.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK))
-				|| (attacker.getNextMovement().getId() == 76 && attacker.getIsChargingAttackForNextRound()))
+				|| (attacker.getNextMovement().isSolarBeam() && attacker.getIsChargingAttackForNextRound()))
 			return;
 
 		// Reduces by one more the PPs of the attacker

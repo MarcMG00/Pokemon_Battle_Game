@@ -454,8 +454,8 @@ public final class AttackAnalyzer {
 	// Returns true if the given attack is currently disabled for this Pokemon
 	// -----------------------------
 	private static boolean isAttackDisabled(Pokemon pk, Attack atk) {
-		if (pk.hasActiveStatusCondition(StatusConditions.DISABLE)) {
-			State disableStatus = pk.getStatusCondition();
+		if (pk.hasActiveEphemeralStatus(StatusConditions.DISABLE)) {
+			State disableStatus = pk.getEphemeralStatus(StatusConditions.DISABLE);
 			return disableStatus.getAttackDisabled().getId() == atk.getId();
 		}
 		return false;

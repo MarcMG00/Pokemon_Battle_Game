@@ -14,7 +14,7 @@ public class EffectSporeAbility implements AbilityEffect {
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 		// Attack must make contact
-		if (!attack.getMakesContact())
+		if (!attack.getMakesContact() || !defender.getHasReceivedDamage())
 			return;
 
 		// Attacker must hace ability 142_Overcoat

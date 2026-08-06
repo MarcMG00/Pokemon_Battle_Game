@@ -533,6 +533,7 @@ public class Pokemon {
 		return hasReceivedDamage;
 	}
 
+	// Only applied for attacks of "Contact" type
 	public void setHasReceivedDamage(boolean hasReceivedDamage) {
 		this.hasReceivedDamage = hasReceivedDamage;
 	}
@@ -668,7 +669,10 @@ public class Pokemon {
 	// Check if has normal status conditions
 	// -----------------------------
 	public boolean hasStatusCondition() {
-		return this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS;
+		return this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS
+				// Get asleep state (because it has a number of turns, it works like an
+				// ephemeral status, but it's a normal status condition)
+				|| hasActiveEphemeralStatus(StatusConditions.ASLEEP);
 	}
 
 	// -----------------------------
@@ -682,7 +686,10 @@ public class Pokemon {
 	// Check if has ephemeral status
 	// -----------------------------
 	public boolean hasEphemeralStatus() {
-		return !this.getEphemeralStatuses().isEmpty();
+		return !this.getEphemeralStatuses().isEmpty()
+				// ASLEEP is a status condition
+				&& (this.getEphemeralStatuses().size() == 1 ? !hasActiveEphemeralStatus(StatusConditions.ASLEEP)
+						: true);
 	}
 
 	// -----------------------------
@@ -753,7 +760,7 @@ public class Pokemon {
 	// -----------------------------
 	public boolean canBeFlinched() {
 		// 98_Magic_Guard annuls secondary damage effects (only by struggle attack)
-		if (hasMagicGuardAbility() && this.getNextMovement().getId() != 165)
+		if (hasMagicGuardAbility() && !this.getNextMovement().isStruggle())
 			return false;
 
 		if (hasInnerFocusAbility()) {
@@ -1475,6 +1482,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 130_CursedBody ability
+	// -----------------------------
+	public boolean hasCursedBodyAbility() {
+		return this.getAbilitySelected().getId() == 130;
+	}
+
+	// -----------------------------
 	// 129_Deafeatist ability reduces attack by 50% if PS under 50% of initial PS
 	// -----------------------------
 	public boolean isDefeatistActive() {
@@ -1500,5 +1514,12 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasSandForceAbility() {
 		return this.getAbilitySelected().getId() == 159;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 165_Aroma_veil ability
+	// -----------------------------
+	public boolean hasAromaVeilAbility() {
+		return this.getAbilitySelected().getId() == 165;
 	}
 }

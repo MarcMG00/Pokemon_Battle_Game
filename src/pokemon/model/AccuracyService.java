@@ -328,10 +328,10 @@ public class AccuracyService {
 	// -----------------------------
 	public boolean isAttackDisabled(AttackContext ctx) {
 		Pokemon attacker = ctx.getAttacker();
-		if (attacker.hasActiveStatusCondition(StatusConditions.DISABLE)) {
-			State disableStatus = attacker.getStatusCondition();
+		if (attacker.hasActiveEphemeralStatus(StatusConditions.DISABLE)) {
+			State disableStatus = attacker.getEphemeralStatus(StatusConditions.DISABLE);
 
-			if (disableStatus.getAttackDisabled() == ctx.getAttack())
+			if (disableStatus.getAttackDisabled().getId() == ctx.getAttack().getId())
 				return true;
 		}
 		return false;

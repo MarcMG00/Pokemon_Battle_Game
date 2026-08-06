@@ -18,7 +18,7 @@ public class FlameBodyAbility implements AbilityEffect {
 			return;
 
 		// Attack must make contact
-		if (!attack.getMakesContact())
+		if (!attack.getMakesContact() || !defender.getHasReceivedDamage())
 			return;
 
 		// Probability

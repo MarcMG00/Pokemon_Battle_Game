@@ -525,4 +525,32 @@ public class Attack {
 	public boolean isFlyingType() {
 		return this.getStrTypeToPkType().getId() == 18;
 	}
+
+	// -----------------------------
+	// Check if attack is 19_Fly
+	// -----------------------------
+	public boolean isFly() {
+		return this.getId() == 19;
+	}
+
+	// -----------------------------
+	// Check if attack is 54_Mist
+	// -----------------------------
+	public boolean isMist() {
+		return this.getId() == 54;
+	}
+
+	// -----------------------------
+	// Check if attack is 76_Solar_beam
+	// -----------------------------
+	public boolean isSolarBeam() {
+		return this.getId() == 76;
+	}
+
+	// -----------------------------
+	// Check if attack is 165_Struggle
+	// -----------------------------
+	public boolean isStruggle() {
+		return this.getId() == 165;
+	}
 }
