@@ -1,18 +1,32 @@
 package pokemon.abilityInterface;
 
-import pokemon.model.Ability;
+import pokemon.enums.StatType;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
+import pokemon.model.StatService;
 
 public class IntimidateAbility implements AbilityEffect {
+	private int stages;
+	private final StatService statService;
+
+	public IntimidateAbility() {
+		this.statService = new StatService();
+	}
+
 	@Override
 	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
-		Ability targetAbility = defender.getAbilitySelected();
+		boolean isReduceStatStage = true;
+
+		System.out.println(owner.getName() + " intimidó a " + defender.getName());
+
+		// 126_Contrary ability reverse the increase or reduce stat stage
+		if (defender.hasContraryAbility())
+			isReduceStatStage = false;
 
 		// Check immunity (Oblivious, Own tempo, etc.)
-		if (targetAbility != null && (targetAbility.getId() == 12 || targetAbility.getId() == 20
-				|| targetAbility.getId() == 29 || targetAbility.getId() == 39)) {
-			System.out.println(defender.getName() + " no se intimidó gracias a " + targetAbility.getName());
+		if (defender.getAbilitySelected() != null && statService.isIntimidateImmune(defender)) {
+			System.out.println(
+					defender.getName() + " no se intimidó gracias a " + defender.getAbilitySelected().getName());
 			return;
 		}
 
@@ -22,10 +36,23 @@ public class IntimidateAbility implements AbilityEffect {
 			return;
 		}
 
-		// Apply attack stage reduction
-		defender.setAttackStage(Math.min(defender.getAttackStage() - 1, -6));
+		if (defender.getStage(StatType.ATTACK) <= -6) {
+			System.out.println("El ataque de " + defender.getName() + " no puede bajar más");
+			return;
+		}
 
-		System.out.println(owner.getName() + " intimidó a " + defender.getName());
-		System.out.println("El ataque de " + defender.getName() + " bajó");
+		stages *= statService.applyModifiersNbStage(defender, isReduceStatStage);
+		defender.setStageValueStats(StatType.ATTACK, stages, isReduceStatStage);
+
+		System.out.println(
+				"El ataque de " + (isReduceStatStage ? defender.getName() + " bajó" : defender.getName() + " aumentó"));
+
+		// 128_Defiant ability increases by 2 the attack for each stat reduced
+		if (isReduceStatStage && defender.hasDefiantAbility()) {
+			if (defender.getStage(StatType.ATTACK) < 6) {
+				defender.setStageValueStats(StatType.ATTACK, 2, false);
+				System.out.println(defender.getName() + " aumentó mucho su ataque gracias a su habilidad Competitivo");
+			}
+		}
 	}
 }

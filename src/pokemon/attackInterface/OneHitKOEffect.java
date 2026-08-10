@@ -35,6 +35,8 @@ public class OneHitKOEffect implements AttackEffect {
 					+ "), se debilitó de un golpe con el ataque fulminante");
 		}
 
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 		result.addDamage(dmg);
 		return result;
 	}

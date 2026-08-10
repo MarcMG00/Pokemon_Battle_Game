@@ -1,70 +1,73 @@
 package pokemon.abilityInterface;
 
 import pokemon.enums.StatusConditions;
-import pokemon.enums.Weather;
-import pokemon.model.Attack;
-import pokemon.model.BattleContext;
-import pokemon.model.Pokemon;
+import pokemon.model.AttackContext;
+import pokemon.model.AttackResult;
 import pokemon.model.State;
 
 public class EffectSporeAbility implements AbilityEffect {
 	private static final double STATUS_PROBABILITY = 0.10d;
 
 	@Override
-	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
-		// Attack must make contact
-		if (!attack.getMakesContact())
-			return;
+	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
+		if (!attackCtx.getDefender().hasEffectSporeAbility())
+			return true;
 
-		// Attacker must hace ability 142_Overcoat
-		if (attacker.getAbilitySelected().getId() == 142) {
-			System.out.println(
-					attacker.getName() + " no puede sufrir efectos de Efecto espora (dada su habilidad Funda)");
-			return;
+		if (attackCtx.getAttacker().hasStatusCondition())
+			return true;
+
+		// Attack must make contact
+		if (!attackCtx.getAttack().makesContact() || attackResult.getDamage() <= 0f)
+			return true;
+
+		// Attacker must have ability 142_Overcoat
+		if (attackCtx.getAttacker().hasOvercoatAbility()) {
+			System.out.println(attackCtx.getAttacker().getName()
+					+ " no puede sufrir efectos de Efecto espora (dada su habilidad Funda)");
+			return true;
 		}
 
-		// Asleep status
+		// ASLEEP status
 		if (Math.random() <= STATUS_PROBABILITY) {
 			// Check if the attacker doesn't have the status Asleep (is a status that
 			// can be accumulated with other ephemeral status)
-			if (!attacker.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
-				System.out.println(attacker.getName() + " fue dormido por la habilidad Efecto espora");
+			System.out.println(attackCtx.getAttacker().getName() + " fue dormido por la habilidad Efecto espora");
 
-				int nbTurnsHoldingStatus;
+			int nbTurnsHoldingStatus;
 
-				nbTurnsHoldingStatus = 1 + (int) (Math.random() * (7 - 1 + 1));
+			nbTurnsHoldingStatus = 1 + (int) (Math.random() * (7 - 1 + 1));
 
-				System.out.println(
-						attacker.getName() + " cayó en un sueño profundo por " + nbTurnsHoldingStatus + " turnos");
+			System.out.println(attackCtx.getAttacker().getName() + " cayó en un sueño profundo por "
+					+ nbTurnsHoldingStatus + " turnos");
 
-				State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
+			State asleep = new State(StatusConditions.ASLEEP, nbTurnsHoldingStatus + 1);
 
-				attacker.addEphemeralStatus(StatusConditions.ASLEEP, asleep);
-			}
-			return;
+			attackCtx.getAttacker().addEphemeralStatus(StatusConditions.ASLEEP, asleep);
+			return true;
 		}
 
-		// Poisoned status
+		// Already has a status
+		if (attackCtx.getAttacker().hasStatusCondition())
+			return true;
+
+		// POISONED status
 		if (Math.random() <= STATUS_PROBABILITY) {
-			// Already has a status
-			if (attacker.hasStatusCondition())
-				return;
-
-			System.out.println(attacker.getName() + " fue envenenado por la habilidad Efecto espora");
-			attacker.setStatusCondition(new State(StatusConditions.POISONED));
-			return;
+			System.out.println(attackCtx.getAttacker().getName() + " fue envenenado por la habilidad Efecto espora");
+			attackCtx.getAttacker().setStatusCondition(new State(StatusConditions.POISONED));
+			return true;
 		}
 
-		// Paralyzed status
+		// Already has a status
+		if (attackCtx.getAttacker().hasStatusCondition())
+			return true;
+
+		// PARALYZED status
 		if (Math.random() <= STATUS_PROBABILITY) {
-			// Already has a status
-			if (attacker.hasStatusCondition())
-				return;
-
-			System.out.println(attacker.getName() + " fue paralizado por la habilidad Efecto espora");
-			attacker.setStatusCondition(new State(StatusConditions.PARALYZED));
-			return;
+			System.out.println(attackCtx.getAttacker().getName() + " fue paralizado por la habilidad Efecto espora");
+			attackCtx.getAttacker().setStatusCondition(new State(StatusConditions.PARALYZED));
+			return true;
 		}
+
+		return true;
 	}
 }

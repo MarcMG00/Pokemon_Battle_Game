@@ -22,23 +22,25 @@ public class WeightDamageEffect implements AttackEffect {
 
 		// Set power of the attack depending on the weight of the Pokemon facing
 		if (defender.getWeight() < 10)
-			attack.setPower(20);
+			ctx.setPower(20);
 		else if (defender.getWeight() >= 10 && defender.getWeight() < 25)
-			attack.setPower(40);
+			ctx.setPower(40);
 		else if (defender.getWeight() >= 25 && defender.getWeight() < 50)
-			attack.setPower(60);
+			ctx.setPower(60);
 		else if (defender.getWeight() >= 50 && defender.getWeight() < 100)
-			attack.setPower(80);
+			ctx.setPower(80);
 		else if (defender.getWeight() >= 100 && defender.getWeight() < 200)
-			attack.setPower(100);
+			ctx.setPower(100);
 		else
-			attack.setPower(120);
+			ctx.setPower(120);
 
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
 		attack.setPp(attack.getPp() - 1);
 		defender.setPs(defender.getPs() - dmg);
+
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

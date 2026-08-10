@@ -20,6 +20,10 @@ public class RecoilDamageEffect implements AttackEffect {
 
 		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
 
+		// 120_Reckless rises power by 20%
+		if (ctx.getAttacker().hasRecklessAbility())
+			ctx.setPower(ctx.getPower() * 1.2f);
+
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
@@ -27,8 +31,10 @@ public class RecoilDamageEffect implements AttackEffect {
 
 		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 		// 69_Rock_Head ability is not affected by recoil
-		if (attacker.getAbilitySelected().getId() == 69) {
+		if (attacker.hasRockHeadAbility()) {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId()
 					+ ") no sufrió daño por retroceso gracias a su habilidad "
 					+ attacker.getAbilitySelected().getName());

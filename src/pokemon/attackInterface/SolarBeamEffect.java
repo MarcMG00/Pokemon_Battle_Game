@@ -30,6 +30,8 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 
 			ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
+			ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 			return result;
 		}
 
@@ -48,7 +50,7 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 		// Weather reduces power
 		if (!ctx.isWeatherSuppressed() && (ctx.getWeather() == Weather.RAIN || ctx.getWeather() == Weather.HAIL
 				|| ctx.getWeather() == Weather.SANDSTORM))
-			ctx.getAttack().setPower(ctx.getAttack().getPower() / 2);
+			ctx.setPower(ctx.getAttack().getPower() / 2);
 
 		result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
@@ -57,6 +59,8 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

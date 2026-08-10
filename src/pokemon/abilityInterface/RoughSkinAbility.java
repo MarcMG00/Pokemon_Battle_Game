@@ -1,28 +1,31 @@
 package pokemon.abilityInterface;
 
-import pokemon.enums.Weather;
-import pokemon.model.Attack;
-import pokemon.model.BattleContext;
-import pokemon.model.Pokemon;
+import pokemon.model.AttackContext;
+import pokemon.model.AttackResult;
 
 public class RoughSkinAbility implements AbilityEffect {
 	@Override
-	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
+	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
+		if (attackCtx.getDefender().hasRoughSkinAbility())
+			return true;
+
 		// 98_Magic_Guard annuls secondary damage effects
-		if (defender.getAbilitySelected().getId() == 98)
-			return;
+		if (attackCtx.getAttacker().hasMagicGuardAbility())
+			return true;
 
 		// Attack must make contact
-		if (!attack.getMakesContact())
-			return;
+		if (!attackCtx.getAttack().makesContact() || attackResult.getDamage() <= 0f)
+			return true;
 
 		// Return damage to attacker
-		float attackerInitialPs = attacker.getInitialPs();
+		float attackerInitialPs = attackCtx.getAttacker().getInitialPs();
 		// Removes 6,25% of initial PS
 		float damage = attackerInitialPs * (1f - 0.625f);
-		attacker.setPs(attacker.getPs() - damage);
+		attackCtx.getAttacker().setPs(attackCtx.getAttacker().getPs() - damage);
 
-		System.out.println(attacker.getName() + " fue dañado por la habilidad Piel tosca del Pokémon rival");
+		System.out.println(
+				attackCtx.getAttacker().getName() + " fue dañado por la habilidad Piel tosca del Pokémon rival");
+
+		return true;
 	}
 }

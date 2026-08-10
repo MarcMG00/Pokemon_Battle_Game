@@ -56,7 +56,7 @@ public class StatusService {
 	// effects for example when paralyzed, it reduces speed
 	// -----------------------------
 	public void evaluateStatusStartOfTurn(Pokemon pk) {
-		doFrozenEffect(pk);
+		doFrozenEffectStartTurn(pk);
 	}
 
 	// -----------------------------
@@ -74,11 +74,11 @@ public class StatusService {
 	// probability of attacking, for example when confused, paralyzed, etc.
 	// -----------------------------
 	public boolean canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
-		canAttackFrozen(pk);
+		canAttackFrozenStartTurn(pk);
 		checkCanMoveParalyzed(pk);
-		canAttackParalyzed(pk);
-		boolean canAttackConfused = canAttackConfused(pk);
-		boolean canAttackAsleep = doAsleepEffect(pk);
+		canAttackParalyzedStartTurn(pk);
+		boolean canAttackConfused = canAttackConfusedStartTurn(pk);
+		boolean canAttackAsleep = doAsleepEffectStartTurn(pk);
 
 		boolean canAttack = pk.getCanAttack() && canAttackConfused && canAttackAsleep;
 		pk.setCanAttack(canAttack);
@@ -111,6 +111,7 @@ public class StatusService {
 		// Normal status
 		doBurnedEffectEndTurn(playerAttacker.getPkCombatting());
 		doPoisonedEffectEndTurn(playerAttacker.getPkCombatting());
+		doAsleepEffectEndTurn(playerAttacker.getPkCombatting(), playerDefender.getPkCombatting());
 		// Ephemeral status
 		doTrappedEffect(playerAttacker.getPkCombatting());
 		putConfusedStateIfNeeded(playerAttacker.getPkCombatting());
@@ -130,7 +131,7 @@ public class StatusService {
 		}
 
 		// Force switch if (for example), after getting drained, has no more PS
-		return new StatusResult(playerAttacker.getPkCombatting().isDebilitated());
+		return new StatusResult(playerAttacker.getPkCombatting().isFainted());
 	}
 
 	// -----------------------------
@@ -148,34 +149,31 @@ public class StatusService {
 			Attack attackAttacker) {
 		boolean canBeFrozen = weather != Weather.SUN;
 		boolean isSunny = weather == Weather.SUN;
-		Ability ability = pk.getAbilitySelected();
 
 		// 102_Leaf_Guard
-		if (ability.getId() == 102 && isSunny) {
+		if (pk.hasLeafGuardAbility() && isSunny) {
 			System.out.println(pk.getName()
 					+ " no puede verse afectado por problemas de estado persistentes dada su habilidad Defensa hoja");
 			return;
 		}
 
-		if (ability != null) {
+		if (pk.getAbilitySelected() != null) {
 			// 19_Shield_Dust doesn't allow to get secondary effects
-			if (attackAttacker.hasSecondaryEffect() && ability.getId() == 19) {
+			if (attackAttacker.hasSecondaryEffect() && pk.hasShieldDustAbility()) {
 				System.out.println(pk.getName()
 						+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
 				return;
 			}
 		}
 
-		// Get asleep state (because it has a number of turns, it works like an
-		// ephemeral status, but it's a normal status condition)
 		// Already has a status
-		if (pk.hasStatusCondition() || pk.hasActiveEphemeralStatus(StatusConditions.ASLEEP))
+		if (pk.hasStatusCondition())
 			return;
 
 		switch (newState.getStatusCondition()) {
 		case PARALYZED:
 			// Limber ability prevents paralysis
-			if (pk.getAbilitySelected().getId() == 7) {
+			if (pk.hasLimberAbility()) {
 				System.out.println(pk.getName() + " evitó la parálisis gracias a Flexibilidad");
 				return;
 			} else
@@ -183,7 +181,7 @@ public class StatusService {
 			break;
 		case POISONED:
 			// 17_Immunity ability
-			if (pk.getAbilitySelected().getId() == 17) {
+			if (pk.hasImmunityAbility()) {
 				System.out.println(pk.getName() + " no puede envenenarse dada su habilidad Inmunidad");
 				return;
 			} else
@@ -193,7 +191,7 @@ public class StatusService {
 			break;
 		case FROZEN:
 			// 40_Magma_Armor ability
-			if (pk.getAbilitySelected().getId() == 40) {
+			if (pk.hasMagmaArmorAbility()) {
 				System.out.println(pk.getName() + " no puede ser congelado dada su habilidad Escudo magma");
 				return;
 			}
@@ -210,7 +208,9 @@ public class StatusService {
 				return;
 			}
 
-			if (canBeFrozen && !isWeatherSuppressed && pk.getTypes().stream().noneMatch(t -> t.getId() == 9)) {
+			if (canBeFrozen && !isWeatherSuppressed) {
+				// Some abilities like Flash fire, disables the effect
+				pk.setIsFireBoostActive(false);
 				System.out.println(pk.getName() + " fue congelado");
 			} else {
 				System.out.println(pk.getName()
@@ -219,8 +219,8 @@ public class StatusService {
 			}
 			break;
 		case BURNED:
-			// 41_Water_Vell ability
-			if (pk.getAbilitySelected().getId() == 41) {
+			// 41_Water_Veil ability
+			if (pk.hasWaterVailAbility()) {
 				System.out.println(pk.getName() + " no puede ser quemado dada su habilidad Velo agua");
 				return;
 			}
@@ -244,21 +244,18 @@ public class StatusService {
 	// Try to put ephemeral status on Pokemon facing
 	// -----------------------------
 	public void trySetEphemeralStatus(State state, Pokemon pk, StatusConditions status, Attack attackAttacker) {
-		Ability ability = pk.getAbilitySelected();
-		if (ability == null)
-			return;
-
 		// 19_Shield_Dust doesn't allow to get secondary effects
-		if (attackAttacker.hasSecondaryEffect() && ability.getId() == 19) {
+		if (attackAttacker.hasSecondaryEffect() && pk.hasShieldDustAbility()) {
 			System.out.println(pk.getName()
 					+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
 			return;
 		}
 
 		switch (status) {
+		// ASLEEP state works like an ephemeral status, but it's a normal status
+		// condition)
 		case ASLEEP:
-			// 15_Insomnia, 72_Vital_Spirit
-			if (ability.getId() == 15 || ability.getId() == 72) {
+			if (pk.hasInsomniaAbility() || pk.hasVitalSpiritAbility()) {
 				System.out.println(
 						pk.getName() + " no puede dormirse dada su habilidad " + pk.getAbilitySelected().getName());
 				return;
@@ -266,16 +263,14 @@ public class StatusService {
 				System.out.println(pk.getName() + " se quedó dormido");
 			break;
 		case CONFUSED:
-			// 20_Own_Tempo
-			if (ability.getId() == 20) {
+			if (pk.hasOwnTempoAbility()) {
 				System.out.println(pk.getName() + " no puede confundirse dada su habilidad Ritmo propio");
 				return;
 			} else
 				System.out.println(pk.getName() + " está confuso");
 			break;
 		case INFATUATED:
-			// 12_Oblivious
-			if (ability.getId() == 12) {
+			if (pk.hasObliviousAbility()) {
 				System.out.println(pk.getName() + " no puede enamorarse dada su habilidad Despiste");
 				return;
 			} else
@@ -291,7 +286,7 @@ public class StatusService {
 	// Gets if Pokemon can attack because of FROZEN state (check start of the turn
 	// after applying effect of Frozen)
 	// -----------------------------
-	public void canAttackFrozen(Pokemon pk) {
+	public void canAttackFrozenStartTurn(Pokemon pk) {
 		if (pk.hasActiveStatusCondition(StatusConditions.FROZEN)) {
 			if (pk.getStatusCondition().getCanMoveStatusCondition())
 				pk.setCanAttack(true);
@@ -304,7 +299,7 @@ public class StatusService {
 	// Gets if Pokemon can attack because of PARALYZED state (check start of the
 	// turn)
 	// -----------------------------
-	public void canAttackParalyzed(Pokemon pk) {
+	public void canAttackParalyzedStartTurn(Pokemon pk) {
 		if (pk.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			if (pk.getStatusCondition().getCanMoveStatusCondition()) {
 				pk.setCanAttack(true);
@@ -320,7 +315,7 @@ public class StatusService {
 	// Gets if Pokemon can attack because of CONFUSION state (check start of the
 	// turn)
 	// -----------------------------
-	public boolean canAttackConfused(Pokemon pk) {
+	public boolean canAttackConfusedStartTurn(Pokemon pk) {
 		boolean canAttackConfused = true;
 
 		if (pk.hasActiveEphemeralStatus(StatusConditions.CONFUSED)) {
@@ -339,10 +334,10 @@ public class StatusService {
 					System.out.println(pk.getName() + " está tan confuso que se hace dañó a sí mismo!");
 
 					// Standard damage with a power of 40 points
-					float damage = doConfusedDammage(pk);
+					float damage = doConfusedDammageStartTurn(pk);
 					pk.setPs(pk.getPs() - damage);
 
-					if (pk.getPs() <= 0) {
+					if (pk.isFainted()) {
 						pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
 						System.out.println(pk.getName() + " quedó debilitado por la confusión!");
 					}
@@ -358,7 +353,7 @@ public class StatusService {
 	// -----------------------------
 	// Do effect from FROZEN state (start of the turn before checking if can attack)
 	// -----------------------------
-	public void doFrozenEffect(Pokemon pk) {
+	public void doFrozenEffectStartTurn(Pokemon pk) {
 		if (pk.hasActiveStatusCondition(StatusConditions.FROZEN)) {
 			State frozenStatus = pk.getStatusCondition();
 
@@ -385,7 +380,7 @@ public class StatusService {
 	// -----------------------------
 	public void doBurnedEffectEndTurn(Pokemon pk) {
 		// 98_Magic_Guard annuls secondary damage effects
-		if (pk.getAbilitySelected().getId() == 98)
+		if (pk.hasMagicGuardAbility())
 			return;
 
 		if (pk.hasActiveStatusCondition(StatusConditions.BURNED)) {
@@ -393,17 +388,15 @@ public class StatusService {
 			float reducePs = pk.getInitialPs() * 0.0625f;
 
 			// 85_Heatproof ability reduces to half the burned effect
-			if (pk.getAbilitySelected().getId() == 85)
+			if (pk.hasHeatProofAbility())
 				reducePs /= 2;
 
 			pk.setPs(pk.getPs() - reducePs);
 
 			System.out.println(pk.getName() + " se resiente de la quemadura XD - PS actuales : " + pk.getPs());
 
-			if (pk.getPs() <= 0) {
+			if (pk.isFainted())
 				pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
-				pk.setStatusCondition(new State());
-			}
 		}
 	}
 
@@ -428,12 +421,12 @@ public class StatusService {
 	// -----------------------------
 	public void doPoisonedEffectEndTurn(Pokemon pk) {
 		// 98_Magic_Guard annuls secondary damage effects
-		if (pk.getAbilitySelected().getId() == 98)
+		if (pk.hasMagicGuardAbility())
 			return;
 
 		if (pk.hasActiveStatusCondition(StatusConditions.POISONED)) {
 			// 90_Poison_Heal ability heals 12,5% of initial PS
-			if (pk.getAbilitySelected().getId() == 90) {
+			if (pk.hasPoisonHealAbility()) {
 				float healsPs = pk.getInitialPs() * 0.125f;
 				pk.setPs(Math.min(pk.getPs() + healsPs, pk.getInitialPs()));
 
@@ -446,10 +439,8 @@ public class StatusService {
 
 				System.out.println(pk.getName() + " está envenenado - PS actuales : " + pk.getPs());
 
-				if (pk.getPs() <= 0) {
+				if (pk.isFainted())
 					pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
-					pk.setStatusCondition(new State());
-				}
 			}
 		}
 	}
@@ -457,11 +448,11 @@ public class StatusService {
 	// -----------------------------
 	// Do effect from ASLEEP state (start of the turn)
 	// -----------------------------
-	public boolean doAsleepEffect(Pokemon pk) {
+	public boolean doAsleepEffectStartTurn(Pokemon pk) {
 		boolean canAttack = true;
 
-		if (pk.hasActiveStatusCondition(StatusConditions.ASLEEP)) {
-			State asleepStatus = pk.getStatusCondition();
+		if (pk.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
+			State asleepStatus = pk.getEphemeralStatus(StatusConditions.ASLEEP);
 			asleepStatus.setNbTurns(asleepStatus.getNbTurns() - 1);
 
 			if (asleepStatus.getNbTurns() <= 0) {
@@ -486,7 +477,7 @@ public class StatusService {
 	// -----------------------------
 	// Apply confusion damage (only start of the turn)
 	// -----------------------------
-	public float doConfusedDammage(Pokemon pk) {
+	public float doConfusedDammageStartTurn(Pokemon pk) {
 		// There is a random variation when attacking (the total damage is not the same
 		// every time)
 		int randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
@@ -504,7 +495,7 @@ public class StatusService {
 	// -----------------------------
 	private void doTrappedEffect(Pokemon pk) {
 		// 98_Magic_Guard annuls secondary damage effects
-		if (pk.getAbilitySelected().getId() == 98)
+		if (pk.hasMagicGuardAbility())
 			return;
 
 		if (pk.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
@@ -522,10 +513,8 @@ public class StatusService {
 
 				System.out.println(pk.getName() + " está atado y recibe daño");
 
-				if (pk.getPs() <= 0) {
+				if (pk.getPs() <= 0)
 					pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
-					pk.removeEphemeralStatus(StatusConditions.TRAPPED);
-				}
 			}
 		}
 	}
@@ -535,7 +524,7 @@ public class StatusService {
 	// -----------------------------
 	public void doDrainedAllTurnsEffect(Pokemon attacker, Pokemon defender) {
 		// 98_Magic_Guard annuls secondary damage effects
-		if (attacker.getAbilitySelected().getId() == 98)
+		if (attacker.hasMagicGuardAbility())
 			return;
 
 		if (attacker.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
@@ -544,7 +533,7 @@ public class StatusService {
 			// Turn number "0" allows to avoid applying effect the first turn
 			if (drainedAllTurnsStaus.getNbTurns() != 0) {
 				// Cannot be drained if defender has the ability 64_Liquid_Ooze
-				if (defender.getAbilitySelected().getId() != 64) {
+				if (!defender.hasLiquidOozeAbility()) {
 					// Reduces 12,5% from his initial PS
 					float reducePs = attacker.getInitialPs() * 0.125f;
 					attacker.setPs(attacker.getPs() - reducePs);
@@ -552,10 +541,8 @@ public class StatusService {
 					System.out.println(
 							attacker.getName() + " está drenado y recibe daño; PS restantes : " + attacker.getPs());
 
-					if (attacker.getPs() <= 0) {
+					if (attacker.isFainted())
 						attacker.setStatusCondition(new State(StatusConditions.DEBILITATED));
-						attacker.removeEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
-					}
 				}
 			}
 		}
@@ -584,7 +571,7 @@ public class StatusService {
 		if (defender.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
 			State drainedAllTurnsStatusDefender = defender.getEphemeralStatuses().get(StatusConditions.DRAINEDALLTURNS);
 
-			if (defender.getAbilitySelected().getId() == 64) {
+			if (defender.hasLiquidOozeAbility()) {
 				// Reduces 12,5% from his initial PS
 				float reducePs = attacker.getInitialPs() * 0.125f;
 				attacker.setPs(attacker.getPs() - reducePs);
@@ -618,13 +605,13 @@ public class StatusService {
 	// Reduce turn from DISABLE state (end of the turn)
 	// -----------------------------
 	private void reduceDisabledAttackTurn(Pokemon pk) {
-		if (pk.hasActiveStatusCondition(StatusConditions.DISABLE)) {
-			State disabledLastaAttackStatus = pk.getStatusCondition();
+		if (pk.hasActiveEphemeralStatus(StatusConditions.DISABLE)) {
+			State disabledLastaAttackStatus = pk.getEphemeralStatus(StatusConditions.DISABLE);
 
 			disabledLastaAttackStatus.setNbTurns(disabledLastaAttackStatus.getNbTurns() - 1);
 
 			if (disabledLastaAttackStatus.getNbTurns() <= 0) {
-				pk.setStatusCondition(new State());
+				pk.removeEphemeralStatus(StatusConditions.DISABLE);
 				System.out.println(pk.getName() + " ya puede volver a usar "
 						+ disabledLastaAttackStatus.getAttackDisabled().getName());
 			} else
@@ -662,6 +649,37 @@ public class StatusService {
 				}
 			}
 		}
+	}
+
+	// -----------------------------
+	// Do effect from ASLEEP state (end of the turn)
+	// -----------------------------
+	public void doAsleepEffectEndTurn(Pokemon attacker, Pokemon defender) {
+		if (applyBadDreamsAbility(attacker, defender))
+			return;
+	}
+
+	// -----------------------------
+	// Apply Bad Dreams ability if needed (end of the turn)
+	// -----------------------------
+	public boolean applyBadDreamsAbility(Pokemon attacker, Pokemon defender) {
+
+		// 123_Bad_dreams ability => needs opponent to be asleep
+		if (attacker.hasBadDreamsAbility() && defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
+			// Reduces current PS by 1/8 from max PS
+			float reducePs = defender.getInitialPs() * 0.125f;
+			defender.setPs(defender.getPs() - reducePs);
+
+			System.out.println(
+					defender.getName() + " sufre daño a causa de la habilidad Mal Sueño de " + attacker.getName());
+
+			if (defender.isFainted())
+				defender.setStatusCondition(new State(StatusConditions.DEBILITATED));
+
+			return true;
+		}
+
+		return false;
 	}
 
 	// -----------------------------

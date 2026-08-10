@@ -23,11 +23,11 @@ public class StenchAbility implements AbilityEffect {
 
 		// 3 - The defender can be flinched
 		// 98_Magic_Guard annuls secondary damage effects
-		if (defender.getAbilitySelected().getId() == 98)
+		if (defender.hasMagicGuardAbility())
 			return;
 
 		// 4 - The defender can be intimidated
-		if (defender.getAbilitySelected().getId() == 39) {
+		if (defender.hasInnerFocusAbility()) {
 			System.out.println(
 					defender.getName() + " no se intimidó gracias a " + defender.getAbilitySelected().getName());
 			return;

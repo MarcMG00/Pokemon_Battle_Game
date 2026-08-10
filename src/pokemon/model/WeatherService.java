@@ -66,14 +66,13 @@ public class WeatherService {
 	// Suppress weather ability by 13_Cloud_Nine or 76_Air_Lock
 	// -----------------------------
 	private void applyWeatherSuppression(Pokemon attacker, Pokemon defender) {
-		Ability ability = attacker.getAbilitySelected();
 
-		if (ability == null)
+		if (attacker.getAbilitySelected() == null)
 			return;
 
-		if (ability.getId() == 13 || ability.getId() == 76) {
-			ability.getEffect().onSwitchIn(battleCtx, attacker, defender);
-		}
+		// 13_Cloud_nine / 76_Air_lock
+		if (attacker.hasCloudNineAbility() || attacker.hasAirLockAbility())
+			attacker.getAbilitySelected().getEffect().onSwitchIn(battleCtx, attacker, defender);
 	}
 
 	// -----------------------------
@@ -90,17 +89,16 @@ public class WeatherService {
 		Weather weather = battleCtx.getWeather();
 
 		for (Pokemon pk : turnCtx.getPokemons()) {
-			Ability ability = pk.getAbilitySelected();
 
-			if (ability == null || ability.getId() == 5000)
+			if (pk.getAbilitySelected() == null || pk.getAbilitySelected().getId() == 5000)
 				continue;
 
 			// 33_Swift_Swim
-			if (ability.getId() == 33 && weather == Weather.RAIN)
+			if (pk.hasSwiftSwimAbility() && weather == Weather.RAIN)
 				turnCtx.multiplySpeed(pk, 2f);
 
 			// 34_Chlorophyll
-			if (ability.getId() == 34 && weather == Weather.SUN)
+			if (pk.hasChlorophyllAbility() && weather == Weather.SUN)
 				turnCtx.multiplySpeed(pk, 2f);
 		}
 	}
@@ -121,6 +119,9 @@ public class WeatherService {
 		case RAIN:
 			applyRainEffect(pokemon);
 			break;
+		case HAIL:
+			applyHailEffect(pokemon);
+			break;
 		default:
 			break;
 		}
@@ -130,14 +131,12 @@ public class WeatherService {
 	// Sandstorm effect
 	// -----------------------------
 	private void applySandstormEffect(Pokemon pokemon) {
-		Ability ability = pokemon.getAbilitySelected();
-
 		if (isImmuneToSandstormByType(pokemon))
 			return;
 
-		if (isImmuneToSandstormByAbility(ability)) {
+		if (isImmuneToSandstormByAbility(pokemon)) {
 			System.out.println(pokemon.getName() + " no se ve afectado por la tormenta de arena dada su habilidad "
-					+ ability.getName());
+					+ pokemon.getAbilitySelected().getName());
 			return;
 		}
 
@@ -148,30 +147,41 @@ public class WeatherService {
 	// Sun effect
 	// -----------------------------
 	private void applySunEffect(Pokemon pokemon) {
-		Ability ability = pokemon.getAbilitySelected();
-
-		if (ability == null)
+		if (pokemon.getAbilitySelected() == null)
 			return;
 
-		// 87_Dry_Skin & 94_Solar_Power
-		if (ability.getId() == 87 || ability.getId() == 94)
+		if (pokemon.hasDrySkinAbility() || pokemon.hasSolarPowerAbility())
 			applyDamageByPercentage(pokemon, 0.125f, pokemon.getName() + " (Id:" + pokemon.getId()
-					+ "), recibie daño dada su habilidad " + ability.getName() + " (hace SOL)");
+					+ "), recibie daño dada su habilidad " + pokemon.getAbilitySelected().getName() + " (hace SOL)");
 	}
 
 	// -----------------------------
 	// Rain effect
 	// -----------------------------
 	private void applyRainEffect(Pokemon pokemon) {
-		Ability ability = pokemon.getAbilitySelected();
-
-		if (ability == null)
+		if (pokemon.getAbilitySelected() == null)
 			return;
 
-		// 87_Dry_Skin
-		if (ability.getId() == 87)
-			applyHealByPercentage(pokemon, 0.125f, pokemon.getName() + " (Id:" + pokemon.getId()
-					+ "), recupera PS dada su habilidad " + ability.getName() + " (está LLOVIENDO)");
+		if (pokemon.hasDrySkinAbility())
+			applyHealByPercentage(pokemon, 0.125f,
+					pokemon.getName() + " (Id:" + pokemon.getId() + "), recupera PS dada su habilidad "
+							+ pokemon.getAbilitySelected().getName() + " (está LLOVIENDO)");
+	}
+
+	// -----------------------------
+	// Hail effect
+	// -----------------------------
+	private void applyHailEffect(Pokemon pokemon) {
+		if (isImmuneToHailByType(pokemon))
+			return;
+
+		if (isImmuneToHailByAbility(pokemon)) {
+			System.out.println(pokemon.getName() + " (Id:" + pokemon.getId()
+					+ "), no sufrió daño de Granizo dada su habilidad " + pokemon.getAbilitySelected().getName());
+			return;
+		}
+
+		applyDamageByPercentage(pokemon, 0.0625f, pokemon.getName() + " ha sido zarandeado por el granizo");
 	}
 
 	// -----------------------------
@@ -204,9 +214,23 @@ public class WeatherService {
 	// -----------------------------
 	// Check sandstorm immunity by ability
 	// -----------------------------
-	private boolean isImmuneToSandstormByAbility(Ability ability) {
-		return ability != null && (ability.getId() == 8 || ability.getId() == 98 || ability.getId() == 159
-				|| ability.getId() == 142 || ability.getId() == 146);
+	private boolean isImmuneToSandstormByAbility(Pokemon pk) {
+		return pk.getAbilitySelected() != null && (pk.hasSandVeilAbility() || pk.hasMagicGuardAbility()
+				|| pk.hasSandForceAbility() || pk.hasOvercoatAbility() || pk.hasSandRashAbility());
+	}
+
+	// -----------------------------
+	// Check hail immunity by type
+	// -----------------------------
+	private boolean isImmuneToHailByType(Pokemon pokemon) {
+		return pokemon.getTypes().stream().anyMatch(t -> t.getId() == 9);
+	}
+
+	// -----------------------------
+	// Check hail immunity by ability
+	// -----------------------------
+	private boolean isImmuneToHailByAbility(Pokemon pk) {
+		return pk.getAbilitySelected() != null && (pk.hasSnowCloakAbility() || pk.hasMagicGuardAbility());
 	}
 
 	// -----------------------------
@@ -228,7 +252,7 @@ public class WeatherService {
 	private boolean checkDebilitatedAfterEndTurn(Player owner, Scanner sc) {
 		Pokemon pk = owner.getPkCombatting();
 
-		if (pk.getPs() >= 0)
+		if (!pk.isFainted())
 			return false;
 
 		// Mark as debilitated
@@ -247,11 +271,11 @@ public class WeatherService {
 			while (!changed)
 				changed = switchPokemonService.changePokemon(sc);
 		} else {
-			Pokemon newIA = owner.decideBestChangePokemon(battleCtx.getPlayer().getPkCombatting(),
+			Pokemon newIA = switchPokemonService.decideBestChangePokemon(owner, battleCtx.getPlayer().getPkCombatting(),
 					battleCtx.getEffectPerTypes());
 
 			if (newIA == null)
-				newIA = owner.getPokemon().stream().filter(p -> !p.isDebilitated()).findFirst().orElse(null);
+				newIA = owner.getPokemon().stream().filter(p -> !p.isFainted()).findFirst().orElse(null);
 
 			if (newIA != null) {
 				switchPokemonService.resetPokemonBeforeSwitch(owner.getPkCombatting());

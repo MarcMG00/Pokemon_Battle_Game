@@ -11,7 +11,7 @@ public class ForecastAbility implements AbilityEffect {
 	@Override
 	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
 		// Only change type of defender if ability is Forecast
-		if (owner.getAbilitySelected().getId() != 59)
+		if (!owner.hasForecastAbility())
 			return;
 
 		// Weather hasn't to be suppressed
@@ -54,7 +54,7 @@ public class ForecastAbility implements AbilityEffect {
 	@Override
 	public void duringBattle(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
 		// Only change type of defender if ability is Forecast
-		if (owner.getAbilitySelected().getId() != 59)
+		if (!owner.hasForecastAbility())
 			return;
 
 		// Weather hasn't to be suppressed

@@ -8,7 +8,7 @@ import pokemon.model.Pokemon;
 public class TraceAbility implements AbilityEffect {
 	@Override
 	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
-		if (defender.getAbilitySelected().getId() == 1) {
+		if (defender.hasStenchAbility()) {
 			System.out.println(owner.getName() + " no puede copiar la habilidad de " + defender.getName() + " : "
 					+ defender.getAbilitySelected().getName());
 			return;
@@ -18,8 +18,7 @@ public class TraceAbility implements AbilityEffect {
 		if (owner.getBaseAbility().getId() != 36)
 			return;
 
-		Ability targetAbility = defender.getAbilitySelected();
-		Ability AbilityDeepCopy = new Ability(targetAbility);
+		Ability AbilityDeepCopy = new Ability(defender.getAbilitySelected());
 
 		owner.setAbilitySelected(AbilityDeepCopy);
 
@@ -29,7 +28,7 @@ public class TraceAbility implements AbilityEffect {
 		// Applies immediately abilities that are onSwitchIn or startBattle
 		if ((owner.hasActiveEphemeralStatus(StatusConditions.ASLEEP))) {
 			// 72_Vital_Spirit forbid to get asleep, so wake up instantly
-			if (defender.getAbilitySelected().getId() == 72) {
+			if (defender.hasVitalSpiritAbility()) {
 				owner.removeEphemeralStatus(StatusConditions.ASLEEP);
 
 				System.out.println(owner.getName() + " se despertó gracias a la habilidad copiada "

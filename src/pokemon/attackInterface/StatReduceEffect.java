@@ -20,6 +20,12 @@ public class StatReduceEffect implements AttackEffect {
 
 		Pokemon target = ctx.getDefender();
 
+		boolean isReduceStatStage = true;
+
+		// 126_Contrary ability reverse the increase or reduce stat stage
+		if (target.hasContraryAbility())
+			isReduceStatStage = false;
+
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
@@ -32,15 +38,16 @@ public class StatReduceEffect implements AttackEffect {
 		}
 
 		// 29_Clear_Body
-		if (target.getAbilitySelected().getId() == 29) {
+		if (target.hasClearBodyAbility()) {
 			System.out.println(
 					"Las estadísticas no pueden bajar por la habilidad " + target.getAbilitySelected().getName());
 			return result;
 		}
 
 		// Precision
+		// 35_Illuminate and 51_Keen_eye cannot be reduced precision
 		if (stat == StatType.PRECISION
-				&& (target.getAbilitySelected().getId() == 35 || target.getAbilitySelected().getId() == 51)) {
+				&& (target.hasIlluminateAbility() || target.hasKeenEyeAbility())) {
 			System.out.println("La precisión no puede bajar por la habilidad " + target.getAbilitySelected().getName());
 			return result;
 		}
@@ -50,10 +57,20 @@ public class StatReduceEffect implements AttackEffect {
 			return result;
 		}
 
-		stages *= ctx.getStatService().applyModifiersNbStage(target, true);
-		target.setStageValueStats(stat, stages, true);
+		stages *= ctx.getStatService().applyModifiersNbStage(target, isReduceStatStage);
+		target.setStageValueStats(stat, stages, isReduceStatStage);
 
-		System.out.println(target.getName() + " bajó su " + stat);
+		System.out.println(
+				isReduceStatStage ? target.getName() + " bajó su " + stat : target.getName() + " aumentó su " + stat);
+
+		// 128_Defiant ability increases by 2 the attack for each stat reduced
+		if (isReduceStatStage && target.hasDefiantAbility()) {
+			if (target.getStage(StatType.ATTACK) < 6) {
+				target.setStageValueStats(StatType.ATTACK, 2, false);
+				System.out.println(target.getName() + " aumentó mucho su ataque gracias a su habilidad Competitivo");
+			}
+		}
+
 		return result;
 	}
 }

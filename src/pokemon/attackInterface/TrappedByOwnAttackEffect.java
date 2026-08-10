@@ -23,8 +23,8 @@ public class TrappedByOwnAttackEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
-		System.out.println(
-				ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó " + ctx.getAttack().getName());
+		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
+				+ ctx.getAttack().getName());
 
 		AttackResult result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
@@ -43,6 +43,8 @@ public class TrappedByOwnAttackEffect implements AttackEffect {
 		}
 
 		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

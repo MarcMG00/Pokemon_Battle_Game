@@ -17,6 +17,12 @@ public class StatBoostEffect implements AttackEffect {
 	public AttackResult execute(AttackContext ctx) {
 		AttackResult result = new AttackResult();
 
+		boolean isReduceStatStage = false;
+
+		// 126_Contrary ability reverse the increase or reduce stat stage
+		if (ctx.getAttacker().hasContraryAbility())
+			isReduceStatStage = true;
+
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
@@ -26,12 +32,13 @@ public class StatBoostEffect implements AttackEffect {
 			return result;
 		}
 
-		stages *= ctx.getStatService().applyModifiersNbStage(ctx.getAttacker(), false);
-		ctx.getAttacker().setStageValueStats(stat, stages, false);
-		System.out.println(
-				ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su " + stat.name());
+		stages *= ctx.getStatService().applyModifiersNbStage(ctx.getAttacker(), isReduceStatStage);
+		ctx.getAttacker().setStageValueStats(stat, stages, isReduceStatStage);
+		System.out.println(isReduceStatStage
+				? ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " bajó su " + stat.name()
+				: ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su "
+						+ stat.name());
 
-		
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		return result;

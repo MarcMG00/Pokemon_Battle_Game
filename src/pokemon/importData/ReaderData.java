@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import pokemon.abilityInterface.AftermathAbility;
 import pokemon.abilityInterface.AirLockAbility;
 import pokemon.abilityInterface.AngerPointAbility;
+import pokemon.abilityInterface.AnticipationAbility;
 import pokemon.abilityInterface.CloudNineAbility;
 import pokemon.abilityInterface.ColorChangeAbility;
+import pokemon.abilityInterface.CursedBodyAbility;
 import pokemon.abilityInterface.CuteCharmAbility;
 import pokemon.abilityInterface.DownloadAbility;
 import pokemon.abilityInterface.DrizzleAbility;
@@ -24,6 +27,7 @@ import pokemon.abilityInterface.FlameBodyAbility;
 import pokemon.abilityInterface.FlashFireAbility;
 import pokemon.abilityInterface.ForecastAbility;
 import pokemon.abilityInterface.HydratationAbility;
+import pokemon.abilityInterface.IceBodyAbility;
 import pokemon.abilityInterface.IntimidateAbility;
 import pokemon.abilityInterface.LevitateAbility;
 import pokemon.abilityInterface.LightningRodAbility;
@@ -39,16 +43,18 @@ import pokemon.abilityInterface.RainDishAbility;
 import pokemon.abilityInterface.RoughSkinAbility;
 import pokemon.abilityInterface.SandStreamAbility;
 import pokemon.abilityInterface.ShedSkinAbility;
+import pokemon.abilityInterface.SnowWarningAbility;
 import pokemon.abilityInterface.SpeedBoostAbility;
 import pokemon.abilityInterface.StaticAbility;
 import pokemon.abilityInterface.SteadfastAbility;
 import pokemon.abilityInterface.StenchAbility;
+import pokemon.abilityInterface.StormDrainAbility;
 import pokemon.abilityInterface.SynchronizeAbility;
 import pokemon.abilityInterface.TraceAbility;
 import pokemon.abilityInterface.VoltAbsorbAbility;
 import pokemon.abilityInterface.WaterAbsorbAbility;
+import pokemon.abilityInterface.WeakArmorAbility;
 import pokemon.abilityInterface.WonderGuardAbility;
-import pokemon.attackInterface.AttackEffect;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
@@ -56,7 +62,6 @@ import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
-import pokemon.model.DamageService;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 import pokemon.model.SecondaryEffect;
@@ -118,10 +123,6 @@ public class ReaderData {
 
 	public HashMap<String, HashMap<String, ArrayList<PokemonType>>> getEffectPerTypes() {
 		return effectPerTypes;
-	}
-
-	public void setEffectPerTypes(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
-		this.effectPerTypes = effectPerTypes;
 	}
 
 	public ArrayList<Attack> getAttacks() {
@@ -476,7 +477,8 @@ public class ReaderData {
 	// -----------------------------
 	// Reads typesList.csv file and adds the effects against other types
 	// -----------------------------
-	public void readPkTypesEffectsToOtherTypes(Map<Integer, PokemonType> typeById) {
+	public void readPkTypesEffectsToOtherTypes(Map<Integer, PokemonType> typeById,
+			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(SAMPLE_CSV_ALL_TYPES))) {
 
 			bufferedReader.readLine(); // skip header
@@ -521,7 +523,7 @@ public class ReaderData {
 				}
 
 				// Save into main dictionary
-				this.getEffectPerTypes().put(typeName, types);
+				effectPerTypes.put(typeName, types);
 			}
 
 			System.out.println("Finished reading readPokeTypeEffectsToOtherTypes");
@@ -742,6 +744,8 @@ public class ReaderData {
 				setAttackForceChange(attack);
 				// Set if attack is punch type
 				setAttackIsPunch(attack);
+				// Set the attack is applied to attacker its self
+				setAttackIsAppliedOnItsSelf(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -929,10 +933,13 @@ public class ReaderData {
 	// -----------------------------
 	// Set the ability effect of the attack
 	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
-	// / 60 (when applying objects) / 82 (when applying objects) / 80 (to complete)
+	// / 60 (when applying objects) / 82 (when applying objects) / 81 (to complete)
 	// / 83 (to complete) / 84 (when applying
 	// objects) / 90 (to complete) / 98 (to complete) / 99 (to complete) / 100 (to
-	// complete)
+	// complete) / 103 (when applying objects)/ 104 (when having more abilities) /
+	// 108 (when all attacks will be programmed) / 112 (when having more attacks) /
+	// 119 (when applying objects) / 121 (when applying objects) / 124 (when
+	// applying objects) / 125 (to complete)
 	// -----------------------------
 	private static void setAbilityEffect(Ability ability) {
 		switch (ability.getId()) {
@@ -1091,8 +1098,37 @@ public class ReaderData {
 		case 96:
 			ability.setEffect(new NormalizeAbility());
 			break;
+		// Detonación/Aftermath
+		case 106:
+			ability.setEffect(new AftermathAbility());
+			break;
+		// Anticipación/Anticipation
+		case 107:
+			ability.setEffect(new AnticipationAbility());
+			break;
+		// Colector/Storm drain
+		case 114:
+			ability.setEffect(new StormDrainAbility());
+			break;
+		// Gélido/Ice body
+		case 115:
+			ability.setEffect(new IceBodyAbility());
+			break;
+		// Nevada/Snow warning
+		case 117:
+			ability.setEffect(new SnowWarningAbility());
+			break;
+		// Cuerpo maldito/Cursed body
+		case 130:
+			ability.setEffect(new CursedBodyAbility());
+			break;
+		// Armadura frágil/Weak armor
+		case 133:
+			ability.setEffect(new WeakArmorAbility());
+			break;
 		default:
 			ability.setEffect(new EmptyAbility());
+			break;
 		}
 	}
 
@@ -1169,11 +1205,27 @@ public class ReaderData {
 	}
 
 	// -----------------------------
-	// Set if the attack is one hit KO
+	// Set if the attack makes contact (physical attack)
 	// -----------------------------
 	private static void setAttackMakesContact(Attack attack) {
 		if (attack.getBases() != null && attack.getBases().contains("fisico"))
 			attack.setMakesContact(true);
+	}
+
+	// -----------------------------
+	// Set if the attack makes contact (physical attack)
+	// -----------------------------
+	private static void setAttackIsAppliedOnItsSelf(Attack attack) {
+		switch (attack.getId()) {
+		case 14:
+		case 74:
+		case 96:
+		case 97:
+			attack.setAppliedToAttacker(true);
+			break;
+		default:
+			attack.setAppliedToAttacker(false);
+		}
 	}
 
 	// -----------------------------

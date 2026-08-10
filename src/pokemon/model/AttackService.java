@@ -20,11 +20,12 @@ import pokemon.attackInterface.IgnoreMinimizeEffect;
 import pokemon.attackInterface.LeechSeedEffect;
 import pokemon.attackInterface.MistEffect;
 import pokemon.attackInterface.MultiHitEffect;
-import pokemon.attackInterface.MultiStatBoostEffect;
+import pokemon.attackInterface.MultiStatChange;
 import pokemon.attackInterface.OneHitKOEffect;
 import pokemon.attackInterface.ParalyzeEffect;
 import pokemon.attackInterface.PoisonEffect;
 import pokemon.attackInterface.RecoilDamageEffect;
+import pokemon.attackInterface.RecoilDamageIfFailsEffect;
 import pokemon.attackInterface.SimpleDamageEffect;
 import pokemon.attackInterface.SleepEffect;
 import pokemon.attackInterface.SolarBeamEffect;
@@ -89,7 +90,6 @@ public class AttackService {
 		attackEffects.put(21, simpleDamage); // Atizar/Slam (tested)
 		attackEffects.put(22, simpleDamage); // Látigo cepa/Vine whip (tested)
 		attackEffects.put(25, simpleDamage); // Megapatada/Mega kick (tested)
-		attackEffects.put(26, simpleDamage); // Patada salto/Jump kick (tested)
 		attackEffects.put(27, simpleDamage); // Patada giro/Rolling kick (tested)
 		attackEffects.put(29, simpleDamage); // Golpe cabeza/Headbutt (tested)
 		attackEffects.put(30, simpleDamage); // Cornada/Horn attack (tested)
@@ -170,6 +170,10 @@ public class AttackService {
 		attackEffects.put(38, new RecoilDamageEffect(damageService, 0.33f)); // Doble filo/Dobule-Edge (tested)
 		attackEffects.put(66, new RecoilDamageEffect(damageService, 0.25f)); // Sumisión/Submission (tested)
 
+		// Recoil damage if attacks fails effect
+		AttackEffect recoilDamageIfFails = new RecoilDamageIfFailsEffect(damageService);
+		attackEffects.put(26, recoilDamageIfFails); // Patada salto/Jump kick (tested)
+
 		// Trapped by own attack effect
 		attackEffects.put(37, new TrappedByOwnAttackEffect(helperService, damageService, 2, 5)); // Saña/Thrash (tested)
 		attackEffects.put(80, new TrappedByOwnAttackEffect(helperService, damageService, 2, 5)); // Danza pétalo/Petal
@@ -216,7 +220,7 @@ public class AttackService {
 		Map<StatType, Integer> growthStats = new HashMap<>();
 		growthStats.put(StatType.ATTACK, 1);
 		growthStats.put(StatType.SPECIAL_ATTACK, 1);
-		attackEffects.put(74, new MultiStatBoostEffect(growthStats)); // Desarrollo/Growth (tested)
+		attackEffects.put(74, new MultiStatChange(growthStats)); // Desarrollo/Growth (tested)
 
 		// Rayo solar/Solar beam (tested)
 		attackEffects.put(76, new SolarBeamEffect(damageService));
@@ -335,7 +339,7 @@ public class AttackService {
 	// Check if PP remaining on attacks from Pokemon
 	// -----------------------------
 	private boolean hasAnyPPLeft(Pokemon pk) {
-		return battleCtx.getPlayer().hasAnyPPLeft(pk);
+		return pk.hasAnyPPLeft();
 	}
 
 	// -----------------------------
@@ -424,7 +428,8 @@ public class AttackService {
 		Pokemon playerPk = battleCtx.getPlayer().getPkCombatting();
 
 		if (playerPk.getCanDonAnythingNextRound() && !playerPk.getIsChargingAttackForNextRound())
-			battleCtx.getPlayer().prepareBestAttackPlayer(attackId, battleCtx.getIa().getPkCombatting());
+			AttackAnalyzer.prepareBestAttackPlayer(battleCtx.getPlayer(), attackId,
+					battleCtx.getIa().getPkCombatting());
 	}
 
 	// -----------------------------
@@ -434,7 +439,7 @@ public class AttackService {
 		Pokemon iaPk = battleCtx.getIa().getPkCombatting();
 
 		if (iaPk.getCanDonAnythingNextRound() && !iaPk.getIsChargingAttackForNextRound()
-				&& battleCtx.getPlayer().getPkCombatting().getAbilitySelected().getId() != 23)
+				&& !battleCtx.getPlayer().getPkCombatting().hasShadowTagAbility())
 			switchPokemonService.tryIAChange();
 	}
 
@@ -460,7 +465,7 @@ public class AttackService {
 		if (pkIA.getIsChargingAttackForNextRound())
 			return; // if charging an attack (like fly), cannot choose another attack
 
-		battleCtx.getIa().prepareBestAttackIA(battleCtx.getPlayer().getPkCombatting());
+		AttackAnalyzer.prepareBestAttackIA(battleCtx.getIa(), battleCtx.getPlayer().getPkCombatting());
 	}
 
 	// -----------------------------
@@ -547,7 +552,7 @@ public class AttackService {
 		}
 
 		// If Pokemon is debilitated, force change and ends turn
-		if (pk.isDebilitated()) {
+		if (pk.isFainted()) {
 			statusService.clearDrainEffects(pk, defender.getPkCombatting());
 			checkForcedPokemonChange(sc);
 			return true;
@@ -596,7 +601,7 @@ public class AttackService {
 	// Handle cases where Pokemon cannot act this turn (recharge, ability, etc.)
 	// -----------------------------
 	private void handleRecoveryTurn(Pokemon pk) {
-		if (pk.getAbilitySelected().getId() == 54)
+		if (pk.hasTruantAbility())
 			System.out.println(pk.getName() + " (" + pk.getId() + ") no puede atacar o cambiarse a causa de "
 					+ pk.getAbilitySelected().getName());
 		else
@@ -622,7 +627,7 @@ public class AttackService {
 		}
 
 		// If defender got debilitated during this attack -> force change and end turn
-		if (defenderPk.isDebilitated()) {
+		if (defenderPk.isFainted()) {
 			statusService.clearDrainEffects(attacker.getPkCombatting(), defenderPk);
 			checkForcedPokemonChange(sc);
 			return true;
@@ -646,11 +651,11 @@ public class AttackService {
 	// -----------------------------
 	private void checkForcedPokemonChange(Scanner sc) {
 		// Player dies
-		if (battleCtx.getPlayer().getPkCombatting().isDebilitated())
+		if (battleCtx.getPlayer().getPkCombatting().isFainted())
 			handlePlayerPokemonDefeated(sc);
 
 		// IA dies
-		if (battleCtx.getIa().getPkCombatting().isDebilitated())
+		if (battleCtx.getIa().getPkCombatting().isFainted())
 			handleIAPokemonDefeated();
 	}
 
@@ -677,11 +682,11 @@ public class AttackService {
 
 		System.out.println(pkIA.getName() + " fue derrotado.");
 
-		Pokemon newIA = battleCtx.getIa().decideBestChangePokemon(battleCtx.getPlayer().getPkCombatting(),
-				battleCtx.getEffectPerTypes());
+		Pokemon newIA = switchPokemonService.decideBestChangePokemon(battleCtx.getIa(),
+				battleCtx.getPlayer().getPkCombatting(), battleCtx.getEffectPerTypes());
 
 		if (newIA == null)
-			newIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.isDebilitated()).findFirst().get();
+			newIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.isFainted()).findFirst().get();
 
 		switchPokemonService.resetPokemonBeforeSwitch(pkIA);
 
@@ -695,7 +700,7 @@ public class AttackService {
 
 		switchPokemonService.refreshAttackOrders();
 
-		battleCtx.getIa().prepareBestAttackIA(battleCtx.getPlayer().getPkCombatting());
+		AttackAnalyzer.prepareBestAttackIA(battleCtx.getIa(), battleCtx.getPlayer().getPkCombatting());
 	}
 
 	// -----------------------------
@@ -704,7 +709,7 @@ public class AttackService {
 	private void handleRetaliation(Player attacker, Player defender, TurnContext turnCtx) {
 		Pokemon pkAttacker = attacker.getPkCombatting();
 
-		if (pkAttacker.isDebilitated()) {
+		if (pkAttacker.isFainted()) {
 			handleDebilitatedPokemon(pkAttacker, attacker == battleCtx.getPlayer());
 			return;
 		}
@@ -768,7 +773,7 @@ public class AttackService {
 	// Apply attack from attacker (principal damage)
 	// -----------------------------
 	private void executeAttackEffect(AttackContext ctx) {
-		Ability abilityDefender = ctx.getAttacker().getAbilitySelected();
+		Ability abilityDefender = ctx.getDefender().getAbilitySelected();
 
 		// Some abilities allows to not to do damage (ex : Volt absorb)
 		if (abilityDefender != null) {
@@ -786,14 +791,56 @@ public class AttackService {
 		if (effect == null)
 			throw new IllegalStateException("No effect defined for attack " + ctx.getAttack().getId());
 
-		// Gets the attack effect and apply damage
-		AttackResult result = effect.execute(ctx);
+		// Cannot attack if attack type doesn't affect to rival (and is not an attack
+		// used to attacker, for instance that allows to boost his stats)
+		if (!canUseAttack(ctx)) {
+			System.out.println(ctx.getAttack().getName() + " no afecta al " + ctx.getDefender().getName() + " (Id:"
+					+ ctx.getDefender().getId() + ")" + " rival");
+		} else {
+			// Gets the attack effect and apply damage
+			AttackResult result = effect.execute(ctx);
 
-		applyAfterAttack(ctx, result);
+			ctx.getAttacker().setLastUsedAttack(ctx.getAttack());
 
-		ctx.getAttacker().setLastUsedAttack(ctx.getAttack());
+			applyAfterAttack(ctx, result);
 
-		applyMistIfNeeded(ctx.getAttacker());
+			applyMistIfNeeded(ctx.getAttacker());
+		}
+	}
+
+	// -----------------------------
+	// Check if attack has effect to rival of applied to attacker
+	// -----------------------------
+	private boolean canUseAttack(AttackContext ctx) {
+		Pokemon attacker = ctx.getAttacker();
+		Attack attack = ctx.getAttack();
+
+		// Defender
+		Pokemon defender = ctx.getDefender();
+		boolean isDefenderGhostType = defender.getTypes().stream().anyMatch(t -> t.getId() == 6);
+
+		// Principal effect of the attack
+		boolean attackNoEffectToRival = attacker.getNoEffectAttacks().stream()
+				.anyMatch(a -> a.getId() == attack.getId());
+		boolean isAttackAppliedToAttacker = attack.isAppliedToAttacker();
+
+		// 1. Can use attack if attacker applies it on itself
+		if (isAttackAppliedToAttacker)
+			return true;
+
+		// 2. 113_Scrappy ability => normal and fight type affects to ghost type
+		if (attackNoEffectToRival && attacker.hasScrappyAbility() && isDefenderGhostType
+				&& (attack.isNormalType() || attack.isFightingType())) {
+			System.out.println(ctx.getAttacker().getName() + " puede atacar dada su habilidad Intrépido");
+
+			return true;
+		}
+
+		// 3. Last condition => nothing applied, just check if doesn't affect at all
+		if (attackNoEffectToRival)
+			return false;
+
+		return true;
 	}
 
 	// -----------------------------
@@ -814,8 +861,9 @@ public class AttackService {
 			float dmg = result.getDamage();
 
 			if (ctx.getAttacker().getPhysicalAttacks() != null && ctx.getAttacker().getPhysicalAttacks().stream()
-					.anyMatch(a -> a.getId() == ctx.getAttack().getId()))
+					.anyMatch(a -> a.getId() == ctx.getAttack().getId())) {
 				ctx.getDefender().setDamageReceived(dmg);
+			}
 
 			ctx.getDefender().setHasReceivedDamage(true);
 
@@ -825,9 +873,13 @@ public class AttackService {
 		abilityService.applyAbilityAfterDamage(ctx.getAttacker(), ctx.getDefender(), ctx.getAttack(),
 				result.getDamage(), result.isCriticalAttack(), ctx.getWeather(), ctx.isWeatherSuppressed());
 
+		// System.out.println("PS actuales de " + ctx.getDefender().getName() + " : " +
+		// ctx.getDefender().getPs());
 		if (ctx.getDefender().getPs() <= 0)
 			ctx.getDefender().setStatusCondition(new State(StatusConditions.DEBILITATED));
 
+		// System.out.println("PS actuales de " + ctx.getAttacker().getName() + " : " +
+		// ctx.getAttacker().getPs());
 		if (ctx.getAttacker().getPs() <= 0)
 			ctx.getAttacker().setStatusCondition(new State(StatusConditions.DEBILITATED));
 	}
@@ -843,6 +895,14 @@ public class AttackService {
 
 		if (ctx.getAttack().getSecondaryEffects() == null)
 			return;
+
+		// 125_Sheer_force doesn't apply secondary effects (only on opponent)
+		if (abilityAttacker.getId() == 125) {
+			System.out.println(ctx.getDefender().getName()
+					+ " no sufrió ningún efecto secundario dada la habildiad del atacante : "
+					+ abilityAttacker.getName());
+			return;
+		}
 
 		for (SecondaryEffect effect : ctx.getAttack().getSecondaryEffects()) {
 			double finalProbability = getFinalSecondaryEffectProbability(effect, ctx.getAttacker());
@@ -872,8 +932,10 @@ public class AttackService {
 					abilityAttacker.getEffect().afterAttack(null, ctx.getAttacker(), ctx.getDefender(), ctx.getAttack(),
 							dmg, effect.getProbability(), result.isCriticalAttack(), ctx.getWeather(),
 							ctx.isWeatherSuppressed());
-				else
+				else {
 					ctx.getDefender().setHasRetreated(true);
+					ctx.getDefender().setCanAttack(false);
+				}
 				break;
 			case STAT_DROP:
 				statService.reduceStatStage(ctx.getDefender(), effect.getStat(), effect.getStages(),
@@ -891,8 +953,7 @@ public class AttackService {
 	private double getFinalSecondaryEffectProbability(SecondaryEffect effect, Pokemon attacker) {
 		double probability = effect.getProbability();
 
-		Ability ability = attacker.getAbilitySelected();
-		if (ability != null && ability.getId() == 32)
+		if (attacker.getAbilitySelected() != null && attacker.hasSereneGraceAbility())
 			probability *= 2;
 
 		return Math.min(probability, 1.0); // never > 100%
@@ -902,7 +963,7 @@ public class AttackService {
 	// Apply mist effect after attacking (if needed)
 	// -----------------------------
 	private void applyMistIfNeeded(Pokemon pk) {
-		if (pk.getNextMovement().getId() == 54 && !battleCtx.isMistActive()) {
+		if (pk.getNextMovement().isMist() && !battleCtx.isMistActive()) {
 			battleCtx.setMistActive(true);
 			battleCtx.setNbTurnsMistActive(5);
 		}
@@ -966,7 +1027,7 @@ public class AttackService {
 		} else {
 			System.out.println(battleCtx.getPlayer().getPkCombatting().getName() + " ("
 					+ battleCtx.getPlayer().getPkCombatting().getId() + ") "
-					+ (battleCtx.getPlayer().getPkCombatting().getAbilitySelected().getId() == 54
+					+ (battleCtx.getPlayer().getPkCombatting().hasTruantAbility()
 							? "no puede cambiarse este turno a causa de "
 									+ battleCtx.getPlayer().getPkCombatting().getAbilitySelected().getName()
 							: "no puede cambiarse este turno a causa de algún ataque o estado"));
@@ -989,7 +1050,7 @@ public class AttackService {
 	// turn, etc.)
 	// -----------------------------
 	private void handleIANotAbleToAct(Pokemon pkIA) {
-		if (pkIA.getAbilitySelected().getId() == 54)
+		if (pkIA.hasTruantAbility())
 			System.out.println(pkIA.getName() + " (" + pkIA.getId() + ") " + "no puede atacar o cambiarse a causa de "
 					+ pkIA.getAbilitySelected().getName());
 		else

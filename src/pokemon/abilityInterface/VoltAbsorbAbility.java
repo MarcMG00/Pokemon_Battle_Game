@@ -23,7 +23,7 @@ public class VoltAbsorbAbility implements AbilityEffect {
 				.println(defender.getName() + " absorbió la electricidad gracias a la habilidad Absorbe electricidad");
 
 		// Heals 25% of max PS
-		if (defender.getPs() < defender.getInitialPs()) {
+		if (!defender.hasMaxPS()) {
 			float heal = defender.getInitialPs() * HEAL_PERCENT;
 			defender.setPs(Math.min(defender.getPs() + heal, defender.getInitialPs()));
 			System.out.println(defender.getName() + " recuperó " + heal + " PS");

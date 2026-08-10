@@ -98,4 +98,8 @@ public class AttackContext {
 	public StatService getStatService() {
 		return statService;
 	}
+
+	public void multiplyPrecision(float value) {
+		this.precision *= value;
+	}
 }

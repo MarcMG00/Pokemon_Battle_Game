@@ -49,15 +49,13 @@ public class DamageService {
 	// Modify power depending on abilities from attacker
 	// -----------------------------
 	private float calculateModifiedPower(Pokemon attacker, Pokemon defender, Attack attack, float power) {
-		Ability ability = attacker.getAbilitySelected();
-
-		power *= applyPhysicalAbilities(ability, attack);
-		power *= applyBoostAbilitiesFromReducedPS(attacker, ability, attack);
-		power *= applyRivalry(attacker, defender, ability);
-		power *= applyIronFist(ability, attack);
-		power *= applyAdaptable(attacker, ability, attack);
-		power *= applyPowerDependingPowerAttack(ability, attack);
-		power *= applyPowerAttackModifiers(ability);
+		power *= applyPhysicalAbilities(attacker, attack);
+		power *= applyBoostAbilitiesFromReducedPS(attacker, attack);
+		power *= applyRivalry(attacker, defender);
+		power *= applyIronFist(attacker, attack);
+		power *= applyAdaptable(attacker, attack);
+		power *= applyPowerDependingPowerAttack(attacker, attack);
+		power *= applyPowerAttackModifiers(attacker, attack);
 
 		return power;
 	}
@@ -65,9 +63,8 @@ public class DamageService {
 	// -----------------------------
 	// Apply physical abilities (physical attacks)
 	// -----------------------------
-	private float applyPhysicalAbilities(Ability ability, Attack attack) {
-		// 37_Huge_Power/ 74_Pure_Power
-		if ((ability.getId() == 37 || ability.getId() == 74) && attack.getBases().contains("fisico"))
+	private float applyPhysicalAbilities(Pokemon attacker, Attack attack) {
+		if (attack.getBases().contains("fisico") && (attacker.hasHugePowerAbility() || attacker.hasPurePowerAbility()))
 			return 2f;
 
 		return 1f;
@@ -76,29 +73,41 @@ public class DamageService {
 	// -----------------------------
 	// Apply booster abilities (activated when some remaining PS)
 	// -----------------------------
-	private float applyBoostAbilitiesFromReducedPS(Pokemon attacker, Ability ability, Attack attack) {
-		if (attacker.getPs() > attacker.getInitialPs() / 3)
+	private float applyBoostAbilitiesFromReducedPS(Pokemon attacker, Attack attack) {
+		if (!attacker.isPSAtOrBelowOneThird())
 			return 1f;
 
-		int abilityId = ability.getId();
-		int attackType = attack.getStrTypeToPkType().getId();
+		if (attacker.hasOvergrowAbility()) // 65_Overgrow (grass)
+			return boostIfType(attacker, attack, attack.isGrassType());
 
-		if ((abilityId == 65 && attackType == 12) || // 65_Overgrow (grass)
-				(abilityId == 66 && attackType == 7) || // 66_Blaze (fire)
-				(abilityId == 67 && attackType == 2) || // 67_Torrent (water)
-				(abilityId == 68 && attackType == 3)) { // 68_Swarm (bug)
+		if (attacker.hasBlazeAbility()) // 66_Blaze (fire)
+			return boostIfType(attacker, attack, attack.isFireType());
 
-			System.out.println(attacker.getName() + " potenciado por habilidad " + ability.getName());
-			return 1.5f;
-		}
+		if (attacker.hasTorrentAbility()) // 67_Torrent (water)
+			return boostIfType(attacker, attack, attack.isWaterType());
+
+		if (attacker.hasSwarmAbility()) // 68_Swarm (bug)
+			return boostIfType(attacker, attack, attack.isBugType());
+
 		return 1f;
+	}
+
+	// -----------------------------
+	// Only boost attack if same type
+	// -----------------------------
+	private float boostIfType(Pokemon attacker, Attack attack, boolean attackSameType) {
+		if (!attackSameType)
+			return 1f;
+
+		System.out.println(attacker.getName() + " potenciado por habilidad " + attacker.getAbilitySelected().getName());
+		return 1.5f;
 	}
 
 	// -----------------------------
 	// Apply 79_Rivalry ability
 	// -----------------------------
-	private float applyRivalry(Pokemon attacker, Pokemon defender, Ability ability) {
-		if (ability.getId() != 79)
+	private float applyRivalry(Pokemon attacker, Pokemon defender) {
+		if (!attacker.hasRivalryAbility())
 			return 1f;
 
 		if (attacker.getSex() == defender.getSex())
@@ -110,8 +119,8 @@ public class DamageService {
 	// -----------------------------
 	// Apply 89_Iron_Fist ability
 	// -----------------------------
-	private float applyIronFist(Ability ability, Attack attack) {
-		if (ability.getId() != 89)
+	private float applyIronFist(Pokemon attacker, Attack attack) {
+		if (!attacker.hasIronFistAbility())
 			return 1f;
 
 		if (attack.isPunchMove())
@@ -123,8 +132,8 @@ public class DamageService {
 	// -----------------------------
 	// Apply 91_Adaptable ability
 	// -----------------------------
-	private float applyAdaptable(Pokemon attacker, Ability ability, Attack attack) {
-		if (ability.getId() == 91 && attacker.getTypes().contains(attack.getStrTypeToPkType()))
+	private float applyAdaptable(Pokemon attacker, Attack attack) {
+		if (attacker.hasAdaptabilityAbility() && attacker.getTypes().contains(attack.getStrTypeToPkType()))
 			return 1.75f;
 
 		return 1f;
@@ -133,27 +142,31 @@ public class DamageService {
 	// -----------------------------
 	// Apply general abilities concerning the attack of the Pokemon
 	// -----------------------------
-	private float applyPowerAttackModifiers(Ability ability) {
-		if (ability == null)
+	private float applyPowerAttackModifiers(Pokemon attacker, Attack attack) {
+		if (attacker.getAbilitySelected() == null)
 			return 1f;
 
-		// Normalidad/ Normalize
-		if (ability.getId() == 96)
-			// Increase power 20% more
+		// 96_Normalize increase power 20% more
+		if (attacker.hasNormalizeAbility())
 			return 1.2f;
+
+		// 125_Sheer_force rises power by 30% if attack has secondary effects
+		if (attacker.hasSheerForceAbility() && attack.hasSecondaryEffect())
+			// Increase power 30% more
+			return 1.3f;
 
 		return 1f;
 	}
 
 	// -----------------------------
-	// Apply 89_Iron_Fist ability
+	// Apply abilities depending on power level of the attack
 	// -----------------------------
-	private float applyPowerDependingPowerAttack(Ability ability, Attack attack) {
-		if (ability == null)
+	private float applyPowerDependingPowerAttack(Pokemon attacker, Attack attack) {
+		if (attacker.getAbilitySelected() == null)
 			return 1f;
 
 		// 101_Technician ability
-		if (ability.getId() == 101 && attack.getPower() <= 60f)
+		if (attacker.hasTechnicianAbility() && attack.getPower() <= 60f)
 			return 1.5f;
 
 		return 1f;
@@ -167,12 +180,18 @@ public class DamageService {
 		boolean isSpecial = attack.getBases().contains("especial");
 		float randomVariation = (float) (85 + Math.random() * 15);
 		float weatherModifier = getWeatherModifier(ctx);
+		// 109_Unaware ability => ignores stages from stats (but no modifiers on
+		// abilities)
+		boolean attackerHasUnaware = attacker.hasUnawareAbility();
+		boolean defenderHasUnaware = defender.hasUnawareAbility();
 
-		float attackStat = isSpecial ? statService.getEffectiveSpecialAttack(attacker)
-				: statService.getEffectiveAttack(attacker);
+		float attackStat = isSpecial
+				? statService.getEffectiveSpecialAttack(attacker, defenderHasUnaware, ctx.getWeather())
+				: statService.getEffectiveAttack(attacker, defenderHasUnaware, ctx.getWeather());
 
-		float defenseStat = isSpecial ? statService.getEffectiveSpecialDefense(defender)
-				: statService.getEffectiveDefense(defender);
+		float defenseStat = isSpecial
+				? statService.getEffectiveSpecialDefense(defender, attackerHasUnaware, ctx.getWeather())
+				: statService.getEffectiveDefense(defender, attackerHasUnaware);
 
 		float base = (((0.2f * 100f + 1f) * attackStat * modifiedPower) / (25f * defenseStat) + 2f);
 
@@ -180,7 +199,7 @@ public class DamageService {
 				* randomVariation * base;
 
 		// 18_Flash_Fire boost ability
-		if (attacker.getIsFireBoostActive() && attack.getStrTypeToPkType().getId() == 7)
+		if (attacker.getIsFireBoostActive() && attack.isFireType())
 			damage *= 1.5f;
 
 		return damage;
@@ -190,7 +209,6 @@ public class DamageService {
 	// Apply critical damage by probabilities
 	// -----------------------------
 	private CriticalResult applyCriticalIfNeeded(Pokemon attacker, Attack attack, float damage, AttackContext ctx) {
-		Ability ability = attacker.getAbilitySelected();
 		boolean isCrit;
 
 		if (attack.getId() == 13)
@@ -205,7 +223,7 @@ public class DamageService {
 
 		System.out.println("Fue un golpe crítico");
 
-		if (ability.getId() == 97) // 97_Sniper ability does *3 damage
+		if (attacker.hasSniperAbility()) // 97_Sniper ability does *3 damage
 			return new CriticalResult(damage * 3f, true);
 
 		return new CriticalResult(damage * 2f, true);
@@ -216,27 +234,23 @@ public class DamageService {
 	// -----------------------------
 	private float applyDefensiveAbilities(Pokemon defender, Pokemon attacker, Attack attack, float damage) {
 		Ability defAbility = defender.getAbilitySelected();
-		int abilityId = defAbility.getId();
-		int attackTypeId = attack.getStrTypeToPkType().getId();
-
-		boolean isFire = attackTypeId == 7;
-		boolean isIce = attackTypeId == 9;
 
 		// 5_Sturdy ability cannot be defeated by one hit KO or by one attack if PS are
 		// on max
-		if (abilityId == 5 && !defAbility.getAlreadyUsedOnEnter() && defender.getInitialPs() == defender.getPs()
-				&& damage >= defender.getPs()) {
+		if (defender.hasSturdyAbility() && !defAbility.getAlreadyUsedOnEnter() && defender.hasMaxPS()
+				&& damage >= defender.getInitialPs()) {
 			defAbility.setAlreadyUsedOnEnter(true);
 			return defender.getInitialPs() - 1f;
 		}
 
 		// 47_Thick_Fat ability/ 85_Heatproof reduces damage by 2 (only if attack type
 		// it's fire or ice type)
-		if ((abilityId == 47 && (isFire || isIce)) || (abilityId == 85 && isFire))
+		if ((defender.hasThickFatAbility() && (attack.isFireType() || attack.isIceType()))
+				|| (defender.hasHeatProofAbility() && attack.isFireType()))
 			return damage / 2f;
 
 		// 87_Dry_Skin ability with a fire attack, do 25% more damage
-		if (abilityId == 87 && attack.getStrTypeToPkType().getId() == 7)
+		if (defender.hasDrySkinAbility() && attack.isFireType())
 			return damage * 1.25f;
 
 		return damage;
@@ -246,7 +260,6 @@ public class DamageService {
 	// Adds multiplier depending on weather of the game
 	// -----------------------------
 	public float getWeatherModifier(AttackContext ctx) {
-
 		Weather weather = ctx.getWeather();
 		boolean isWeatherSuppresed = ctx.isWeatherSuppressed();
 
@@ -254,16 +267,16 @@ public class DamageService {
 			return 1.0f;
 
 		if (weather == Weather.RAIN) {
-			if (ctx.getAttack().getStrTypeToPkType().getId() == 2) // Water
+			if (ctx.getAttack().isWaterType()) // Water
 				return 1.5f;
-			if (ctx.getAttack().getStrTypeToPkType().getId() == 7) // Fire
+			if (ctx.getAttack().isFireType()) // Fire
 				return 0.5f;
 		}
 
 		if (weather == Weather.SUN) {
-			if (ctx.getAttack().getStrTypeToPkType().getId() == 7) // Fire
+			if (ctx.getAttack().isFireType()) // Fire
 				return 1.5f;
-			if (ctx.getAttack().getStrTypeToPkType().getId() == 2) // Water
+			if (ctx.getAttack().isWaterType()) // Water
 				return 0.5f;
 		}
 		return 1.0f;
@@ -273,7 +286,9 @@ public class DamageService {
 	// Gets if an attack is critic (x2 of damage) => 10% of probabilities
 	// -----------------------------
 	public boolean getCriticity(AttackContext ctx) {
-		int randomCritic = (int) (Math.random() * 100);
+		double randomCritic = Math.random() * 100d;
+
+		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10)
@@ -286,9 +301,11 @@ public class DamageService {
 	// Gets if an attack is critic (x2 of damage) => 30% of probabilities
 	// -----------------------------
 	public boolean getHighCriticity30(AttackContext ctx) {
-		int randomCritic = (int) (Math.random() * 100);
+		double randomCritic = Math.random() * 100d;
 
-		// 10% of probabilities to have a critic attack
+		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
+
+		// 30% of probabilities to have a critic attack
 		if (randomCritic <= 30)
 			return this.canReceiveCriticalAttacks(ctx);
 
@@ -299,9 +316,11 @@ public class DamageService {
 	// Gets if an attack is critic (x2 of damage) => 40% of probabilities
 	// -----------------------------
 	public boolean getHighCriticity40(AttackContext ctx) {
-		int randomCritic = (int) (Math.random() * 100);
+		double randomCritic = Math.random() * 100d;
 
-		// 10% of probabilities to have a critic attack
+		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
+
+		// 40% of probabilities to have a critic attack
 		if (randomCritic <= 40)
 			return this.canReceiveCriticalAttacks(ctx);
 
@@ -309,13 +328,24 @@ public class DamageService {
 	}
 
 	// -----------------------------
+	// Rises probability of getting a critical attack if needed
+	// -----------------------------
+	public double getCriticalIndexIfNeeded(Ability ability) {
+		// 105_Super_Lock rises by 12,5% the probability of getting a critical attack
+		// (index 1)
+		if (ability.getId() == 105)
+			return 1d + (12.5d / 100d);
+
+		return 1d;
+	}
+
+	// -----------------------------
 	// Check if defender can receive critical attacks
 	// -----------------------------
 	public boolean canReceiveCriticalAttacks(AttackContext ctx) {
-		// 4_Battle_Armor / 75_Shell_Armor cannot recieve critic damage because of
+		// 4_Battle_Armor / 75_Shell_Armor cannot receive critic damage because of
 		// ability
-		if (ctx.getDefender().getAbilitySelected().getId() == 4
-				|| ctx.getDefender().getAbilitySelected().getId() == 75) {
+		if (ctx.getDefender().hasBattleArmorAbility() || ctx.getDefender().hasShellArmorAbility()) {
 			System.out.println(ctx.getDefender().getName() + " no puede recibir ataques críticos dada su habilidad "
 					+ ctx.getDefender().getAbilitySelected().getName());
 			return false;

@@ -20,6 +20,8 @@ public class FixedDamageEffect implements AttackEffect {
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 		ctx.getDefender().setPs(ctx.getDefender().getPs() - fixedDamage);
 
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 		result.addDamage(fixedDamage);
 		return result;
 	}
