@@ -25,6 +25,8 @@ public class AttackRestOneTurnEffect implements AttackEffect {
 		// Pokemon combating cannot do anything next round
 		ctx.getAttacker().setCanDonAnythingNextRound(false);
 
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 		return result;
 	}
 }

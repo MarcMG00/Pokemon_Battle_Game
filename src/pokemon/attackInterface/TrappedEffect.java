@@ -37,6 +37,8 @@ public class TrappedEffect implements AttackEffect {
 		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 		return result;
 	}
 }

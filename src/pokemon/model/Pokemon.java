@@ -679,7 +679,7 @@ public class Pokemon {
 	// Check if has a specific status condition
 	// -----------------------------
 	public boolean hasActiveStatusCondition(StatusConditions status) {
-		return this.getStatusCondition().getStatusCondition() == status;
+		return hasStatusCondition() && this.getStatusCondition().getStatusCondition() == status;
 	}
 
 	// -----------------------------
@@ -929,6 +929,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 9_Static ability
+	// -----------------------------
+	public boolean hasStaticAbility() {
+		return this.getAbilitySelected().getId() == 9;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 12_Oblivious ability
 	// -----------------------------
 	public boolean hasObliviousAbility() {
@@ -992,10 +999,24 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 24_Rough_skin ability
+	// -----------------------------
+	public boolean hasRoughSkinAbility() {
+		return this.getAbilitySelected().getId() == 24;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 26_Levitate ability
 	// -----------------------------
 	public boolean hasLevitateAbility() {
 		return this.getAbilitySelected().getId() == 26;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 27_Effect_spore ability
+	// -----------------------------
+	public boolean hasEffectSporeAbility() {
+		return this.getAbilitySelected().getId() == 27;
 	}
 
 	// -----------------------------
@@ -1038,6 +1059,13 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasHugePowerAbility() {
 		return this.getAbilitySelected().getId() == 37;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 38_Poison_point ability
+	// -----------------------------
+	public boolean hasPoisonPointAbility() {
+		return this.getAbilitySelected().getId() == 38;
 	}
 
 	// -----------------------------
@@ -1087,6 +1115,13 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasEarlyBirdAbility() {
 		return this.getAbilitySelected().getId() == 48;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 49_Flame_body ability
+	// -----------------------------
+	public boolean hasFlameBodtyAbility() {
+		return this.getAbilitySelected().getId() == 49;
 	}
 
 	// -----------------------------
@@ -1482,17 +1517,24 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Check if Pokemon has 130_CursedBody ability
+	// 129_Deafeatist ability reduces attack by 50% if PS under 50% of initial PS
+	// -----------------------------
+	public boolean isDefeatistActive() {
+		return hasDefeatistAbility() && getPs() <= getInitialPs() / 2;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 130_Cursed_body ability
 	// -----------------------------
 	public boolean hasCursedBodyAbility() {
 		return this.getAbilitySelected().getId() == 130;
 	}
 
 	// -----------------------------
-	// 129_Deafeatist ability reduces attack by 50% if PS under 50% of initial PS
+	// Check if Pokemon has 133_Weak_armor ability
 	// -----------------------------
-	public boolean isDefeatistActive() {
-		return hasDefeatistAbility() && getPs() <= getInitialPs() / 2;
+	public boolean hasWeakArmorAbility() {
+		return this.getAbilitySelected().getId() == 133;
 	}
 
 	// -----------------------------

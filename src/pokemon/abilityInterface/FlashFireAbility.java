@@ -35,10 +35,11 @@ public class FlashFireAbility implements AbilityEffect {
 
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
+			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 		// If Pokemon frozen => don't activate the ability
 		if (defender.hasActiveStatusCondition(StatusConditions.FROZEN)) {
 			defender.setStatusCondition(new State());
+			defender.setIsFireBoostActive(false);
 			System.out.println(defender.getName() + " se descongeló!");
 		}
 	}

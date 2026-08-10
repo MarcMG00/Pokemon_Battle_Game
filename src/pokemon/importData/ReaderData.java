@@ -53,6 +53,7 @@ import pokemon.abilityInterface.SynchronizeAbility;
 import pokemon.abilityInterface.TraceAbility;
 import pokemon.abilityInterface.VoltAbsorbAbility;
 import pokemon.abilityInterface.WaterAbsorbAbility;
+import pokemon.abilityInterface.WeakArmorAbility;
 import pokemon.abilityInterface.WonderGuardAbility;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
@@ -1120,6 +1121,10 @@ public class ReaderData {
 		// Cuerpo maldito/Cursed body
 		case 130:
 			ability.setEffect(new CursedBodyAbility());
+			break;
+		// Armadura frágil/Weak armor
+		case 133:
+			ability.setEffect(new WeakArmorAbility());
 			break;
 		default:
 			ability.setEffect(new EmptyAbility());

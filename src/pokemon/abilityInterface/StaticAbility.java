@@ -1,32 +1,35 @@
 package pokemon.abilityInterface;
 
 import pokemon.enums.StatusConditions;
-import pokemon.enums.Weather;
-import pokemon.model.Attack;
-import pokemon.model.BattleContext;
-import pokemon.model.Pokemon;
+import pokemon.model.AttackContext;
+import pokemon.model.AttackResult;
 import pokemon.model.State;
 
 public class StaticAbility implements AbilityEffect {
 	private static final double PARALYSIS_CHANCE = 0.30;
 
 	@Override
-	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
-		if (attacker.hasActiveStatusCondition(StatusConditions.PARALYZED))
-			return;
+	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
+		if (attackCtx.getDefender().hasStaticAbility())
+			return true;
+
+		if (attackCtx.getAttacker().hasActiveStatusCondition(StatusConditions.PARALYZED))
+			return true;
 
 		// Attack must make contact
-		if (!attack.getMakesContact() || !defender.getHasReceivedDamage())
-			return;
+		if (!attackCtx.getAttack().makesContact() || attackResult.getDamage() <= 0f)
+			return true;
 
 		// Probability
 		if (Math.random() >= PARALYSIS_CHANCE)
-			return;
+			return true;
 
 		// Try to apply paralysis
-		battleCtx.getStatusService().trySetStatus(attacker, new State(StatusConditions.PARALYZED), null, false, attack);
-		System.out.println(
-				attacker.getName() + " fue paralizado por la habilidad electricidad estática del Pokémon rival");
+		attackCtx.getStatusService().trySetStatus(attackCtx.getAttacker(), new State(StatusConditions.PARALYZED), null,
+				false, attackCtx.getAttack());
+		System.out.println(attackCtx.getAttacker().getName()
+				+ " fue paralizado por la habilidad electricidad estática del Pokémon rival");
+
+		return true;
 	}
 }

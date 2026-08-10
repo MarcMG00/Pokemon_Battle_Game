@@ -30,6 +30,8 @@ public class ConditionalPowerEffect implements AttackEffect {
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 		return result;
 	}
 }

@@ -21,6 +21,8 @@ public class CounterAttackEffect implements AttackEffect {
 
 			ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
 
+			ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 			System.out.println("Damage to Pokemon facing (" + ctx.getDefender().getName() + " (Id:"
 					+ ctx.getDefender().getId() + ")" + ") : " + dmg);
 		} else

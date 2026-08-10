@@ -275,7 +275,7 @@ public class Attack {
 		this.isOneHitKO = isOneHitKO;
 	}
 
-	public boolean getMakesContact() {
+	public boolean makesContact() {
 		return makesContact;
 	}
 

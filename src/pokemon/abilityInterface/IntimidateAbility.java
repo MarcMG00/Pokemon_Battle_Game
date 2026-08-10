@@ -1,7 +1,6 @@
 package pokemon.abilityInterface;
 
 import pokemon.enums.StatType;
-import pokemon.model.Ability;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.StatService;

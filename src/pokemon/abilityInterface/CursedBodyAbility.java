@@ -11,8 +11,7 @@ public class CursedBodyAbility implements AbilityEffect {
 	private static final double PROBABILITY = 0.30d;
 
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
-
+			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 		// Defender must have the current ability
 		if (!defender.hasCursedBodyAbility())
 			return;

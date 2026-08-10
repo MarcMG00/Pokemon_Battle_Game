@@ -23,6 +23,8 @@ public class FixedRecoilDamageEffect implements AttackEffect {
 		// Pokemon combating receives 25% of damage from his initial PS
 		ctx.getAttacker().setPs(ctx.getAttacker().getInitialPs() - (ctx.getAttacker().getInitialPs() * 0.25f));
 
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 		return result;
 	}
 

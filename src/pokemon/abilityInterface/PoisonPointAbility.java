@@ -1,31 +1,35 @@
 package pokemon.abilityInterface;
 
 import pokemon.enums.StatusConditions;
-import pokemon.enums.Weather;
-import pokemon.model.Attack;
-import pokemon.model.BattleContext;
-import pokemon.model.Pokemon;
+import pokemon.model.AttackContext;
+import pokemon.model.AttackResult;
 import pokemon.model.State;
 
 public class PoisonPointAbility implements AbilityEffect {
 	private static final double POISONED_CHANCE = 0.30;
 
 	@Override
-	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
-		if (attacker.hasActiveStatusCondition(StatusConditions.POISONED))
-			return;
+	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
+		if (!attackCtx.getDefender().hasPoisonPointAbility())
+			return true;
+
+		if (attackCtx.getAttacker().hasActiveStatusCondition(StatusConditions.POISONED))
+			return true;
 
 		// Attack must make contact
-		if (!attack.getMakesContact() || !defender.getHasReceivedDamage())
-			return;
+		if (!attackCtx.getAttack().makesContact() || attackResult.getDamage() <= 0f)
+			return true;
 
 		// Probability
 		if (Math.random() >= POISONED_CHANCE)
-			return;
+			return true;
 
 		// Try to apply poison
-		battleCtx.getStatusService().trySetStatus(attacker, new State(StatusConditions.POISONED), null, false, attack);
-		System.out.println(attacker.getName() + " fue envenenado por la habilidad punto tóxico del Pokémon rival");
+		attackCtx.getStatusService().trySetStatus(attackCtx.getAttacker(), new State(StatusConditions.POISONED), null,
+				false, attackCtx.getAttack());
+		System.out.println(
+				attackCtx.getAttacker().getName() + " fue envenenado por la habilidad Punto tóxico del Pokémon rival");
+
+		return true;
 	}
 }

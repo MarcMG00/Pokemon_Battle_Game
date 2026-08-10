@@ -208,7 +208,9 @@ public class StatusService {
 				return;
 			}
 
-			if (canBeFrozen && !isWeatherSuppressed && pk.getTypes().stream().noneMatch(t -> t.getId() == 9)) {
+			if (canBeFrozen && !isWeatherSuppressed) {
+				// Some abilities like Flash fire, disables the effect
+				pk.setIsFireBoostActive(false);
 				System.out.println(pk.getName() + " fue congelado");
 			} else {
 				System.out.println(pk.getName()

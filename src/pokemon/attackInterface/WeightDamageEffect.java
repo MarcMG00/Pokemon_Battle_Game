@@ -40,6 +40,8 @@ public class WeightDamageEffect implements AttackEffect {
 		attack.setPp(attack.getPp() - 1);
 		defender.setPs(defender.getPs() - dmg);
 
+		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
+
 		return result;
 	}
 

@@ -1,32 +1,35 @@
 package pokemon.abilityInterface;
 
 import pokemon.enums.StatusConditions;
-import pokemon.enums.Weather;
-import pokemon.model.Attack;
-import pokemon.model.BattleContext;
-import pokemon.model.Pokemon;
+import pokemon.model.AttackContext;
+import pokemon.model.AttackResult;
 import pokemon.model.State;
 
 public class FlameBodyAbility implements AbilityEffect {
 	private static final double BURNED_CHANCE = 0.30;
 
 	@Override
-	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double precentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
+	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
+		if (!attackCtx.getDefender().hasFlameBodtyAbility())
+			return true;
 
-		if (attacker.hasActiveStatusCondition(StatusConditions.BURNED))
-			return;
+		if (attackCtx.getAttacker().hasActiveStatusCondition(StatusConditions.BURNED))
+			return true;
 
 		// Attack must make contact
-		if (!attack.getMakesContact() || !defender.getHasReceivedDamage())
-			return;
+		if (!attackCtx.getAttack().makesContact() || attackResult.getDamage() <= 0f)
+			return true;
 
 		// Probability
 		if (Math.random() >= BURNED_CHANCE)
-			return;
+			return true;
 
 		// Try to apply burned
-		battleCtx.getStatusService().trySetStatus(attacker, new State(StatusConditions.BURNED), null, false, attack);
-		System.out.println(attacker.getName() + " fue quemado por la habilidad Cuerpo llama del Pokémon rival");
+		attackCtx.getStatusService().trySetStatus(attackCtx.getAttacker(), new State(StatusConditions.BURNED), null,
+				false, attackCtx.getAttack());
+		System.out.println(
+				attackCtx.getAttacker().getName() + " fue quemado por la habilidad Cuerpo llama del Pokémon rival");
+
+		return true;
 	}
 }
