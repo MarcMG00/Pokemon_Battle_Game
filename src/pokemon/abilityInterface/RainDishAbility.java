@@ -4,9 +4,13 @@ import pokemon.enums.Weather;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class RainDishAbility implements AbilityEffect {
+public class RainDishAbility extends AbilityEffect {
+	public RainDishAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
-	public void endOfTurn(BattleContext battleCtx, Pokemon owner) {
+	public void endOfTurn(BattleContext battleCtx) {
 		if (battleCtx.getWeather() != Weather.RAIN)
 			return;
 

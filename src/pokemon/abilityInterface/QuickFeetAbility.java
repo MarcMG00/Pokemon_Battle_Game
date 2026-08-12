@@ -5,7 +5,11 @@ import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class QuickFeetAbility implements AbilityEffect {
+public class QuickFeetAbility extends AbilityEffect {
+	public QuickFeetAbility(Pokemon owner) {
+		super(owner);
+	}
+	
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {

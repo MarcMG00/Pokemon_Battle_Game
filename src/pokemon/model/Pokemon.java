@@ -1055,6 +1055,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 36_Trace ability
+	// -----------------------------
+	public boolean hasTraceAbility() {
+		return this.getAbilitySelected().getId() == 36;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 37_Huge_power ability
 	// -----------------------------
 	public boolean hasHugePowerAbility() {

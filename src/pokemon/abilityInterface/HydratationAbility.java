@@ -5,9 +5,13 @@ import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class HydratationAbility implements AbilityEffect {
+public class HydratationAbility extends AbilityEffect {
+	public HydratationAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
-	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
+	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
 		if (battleCtx.getWeather() != Weather.RAIN)
 			return;
 
@@ -22,7 +26,7 @@ public class HydratationAbility implements AbilityEffect {
 	}
 
 	@Override
-	public void endOfTurn(BattleContext battleCtx, Pokemon owner) {
+	public void endOfTurn(BattleContext battleCtx) {
 		if (battleCtx.getWeather() != Weather.RAIN)
 			return;
 

@@ -1,5 +1,9 @@
 package pokemon.abilityInterface;
 
-public class EmptyAbility implements AbilityEffect {
+import pokemon.model.Pokemon;
 
+public class EmptyAbility extends AbilityEffect {
+	public EmptyAbility(Pokemon owner) {
+		super(owner);
+	}
 }

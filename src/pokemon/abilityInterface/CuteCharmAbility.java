@@ -3,9 +3,14 @@ package pokemon.abilityInterface;
 import pokemon.enums.StatusConditions;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
+import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class CuteCharmAbility implements AbilityEffect {
+public class CuteCharmAbility extends AbilityEffect {
+	public CuteCharmAbility(Pokemon owner) {
+		super(owner);
+	}
+	
 	private static final double INFATUEATED_CHANCE = 0.30;
 
 	@Override

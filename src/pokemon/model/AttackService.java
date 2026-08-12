@@ -682,21 +682,21 @@ public class AttackService {
 
 		System.out.println(pkIA.getName() + " fue derrotado.");
 
-		Pokemon newIA = switchPokemonService.decideBestChangePokemon(battleCtx.getIa(),
+		Pokemon pkEnteringIA = switchPokemonService.decideBestChangePokemon(battleCtx.getIa(),
 				battleCtx.getPlayer().getPkCombatting(), battleCtx.getEffectPerTypes());
 
-		if (newIA == null)
-			newIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.isFainted()).findFirst().get();
+		if (pkEnteringIA == null)
+			pkEnteringIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.isFainted()).findFirst().get();
 
 		switchPokemonService.resetPokemonBeforeSwitch(pkIA);
 
-		System.out.println("IA eligió a " + newIA.getName() + " (Id:" + newIA.getId() + ")");
+		System.out.println("IA eligió a " + pkEnteringIA.getName() + " (Id:" + pkEnteringIA.getId() + ")");
 
-		battleCtx.getIa().setPkCombatting(newIA);
+		battleCtx.getIa().setPkCombatting(pkEnteringIA);
 
 		switchPokemonService.updatePkFacingAfterSwitch();
 
-		abilityService.applyEntryAbilityOnSwitch(battleCtx, newIA, battleCtx.getPlayer().getPkCombatting());
+		abilityService.applyEntryAbilityOnSwitch(battleCtx, pkEnteringIA, battleCtx.getPlayer().getPkCombatting());
 
 		switchPokemonService.refreshAttackOrders();
 
@@ -777,8 +777,7 @@ public class AttackService {
 
 		// Some abilities allows to not to do damage (ex : Volt absorb)
 		if (abilityDefender != null) {
-			boolean continueAttack = abilityDefender.getEffect().beforeDamage(null, ctx.getAttacker(),
-					ctx.getDefender(), ctx.getAttack());
+			boolean continueAttack = abilityDefender.getEffect().beforeDamage(null, ctx.getAttacker(), ctx.getAttack());
 
 			if (!continueAttack) {
 				ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);

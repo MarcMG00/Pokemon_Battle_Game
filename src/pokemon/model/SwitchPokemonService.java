@@ -22,18 +22,18 @@ public class SwitchPokemonService {
 	// -----------------------------
 	// Reset stats from Pokemon leaving
 	// -----------------------------
-	public void resetPokemonBeforeSwitch(Pokemon pk) {
-		abilityService.applyExitAbilityOnSwitch(battleCtx, pk);
+	public void resetPokemonBeforeSwitch(Pokemon leaver) {
+		abilityService.applyExitAbilityOnSwitch(battleCtx, leaver);
 
-		pk.setAttackStage(0);
-		pk.setSpecialAttackStage(0);
-		pk.setPrecisionStage(0);
-		pk.setDefenseStage(0);
-		pk.setSpecialDefenseStage(0);
-		pk.setSpeedStage(0);
+		leaver.setAttackStage(0);
+		leaver.setSpecialAttackStage(0);
+		leaver.setPrecisionStage(0);
+		leaver.setDefenseStage(0);
+		leaver.setSpecialDefenseStage(0);
+		leaver.setSpeedStage(0);
 
-		pk.setLastUsedAttack(new Attack());
-		pk.getAbilitySelected().setAlreadyUsedOnEnter(false);
+		leaver.setLastUsedAttack(new Attack());
+		leaver.getAbilitySelected().setAlreadyUsedOnEnter(false);
 	}
 
 	// -----------------------------
@@ -133,12 +133,12 @@ public class SwitchPokemonService {
 	// Perform Pokemon switch
 	// -----------------------------
 	private void performSwitch(Pokemon selected) {
-		Pokemon current = battleCtx.getPlayer().getPkCombatting();
+		Pokemon leaver = battleCtx.getPlayer().getPkCombatting();
 
-		resetPokemonBeforeSwitch(current);
+		resetPokemonBeforeSwitch(leaver);
 
 		// Remove drained ALL STATUS state (cause player changed)
-		statusService.clearDrainEffects(current, battleCtx.getIa().getPkCombatting());
+		statusService.clearDrainEffects(leaver, battleCtx.getIa().getPkCombatting());
 
 		System.out.println("Jugador eligió a " + selected.getName());
 
@@ -158,8 +158,7 @@ public class SwitchPokemonService {
 	// Chech Pokemon selected is not the one already on the field
 	// -----------------------------
 	private boolean isInvalidPokemonChoice(int id) {
-		if (battleCtx.getPlayer().getPkCombatting().getId() == id
-				&& !battleCtx.getIa().getPkCombatting().isFainted()) {
+		if (battleCtx.getPlayer().getPkCombatting().getId() == id && !battleCtx.getIa().getPkCombatting().isFainted()) {
 			System.out.println("Ese Pokémon ya está combatiendo.");
 			return true;
 		}
@@ -229,18 +228,18 @@ public class SwitchPokemonService {
 		statusService.clearDrainEffects(pkCombating, pkFacing);
 
 		// Get available Pokemon
-		List<Pokemon> available = getAvailablePokemonForSwitch(defender);
+		List<Pokemon> pkAvailable = getAvailablePokemonForSwitch(defender);
 
-		if (available.isEmpty()) {
+		if (pkAvailable.isEmpty()) {
 			defender.setForceSwitchPokemon(false);
 			return; // Cannot change => does not anything
 		}
 
-		Pokemon newPk = chooseRandomPokemon(available);
+		Pokemon newPkEntering = chooseRandomPokemon(pkAvailable);
 
-		printForcedSwitchMessage(defender, newPk);
+		printForcedSwitchMessage(defender, newPkEntering);
 
-		performForcedSwitch(battleCtx, defender, newPk);
+		performForcedSwitch(battleCtx, defender, newPkEntering);
 
 		defender.setForceSwitchPokemon(false);
 	}
@@ -249,8 +248,7 @@ public class SwitchPokemonService {
 	// Get available Pokemon for forced switch
 	// -----------------------------
 	private List<Pokemon> getAvailablePokemonForSwitch(Player defender) {
-		return defender.getPokemon().stream().filter(p -> !p.isFainted() && p != defender.getPkCombatting())
-				.toList();
+		return defender.getPokemon().stream().filter(p -> !p.isFainted() && p != defender.getPkCombatting()).toList();
 	}
 
 	// -----------------------------
@@ -263,41 +261,41 @@ public class SwitchPokemonService {
 	// -----------------------------
 	// Print forced switch messages
 	// -----------------------------
-	private void printForcedSwitchMessage(Player defender, Pokemon newPk) {
+	private void printForcedSwitchMessage(Player defender, Pokemon newPkEntering) {
 		System.out.println(defender.getPkCombatting().getName() + " fue expulsado por "
 				+ defender.getPkFacing().getNextMovement().getName() + ".");
 
 		boolean isPlayer = defender == battleCtx.getPlayer();
 
-		System.out
-				.println((isPlayer ? "Jugador" : "IA") + " envía a " + newPk.getName() + " (Id:" + newPk.getId() + ")");
+		System.out.println((isPlayer ? "Jugador" : "IA") + " envía a " + newPkEntering.getName() + " (Id:"
+				+ newPkEntering.getId() + ")");
 	}
 
 	// -----------------------------
 	// Perform forced switch
 	// -----------------------------
-	private void performForcedSwitch(BattleContext battleCtx, Player defender, Pokemon newPk) {
-		Pokemon current = defender.getPkCombatting();
+	private void performForcedSwitch(BattleContext battleCtx, Player defender, Pokemon newPkEntering) {
+		Pokemon leaver = defender.getPkCombatting();
 
-		resetPokemonBeforeSwitch(current);
+		resetPokemonBeforeSwitch(leaver);
 
-		newPk.setJustEnteredBattle(true);
-		defender.setPkCombatting(newPk);
+		newPkEntering.setJustEnteredBattle(true);
+		defender.setPkCombatting(newPkEntering);
 
-		abilityService.applyEntryAbilityOnSwitch(battleCtx, newPk, getOpponent(defender).getPkCombatting());
+		abilityService.applyEntryAbilityOnSwitch(battleCtx, newPkEntering, getOpponent(defender).getPkCombatting());
 
-		updateFacingAfterForcedSwitch(defender, newPk);
+		updateFacingAfterForcedSwitch(defender, newPkEntering);
 	}
 
 	// -----------------------------
 	// Update facing after forced switch
 	// -----------------------------
-	private void updateFacingAfterForcedSwitch(Player defender, Pokemon newPk) {
+	private void updateFacingAfterForcedSwitch(Player defender, Pokemon newPkEntering) {
 		if (defender == battleCtx.getPlayer()) {
-			battleCtx.getIa().setPkFacing(newPk);
+			battleCtx.getIa().setPkFacing(newPkEntering);
 			battleCtx.getPlayer().setPkFacing(battleCtx.getIa().getPkCombatting());
 		} else {
-			battleCtx.getPlayer().setPkFacing(newPk);
+			battleCtx.getPlayer().setPkFacing(newPkEntering);
 			battleCtx.getIa().setPkFacing(battleCtx.getPlayer().getPkCombatting());
 		}
 	}

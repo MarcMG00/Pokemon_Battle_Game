@@ -46,12 +46,12 @@ public class WeatherService {
 			return;
 
 		if (weatherA1 != null && weatherA2 == null) {
-			weatherA1.getEffect().onSwitchIn(battleCtx, pk1, pk2);
+			weatherA1.getEffect().onSwitchIn(battleCtx, pk2);
 			return;
 		}
 
 		if (weatherA2 != null && weatherA1 == null) {
-			weatherA2.getEffect().onSwitchIn(battleCtx, pk2, pk1);
+			weatherA2.getEffect().onSwitchIn(battleCtx, pk1);
 			return;
 		}
 
@@ -59,7 +59,7 @@ public class WeatherService {
 		Pokemon slower = pk1.getSpeed() <= pk2.getSpeed() ? pk1 : pk2;
 		Pokemon faster = pk1.getSpeed() > pk2.getSpeed() ? pk1 : pk2;
 
-		slower.getAbilitySelected().getEffect().onSwitchIn(battleCtx, slower, faster);
+		slower.getAbilitySelected().getEffect().onSwitchIn(battleCtx, faster);
 	}
 
 	// -----------------------------
@@ -72,7 +72,7 @@ public class WeatherService {
 
 		// 13_Cloud_nine / 76_Air_lock
 		if (attacker.hasCloudNineAbility() || attacker.hasAirLockAbility())
-			attacker.getAbilitySelected().getEffect().onSwitchIn(battleCtx, attacker, defender);
+			attacker.getAbilitySelected().getEffect().onSwitchIn(battleCtx, defender);
 	}
 
 	// -----------------------------
@@ -271,25 +271,26 @@ public class WeatherService {
 			while (!changed)
 				changed = switchPokemonService.changePokemon(sc);
 		} else {
-			Pokemon newIA = switchPokemonService.decideBestChangePokemon(owner, battleCtx.getPlayer().getPkCombatting(),
-					battleCtx.getEffectPerTypes());
+			Pokemon pkEnteringIA = switchPokemonService.decideBestChangePokemon(owner,
+					battleCtx.getPlayer().getPkCombatting(), battleCtx.getEffectPerTypes());
 
-			if (newIA == null)
-				newIA = owner.getPokemon().stream().filter(p -> !p.isFainted()).findFirst().orElse(null);
+			if (pkEnteringIA == null)
+				pkEnteringIA = owner.getPokemon().stream().filter(p -> !p.isFainted()).findFirst().orElse(null);
 
-			if (newIA != null) {
+			if (pkEnteringIA != null) {
 				switchPokemonService.resetPokemonBeforeSwitch(owner.getPkCombatting());
 
 				statusService.removeStates(owner.getPkCombatting());
 
-				System.out.println("IA envía a " + newIA.getName());
+				System.out.println("IA envía a " + pkEnteringIA.getName());
 
-				newIA.setJustEnteredBattle(false);
-				owner.setPkCombatting(newIA);
+				pkEnteringIA.setJustEnteredBattle(false);
+				owner.setPkCombatting(pkEnteringIA);
 
-				abilityService.applyEntryAbilityOnSwitch(battleCtx, newIA, battleCtx.getPlayer().getPkCombatting());
+				abilityService.applyEntryAbilityOnSwitch(battleCtx, pkEnteringIA,
+						battleCtx.getPlayer().getPkCombatting());
 
-				battleCtx.getPlayer().setPkFacing(newIA);
+				battleCtx.getPlayer().setPkFacing(pkEnteringIA);
 				owner.setPkFacing(battleCtx.getPlayer().getPkCombatting());
 
 				switchPokemonService.refreshAttackOrders();

@@ -3,8 +3,14 @@ package pokemon.abilityInterface;
 import pokemon.enums.StatType;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
+import pokemon.model.Pokemon;
 
-public class WeakArmorAbility implements AbilityEffect {
+public class WeakArmorAbility extends AbilityEffect {
+	public WeakArmorAbility(Pokemon owner) {
+		super(owner);
+	}
+
+	@Override
 	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
 		// Defender must have the current ability
 		if (!attackCtx.getDefender().hasWeakArmorAbility())

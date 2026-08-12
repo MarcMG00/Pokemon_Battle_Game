@@ -4,11 +4,15 @@ import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class WaterAbsorbAbility implements AbilityEffect {
+public class WaterAbsorbAbility extends AbilityEffect {
+	public WaterAbsorbAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	private static final float HEAL_PERCENT = 0.25f;
 
 	@Override
-	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack) {
+	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Attack attack) {
 		// Only water movements
 		if (!attack.getType().equals("AGUA"))
 			return true;
@@ -17,13 +21,15 @@ public class WaterAbsorbAbility implements AbilityEffect {
 		if (attack.getPower() <= 0)
 			return true;
 
-		System.out.println(defender.getName() + " absorbió la agua gracias a la habilidad Absorbe agua");
+		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + attack.getName());
+
+		System.out.println(owner.getName() + " absorbió la agua gracias a la habilidad Absorbe agua");
 
 		// Heals 25% of max PS
-		float heal = defender.getInitialPs() * HEAL_PERCENT;
-		defender.setPs(Math.min(defender.getPs() + heal, defender.getInitialPs()));
+		float heal = owner.getInitialPs() * HEAL_PERCENT;
+		owner.setPs(Math.min(owner.getPs() + heal, owner.getInitialPs()));
 
-		System.out.println(defender.getName() + " recuperó " + heal + " PS");
+		System.out.println(owner.getName() + " recuperó " + heal + " PS");
 
 		// Cancel damage and effects of the attack
 		return false;

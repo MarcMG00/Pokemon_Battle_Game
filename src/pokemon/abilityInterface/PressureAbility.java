@@ -6,7 +6,11 @@ import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class PressureAbility implements AbilityEffect {
+public class PressureAbility extends AbilityEffect {
+	public PressureAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
@@ -22,7 +26,7 @@ public class PressureAbility implements AbilityEffect {
 	}
 
 	@Override
-	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
+	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
 		System.out.println(owner.getName() + " ejerce presión sobre " + defender.getName());
 	}
 }

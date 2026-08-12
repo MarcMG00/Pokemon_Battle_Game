@@ -5,7 +5,11 @@ import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class AngerPointAbility implements AbilityEffect {
+public class AngerPointAbility extends AbilityEffect {
+	public AngerPointAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {

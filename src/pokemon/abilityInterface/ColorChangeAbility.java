@@ -8,7 +8,11 @@ import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 
-public class ColorChangeAbility implements AbilityEffect {
+public class ColorChangeAbility extends AbilityEffect {
+	public ColorChangeAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
@@ -38,7 +42,7 @@ public class ColorChangeAbility implements AbilityEffect {
 	}
 
 	@Override
-	public void onSwitchOut(BattleContext battleCtx, Pokemon owner) {
+	public void onSwitchOut(BattleContext battleCtx) {
 		// Reinitialize types (ex : Kecleon change types during combat)
 		owner.setTypes(owner.getInitialTypes());
 

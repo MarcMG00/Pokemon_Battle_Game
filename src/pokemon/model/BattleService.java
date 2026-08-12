@@ -23,7 +23,7 @@ public class BattleService {
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
 
-		abilityService.applyAbilities(battleCtx, battleCtx.getPlayer().getPkCombatting(),
+		abilityService.applyAbilitiesStartBattle(battleCtx, battleCtx.getPlayer().getPkCombatting(),
 				battleCtx.getIa().getPkCombatting());
 
 		weatherService.applyEntryWeatherAbilities();

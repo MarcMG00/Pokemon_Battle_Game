@@ -22,8 +22,6 @@ public class Ability {
 		this.id = 5000;
 		this.name = "";
 		this.description = "";
-		this.effect = new AbilityEffect() {
-		};
 		this.isWeatherType = false;
 		alreadyUsedOnEnter = false;
 	}
@@ -33,12 +31,10 @@ public class Ability {
 		this.id = id;
 		this.name = name;
 		this.description = description;
-		this.effect = new AbilityEffect() {
-		};
 		this.isWeatherType = false;
 		alreadyUsedOnEnter = false;
 	}
-	
+
 	public Ability(Ability ability) {
 		super();
 		this.id = ability.id;
@@ -46,7 +42,7 @@ public class Ability {
 		this.description = ability.description;
 		this.effect = ability.effect;
 		this.isWeatherType = ability.isWeatherType;
-		alreadyUsedOnEnter = ability.alreadyUsedOnEnter;
+		alreadyUsedOnEnter = false;
 	}
 
 	// ==================================== GETTERS/SETTERS

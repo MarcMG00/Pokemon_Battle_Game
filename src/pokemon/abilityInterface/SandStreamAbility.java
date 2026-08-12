@@ -4,9 +4,13 @@ import pokemon.enums.Weather;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class SandStreamAbility implements AbilityEffect {
+public class SandStreamAbility extends AbilityEffect {
+	public SandStreamAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
-	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
+	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
 		if (battleCtx.getWeather() == Weather.SANDSTORM) {
 			System.out.println(owner.getName() + " invocó una tormenta de arena - pero ya hay una");
 			return;

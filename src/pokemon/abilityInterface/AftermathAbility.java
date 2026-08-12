@@ -5,14 +5,19 @@ import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class AftermathAbility implements AbilityEffect {
+public class AftermathAbility extends AbilityEffect {
+	public AftermathAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 
 		// Defender needs to be debilitated + attacker hasn't to have 006_Damp ability +
 		// defender needs to receive a physical attack
-		if (!defender.isFainted() || !defender.getHasReceivedDamage() || attacker.hasDampAbility() || !attack.makesContact())
+		if (!defender.isFainted() || !defender.getHasReceivedDamage() || attacker.hasDampAbility()
+				|| !attack.makesContact())
 			return;
 
 		// Remove 25% of max PS from defender

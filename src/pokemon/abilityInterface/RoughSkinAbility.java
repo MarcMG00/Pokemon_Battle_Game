@@ -2,8 +2,13 @@ package pokemon.abilityInterface;
 
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
+import pokemon.model.Pokemon;
 
-public class RoughSkinAbility implements AbilityEffect {
+public class RoughSkinAbility extends AbilityEffect {
+	public RoughSkinAbility(Pokemon owner) {
+		super(owner);
+	}
+	
 	@Override
 	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
 		if (attackCtx.getDefender().hasRoughSkinAbility())

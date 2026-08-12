@@ -6,7 +6,10 @@ import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class StenchAbility implements AbilityEffect {
+public class StenchAbility extends AbilityEffect {
+	public StenchAbility(Pokemon owner) {
+		super(owner);
+	}
 
 	private static final double FLINCH_CHANCE = 0.10d;
 

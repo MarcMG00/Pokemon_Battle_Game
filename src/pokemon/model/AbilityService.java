@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import pokemon.abilityInterface.AbilityEffect;
 import pokemon.enums.Weather;
 
 public class AbilityService {
@@ -49,6 +50,11 @@ public class AbilityService {
 			}
 
 			Ability finalAbilityDeepCopy = new Ability(finalAbility);
+			// Put the effect of the ability to Pokemon => unicity for each Pokemon (each
+			// Pokemon is owner of the effect)
+			AbilityEffect effect = AbilityEffectFactory.createEffect(finalAbilityDeepCopy, pk);
+			finalAbilityDeepCopy.setEffect(effect);
+
 			pk.setAbilitySelected(finalAbilityDeepCopy);
 			pk.setBaseAbility(finalAbilityDeepCopy);
 
@@ -60,18 +66,18 @@ public class AbilityService {
 	// -----------------------------
 	// Do start abilities (that are not weather type)
 	// -----------------------------
-	public void applyAbilities(BattleContext battleCtx, Pokemon p1, Pokemon p2) {
-		boolean p1HasWeatherType = p1.getAbilitySelected().getIsWeatherType();
-		boolean p2HasWeatherType = p2.getAbilitySelected().getIsWeatherType();
+	public void applyAbilitiesStartBattle(BattleContext battleCtx, Pokemon pkPlayer, Pokemon pkIA) {
+		boolean p1HasWeatherType = pkPlayer.getAbilitySelected().getIsWeatherType();
+		boolean p2HasWeatherType = pkIA.getAbilitySelected().getIsWeatherType();
 
 		if (p1HasWeatherType && p2HasWeatherType)
 			return;
 
 		if (!p1HasWeatherType)
-			p1.getAbilitySelected().getEffect().onSwitchIn(battleCtx, p1, p2);
+			pkPlayer.getAbilitySelected().getEffect().onSwitchIn(battleCtx, pkIA);
 
 		if (!p2HasWeatherType)
-			p2.getAbilitySelected().getEffect().onSwitchIn(battleCtx, p2, p1);
+			pkIA.getAbilitySelected().getEffect().onSwitchIn(battleCtx, pkPlayer);
 	}
 
 	// -----------------------------
@@ -111,31 +117,31 @@ public class AbilityService {
 	// -----------------------------
 	// Sets the ability during changes (forced or manual) (if any)
 	// -----------------------------
-	public void applyEntryAbilityOnSwitch(BattleContext battleCtx, Pokemon entering, Pokemon defender) {
-		Ability abilityEntering = entering.getAbilitySelected();
+	public void applyEntryAbilityOnSwitch(BattleContext battleCtx, Pokemon pkEntering, Pokemon defender) {
+		Ability abilityEntering = pkEntering.getAbilitySelected();
 		Ability abilityDefendering = defender.getAbilitySelected();
 
 		if (abilityEntering == null || abilityEntering.getId() == 5000)
 			return;
 
-		abilityEntering.getEffect().onSwitchIn(battleCtx, entering, defender);
+		abilityEntering.getEffect().onSwitchIn(battleCtx, defender);
 
 		// For example for 59_Foceast ability
 		// If 36_Trace (copies ability) => needs to be applied
-		abilityDefendering.getEffect().duringBattle(battleCtx, defender, entering);
+		abilityDefendering.getEffect().duringBattle(battleCtx, pkEntering);
 	}
 
 	// -----------------------------
-	// Remove abilities effects before changing to new pokemon (ex : remove 13 Cloud
-	// Nine)
+	// Remove abilities effects before changing to new pokemon (ex : remove
+	// 13_Clou_Nine)
 	// -----------------------------
-	public void applyExitAbilityOnSwitch(BattleContext battleCtx, Pokemon leaving) {
-		Ability ability = leaving.getBaseAbility();
+	public void applyExitAbilityOnSwitch(BattleContext battleCtx, Pokemon leaver) {
+		Ability ability = leaver.getBaseAbility();
 
 		if (ability == null || ability.getId() == 5000)
 			return;
 
-		ability.getEffect().onSwitchOut(battleCtx, leaving);
+		ability.getEffect().onSwitchOut(battleCtx);
 	}
 
 	// -----------------------------
@@ -155,7 +161,7 @@ public class AbilityService {
 		if (ability == null || ability.getId() == 5000 || (pk.getJustEnteredBattle() && !pk.hasShedSkinAbility()))
 			return;
 
-		ability.getEffect().beforeEndOfTurn(battleCtx, pk);
+		ability.getEffect().beforeEndOfTurn(battleCtx);
 	}
 
 	// -----------------------------
@@ -176,7 +182,7 @@ public class AbilityService {
 		if (ability == null || ability.getId() == 5000 || (pk.getJustEnteredBattle() && !pk.hasRainDishAbility()))
 			return;
 
-		ability.getEffect().endOfTurn(battleCtx, pk);
+		ability.getEffect().endOfTurn(battleCtx);
 	}
 
 	// -----------------------------
