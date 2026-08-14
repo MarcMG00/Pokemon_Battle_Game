@@ -19,7 +19,7 @@ public class ChargeAttackEffect implements AttackEffect {
 		AttackResult result = new AttackResult();
 
 		// If not charging => first turn charge the attack
-		if (!attacker.getIsChargingAttackForNextRound()) {
+		if (!attacker.isChargingAttackForNextRound()) {
 			// This attack requires to charge first time for one round
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " se prepara para realizar "
 					+ ctx.getAttack().getName());
@@ -34,6 +34,7 @@ public class ChargeAttackEffect implements AttackEffect {
 		result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
+		// Ensure we don't keep charging state
 		attacker.setIsChargingAttackForNextRound(false);
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 

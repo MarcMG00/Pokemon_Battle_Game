@@ -58,11 +58,11 @@ public class Player {
 		this.pkFacing = pkFacing;
 	}
 
-	public boolean getIsForceSwitchPokemon() {
+	public boolean isForcedSwitchPokemon() {
 		return forceSwitchPokemon;
 	}
 
-	public void setForceSwitchPokemon(boolean forceSwitchPokemon) {
+	public void setForcedSwitchPokemon(boolean forceSwitchPokemon) {
 		this.forceSwitchPokemon = forceSwitchPokemon;
 	}
 

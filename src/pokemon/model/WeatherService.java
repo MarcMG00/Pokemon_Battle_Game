@@ -79,7 +79,7 @@ public class WeatherService {
 	// Check if ability is wetaher type
 	// -----------------------------
 	private boolean isWeatherAbility(Ability ability) {
-		return ability != null && ability.getIsWeatherType();
+		return ability != null && ability.isWeatherType();
 	}
 
 	// -----------------------------
@@ -208,7 +208,7 @@ public class WeatherService {
 	// Check sandstorm immunity by type
 	// -----------------------------
 	private boolean isImmuneToSandstormByType(Pokemon pokemon) {
-		return pokemon.getTypes().stream().anyMatch(t -> t.getId() == 1 || t.getId() == 14 || t.getId() == 16);
+		return pokemon.getTypes().stream().anyMatch(t -> t.isSteelType() || t.isRockType() || t.isGroundType());
 	}
 
 	// -----------------------------
@@ -223,7 +223,7 @@ public class WeatherService {
 	// Check hail immunity by type
 	// -----------------------------
 	private boolean isImmuneToHailByType(Pokemon pokemon) {
-		return pokemon.getTypes().stream().anyMatch(t -> t.getId() == 9);
+		return pokemon.getTypes().stream().anyMatch(t -> t.isIceType());
 	}
 
 	// -----------------------------
@@ -238,10 +238,10 @@ public class WeatherService {
 	// -----------------------------
 	public void applyWeatherEffects(Scanner sc) {
 		applyStatsFromWeatherEndOfTurn(battleCtx.getPlayer().getPkCombatting());
-		checkDebilitatedAfterEndTurn(battleCtx.getPlayer(), sc);
+		switchPokemonAfterEndTurnIfNeeded(battleCtx.getPlayer(), sc);
 
 		applyStatsFromWeatherEndOfTurn(battleCtx.getIa().getPkCombatting());
-		checkDebilitatedAfterEndTurn(battleCtx.getIa(), sc);
+		switchPokemonAfterEndTurnIfNeeded(battleCtx.getIa(), sc);
 
 		reduceNbTurnsMistActive();
 	}
@@ -249,20 +249,17 @@ public class WeatherService {
 	// -----------------------------
 	// Check if a Pokemon fainted due to end-of-turn effects (weather, poison, burn)
 	// -----------------------------
-	private boolean checkDebilitatedAfterEndTurn(Player owner, Scanner sc) {
-		Pokemon pk = owner.getPkCombatting();
+	private boolean switchPokemonAfterEndTurnIfNeeded(Player owner, Scanner sc) {
+		Pokemon pkLeaver = owner.getPkCombatting();
+		Pokemon pkPlayer = battleCtx.getPlayer().getPkCombatting();
 
-		if (!pk.isFainted())
+		if (!pkLeaver.isFainted())
 			return false;
 
 		// Mark as debilitated
-		pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
+		pkLeaver.setStatusCondition(new State(StatusConditions.DEBILITATED));
 
-		System.out.println(pk.getName() + " fue debilitado.");
-
-		// Force clean of drain effects because one of the Pokemon have died (so it
-		// doesn't matter the order of Pokemon)
-		statusService.clearDrainEffects(battleCtx.getPlayer().getPkCombatting(), battleCtx.getIa().getPkCombatting());
+		System.out.println(pkLeaver.getName() + " fue debilitado.");
 
 		// Force switch
 		if (owner == battleCtx.getPlayer()) {
@@ -271,27 +268,28 @@ public class WeatherService {
 			while (!changed)
 				changed = switchPokemonService.changePokemon(sc);
 		} else {
-			Pokemon pkEnteringIA = switchPokemonService.decideBestChangePokemon(owner,
-					battleCtx.getPlayer().getPkCombatting(), battleCtx.getEffectPerTypes());
+			Pokemon pkEnteringIA = switchPokemonService.decideBestChangePokemon(owner, pkPlayer,
+					battleCtx.getEffectPerTypes());
 
 			if (pkEnteringIA == null)
 				pkEnteringIA = owner.getPokemon().stream().filter(p -> !p.isFainted()).findFirst().orElse(null);
 
 			if (pkEnteringIA != null) {
-				switchPokemonService.resetPokemonBeforeSwitch(owner.getPkCombatting());
+				switchPokemonService.resetPokemonBeforeSwitch(pkLeaver);
 
-				statusService.removeStates(owner.getPkCombatting());
+				statusService.removeStates(pkLeaver);
+				// Remove some states from Pokemon remaining in the field
+				statusService.removeDrainingState(pkPlayer);
 
 				System.out.println("IA envía a " + pkEnteringIA.getName());
 
 				pkEnteringIA.setJustEnteredBattle(false);
 				owner.setPkCombatting(pkEnteringIA);
 
-				abilityService.applyEntryAbilityOnSwitch(battleCtx, pkEnteringIA,
-						battleCtx.getPlayer().getPkCombatting());
+				abilityService.applyAbilityOnSwitchInIfNeeded(battleCtx, pkEnteringIA, pkPlayer);
 
 				battleCtx.getPlayer().setPkFacing(pkEnteringIA);
-				owner.setPkFacing(battleCtx.getPlayer().getPkCombatting());
+				owner.setPkFacing(pkPlayer);
 
 				switchPokemonService.refreshAttackOrders();
 			}

@@ -25,7 +25,7 @@ public class FlashFireAbility extends AbilityEffect {
 		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + attack.getName());
 
 		// If already has the boost => only immunity (no cumulative)
-		if (owner.getIsFireBoostActive()) {
+		if (owner.isFireBoostActive()) {
 			System.out.println(owner.getName() + " absorbió el ataque de fuego!");
 			return false; // cannot be attacked
 		}

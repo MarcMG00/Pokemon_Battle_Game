@@ -25,7 +25,7 @@ public class DownloadAbility extends AbilityEffect {
 	@Override
 	public void onSwitchOut(BattleContext battleCtx) {
 		// Reinitialize the activation of ability => reduce one level the stat increased
-		if (owner.getIsAttackBoostedFromDownloadAbility()) {
+		if (owner.isAttackBoostedFromDownloadAbility()) {
 			owner.setAttackStage(Math.max(owner.getAttackStage() - 1, -6));
 		} else {
 			owner.setSpecialAttackStage(Math.max(owner.getSpecialAttackStage() - 1, -6));

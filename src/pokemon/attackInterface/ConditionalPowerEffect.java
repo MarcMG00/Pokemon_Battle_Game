@@ -20,8 +20,8 @@ public class ConditionalPowerEffect implements AttackEffect {
 
 		// Some attacks can get the double of power if charging an attack and are
 		// invulnerable
-		if (ctx.getDefender().getIsChargingAttackForNextRound()
-				&& ctx.getAttack().getCanHitWhileInvulnerable().contains(ctx.getDefender().getNextMovement().getId()))
+		if (ctx.getDefender().isChargingAttackForNextRound()
+				&& ctx.getAttack().canHitWhileInvulnerable().contains(ctx.getDefender().getNextMovement().getId()))
 			ctx.setPower(ctx.getPower() * multiplier);
 
 		AttackResult result = damageService.doDamage(ctx);

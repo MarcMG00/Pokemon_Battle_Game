@@ -80,7 +80,7 @@ public class Ability {
 		this.effect = effect;
 	}
 
-	public boolean getIsWeatherType() {
+	public boolean isWeatherType() {
 		return isWeatherType;
 	}
 
@@ -88,7 +88,7 @@ public class Ability {
 		this.isWeatherType = isWeatherType;
 	}
 
-	public boolean getAlreadyUsedOnEnter() {
+	public boolean alreadyUsedOnEnter() {
 		return alreadyUsedOnEnter;
 	}
 

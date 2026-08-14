@@ -20,7 +20,7 @@ public class LightningRodAbility extends AbilityEffect {
 
 		// If defender is ground type => immunity has preference and doesn't increase
 		// the special attack
-		if (owner.getTypes().stream().anyMatch(t -> t.getId() == 16))
+		if (owner.getTypes().stream().anyMatch(t -> t.isGroundType()))
 			return false;
 
 		// Rises the special attack one point

@@ -20,7 +20,7 @@ public class OneHitKOEffect implements AttackEffect {
 		float dmg = 0f;
 
 		// One-Hit KO => Pokemon facing dies instantly (depending on conditions)
-		if (abilityDefender.getId() == 5 && !abilityDefender.getAlreadyUsedOnEnter()) {
+		if (abilityDefender.getId() == 5 && !abilityDefender.alreadyUsedOnEnter()) {
 			ctx.getDefender().setPs(1f);
 			abilityDefender.setAlreadyUsedOnEnter(true);
 			dmg = ctx.getDefender().getPs() - 1f;

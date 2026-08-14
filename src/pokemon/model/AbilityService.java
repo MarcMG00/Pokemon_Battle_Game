@@ -46,6 +46,12 @@ public class AbilityService {
 			if (finalAbility == null) {
 				System.out.println("Habilidad no encontrada en catálogo global para " + pk.getName() + " (id="
 						+ abilityFromPokemon.getId() + ")");
+
+				// Initialize an empty ability
+				Ability emptyAbility = new Ability();
+				pk.setAbilitySelected(emptyAbility);
+				pk.setBaseAbility(emptyAbility);
+
 				continue;
 			}
 
@@ -64,20 +70,17 @@ public class AbilityService {
 	}
 
 	// -----------------------------
-	// Do start abilities (that are not weather type)
+	// Apply abilities on battle start (that are not weather type)
 	// -----------------------------
-	public void applyAbilitiesStartBattle(BattleContext battleCtx, Pokemon pkPlayer, Pokemon pkIA) {
-		boolean p1HasWeatherType = pkPlayer.getAbilitySelected().getIsWeatherType();
-		boolean p2HasWeatherType = pkIA.getAbilitySelected().getIsWeatherType();
+	public void applyAbilitiesStartBattle(BattleContext battleCtx) {
+		boolean pkPlayerHasWeatherType = battleCtx.getPkPlayer().getAbilitySelected().isWeatherType();
+		boolean pkIAHasWeatherType = battleCtx.getPkIA().getAbilitySelected().isWeatherType();
 
-		if (p1HasWeatherType && p2HasWeatherType)
-			return;
+		if (!pkPlayerHasWeatherType)
+			battleCtx.getPkPlayer().getAbilitySelected().getEffect().onSwitchIn(battleCtx, battleCtx.getPkIA());
 
-		if (!p1HasWeatherType)
-			pkPlayer.getAbilitySelected().getEffect().onSwitchIn(battleCtx, pkIA);
-
-		if (!p2HasWeatherType)
-			pkIA.getAbilitySelected().getEffect().onSwitchIn(battleCtx, pkPlayer);
+		if (!pkIAHasWeatherType)
+			battleCtx.getPkIA().getAbilitySelected().getEffect().onSwitchIn(battleCtx, battleCtx.getPkPlayer());
 	}
 
 	// -----------------------------
@@ -87,7 +90,7 @@ public class AbilityService {
 		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 
-		if (pk.hasMagnetPullAbility() && player.getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 1)) {
+		if (pk.hasMagnetPullAbility() && player.getPkCombatting().getTypes().stream().anyMatch(t -> t.isSteelType())) {
 			System.out.println(player.getPkCombatting().getName() + " (" + player.getPkCombatting().getId()
 					+ ") no puede cambiarse a causa de la habilidad Imán del Pokémon rival");
 
@@ -102,10 +105,13 @@ public class AbilityService {
 	// -----------------------------
 	public boolean isBlockedByArenaTrap(BattleContext battleCtx, boolean isPlayer) {
 		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
-		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
+		Pokemon pkDefender = player.getPkCombatting();
+		Pokemon pkBlocking = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 
-		if (pk.hasArenaTrapAbility() && (!player.getPkCombatting().getTypes().stream().anyMatch(t -> t.getId() == 18)
-				|| player.getPkCombatting().hasLevitateAbility() || player.getPkCombatting().getIsLevitating())) {
+		boolean pkDefenderIsFlyigType = pkDefender.getTypes().stream().anyMatch(t -> t.isFlyingType());
+		boolean pkDefenderIsLevitating = pkDefender.hasLevitateAbility() || pkDefender.isLevitating();
+
+		if (pkBlocking.hasArenaTrapAbility() && (!pkDefenderIsFlyigType || pkDefenderIsLevitating)) {
 			System.out.println(player.getPkCombatting().getName() + " (" + player.getPkCombatting().getId()
 					+ ") no puede cambiarse a causa de la habilidad Trampa arena del Pokémon rival");
 
@@ -115,9 +121,9 @@ public class AbilityService {
 	}
 
 	// -----------------------------
-	// Sets the ability during changes (forced or manual) (if any)
+	// Apply abilities when switching Pokemon if needed
 	// -----------------------------
-	public void applyEntryAbilityOnSwitch(BattleContext battleCtx, Pokemon pkEntering, Pokemon defender) {
+	public void applyAbilityOnSwitchInIfNeeded(BattleContext battleCtx, Pokemon pkEntering, Pokemon defender) {
 		Ability abilityEntering = pkEntering.getAbilitySelected();
 		Ability abilityDefendering = defender.getAbilitySelected();
 
@@ -135,10 +141,10 @@ public class AbilityService {
 	// Remove abilities effects before changing to new pokemon (ex : remove
 	// 13_Clou_Nine)
 	// -----------------------------
-	public void applyExitAbilityOnSwitch(BattleContext battleCtx, Pokemon leaver) {
+	public void applyAbilityOnSwitchOutIfNeeded(BattleContext battleCtx, Pokemon leaver) {
 		Ability ability = leaver.getBaseAbility();
 
-		if (ability == null || ability.getId() == 5000)
+		if (ability.getId() == 5000)
 			return;
 
 		ability.getEffect().onSwitchOut(battleCtx);
@@ -148,50 +154,51 @@ public class AbilityService {
 	// Apply abilities before the end of the turn
 	// -----------------------------
 	public void applyAbilitiesBeforeEndTurn(BattleContext battleCtx) {
-		applyAbilityBeforeEndTurn(battleCtx, true);
-		applyAbilityBeforeEndTurn(battleCtx, false);
+		applyAbilityBeforeEndTurnIfNeeded(battleCtx, true);
+		applyAbilityBeforeEndTurnIfNeeded(battleCtx, false);
 	}
 
 	// -----------------------------
-	// Apply ability before end of turn
+	// Apply ability before end of the turn
 	// -----------------------------
-	private void applyAbilityBeforeEndTurn(BattleContext battleCtx, boolean isPlayer) {
+	private void applyAbilityBeforeEndTurnIfNeeded(BattleContext battleCtx, boolean isPlayer) {
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 		Ability ability = pk.getAbilitySelected();
-		if (ability == null || ability.getId() == 5000 || (pk.getJustEnteredBattle() && !pk.hasShedSkinAbility()))
+
+		if (ability.getId() == 5000 || (pk.justEnteredBattle() && !pk.hasShedSkinAbility()))
 			return;
 
 		ability.getEffect().beforeEndOfTurn(battleCtx);
 	}
 
 	// -----------------------------
-	// Apply abilities at the end of turn
+	// Apply abilities at the end of the turn
 	// -----------------------------
 	public void applyEndTurnAbilities(BattleContext battleCtx) {
-		applyEndTurnAbility(battleCtx, true);
-		applyEndTurnAbility(battleCtx, false);
+		applyEndTurnAbilityIfNeeded(battleCtx, true);
+		applyEndTurnAbilityIfNeeded(battleCtx, false);
 	}
 
 	// -----------------------------
-	// Apply ability on end turn
+	// Apply ability on end of the turn
 	// -----------------------------
-	private void applyEndTurnAbility(BattleContext battleCtx, boolean isPlayer) {
+	private void applyEndTurnAbilityIfNeeded(BattleContext battleCtx, boolean isPlayer) {
 		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
 		Ability ability = pk.getAbilitySelected();
 
-		if (ability == null || ability.getId() == 5000 || (pk.getJustEnteredBattle() && !pk.hasRainDishAbility()))
+		if (ability.getId() == 5000 || (pk.justEnteredBattle() && !pk.hasRainDishAbility()))
 			return;
 
 		ability.getEffect().endOfTurn(battleCtx);
 	}
 
 	// -----------------------------
-	// Do ability effect after attacking
+	// Apply ability from defender (end of the attack from attacker)
 	// -----------------------------
-	public void applyAbilityAfterDamage(Pokemon attacker, Pokemon defender, Attack attack, float dmg,
+	public void applyAbilityAfterDamageIfNeeded(Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			boolean isCriticalAttack, Weather weather, boolean isWeatherSuppressed) {
 		// 54_Truant ability (can't do anything next round)
-		if (attacker.getAbilitySelected() != null && attacker.hasTruantAbility()) {
+		if (attacker.hasTruantAbility()) {
 			System.out.println(attacker.getName() + " (" + attacker.getId() + ") "
 					+ "no popdrá atacar o cambiarse en el siguiente turno a causa de "
 					+ attacker.getAbilitySelected().getName());
@@ -202,12 +209,9 @@ public class AbilityService {
 		if (dmg <= 0)
 			return;
 
-		// Defender ability
 		Ability defenderAbility = defender.getAbilitySelected();
-		if (defenderAbility != null) {
-			defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, isCriticalAttack,
-					weather, isWeatherSuppressed);
-		}
+		defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, isCriticalAttack, weather,
+				isWeatherSuppressed);
 	}
 
 	// -----------------------------

@@ -16,7 +16,7 @@ public class LeechSeedEffect implements AttackEffect {
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
 		// Doesn't affect to grass type
-		if (ctx.getDefender().getTypes().stream().filter(t -> t.getId() == 12).findAny().isPresent()) {
+		if (ctx.getDefender().getTypes().stream().filter(t -> t.isGrassType()).findAny().isPresent()) {
 			System.out.println(ctx.getDefender().getName() + " no puede estar drenado ya que es de tipo planta");
 			return result;
 		}

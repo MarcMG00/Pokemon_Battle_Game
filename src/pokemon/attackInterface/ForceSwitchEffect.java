@@ -28,7 +28,7 @@ public class ForceSwitchEffect implements AttackEffect {
 		}
 
 		// Force change
-		ctx.getDefendingPlayer().setForceSwitchPokemon(true);
+		ctx.getDefendingPlayer().setForcedSwitchPokemon(true);
 
 		System.out.println("¡" + ctx.getDefender().getName() + " fue arrastrado y obligado a retirarse!");
 		return result;

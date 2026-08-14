@@ -22,46 +22,49 @@ public class AccuracyService {
 	}
 
 	// -----------------------------
-	// Gets the probability of attacking
+	// Allow or deny to attack depending on accuracy of the attack
 	// -----------------------------
-	public void resolveAttack(AttackContext ctx) {
+	public void resolveAccuracyAttack(AttackContext ctx) {
+		Weather weather = ctx.getWeather();
 		Pokemon attacker = ctx.getAttacker();
 		Pokemon defender = ctx.getDefender();
-		Attack atkAttacker = ctx.getAttack();
-		Attack atkDefender = defender.getNextMovement();
-		boolean isAttackerCharging = attacker.getIsChargingAttackForNextRound();
-		boolean isDefenderCharging = defender.getIsChargingAttackForNextRound();
+		Attack attackAttacker = ctx.getAttack();
+		Attack attackDefender = defender.getNextMovement();
+		boolean isAttackerCharging = attacker.isChargingAttackForNextRound();
+		boolean isDefenderCharging = defender.isChargingAttackForNextRound();
 
-		boolean canHitInvulnerable = atkDefender == null
-				|| atkAttacker.getCanHitWhileInvulnerable().contains(atkDefender.getId());
+		boolean canHitInvulnerable = attackDefender == null
+				|| attackAttacker.canHitWhileInvulnerable().contains(attackDefender.getId());
 
 		// 1 - Check if an attack is not disabled (attacks disabled cannot be used, even
 		// for charged attacks, they are instantly disabled)
-		if (!canUseAttack(ctx, attacker, atkAttacker)) {
-			return;
-		}
-
-		// 2 - Special cases that ignore precision
-		if (handleForcedChangeOrIgnorePrecision(ctx, attacker, defender, atkAttacker, canHitInvulnerable,
-				isDefenderCharging)) {
-			return;
-		}
-
-		// 3 - Charged attack (first turn)
-		if (handleChargeStart(attacker, atkAttacker, isAttackerCharging)) {
-			return;
-		}
-
-		// 4 - Check for 99_Magic_Guard ability (always hits)
-		if (ApplyNoGuardAbility(attacker, defender))
+		if (attackIsDisabled(attacker, attackAttacker))
 			return;
 
-		// Reset CanAttack if doesn't enter in any case
+		// 2 - Resolve the attack if forces Pokemon change
+		if (resolvedAttackForcesChange(attacker, defender, attackAttacker, canHitInvulnerable, isDefenderCharging))
+			return;
+
+		// 3 - Special cases that ignore precision
+		if (resolvedAttackIgnoresPrecision(weather, attacker, defender, attackAttacker, canHitInvulnerable,
+				isDefenderCharging))
+			return;
+
+		// 4 - Charged attack (first turn)
+		if (resolvedChargingAttack(attacker, attackAttacker, isAttackerCharging))
+			return;
+
+		// 5 - Check for 99_No_Guard ability (always hits)
+		if (PokemonHaveNoGuardAbility(attacker, defender))
+			return;
+
+		// Reset allowing to attack if doesn't enter in any case (will be checked with
+		// accuracy calculs)
 		attacker.denyAttack();
 
-		float accuracyFactor = calculateAccuracyFactor(ctx, attacker, defender, atkAttacker);
+		float accuracyFactor = calculateAccuracyFactor(ctx, attacker, defender, attackAttacker);
 
-		resolveAccuracyByContext(attacker, defender, atkAttacker, accuracyFactor, canHitInvulnerable,
+		resolveAccuracyByContext(attacker, defender, attackAttacker, accuracyFactor, canHitInvulnerable,
 				isAttackerCharging, isDefenderCharging);
 	}
 
@@ -125,40 +128,54 @@ public class AccuracyService {
 	}
 
 	// -----------------------------
-	// Check if attack is not disabled
+	// Check if last attack from Pokemon combating used is disabled
 	// -----------------------------
-	private boolean canUseAttack(AttackContext ctx, Pokemon attacker, Attack atkAttacker) {
-		if (isAttackDisabled(ctx)) {
-			System.out.println(
-					attacker.getName() + " intentó usar " + ctx.getAttack().getName() + ", pero está anulado!");
-			attacker.denyAttack();
-			return false;
+	private boolean attackIsDisabled(Pokemon attacker, Attack attackUsed) {
+		if (attacker.hasActiveEphemeralStatus(StatusConditions.DISABLE)) {
+			State disableStatus = attacker.getEphemeralStatus(StatusConditions.DISABLE);
+
+			if (disableStatus.getAttackDisabled().getId() == attackUsed.getId()) {
+				System.out
+						.println(attacker.getName() + " intentó usar " + attackUsed.getName() + ", pero está anulado!");
+				attacker.denyAttack();
+				return true;
+			}
 		}
-		return true;
+		return false;
 	}
 
 	// -----------------------------
-	// Check for attacks that force changes or has 100% of precision
+	// Check for attacks that force Pokemon change
 	// -----------------------------
-	private boolean handleForcedChangeOrIgnorePrecision(AttackContext ctx, Pokemon attacker, Pokemon defender,
-			Attack atkAttacker, boolean canHitInvulnerable, boolean isDefenderCharging) {
-		// 18_Whirlwind / 46_Roar / 54_Mist
-		if (atkAttacker.isForceChange() || atkAttacker.getId() == 54) {
+	private boolean resolvedAttackForcesChange(Pokemon attacker, Pokemon defender, Attack atkAttacker,
+			boolean canHitInvulnerable, boolean isDefenderCharging) {
+		// 18_Whirlwind / 46_Roar
+		if (atkAttacker.forcesChange()) {
 			if (isDefenderCharging && !canHitInvulnerable) {
 				attacker.denyAttack();
 				System.out.println(attacker.getName() + " usó " + atkAttacker.getName() + ", pero " + defender.getName()
 						+ " evitó el ataque (invulnerable).");
-			} else
+			} else {
+				// Attacks that force Pokemon change don't have precision, so they can be used
+				// directly
 				attacker.allowAttack();
+			}
 			return true;
 		}
+		return false;
+	}
 
+	// -----------------------------
+	// Check for attacks that have 100% of precision
+	// -----------------------------
+	private boolean resolvedAttackIgnoresPrecision(Weather weather, Pokemon attacker, Pokemon defender,
+			Attack atkAttacker, boolean canHitInvulnerable, boolean isDefenderCharging) {
 		if (atkAttacker.alwaysHits()) {
 			attacker.allowAttack();
 			return true;
 		}
 
-		if (atkAttacker.alwaysHeatsUnderWeather(ctx.getWeather())) {
+		if (atkAttacker.alwaysHeatsUnderWeather(weather)) {
 			attacker.allowAttack();
 			return true;
 		}
@@ -168,7 +185,7 @@ public class AccuracyService {
 	// -----------------------------
 	// Check for charged attack
 	// -----------------------------
-	private boolean handleChargeStart(Pokemon attacker, Attack atkAttacker, boolean isAttackerCharging) {
+	private boolean resolvedChargingAttack(Pokemon attacker, Attack atkAttacker, boolean isAttackerCharging) {
 		if (atkAttacker.getCategory() == AttackCategory.CHARGED && !isAttackerCharging) {
 			System.out.println(ANSI_PURPLE + "Probability - Starting a charged attack" + ANSI_RESET);
 
@@ -191,15 +208,16 @@ public class AccuracyService {
 		boolean defenderHasUnaware = defender.hasUnawareAbility();
 
 		// Methods to modify precision of attack, evasion, etc.
-		checkWeatherEffectsForAttacks(ctx);
-		checkStatsForAttacks(ctx);
+		modifyPrecisionByWeather(ctx);
+		modifyPrecisionByAbility(ctx);
 
 		if (atkAttacker.isOneHitKO())
 			// don't take into account Pokemon levels (cause all are on the same lvl)
 			accuracyFactor = 1f;
-		// Retreat Pokemon (23_Stomp/ 27_Rolling kick/ 29_Headbutt/ 44_Bite) + defender
+		// If attack can flinch Pokemon + (23_Stomp/ 27_Rolling kick/ 29_Headbutt/
+		// 44_Bite) + defender
 		// is minimized
-		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.getHasUsedMinimize())
+		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.hasUsedMinimize())
 			accuracyFactor = (ctx.getPrecision() / 100f)
 					* (getEvasionOrAccuracy(ctx, attacker, 1, defenderHasUnaware) / 1f);
 		// Other attacks
@@ -211,12 +229,13 @@ public class AccuracyService {
 	}
 
 	// -----------------------------
-	// Apply accuracy depending on different cases
+	// Apply accuracy depending on different Pokemon situations during the attack
+	// (normal attacks, charging attacks)
 	// -----------------------------
 	private void resolveAccuracyByContext(Pokemon attacker, Pokemon defender, Attack atkAttacker, float accuracyFactor,
 			boolean canHitInvulnerable, boolean isAttackerCharging, boolean isDefenderCharging) {
 
-		// BLOC 1 : NORMAL ATTACK
+		// BLOC 1 : NORMAL ATTACK - DEFENDER IS NOT CHARGING AN ATTACK
 		if (atkAttacker.getCategory() == AttackCategory.NORMAL && !isDefenderCharging) {
 			handleNormalAccuracyCheck(accuracyFactor, atkAttacker, attacker, defender, "(bloc 1)");
 			return;
@@ -250,7 +269,7 @@ public class AccuracyService {
 	}
 
 	// -----------------------------
-	// Handle normal accuracy
+	// Calculates normal accuracy
 	// -----------------------------
 	private void handleNormalAccuracyCheck(float accuracyFactor, Attack atk, Pokemon attacker, Pokemon defender,
 			String code) {
@@ -271,8 +290,8 @@ public class AccuracyService {
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName()
 					+ " evitó el ataque jijijija. " + code);
 
-			// Some attacks that can fail, hurts the attacker (Jump kick, etc.)
-			if (atk.getCanRecieveDamage()) {
+			// Some attacks that can fail, hurt the attacker (Jump kick, etc.)
+			if (atk.canRecieveDamage()) {
 				float attackerInitialPs = attacker.getInitialPs();
 
 				float recoil = attackerInitialPs / 2f;
@@ -302,6 +321,7 @@ public class AccuracyService {
 		else {
 			atk.setPp(atk.getPp() - 1);
 			attacker.denyAttack();
+			// Ensure we don't keep charging state
 			attacker.setIsChargingAttackForNextRound(false);
 
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName() + " (Id:"
@@ -312,7 +332,7 @@ public class AccuracyService {
 	// -----------------------------
 	// Check if 99_No_Guard ability is in game
 	// -----------------------------
-	private boolean ApplyNoGuardAbility(Pokemon attacker, Pokemon defender) {
+	private boolean PokemonHaveNoGuardAbility(Pokemon attacker, Pokemon defender) {
 		// 99_No_Guard allows to attack every time (whether is the defender or the
 		// attacker that has the ability)
 		if (attacker.hasNoGuardAbility() || defender.hasNoGuardAbility()) {
@@ -324,32 +344,18 @@ public class AccuracyService {
 	}
 
 	// -----------------------------
-	// Gets if last attack from Pokemon combating used is disabled
-	// -----------------------------
-	public boolean isAttackDisabled(AttackContext ctx) {
-		Pokemon attacker = ctx.getAttacker();
-		if (attacker.hasActiveEphemeralStatus(StatusConditions.DISABLE)) {
-			State disableStatus = attacker.getEphemeralStatus(StatusConditions.DISABLE);
-
-			if (disableStatus.getAttackDisabled().getId() == ctx.getAttack().getId())
-				return true;
-		}
-		return false;
-	}
-
-	// -----------------------------
 	// Change attacks depending on weather
 	// -----------------------------
-	private void checkWeatherEffectsForAttacks(AttackContext ctx) {
+	private void modifyPrecisionByWeather(AttackContext ctx) {
 		if (ctx.getWeather() == Weather.SUN)
-			if (ctx.getAttack().getId() == 87)
+			if (ctx.getAttack().isThunder())
 				ctx.setPrecision(50f);
 	}
 
 	// -----------------------------
-	// Change attacks depending on abilities, etc.
+	// Modify precision of attacks depending on abilities, etc.
 	// -----------------------------
-	private void checkStatsForAttacks(AttackContext ctx) {
+	private void modifyPrecisionByAbility(AttackContext ctx) {
 		// ATTACKER
 		// 14_Compound_Eyes ability rises precision by 30%
 		if (ctx.getAttacker().hasCompoundEyesAbility())
@@ -361,7 +367,7 @@ public class AccuracyService {
 
 		// DEFENDER
 		// 77_Tangled_Feed duplicates evasion by 2 if confused
-		if (ctx.getDefender().isTagledFeetActive()) {
+		if (ctx.getDefender().isTangledFeetActive()) {
 			ctx.multiplyPrecision(0.5f);
 			System.out.println(ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
 					+ ctx.getDefender().getAbilitySelected().getName());

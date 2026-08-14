@@ -437,7 +437,7 @@ public class Pokemon {
 		return ephemeralStatuses;
 	}
 
-	public boolean getIsChargingAttackForNextRound() {
+	public boolean isChargingAttackForNextRound() {
 		return isChargingAttackForNextRound;
 	}
 
@@ -445,7 +445,7 @@ public class Pokemon {
 		this.isChargingAttackForNextRound = isChargingAttackForNextRound;
 	}
 
-	public boolean getCanAttack() {
+	public boolean canAttack() {
 		return canAttack;
 	}
 
@@ -453,7 +453,7 @@ public class Pokemon {
 		this.canAttack = canAttack;
 	}
 
-	public boolean getHasUsedMinimize() {
+	public boolean hasUsedMinimize() {
 		return hasUsedMinimize;
 	}
 
@@ -461,7 +461,7 @@ public class Pokemon {
 		this.hasUsedMinimize = hasUsedMinimize;
 	}
 
-	public boolean getHasRetreated() {
+	public boolean hasRetreated() {
 		return hasRetreated;
 	}
 
@@ -517,7 +517,7 @@ public class Pokemon {
 		this.lastUsedAttack = lastUsedAttack;
 	}
 
-	public boolean getCanDonAnythingNextRound() {
+	public boolean canDonAnythingNextRound() {
 		return canDonAnythingNextRound;
 	}
 
@@ -529,7 +529,7 @@ public class Pokemon {
 		return weight;
 	}
 
-	public boolean getHasReceivedDamage() {
+	public boolean hasReceivedDamage() {
 		return hasReceivedDamage;
 	}
 
@@ -546,7 +546,7 @@ public class Pokemon {
 		this.damageReceived = damageReceived;
 	}
 
-	public boolean getIsDraining() {
+	public boolean isDraining() {
 		return isDraining;
 	}
 
@@ -562,7 +562,7 @@ public class Pokemon {
 		this.currentAbility = currentAbility;
 	}
 
-	public boolean getJustEnteredBattle() {
+	public boolean justEnteredBattle() {
 		return justEnteredBattle;
 	}
 
@@ -570,7 +570,7 @@ public class Pokemon {
 		this.justEnteredBattle = justEnteredBattle;
 	}
 
-	public boolean getHasSubstitute() {
+	public boolean hasSubstitute() {
 		return hasSubstitute;
 	}
 
@@ -578,7 +578,7 @@ public class Pokemon {
 		this.hasSubstitute = hasSubstitute;
 	}
 
-	public boolean getIsFireBoostActive() {
+	public boolean isFireBoostActive() {
 		return isFireBoostActive;
 	}
 
@@ -602,7 +602,7 @@ public class Pokemon {
 		this.AbilitySelected = abilitySelected;
 	}
 
-	public boolean getIsLevitating() {
+	public boolean isLevitating() {
 		return isLevitating;
 	}
 
@@ -614,7 +614,7 @@ public class Pokemon {
 		return sex;
 	}
 
-	public boolean getIsAttackBoostedFromDownloadAbility() {
+	public boolean isAttackBoostedFromDownloadAbility() {
 		return isAttackBoostedFromDownloadAbility;
 	}
 
@@ -731,8 +731,6 @@ public class Pokemon {
 	// Restart stats after some attacks... (cause not accumulated)
 	// -----------------------------
 	public void restartParametersEffect() {
-		// Can move and attack
-		this.getStatusCondition().setCanMoveStatusCondition(true);
 		this.setCanAttack(true);
 
 		// Reset damage received
@@ -840,14 +838,14 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Don't allow to attack (PkVsPk)
+	// Don't allow to attack
 	// -----------------------------
 	public void denyAttack() {
 		this.setCanAttack(false);
 	}
 
 	// -----------------------------
-	// Allow to attack (PkVsPk)
+	// Allow to attack
 	// -----------------------------
 	public void allowAttack() {
 		this.setCanAttack(true);
@@ -865,7 +863,7 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasPP(int attackId) {
 		Attack atk = this.getNextMovementById(attackId);
-		return atk.getPp() > 0;
+		return atk != null && atk.getPp() > 0;
 	}
 
 	// -----------------------------
@@ -1302,7 +1300,7 @@ public class Pokemon {
 	// -----------------------------
 	// 77_Tangled_feet ability duplicates evasion by 2 if confused
 	// -----------------------------
-	public boolean isTagledFeetActive() {
+	public boolean isTangledFeetActive() {
 		return hasTangledFeetAbility() && hasActiveEphemeralStatus(StatusConditions.CONFUSED);
 	}
 
@@ -1437,6 +1435,13 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasLeafGuardAbility() {
 		return this.getAbilitySelected().getId() == 102;
+	}
+	
+	// -----------------------------
+	// Check if Pokemon has 105_Super_lock ability
+	// -----------------------------
+	public boolean hasSuperLockAbility() {
+		return this.getAbilitySelected().getId() == 105;
 	}
 
 	// -----------------------------

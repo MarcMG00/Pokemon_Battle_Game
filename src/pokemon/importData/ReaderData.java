@@ -1001,6 +1001,7 @@ public class ReaderData {
 	private static void setCategoryAttackType(Attack attack) {
 		switch (attack.getId()) {
 		case 19:
+		case 76:
 			attack.setCategory(AttackCategory.CHARGED);
 			break;
 		default:

@@ -11,7 +11,7 @@ public class CounterAttackEffect implements AttackEffect {
 		Pokemon attacker = ctx.getAttacker();
 		AttackResult result = new AttackResult();
 
-		if (attacker.getHasReceivedDamage()) {
+		if (attacker.hasReceivedDamage()) {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Contraataque");
 
 			float dmg = attacker.getDamageReceived() * 2f;

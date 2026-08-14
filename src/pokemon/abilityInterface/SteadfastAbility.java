@@ -14,7 +14,7 @@ public class SteadfastAbility extends AbilityEffect {
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 		// 1️ - The attack has to retreat defender
-		if (!defender.getHasRetreated())
+		if (!defender.hasRetreated())
 			return;
 
 		if (defender.getSpeedStage() >= 6) {

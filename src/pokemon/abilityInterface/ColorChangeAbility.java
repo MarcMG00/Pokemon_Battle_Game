@@ -21,7 +21,7 @@ public class ColorChangeAbility extends AbilityEffect {
 			return;
 
 		// Defender doesn't have to be substitute
-		if (defender.getHasSubstitute())
+		if (defender.hasSubstitute())
 			return;
 
 		// Attacker doesn't have to have 125_Sheer_force
@@ -29,7 +29,7 @@ public class ColorChangeAbility extends AbilityEffect {
 			return;
 
 		// Movement type
-		PokemonType moveType = attack.getStrTypeToPkType();
+		PokemonType moveType = attack.getPkType();
 		if (moveType == null)
 			return;
 

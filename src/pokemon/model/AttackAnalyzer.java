@@ -15,7 +15,7 @@ public final class AttackAnalyzer {
 	}
 
 	// -----------------------------
-	// Adds 4 attacks to each Pokemon from player (1 other, 2 physicals, 1 special)
+	// Adds 4 attacks to each Pokemon from player (1 other, 2 physical, 1 special)
 	// -----------------------------
 	public static void addAttacksForEachPokemon(Player owner) {
 		for (Pokemon pk : owner.getPokemon()) {
@@ -37,7 +37,7 @@ public final class AttackAnalyzer {
 			rand = new Random();
 			pk.addAttacks(pk.getSpecialAttacks().get(rand.nextInt(pk.getSpecialAttacks().size())));
 
-			System.out.println("fin PK");
+			System.out.println("finished adding Attacks to each Pokémon");
 		}
 	}
 
@@ -92,8 +92,7 @@ public final class AttackAnalyzer {
 			for (Attack finalAttack : attacker.getFourPrincipalAttacks()) {
 				boolean isPicked = false;
 
-				if (hasNoEffect.contains(finalAttack.getStrTypeToPkType())
-						&& !iaHasNoEffectAttacks.contains(finalAttack))
+				if (hasNoEffect.contains(finalAttack.getPkType()) && !iaHasNoEffectAttacks.contains(finalAttack))
 					iaHasNoEffectAttacks.add(finalAttack);
 				else {
 					// Affects both types strongly
@@ -102,15 +101,13 @@ public final class AttackAnalyzer {
 
 					// If not picked, apply single-type logic
 					if (!isPicked) {
-						if (finalLittleDammageRepeatedTypes
-								.containsKey(finalAttack.getStrTypeToPkType().getName().toUpperCase())
+						if (finalLittleDammageRepeatedTypes.containsKey(finalAttack.getPkType().getName().toUpperCase())
 								&& !iaLowAttacks.contains(finalAttack))
 							iaLowAttacks.add(finalAttack);
 
 						else if (finalLotDammageRepeatedTypes
-								.containsKey(finalAttack.getStrTypeToPkType().getName().toUpperCase())
-								&& normalDamageRepeatedTypes
-										.contains(finalAttack.getStrTypeToPkType().getName().toUpperCase())
+								.containsKey(finalAttack.getPkType().getName().toUpperCase())
+								&& normalDamageRepeatedTypes.contains(finalAttack.getPkType().getName().toUpperCase())
 								&& !iaLotDamageAttacks.contains(finalAttack))
 							iaLotDamageAttacks.add(finalAttack);
 
@@ -128,7 +125,7 @@ public final class AttackAnalyzer {
 				ArrayList<PokemonType> rebientanPoco = ef.getValue().get("Le Rebientan poco");
 
 				for (Attack finalAttack : attacker.getFourPrincipalAttacks()) {
-					PokemonType attackType = finalAttack.getStrTypeToPkType();
+					PokemonType attackType = finalAttack.getPkType();
 
 					if (rebientan != null && rebientan.contains(attackType) && !iaLotDamageAttacks.contains(finalAttack)
 							&& !hasNoEffect.contains(attackType)) {
@@ -166,8 +163,8 @@ public final class AttackAnalyzer {
 		ArrayList<PokemonType> uniquePkType = new ArrayList<>();
 
 		for (Attack atck : attacker.getFourPrincipalAttacks()) {
-			if (!uniquePkType.contains(atck.getStrTypeToPkType()))
-				uniquePkType.add(atck.getStrTypeToPkType());
+			if (!uniquePkType.contains(atck.getPkType()))
+				uniquePkType.add(atck.getPkType());
 		}
 
 		return uniquePkType;
@@ -179,7 +176,7 @@ public final class AttackAnalyzer {
 	private static boolean addIfDoubleType(Attack attack, Map<String, Long> repeatedTypeMap,
 			ArrayList<Attack> targetList) {
 		for (Map.Entry<String, Long> key : repeatedTypeMap.entrySet()) {
-			if (key.getKey().equals(attack.getStrTypeToPkType().getName().toUpperCase()) && key.getValue() == 2
+			if (key.getKey().equals(attack.getPkType().getName().toUpperCase()) && key.getValue() == 2
 					&& !targetList.contains(attack)) {
 				targetList.add(attack);
 
@@ -211,7 +208,7 @@ public final class AttackAnalyzer {
 						hasNoEffect.add(noEffect);
 			}
 
-			// Put only types that hurts a lot
+			// Put only types that hurt a lot
 			if (lotDamageList != null) {
 				for (PokemonType lotDamage : lotDamageList)
 					lotDamageRepeatedTypes.add(lotDamage.getName().toUpperCase());
@@ -236,29 +233,29 @@ public final class AttackAnalyzer {
 	}
 
 	// -----------------------------
-	// Puts in a Map the number of times that appears the elements in the list
+	// Put in a Map the number of times that appears the elements in the list
 	// -----------------------------
 	private static Map<String, Long> countDuplicates(List<String> list) {
 		return list.stream().collect(Collectors.groupingBy(e -> e.toString(), Collectors.counting()));
 	}
 
 	// -----------------------------
-	// Returns true if attacker has at least one super effective move
+	// Return true if attacker has at least one super effective move
 	// -----------------------------
 	public static boolean hasSuperEffectiveAttack(Pokemon attacker, Pokemon defender) {
 		return attacker.getFourPrincipalAttacks().stream()
-				.anyMatch(a -> getEffectiveness(a.getStrTypeToPkType(), defender) > 1f);
+				.anyMatch(a -> getEffectiveness(a.getPkType(), defender) > 1f);
 	}
 
 	// -----------------------------
-	// Returns true if attacker has an OHKO or self destruction move
+	// Return true if attacker has an OHKO or self destruction move
 	// -----------------------------
 	public static boolean hasDangerousAttack(Pokemon pokemon) {
 		return pokemon.getFourPrincipalAttacks().stream().anyMatch(a -> a.isOneHitKO() || a.isSelfDestruction());
 	}
 
 	// -----------------------------
-	// Returns the best attack according to power, STAB and effectiveness
+	// Return the best attack according to power, STAB and effectiveness
 	// -----------------------------
 	public static Attack getBestAttack(Pokemon attacker, Pokemon defender) {
 		Attack bestAttack = null;
@@ -268,9 +265,9 @@ public final class AttackAnalyzer {
 			if (atk.getPp() <= 0)
 				continue;
 
-			float effectiveness = getEffectiveness(atk.getStrTypeToPkType(), defender);
+			float effectiveness = getEffectiveness(atk.getPkType(), defender);
 
-			float stab = attacker.getTypes().contains(atk.getStrTypeToPkType()) ? 1.5f : 1f;
+			float stab = attacker.getTypes().contains(atk.getPkType()) ? 1.5f : 1f;
 
 			float power = atk.getPower() > 0 ? atk.getPower() : 1f;
 
@@ -305,7 +302,7 @@ public final class AttackAnalyzer {
 	}
 
 	// -----------------------------
-	// Prepares best attack for player
+	// Prepare best attack for player
 	// -----------------------------
 	public static void prepareBestAttackPlayer(Player owner, int attackId, Pokemon pokemonRival) {
 		Pokemon defender = owner.getPkFacing();
@@ -317,7 +314,7 @@ public final class AttackAnalyzer {
 			return;
 
 		Attack atk = nextAttack.get();
-		PokemonType attackType = atk.getStrTypeToPkType();
+		PokemonType attackType = atk.getPkType();
 
 		// 1 - Real effectiveness
 		float effectiveness = getEffectiveness(attackType, pokemonRival);
@@ -331,7 +328,7 @@ public final class AttackAnalyzer {
 	// Prepare best attack
 	// -----------------------------
 	private static void prepareAttack(Attack atk, Pokemon attacker, Pokemon defender, float effectiveness) {
-		PokemonType attackType = atk.getStrTypeToPkType();
+		PokemonType attackType = atk.getPkType();
 
 		// 110_Tinted_Lens ability (attacker) => low effectiveness is treated as neutral
 		if (attacker.hasTintedLensAbility() && effectiveness > 0f && effectiveness < 1f)
@@ -354,7 +351,6 @@ public final class AttackAnalyzer {
 	// -----------------------------
 	public static void prepareBestAttackIA(Player owner, Pokemon opponent) {
 		Pokemon attacker = owner.getPkCombatting();
-		Pokemon defender = owner.getPkFacing();
 
 		// If no PPs remaining in any attack => use 165_Struggle
 		boolean hasPP = attacker.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
@@ -370,7 +366,7 @@ public final class AttackAnalyzer {
 		Attack bestNormalAttack = null;
 		float bestNormalScore = -1f;
 
-		Attack bestOtrosAttack = null;
+		Attack bestOtherAttack = null;
 
 		// Check all possible attacks
 		for (Attack atk : attacker.getFourPrincipalAttacks()) {
@@ -380,7 +376,7 @@ public final class AttackAnalyzer {
 			if (isAttackDisabled(attacker, atk))
 				continue;
 
-			PokemonType attackType = atk.getStrTypeToPkType();
+			PokemonType attackType = atk.getPkType();
 
 			float effectiveness = getEffectiveness(attackType, opponent);
 			float effectivenessForScore = effectiveness;
@@ -393,7 +389,7 @@ public final class AttackAnalyzer {
 
 			// 111_Filter/ 116_Solid_rock ability (defender) => reduce super effective
 			// attack by 1/4
-			if ((defender.hasFilterAbility() || defender.hasSolidRockAbility()) && effectiveness > 1f)
+			if ((opponent.hasFilterAbility() || opponent.hasSolidRockAbility()) && effectiveness > 1f)
 				effectivenessForScore *= 0.75f;
 
 			float stab = attacker.getTypes().contains(attackType) ? 1.5f : 1f;
@@ -416,9 +412,8 @@ public final class AttackAnalyzer {
 
 			// Save an attack from "others"
 			if (atk.getBases().contains("otros")) {
-				if (bestOtrosAttack == null) {
-					bestOtrosAttack = atk;
-				}
+				if (bestOtherAttack == null)
+					bestOtherAttack = atk;
 			}
 		}
 
@@ -431,8 +426,8 @@ public final class AttackAnalyzer {
 		} else if (bestNormalAttack != null) {
 			chosenAttack = bestNormalAttack;
 
-		} else if (bestOtrosAttack != null) {
-			chosenAttack = bestOtrosAttack;
+		} else if (bestOtherAttack != null) {
+			chosenAttack = bestOtherAttack;
 
 		} else {
 			// Last case : any attack with PP
@@ -441,7 +436,7 @@ public final class AttackAnalyzer {
 
 		// Get again effectiveness => for example for 110_Tinted_Lens ability doubles
 		// low effectiveness damage => but this time from chosen attack
-		float effectiveness = getEffectiveness(chosenAttack.getStrTypeToPkType(), opponent);
+		float effectiveness = getEffectiveness(chosenAttack.getPkType(), opponent);
 		// Apply effectiveness and real STAB
 		prepareAttack(chosenAttack, attacker, opponent, effectiveness);
 		attacker.setNextMovement(chosenAttack);

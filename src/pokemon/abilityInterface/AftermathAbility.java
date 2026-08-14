@@ -16,7 +16,7 @@ public class AftermathAbility extends AbilityEffect {
 
 		// Defender needs to be debilitated + attacker hasn't to have 006_Damp ability +
 		// defender needs to receive a physical attack
-		if (!defender.isFainted() || !defender.getHasReceivedDamage() || attacker.hasDampAbility()
+		if (!defender.isFainted() || !defender.hasReceivedDamage() || attacker.hasDampAbility()
 				|| !attack.makesContact())
 			return;
 

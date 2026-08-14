@@ -420,7 +420,7 @@ public class Game {
 
 		System.out.println("Next attack from machine :");
 		System.out.println(this.getIA().getPkCombatting().getNextMovement().getName() + " - "
-				+ this.getIA().getPkCombatting().getNextMovement().getStrTypeToPkType().getName());
+				+ this.getIA().getPkCombatting().getNextMovement().getPkType().getName());
 	}
 
 	// -----------------------------
@@ -525,7 +525,7 @@ public class Game {
 				System.out.println(pt.getName());
 
 			for (Attack a : p.getFourPrincipalAttacks())
-				System.out.println(a.getName() + " - " + a.getStrTypeToPkType().getName());
+				System.out.println(a.getName() + " - " + a.getPkType().getName());
 
 			System.out.println();
 		}
@@ -559,7 +559,7 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "466,466,466";
+		String allPkPlayer = "008,008,008";
 		String allPkIA = "467,467,467";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
@@ -611,9 +611,11 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 43).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 39).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 46).findFirst().get());
+			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 54).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 8).findFirst().get());

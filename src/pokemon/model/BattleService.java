@@ -23,8 +23,7 @@ public class BattleService {
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
 
-		abilityService.applyAbilitiesStartBattle(battleCtx, battleCtx.getPlayer().getPkCombatting(),
-				battleCtx.getIa().getPkCombatting());
+		abilityService.applyAbilitiesStartBattle(battleCtx);
 
 		weatherService.applyEntryWeatherAbilities();
 
@@ -35,7 +34,7 @@ public class BattleService {
 
 			Pokemon pkPlayer = battleCtx.getPlayer().getPkCombatting();
 
-			boolean playerIsCharging = pkPlayer.getIsChargingAttackForNextRound();
+			boolean playerIsCharging = pkPlayer.isChargingAttackForNextRound();
 
 			boolean playerIsTrapped = pkPlayer.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)
 					&& pkPlayer.getEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK).getNbTurns() > 0;
@@ -45,22 +44,19 @@ public class BattleService {
 			if (attackChoice == 1)
 				attackService.handleAttackTurn(sc);
 			else {
-				if (battleCtx.getIa().getPkCombatting().hasShadowTagAbility()) {
-					System.out.println("No puedes cambiar de Pokémon a causa de Sombra trampa");
+				boolean cancelled = !attackService.handleChangeTurn(sc);
 
+				if (cancelled) {
+					System.out.println("Cambio cancelado. Regresando al menú...");
 					nbRound--;
-
-				} else {
-					boolean cancelled = !attackService.handleChangeTurn(sc);
-
-					if (cancelled) {
-						System.out.println("Cambio cancelado. Regresando al menú...");
-						nbRound--;
-					}
 				}
 			}
 
 			nbRound++;
 		}
+
+		System.out.println("----------------------------------");
+		System.out.println("Fin del combate...");
+		System.out.println("----------------------------------");
 	}
 }

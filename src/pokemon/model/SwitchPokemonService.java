@@ -23,7 +23,7 @@ public class SwitchPokemonService {
 	// Reset stats from Pokemon leaving
 	// -----------------------------
 	public void resetPokemonBeforeSwitch(Pokemon leaver) {
-		abilityService.applyExitAbilityOnSwitch(battleCtx, leaver);
+		abilityService.applyAbilityOnSwitchOutIfNeeded(battleCtx, leaver);
 
 		leaver.setAttackStage(0);
 		leaver.setSpecialAttackStage(0);
@@ -138,7 +138,9 @@ public class SwitchPokemonService {
 		resetPokemonBeforeSwitch(leaver);
 
 		// Remove drained ALL STATUS state (cause player changed)
-		statusService.clearDrainEffects(leaver, battleCtx.getIa().getPkCombatting());
+		statusService.removeStates(leaver);
+		// Remove some states from Pokemon remaining in the field
+		statusService.removeDrainingState(battleCtx.getIa().getPkCombatting());
 
 		System.out.println("Jugador eligió a " + selected.getName());
 
@@ -148,8 +150,7 @@ public class SwitchPokemonService {
 
 		updatePkFacingAfterSwitch();
 
-		// Update weather ability if any
-		abilityService.applyEntryAbilityOnSwitch(battleCtx, selected, battleCtx.getIa().getPkCombatting());
+		abilityService.applyAbilityOnSwitchInIfNeeded(battleCtx, selected, battleCtx.getIa().getPkCombatting());
 
 		refreshAttackOrders();
 	}
@@ -179,13 +180,7 @@ public class SwitchPokemonService {
 	// Try IA to change Pokemon. Return true if IA changed Pokemon. If return false,
 	// will attack normally
 	// -----------------------------
-	public boolean tryIAChange() {
-		if (abilityService.isBlockedByMagnetPull(battleCtx, true))
-			return false;
-
-		if (abilityService.isBlockedByArenaTrap(battleCtx, true))
-			return false;
-
+	public boolean tryIAPokemonSwitch() {
 		// 15% of probability to change Pokemon
 		int randomNumber = (int) (Math.random() * 100) + 1;
 
@@ -225,13 +220,15 @@ public class SwitchPokemonService {
 		Pokemon pkCombating = defender.getPkCombatting();
 		Pokemon pkFacing = defender.getPkFacing();
 
-		statusService.clearDrainEffects(pkCombating, pkFacing);
+		statusService.removeStates(pkCombating);
+		// Remove some states from Pokemon remaining in the field
+		statusService.removeDrainingState(pkFacing);
 
 		// Get available Pokemon
 		List<Pokemon> pkAvailable = getAvailablePokemonForSwitch(defender);
 
 		if (pkAvailable.isEmpty()) {
-			defender.setForceSwitchPokemon(false);
+			defender.setForcedSwitchPokemon(false);
 			return; // Cannot change => does not anything
 		}
 
@@ -241,7 +238,7 @@ public class SwitchPokemonService {
 
 		performForcedSwitch(battleCtx, defender, newPkEntering);
 
-		defender.setForceSwitchPokemon(false);
+		defender.setForcedSwitchPokemon(false);
 	}
 
 	// -----------------------------
@@ -282,7 +279,8 @@ public class SwitchPokemonService {
 		newPkEntering.setJustEnteredBattle(true);
 		defender.setPkCombatting(newPkEntering);
 
-		abilityService.applyEntryAbilityOnSwitch(battleCtx, newPkEntering, getOpponent(defender).getPkCombatting());
+		abilityService.applyAbilityOnSwitchInIfNeeded(battleCtx, newPkEntering,
+				getOpponent(defender).getPkCombatting());
 
 		updateFacingAfterForcedSwitch(defender, newPkEntering);
 	}
@@ -391,7 +389,7 @@ public class SwitchPokemonService {
 		for (Attack atk : pk.getLotDamageAttacks()) {
 
 			// "same type" (STAB)
-			if (pk.getTypes().contains(atk.getStrTypeToPkType())) {
+			if (pk.getTypes().contains(atk.getPkType())) {
 				return true;
 			}
 		}

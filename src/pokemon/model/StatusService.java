@@ -42,12 +42,12 @@ public class StatusService {
 	// -----------------------------
 	private boolean shouldEvaluateStatus(Pokemon pk) {
 		boolean secondTurnCharged = pk.getNextMovement() != null
-				&& pk.getNextMovement().getCategory() == AttackCategory.CHARGED && pk.getIsChargingAttackForNextRound();
+				&& pk.getNextMovement().getCategory() == AttackCategory.CHARGED && pk.isChargingAttackForNextRound();
 
 		boolean normalAttack = pk.getNextMovement() != null
 				&& pk.getNextMovement().getCategory() != AttackCategory.CHARGED;
 
-		return (secondTurnCharged || normalAttack) && pk.getCanDonAnythingNextRound();
+		return (secondTurnCharged || normalAttack) && pk.canDonAnythingNextRound();
 	}
 
 	// -----------------------------
@@ -60,30 +60,17 @@ public class StatusService {
 	}
 
 	// -----------------------------
-	// Clear DRAINED ALL TURNS effects for both Pokemon
-	// -----------------------------
-	public void clearDrainEffects(Pokemon pkA, Pokemon pkB) {
-		pkA.setIsDraining(false);
-		pkB.setIsDraining(false);
-		removeStates(pkA);
-		removeStates(pkB);
-	}
-
-	// -----------------------------
 	// Helper: Evaluate states BEFORE attacking. Some states influence the
 	// probability of attacking, for example when confused, paralyzed, etc.
 	// -----------------------------
-	public boolean canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
-		canAttackFrozenStartTurn(pk);
-		checkCanMoveParalyzed(pk);
-		canAttackParalyzedStartTurn(pk);
+	public void canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
+		boolean canAttackFrozen = canAttackFrozenStartTurn(pk);
+		boolean canAttackParalyzed = canAttackParalyzedStartTurn(pk);
 		boolean canAttackConfused = canAttackConfusedStartTurn(pk);
-		boolean canAttackAsleep = doAsleepEffectStartTurn(pk);
+		boolean canAttackAsleep = canAttackAsleepStartTurn(pk);
 
-		boolean canAttack = pk.getCanAttack() && canAttackConfused && canAttackAsleep;
+		boolean canAttack = canAttackFrozen && canAttackParalyzed && canAttackConfused && canAttackAsleep;
 		pk.setCanAttack(canAttack);
-
-		return canAttack;
 	}
 
 	// -----------------------------
@@ -119,7 +106,7 @@ public class StatusService {
 		doDrainedAllTurnsEffect(playerAttacker.getPkCombatting(), playerDefender.getPkCombatting());
 
 		// Get PS from drained rival Pokemon
-		if (playerAttacker.getPkCombatting().getIsDraining()) {
+		if (playerAttacker.getPkCombatting().isDraining()) {
 			// Get drained all turns state from defender
 			State drainedAllTurnsStatus = playerDefender.getPkCombatting()
 					.getEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
@@ -203,7 +190,7 @@ public class StatusService {
 			}
 
 			// Pokemon is ice type
-			if (pk.getTypes().stream().anyMatch(t -> t.getId() == 9)) {
+			if (pk.getTypes().stream().anyMatch(t -> t.isIceType())) {
 				System.out.println(pk.getName() + " no puede ser congelado ya que es de tipo hielo");
 				return;
 			}
@@ -226,7 +213,7 @@ public class StatusService {
 			}
 
 			// Fire Pokemon cannot be burned
-			if (pk.getTypes().stream().anyMatch(t -> t.getId() == 7)) {
+			if (pk.getTypes().stream().anyMatch(t -> t.isFireType())) {
 				System.out.println(pk.getName() + " no puede ser quemado ya que es de tipo fuego");
 				return;
 			} else
@@ -286,29 +273,13 @@ public class StatusService {
 	// Gets if Pokemon can attack because of FROZEN state (check start of the turn
 	// after applying effect of Frozen)
 	// -----------------------------
-	public void canAttackFrozenStartTurn(Pokemon pk) {
-		if (pk.hasActiveStatusCondition(StatusConditions.FROZEN)) {
-			if (pk.getStatusCondition().getCanMoveStatusCondition())
-				pk.setCanAttack(true);
-			else
-				pk.setCanAttack(false);
-		}
-	}
+	public boolean canAttackFrozenStartTurn(Pokemon pk) {
+		boolean canAttack = true;
 
-	// -----------------------------
-	// Gets if Pokemon can attack because of PARALYZED state (check start of the
-	// turn)
-	// -----------------------------
-	public void canAttackParalyzedStartTurn(Pokemon pk) {
-		if (pk.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
-			if (pk.getStatusCondition().getCanMoveStatusCondition()) {
-				pk.setCanAttack(true);
-				System.out.println(ANSI_CYAN + pk.getName() + " => paralizado - puede atacar" + ANSI_RESET);
-			} else {
-				pk.setCanAttack(false);
-				System.out.println(ANSI_CYAN + pk.getName() + " => paralizado - no puede atacar" + ANSI_RESET);
-			}
-		}
+		if (pk.hasActiveStatusCondition(StatusConditions.FROZEN))
+			canAttack = false;
+
+		return canAttack;
 	}
 
 	// -----------------------------
@@ -343,8 +314,9 @@ public class StatusService {
 					}
 
 					canAttackConfused = false; // received damage or dies => cannot continue
-				} else
-					System.out.println(pk.getName() + " está confuso...");
+				} else {
+					System.out.println(pk.getName() + " está confuso... (pero podrá atacar)");
+				}
 			}
 		}
 		return canAttackConfused;
@@ -366,7 +338,6 @@ public class StatusService {
 				System.out.println(ANSI_CYAN + pk.getName() + " se descongeló! (probabilidad inferior a "
 						+ frozenStatus.getPercentToBeDefrosted() + ") : " + getRidOfStatusProbability + ANSI_RESET);
 			} else {
-				frozenStatus.setCanMoveStatusCondition(false);
 				// Adds +10% each turn not thawed
 				frozenStatus.setPercentToBeDefrosted(frozenStatus.getPercentToBeDefrosted() + 10);
 
@@ -403,17 +374,21 @@ public class StatusService {
 	// -----------------------------
 	// Check can move from PARALYZED state (only before attacking)
 	// -----------------------------
-	public void checkCanMoveParalyzed(Pokemon pk) {
-		if (pk.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
-			State paralyzedStatus = pk.getStatusCondition();
+	public boolean canAttackParalyzedStartTurn(Pokemon pk) {
+		boolean canAttack = true;
 
+		if (pk.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			int attackProbability = (int) (Math.random() * 100);
 
-			if (attackProbability <= 25)
-				paralyzedStatus.setCanMoveStatusCondition(true);
-			else
-				paralyzedStatus.setCanMoveStatusCondition(false);
+			if (attackProbability > 25) {
+				canAttack = false;
+				System.out.println(ANSI_CYAN + pk.getName() + " => paralizado - no puede atacar" + ANSI_RESET);
+			} else {
+				System.out.println(ANSI_CYAN + pk.getName() + " => paralizado - puede atacar" + ANSI_RESET);
+			}
 		}
+
+		return canAttack;
 	}
 
 	// -----------------------------
@@ -448,7 +423,7 @@ public class StatusService {
 	// -----------------------------
 	// Do effect from ASLEEP state (start of the turn)
 	// -----------------------------
-	public boolean doAsleepEffectStartTurn(Pokemon pk) {
+	public boolean canAttackAsleepStartTurn(Pokemon pk) {
 		boolean canAttack = true;
 
 		if (pk.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
@@ -592,13 +567,22 @@ public class StatusService {
 	}
 
 	// -----------------------------
+	// Remove states when switching a Pokemon or a Pokemon has fainted
+	// -----------------------------
+	public void removeStates(Pokemon pk) {
+		removeDrainingState(pk);
+
+		// Trapped normally is removed when a Pokemon has fainted
+		// But if for any case Pokemon has switched alive, remove the status
+		pk.removeEphemeralStatus(StatusConditions.TRAPPED);
+	}
+
+	// -----------------------------
 	// Remove DRAINED ALL TURNS state
 	// -----------------------------
-	private void removeDrainedAllTurns(Pokemon pk) {
-		if (pk.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
-			pk.setIsDraining(false);
-			pk.removeEphemeralStatus(StatusConditions.TRAPPED);
-		}
+	public void removeDrainingState(Pokemon pk) {
+		pk.removeEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
+		pk.setIsDraining(false);
 	}
 
 	// -----------------------------
@@ -681,12 +665,4 @@ public class StatusService {
 
 		return false;
 	}
-
-	// -----------------------------
-	// Remove states when changing or dying a Pokemon
-	// -----------------------------
-	public void removeStates(Pokemon pk) {
-		removeDrainedAllTurns(pk);
-	}
-
 }
