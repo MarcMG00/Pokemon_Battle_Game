@@ -446,6 +446,16 @@ public class AttackService {
 			return;
 		}
 
+		if (iaPk.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
+			System.out.println("No puede cambiar de Pokémon ya que está atrapado (bajo un efecto o ataque)");
+			return;
+		}
+
+		if (iaPk.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
+			System.out.println("No puede cambiar de Pokémon ya que está atrapado (bajo su propio ataque)");
+			return;
+		}
+
 		switchPokemonService.tryIAPokemonSwitch();
 	}
 
@@ -989,6 +999,16 @@ public class AttackService {
 
 		if (battleCtx.getIa().getPkCombatting().hasShadowTagAbility()) {
 			System.out.println("No puedes cambiar de Pokémon a causa de Sombra trampa del Pokémon rival");
+			return false;
+		}
+
+		if (battleCtx.getPlayer().getPkCombatting().hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
+			System.out.println("No puedes cambiar de Pokémon ya que está atrapado (bajo un efecto o ataque)");
+			return false;
+		}
+
+		if (battleCtx.getPlayer().getPkCombatting().hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
+			System.out.println("No puedes cambiar de Pokémon ya que está atrapado (bajo su propio ataque)");
 			return false;
 		}
 

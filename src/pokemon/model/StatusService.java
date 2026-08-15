@@ -575,6 +575,7 @@ public class StatusService {
 		// Trapped normally is removed when a Pokemon has fainted
 		// But if for any case Pokemon has switched alive, remove the status
 		pk.removeEphemeralStatus(StatusConditions.TRAPPED);
+		pk.removeEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK);
 	}
 
 	// -----------------------------
