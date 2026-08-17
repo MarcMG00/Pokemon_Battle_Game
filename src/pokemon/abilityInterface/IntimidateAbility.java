@@ -25,7 +25,7 @@ public class IntimidateAbility extends AbilityEffect {
 			isReduceStatStage = false;
 
 		// Check immunity (Oblivious, Own tempo, etc.)
-		if (defender.getAbilitySelected() != null && statService.isIntimidateImmune(defender)) {
+		if (statService.isIntimidateImmune(defender)) {
 			System.out.println(
 					defender.getName() + " no se intimidó gracias a " + defender.getAbilitySelected().getName());
 			return;

@@ -34,14 +34,15 @@ public class SwitchPokemonService {
 
 		leaver.setLastUsedAttack(new Attack());
 		leaver.getAbilitySelected().setAlreadyUsedOnEnter(false);
+		leaver.setJustEnteredBattle(false); // just in case
 	}
 
 	// -----------------------------
 	// Update Pokemon facing when a new one is entering on combat
 	// -----------------------------
 	public void updatePkFacingAfterSwitch() {
-		battleCtx.getPlayer().setPkFacing(battleCtx.getIa().getPkCombatting());
-		battleCtx.getIa().setPkFacing(battleCtx.getPlayer().getPkCombatting());
+		battleCtx.getPlayer().setPkFacing(battleCtx.getPkIA());
+		battleCtx.getIa().setPkFacing(battleCtx.getPkPlayer());
 	}
 
 	// -----------------------------
@@ -133,14 +134,14 @@ public class SwitchPokemonService {
 	// Perform Pokemon switch
 	// -----------------------------
 	private void performSwitch(Pokemon selected) {
-		Pokemon leaver = battleCtx.getPlayer().getPkCombatting();
+		Pokemon leaver = battleCtx.getPkPlayer();
 
 		resetPokemonBeforeSwitch(leaver);
 
 		// Remove drained ALL STATUS state (cause player changed)
 		statusService.removeStates(leaver);
 		// Remove some states from Pokemon remaining in the field
-		statusService.removeDrainingState(battleCtx.getIa().getPkCombatting());
+		statusService.removeDrainingState(battleCtx.getPkIA());
 
 		System.out.println("Jugador eligió a " + selected.getName());
 
@@ -150,7 +151,7 @@ public class SwitchPokemonService {
 
 		updatePkFacingAfterSwitch();
 
-		abilityService.applyAbilityOnSwitchInIfNeeded(battleCtx, selected, battleCtx.getIa().getPkCombatting());
+		abilityService.applyAbilityOnSwitchInIfNeeded(battleCtx, selected, battleCtx.getPkIA());
 
 		refreshAttackOrders();
 	}
@@ -159,7 +160,7 @@ public class SwitchPokemonService {
 	// Chech Pokemon selected is not the one already on the field
 	// -----------------------------
 	private boolean isInvalidPokemonChoice(int id) {
-		if (battleCtx.getPlayer().getPkCombatting().getId() == id && !battleCtx.getIa().getPkCombatting().isFainted()) {
+		if (battleCtx.getPkPlayer().getId() == id && !battleCtx.getPkIA().isFainted()) {
 			System.out.println("Ese Pokémon ya está combatiendo.");
 			return true;
 		}
@@ -170,9 +171,9 @@ public class SwitchPokemonService {
 	// Put attacks from damage level
 	// -----------------------------
 	public void refreshAttackOrders() {
-		AttackAnalyzer.orderAttacksByDamage(battleCtx.getIa().getPkCombatting(), battleCtx.getIa().getPkFacing(),
+		AttackAnalyzer.orderAttacksByDamage(battleCtx.getPkIA(), battleCtx.getIa().getPkFacing(),
 				battleCtx.getEffectPerTypes());
-		AttackAnalyzer.orderAttacksByDamage(battleCtx.getPlayer().getPkCombatting(),
+		AttackAnalyzer.orderAttacksByDamage(battleCtx.getPkPlayer(),
 				battleCtx.getPlayer().getPkFacing(), battleCtx.getEffectPerTypes());
 	}
 
@@ -190,7 +191,7 @@ public class SwitchPokemonService {
 		}
 
 		// Check from others Pokemon from the team to see a potential better option
-		Pokemon changeTo = this.decideBestChangePokemon(battleCtx.getIa(), battleCtx.getPlayer().getPkCombatting(),
+		Pokemon changeTo = this.decideBestChangePokemon(battleCtx.getIa(), battleCtx.getPkPlayer(),
 				battleCtx.getEffectPerTypes());
 
 		if (changeTo == null) {
@@ -198,12 +199,12 @@ public class SwitchPokemonService {
 			return false; // doesn't exists a better option
 		}
 
-		resetPokemonBeforeSwitch(battleCtx.getIa().getPkCombatting());
+		resetPokemonBeforeSwitch(battleCtx.getPkIA());
 
 		System.out.println("IA cambió a " + changeTo.getName());
 
 		battleCtx.getIa().setPkCombatting(changeTo);
-		battleCtx.getIa().getPkCombatting().setJustEnteredBattle(true);
+		battleCtx.getPkIA().setJustEnteredBattle(true);
 
 		updatePkFacingAfterSwitch();
 
@@ -291,10 +292,10 @@ public class SwitchPokemonService {
 	private void updateFacingAfterForcedSwitch(Player defender, Pokemon newPkEntering) {
 		if (defender == battleCtx.getPlayer()) {
 			battleCtx.getIa().setPkFacing(newPkEntering);
-			battleCtx.getPlayer().setPkFacing(battleCtx.getIa().getPkCombatting());
+			battleCtx.getPlayer().setPkFacing(battleCtx.getPkIA());
 		} else {
 			battleCtx.getPlayer().setPkFacing(newPkEntering);
-			battleCtx.getIa().setPkFacing(battleCtx.getPlayer().getPkCombatting());
+			battleCtx.getIa().setPkFacing(battleCtx.getPkPlayer());
 		}
 	}
 
@@ -395,5 +396,55 @@ public class SwitchPokemonService {
 		}
 
 		return false;
+	}
+
+	// -----------------------------
+	// Check if a Pokemon fainted due to end-of-turn effects (weather, status
+	// conditions, etc.)
+	// -----------------------------
+	public void switchPokemonAfterEndTurnIfNeeded(Player owner, Scanner sc) {
+		Pokemon pkLeaver = owner.getPkCombatting();
+		Pokemon pkPlayer = battleCtx.getPkPlayer();
+
+		if (!pkLeaver.isFainted())
+			return;
+
+		// Mark as debilitated
+		pkLeaver.setStatusCondition(new State(StatusConditions.DEBILITATED));
+
+		System.out.println(pkLeaver.getName() + " fue debilitado.");
+
+		// Force switch
+		if (owner == battleCtx.getPlayer()) {
+			System.out.println("¿Qué Pokémon deberías escoger?");
+			boolean changed = false;
+			while (!changed)
+				changed = changePokemon(sc);
+		} else {
+			Pokemon pkEnteringIA = decideBestChangePokemon(owner, pkPlayer, battleCtx.getEffectPerTypes());
+
+			if (pkEnteringIA == null)
+				pkEnteringIA = owner.getPokemon().stream().filter(p -> !p.isFainted()).findFirst().orElse(null);
+
+			if (pkEnteringIA != null) {
+				resetPokemonBeforeSwitch(pkLeaver);
+
+				statusService.removeStates(pkLeaver);
+				// Remove some states from Pokemon remaining in the field
+				statusService.removeDrainingState(pkPlayer);
+
+				System.out.println("IA envía a " + pkEnteringIA.getName());
+
+				pkEnteringIA.setJustEnteredBattle(false);
+				owner.setPkCombatting(pkEnteringIA);
+
+				abilityService.applyAbilityOnSwitchInIfNeeded(battleCtx, pkEnteringIA, pkPlayer);
+
+				battleCtx.getPlayer().setPkFacing(pkEnteringIA);
+				owner.setPkFacing(pkPlayer);
+
+				refreshAttackOrders();
+			}
+		}
 	}
 }

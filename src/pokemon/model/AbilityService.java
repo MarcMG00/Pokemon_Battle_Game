@@ -88,7 +88,7 @@ public class AbilityService {
 	// -----------------------------
 	public boolean isBlockedByMagnetPull(BattleContext battleCtx, boolean isPlayer) {
 		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
-		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
+		Pokemon pk = isPlayer ? battleCtx.getPkPlayer() : battleCtx.getPkIA();
 
 		if (pk.hasMagnetPullAbility() && player.getPkCombatting().getTypes().stream().anyMatch(t -> t.isSteelType())) {
 			System.out.println(player.getPkCombatting().getName() + " (" + player.getPkCombatting().getId()
@@ -106,7 +106,7 @@ public class AbilityService {
 	public boolean isBlockedByArenaTrap(BattleContext battleCtx, boolean isPlayer) {
 		Player player = isPlayer ? battleCtx.getIa() : battleCtx.getPlayer();
 		Pokemon pkDefender = player.getPkCombatting();
-		Pokemon pkBlocking = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
+		Pokemon pkBlocking = isPlayer ? battleCtx.getPkPlayer() : battleCtx.getPkIA();
 
 		boolean pkDefenderIsFlyigType = pkDefender.getTypes().stream().anyMatch(t -> t.isFlyingType());
 		boolean pkDefenderIsLevitating = pkDefender.hasLevitateAbility() || pkDefender.isLevitating();
@@ -127,7 +127,7 @@ public class AbilityService {
 		Ability abilityEntering = pkEntering.getAbilitySelected();
 		Ability abilityDefendering = defender.getAbilitySelected();
 
-		if (abilityEntering == null || abilityEntering.getId() == 5000)
+		if (abilityEntering.getId() == 5000)
 			return;
 
 		abilityEntering.getEffect().onSwitchIn(battleCtx, defender);
@@ -151,10 +151,22 @@ public class AbilityService {
 	}
 
 	// -----------------------------
-	// Apply abilities before the end of the turn
+	// Apply abilities before the end of the turn (both players)
 	// -----------------------------
-	public void applyAbilitiesBeforeEndTurn(BattleContext battleCtx) {
-		applyAbilityBeforeEndTurnIfNeeded(battleCtx, true);
+	public void applyAbilitiesBeforeEndTurn(BattleContext battleCtx, boolean playerAttacksFirst) {
+		if (playerAttacksFirst) {
+			applyAbilityBeforeEndTurnIfNeeded(battleCtx, true);
+			applyAbilityBeforeEndTurnIfNeeded(battleCtx, false);
+		} else {
+			applyAbilityBeforeEndTurnIfNeeded(battleCtx, false);
+			applyAbilityBeforeEndTurnIfNeeded(battleCtx, true);
+		}
+	}
+
+	// -----------------------------
+	// Apply abilities before the end of the turn (only IA)
+	// -----------------------------
+	public void applyIAAbilitiesBeforeEndTurnIfNeeded(BattleContext battleCtx) {
 		applyAbilityBeforeEndTurnIfNeeded(battleCtx, false);
 	}
 
@@ -162,20 +174,32 @@ public class AbilityService {
 	// Apply ability before end of the turn
 	// -----------------------------
 	private void applyAbilityBeforeEndTurnIfNeeded(BattleContext battleCtx, boolean isPlayer) {
-		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
+		Pokemon pk = isPlayer ? battleCtx.getPkPlayer() : battleCtx.getPkIA();
 		Ability ability = pk.getAbilitySelected();
 
-		if (ability.getId() == 5000 || (pk.justEnteredBattle() && !pk.hasShedSkinAbility()))
+		if (ability.getId() == 5000)
 			return;
 
 		ability.getEffect().beforeEndOfTurn(battleCtx);
 	}
 
 	// -----------------------------
-	// Apply abilities at the end of the turn
+	// Apply abilities at the end of the turn (both players)
 	// -----------------------------
-	public void applyEndTurnAbilities(BattleContext battleCtx) {
-		applyEndTurnAbilityIfNeeded(battleCtx, true);
+	public void applyEndTurnAbilitiesIfNeeded(BattleContext battleCtx, boolean playerAttacksFirst) {
+		if (playerAttacksFirst) {
+			applyEndTurnAbilityIfNeeded(battleCtx, true);
+			applyEndTurnAbilityIfNeeded(battleCtx, false);
+		} else {
+			applyEndTurnAbilityIfNeeded(battleCtx, false);
+			applyEndTurnAbilityIfNeeded(battleCtx, true);
+		}
+	}
+
+	// -----------------------------
+	// Apply abilities at the end of the turn (only IA)
+	// -----------------------------
+	public void applyIAEndTurnAbilitiesIfNeeded(BattleContext battleCtx) {
 		applyEndTurnAbilityIfNeeded(battleCtx, false);
 	}
 
@@ -183,10 +207,13 @@ public class AbilityService {
 	// Apply ability on end of the turn
 	// -----------------------------
 	private void applyEndTurnAbilityIfNeeded(BattleContext battleCtx, boolean isPlayer) {
-		Pokemon pk = isPlayer ? battleCtx.getPlayer().getPkCombatting() : battleCtx.getIa().getPkCombatting();
+		Pokemon pk = isPlayer ? battleCtx.getPkPlayer() : battleCtx.getPkIA();
 		Ability ability = pk.getAbilitySelected();
 
-		if (ability.getId() == 5000 || (pk.justEnteredBattle() && !pk.hasRainDishAbility()))
+		if (pk.isFainted())
+			return;
+
+		if (ability.getId() == 5000)
 			return;
 
 		ability.getEffect().endOfTurn(battleCtx);
@@ -218,9 +245,6 @@ public class AbilityService {
 	// Get priority points from speed (allows to know first Pokemon attacking)
 	// -----------------------------
 	public int getSpeedPriorityModifier(Pokemon pk) {
-		if (pk.getAbilitySelected() == null)
-			return 0;
-
 		// 100_Stall ability => moves last
 		if (pk.hasStallAbility())
 			return -1;

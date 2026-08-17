@@ -143,9 +143,6 @@ public class DamageService {
 	// Apply general abilities concerning the attack of the Pokemon
 	// -----------------------------
 	private float applyPowerAttackModifiers(Pokemon attacker, Attack attack) {
-		if (attacker.getAbilitySelected() == null)
-			return 1f;
-
 		// 96_Normalize increase power 20% more
 		if (attacker.hasNormalizeAbility())
 			return 1.2f;
@@ -162,9 +159,6 @@ public class DamageService {
 	// Apply abilities depending on power level of the attack
 	// -----------------------------
 	private float applyPowerDependingPowerAttack(Pokemon attacker, Attack attack) {
-		if (attacker.getAbilitySelected() == null)
-			return 1f;
-
 		// 101_Technician ability
 		if (attacker.hasTechnicianAbility() && attack.getPower() <= 60f)
 			return 1.5f;

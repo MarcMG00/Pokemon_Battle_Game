@@ -24,7 +24,7 @@ public class LeechSeedEffect implements AttackEffect {
 		ctx.getAttacker().setIsDraining(true);
 
 		// Cannot be accumulated
-		if (!ctx.getDefender().hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
+		if (ctx.getDefender().hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
 			System.out.println(ctx.getDefender().getName() + " ya está drenado");
 			return result;
 		}

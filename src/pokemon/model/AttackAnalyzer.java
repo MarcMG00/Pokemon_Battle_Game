@@ -306,9 +306,15 @@ public final class AttackAnalyzer {
 	// -----------------------------
 	public static void prepareBestAttackPlayer(Player owner, int attackId, Pokemon pokemonRival) {
 		Pokemon defender = owner.getPkFacing();
+		Optional<Attack> nextAttack;
 
-		Optional<Attack> nextAttack = owner.getPkCombatting().getFourPrincipalAttacks().stream()
-				.filter(a -> a.getId() == attackId).findFirst();
+		if (isAttackStruggle(attackId)) {
+			nextAttack = owner.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == attackId)
+					.findFirst();
+		} else {
+			nextAttack = owner.getPkCombatting().getFourPrincipalAttacks().stream().filter(a -> a.getId() == attackId)
+					.findFirst();
+		}
 
 		if (nextAttack.isEmpty())
 			return;
@@ -322,6 +328,10 @@ public final class AttackAnalyzer {
 		prepareAttack(atk, owner.getPkCombatting(), defender, effectiveness);
 
 		owner.getPkCombatting().setNextMovement(atk);
+	}
+
+	private static boolean isAttackStruggle(int attackId) {
+		return attackId == 165;
 	}
 
 	// -----------------------------

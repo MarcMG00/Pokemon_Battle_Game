@@ -730,13 +730,20 @@ public class Pokemon {
 	// -----------------------------
 	// Restart stats after some attacks... (cause not accumulated)
 	// -----------------------------
-	public void restartParametersEffect() {
+	public void restartParametersEffectInitialTurn() {
+		this.setJustEnteredBattle(false);
+	}
+
+	// -----------------------------
+	// Restart stats after some attacks... (cause not accumulated)
+	// -----------------------------
+	public void restartParametersEffectEndTurn() {
 		this.setCanAttack(true);
+		this.setHasRetreated(false);
 
 		// Reset damage received
 		this.setHasReceivedDamage(false);
 		this.setDamageReceived(0f);
-		this.setJustEnteredBattle(false);
 	}
 
 	// -----------------------------
@@ -1436,7 +1443,7 @@ public class Pokemon {
 	public boolean hasLeafGuardAbility() {
 		return this.getAbilitySelected().getId() == 102;
 	}
-	
+
 	// -----------------------------
 	// Check if Pokemon has 105_Super_lock ability
 	// -----------------------------

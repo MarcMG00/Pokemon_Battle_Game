@@ -26,7 +26,7 @@ public class HydratationAbility extends AbilityEffect {
 	}
 
 	@Override
-	public void endOfTurn(BattleContext battleCtx) {
+	public void beforeEndOfTurn(BattleContext battleCtx) {
 		if (battleCtx.getWeather() != Weather.RAIN)
 			return;
 

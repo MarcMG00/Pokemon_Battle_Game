@@ -37,6 +37,7 @@ import pokemon.attackInterface.WeightDamageEffect;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
+import pokemon.enums.Weather;
 
 public class AttackService {
 	public static final String ANSI_BLACK = "\u001B[30m";
@@ -255,38 +256,67 @@ public class AttackService {
 
 		printPokemonStates();
 
-		Pokemon playerPk = battleCtx.getPlayer().getPkCombatting();
-		Pokemon iaPk = battleCtx.getIa().getPkCombatting();
+		Pokemon pkPlayer = battleCtx.getPkPlayer();
+		// Informative : don't stock IA Pokemon in a var because it may change, so pass
+		// through the IAPlayer instead
 
 		TurnContext turnCtx = buildTurnContext();
 		// Apply stats effect before turn starts (reduce speed if paralyzed, etc.)
-		applyModifierStatsPokemon(playerPk, turnCtx);
-		applyModifierStatsPokemon(iaPk, turnCtx);
+		applyModifierStatsPokemon(pkPlayer, turnCtx);
+		applyModifierStatsPokemon(battleCtx.getPkIA(), turnCtx);
 		weatherService.applyStatsFromWeather(turnCtx);
 
-		statusService.evaluateStartTurnStatuses(playerPk, iaPk);
+		// Informative : Some status conditions can be removed before attacking (for
+		// example Frozen), so check at the beginning of the turn
+		statusService.evaluateStartTurnStatuses(pkPlayer, battleCtx.getPkIA());
 
-		// Player actions
-		preparePlayerAttack(attackId);
+		// PLAYER ACTIONS
+		preparePlayerPokemonAttack(attackId);
 
-		// IA actions
+		// IA ACTIONS
 		tryIAPokemonSwitchIfPossible();
-		prepareIAPokemonAttack();
+		if (battleCtx.getPkIA().canDonAnythingNextRound()) {
+			prepareIAPokemonAttack();
+		} else
+			handleIANotAbleToAct(battleCtx.getPkIA());
 
 		// Execute the attack sequence (ordering uses current canAttack and speed)
-		handleNormalAttackSequence(sc, playerPk, iaPk, turnCtx);
+		handleNormalAttackSequence(sc, pkPlayer, battleCtx.getPkIA(), turnCtx);
 
-		abilityService.applyAbilitiesBeforeEndTurn(battleCtx);
+		// POST ATTACK EFFECTS
+		// From here, apply effects (from abilities, status conditions, weather, etc.)
+		// within the speed from each Pokemon (even for draining status)
+		boolean playerAttacksFirst = playerAttacksFirst(pkPlayer, battleCtx.getPkIA(), turnCtx);
 
-		List<Player> fainted = statusService.applyTurnStatusReductions(battleCtx);
-		for (Player p : fainted)
-			switchPokemonService.handleForcedSwitch(p);
+		if (playerAttacksFirst) {
+			statusService.handleDrainingStatusEffects(pkPlayer, battleCtx.getPkIA());
+			statusService.handleDrainingStatusEffects(battleCtx.getPkIA(), pkPlayer);
+		} else {
+			statusService.handleDrainingStatusEffects(battleCtx.getPkIA(), pkPlayer);
+			statusService.handleDrainingStatusEffects(pkPlayer, battleCtx.getPkIA());
+		}
+		// Informative : Begins draining state if needed => doesn't apply the first turn
+		// when the attack is used, so put after draining effect
+		statusService.startDrainingEffectIfNeeded(battleCtx);
 
-		abilityService.applyEndTurnAbilities(battleCtx);
-
-		resetTurnParameters();
+		// Apply abilities before end of turn (some abilities can neutralize the effect
+		// of status conditions, etc.)
+		abilityService.applyAbilitiesBeforeEndTurn(battleCtx, playerAttacksFirst);
+		// Apply effects from status condtions / ephemeral statuses
+		statusService.applyTurnStatusReductions(battleCtx);
+		// Apply abilities at the end of turn (if boost some stats, etc.)
+		abilityService.applyEndTurnAbilitiesIfNeeded(battleCtx, playerAttacksFirst);
 
 		weatherService.applyWeatherEffects(sc);
+		// Reset some paramenters
+		resetParametersEffectEndTurn();
+
+		// Switch Pokemon if needed => Pokemon normally are switch at the end of the
+		// turn context. So if one has fainted, ask for switching at the end.
+		// Informative : If player is forced to switch, normally it is handled during
+		// the method "handleNormalAttackSequence"
+		switchPokemonService.switchPokemonAfterEndTurnIfNeeded(battleCtx.getPlayer(), sc);
+		switchPokemonService.switchPokemonAfterEndTurnIfNeeded(battleCtx.getIa(), sc);
 	}
 
 	// -----------------------------
@@ -308,7 +338,7 @@ public class AttackService {
 	// Prepare next attack for player
 	// -----------------------------
 	private int choosePlayerAttack(Scanner sc) {
-		Pokemon pk = battleCtx.getPlayer().getPkCombatting();
+		Pokemon pk = battleCtx.getPkPlayer();
 
 		if (isForcedAttack(pk))
 			return handleForcedAttack(pk);
@@ -342,7 +372,7 @@ public class AttackService {
 	// -----------------------------
 	private int handleStruggle(Pokemon pk) {
 		System.out.println(pk.getName() + " no tiene más PPs en ningún ataque.");
-		System.out.println(pk.getName() + " usó Forcejeo!");
+		System.out.println(pk.getName() + " tendrá que usar Forcejeo!");
 		return 165;
 	}
 
@@ -386,14 +416,13 @@ public class AttackService {
 	private void printPokemonStates() {
 		// Normal status player
 		System.out.println(ANSI_YELLOW + "Estado normal del Pokémon del jugador : "
-				+ battleCtx.getPlayer().getPkCombatting().getStatusCondition().getStatusCondition() + ANSI_RESET);
+				+ battleCtx.getPkPlayer().getStatusCondition().getStatusCondition() + ANSI_RESET);
 
 		// Ephemeral status player
 		System.out.println(ANSI_YELLOW + "Estados efímeros del Pokémon del jugador : " + ANSI_RESET);
-		if (battleCtx.getPlayer().getPkCombatting().hasEphemeralStatus()) {
+		if (battleCtx.getPkPlayer().hasEphemeralStatus()) {
 			System.out.println(ANSI_YELLOW + "[" + ANSI_RESET);
-			for (Map.Entry<StatusConditions, State> entry : battleCtx.getPlayer().getPkCombatting()
-					.getEphemeralStatuses().entrySet())
+			for (Map.Entry<StatusConditions, State> entry : battleCtx.getPkPlayer().getEphemeralStatuses().entrySet())
 				System.out.println(ANSI_YELLOW + entry.getKey() + ANSI_RESET);
 
 			System.out.println(ANSI_YELLOW + "]" + ANSI_RESET);
@@ -401,14 +430,13 @@ public class AttackService {
 
 		// Normal status IA
 		System.out.println(ANSI_YELLOW + "Estado normal del Pokémon de la máquina : "
-				+ battleCtx.getIa().getPkCombatting().getStatusCondition().getStatusCondition() + ANSI_RESET);
+				+ battleCtx.getPkIA().getStatusCondition().getStatusCondition() + ANSI_RESET);
 
 		// Ephemeral status IA
 		System.out.println(ANSI_YELLOW + "Estados efímeros del Pokémon de la máquina : " + ANSI_RESET);
-		if (battleCtx.getIa().getPkCombatting().hasEphemeralStatus()) {
+		if (battleCtx.getPkIA().hasEphemeralStatus()) {
 			System.out.println(ANSI_YELLOW + "[" + ANSI_RESET);
-			for (Map.Entry<StatusConditions, State> entry : battleCtx.getIa().getPkCombatting().getEphemeralStatuses()
-					.entrySet())
+			for (Map.Entry<StatusConditions, State> entry : battleCtx.getPkIA().getEphemeralStatuses().entrySet())
 				System.out.println(ANSI_YELLOW + entry.getKey() + ANSI_RESET);
 
 			System.out.println(ANSI_YELLOW + "]" + ANSI_RESET);
@@ -418,19 +446,18 @@ public class AttackService {
 	// -----------------------------
 	// Prepare player chosen attack (sets nextMovement etc.)
 	// -----------------------------
-	private void preparePlayerAttack(int attackId) {
-		Pokemon playerPk = battleCtx.getPlayer().getPkCombatting();
+	private void preparePlayerPokemonAttack(int attackId) {
+		Pokemon playerPk = battleCtx.getPkPlayer();
 
 		if (playerPk.canDonAnythingNextRound() && !playerPk.isChargingAttackForNextRound())
-			AttackAnalyzer.prepareBestAttackPlayer(battleCtx.getPlayer(), attackId,
-					battleCtx.getIa().getPkCombatting());
+			AttackAnalyzer.prepareBestAttackPlayer(battleCtx.getPlayer(), attackId, battleCtx.getPkIA());
 	}
 
 	// -----------------------------
 	// IA can decide to change Pokemon only if it's not charging an attack
 	// -----------------------------
 	private void tryIAPokemonSwitchIfPossible() {
-		Pokemon iaPk = battleCtx.getIa().getPkCombatting();
+		Pokemon iaPk = battleCtx.getPkIA();
 
 		if (!iaPk.canDonAnythingNextRound() || iaPk.isChargingAttackForNextRound())
 			return;
@@ -441,7 +468,7 @@ public class AttackService {
 		if (abilityService.isBlockedByArenaTrap(battleCtx, true))
 			return;
 
-		if (battleCtx.getPlayer().getPkCombatting().hasShadowTagAbility()) {
+		if (battleCtx.getPkPlayer().hasShadowTagAbility()) {
 			System.out.println("No puede cambiar de Pokémon a causa de Sombra trampa del Pokémon rival");
 			return;
 		}
@@ -463,14 +490,14 @@ public class AttackService {
 	// Prepare IA (select move) only if not charging an attack
 	// -----------------------------
 	private void prepareIAPokemonAttack() {
-		Pokemon iaPk = battleCtx.getIa().getPkCombatting();
+		Pokemon iaPk = battleCtx.getPkIA();
 
 		boolean isPkChargingAttack = iaPk.getNextMovement() != null
 				&& iaPk.getNextMovement().getCategory() == AttackCategory.CHARGED
 				&& iaPk.isChargingAttackForNextRound();
 
-		if (!isPkChargingAttack && iaPk.canDonAnythingNextRound())
-			AttackAnalyzer.prepareBestAttackIA(battleCtx.getIa(), battleCtx.getPlayer().getPkCombatting());
+		if (!isPkChargingAttack)
+			AttackAnalyzer.prepareBestAttackIA(battleCtx.getIa(), battleCtx.getPkPlayer());
 	}
 
 	// -----------------------------
@@ -494,10 +521,6 @@ public class AttackService {
 		// 3. Second player attacks if turn can continue
 		if (!turnShouldEnd)
 			attackAndCheckIfTurnEnds(defender, attacker, sc, turnCtx);
-
-		// 4. Reset the flinch/retreat
-		battleCtx.getIa().getPkCombatting().setHasRetreated(false);
-		battleCtx.getPlayer().getPkCombatting().setHasRetreated(false);
 	}
 
 	// -----------------------------
@@ -633,11 +656,6 @@ public class AttackService {
 			return true;
 		}
 
-		// If defender got debilitated during this attack -> force change and end turn
-		if (defenderPk.isFainted()) {
-			checkForcedPokemonChange(sc);
-			return true;
-		}
 		return false;
 	}
 
@@ -656,12 +674,22 @@ public class AttackService {
 	// burning in final turn while flying, etc.)
 	// -----------------------------
 	private void checkForcedPokemonChange(Scanner sc) {
-		// Player dies
-		if (battleCtx.getPlayer().getPkCombatting().isFainted())
+		// Player is debilitated
+		if (battleCtx.getPkPlayer().isFainted())
 			handlePlayerPokemonDefeated(sc);
 
-		// IA dies
-		if (battleCtx.getIa().getPkCombatting().isFainted())
+		// IA is debilitated
+		if (battleCtx.getPkIA().isFainted())
+			handleIAPokemonDefeated();
+	}
+
+	// -----------------------------
+	// Check if needed to chose a new Pokemon (ex : combating Pokemon dies from
+	// burning in final turn while flying, etc.)
+	// -----------------------------
+	private void handleIASwitchIfNeeded(Scanner sc) {
+		// IA is debilitated
+		if (battleCtx.getPkIA().isFainted())
 			handleIAPokemonDefeated();
 	}
 
@@ -669,7 +697,7 @@ public class AttackService {
 	// Select new Pokemon from player
 	// -----------------------------
 	private void handlePlayerPokemonDefeated(Scanner sc) {
-		System.out.println(battleCtx.getPlayer().getPkCombatting().getName() + " fue derrotado.");
+		System.out.println(battleCtx.getPkPlayer().getName() + " fue derrotado.");
 		System.out.println("¿Qué Pokémon deberías escoger?");
 
 		boolean changed = false;
@@ -682,8 +710,8 @@ public class AttackService {
 	// Select new Pokemon from IA
 	// -----------------------------
 	private void handleIAPokemonDefeated() {
-		Pokemon pkIA = battleCtx.getIa().getPkCombatting();
-		Pokemon pkPlayer = battleCtx.getPlayer().getPkCombatting();
+		Pokemon pkIA = battleCtx.getPkIA();
+		Pokemon pkPlayer = battleCtx.getPkPlayer();
 
 		statusService.removeStates(pkIA);
 		// Remove some states from Pokemon remaining in the field
@@ -701,6 +729,7 @@ public class AttackService {
 
 		System.out.println("IA eligió a " + pkEnteringIA.getName() + " (Id:" + pkEnteringIA.getId() + ")");
 
+		pkEnteringIA.setJustEnteredBattle(true);
 		battleCtx.getIa().setPkCombatting(pkEnteringIA);
 
 		switchPokemonService.updatePkFacingAfterSwitch();
@@ -708,8 +737,6 @@ public class AttackService {
 		abilityService.applyAbilityOnSwitchInIfNeeded(battleCtx, pkEnteringIA, pkPlayer);
 
 		switchPokemonService.refreshAttackOrders();
-
-		AttackAnalyzer.prepareBestAttackIA(battleCtx.getIa(), pkPlayer);
 	}
 
 	// -----------------------------
@@ -755,7 +782,7 @@ public class AttackService {
 	}
 
 	// -----------------------------
-	// Reset some parameters if cannot attack
+	// Reset some parameters if cannot attack + informative message
 	// -----------------------------
 	private void handleCannotAttack(Pokemon pk, boolean isPlayer) {
 		System.out.println(ANSI_RED + "Pokemon " + (isPlayer ? "player" : "IA") + " cannot attack" + ANSI_RESET);
@@ -885,12 +912,12 @@ public class AttackService {
 
 		// System.out.println("PS actuales de " + ctx.getDefender().getName() + " : " +
 		// ctx.getDefender().getPs());
-		if (ctx.getDefender().getPs() <= 0)
+		if (ctx.getDefender().isFainted())
 			ctx.getDefender().setStatusCondition(new State(StatusConditions.DEBILITATED));
 
 		// System.out.println("PS actuales de " + ctx.getAttacker().getName() + " : " +
 		// ctx.getAttacker().getPs());
-		if (ctx.getAttacker().getPs() <= 0)
+		if (ctx.getAttacker().isFainted())
 			ctx.getAttacker().setStatusCondition(new State(StatusConditions.DEBILITATED));
 	}
 
@@ -963,7 +990,7 @@ public class AttackService {
 	private double getFinalSecondaryEffectProbability(SecondaryEffect effect, Pokemon attacker) {
 		double probability = effect.getProbability();
 
-		if (attacker.getAbilitySelected() != null && attacker.hasSereneGraceAbility())
+		if (attacker.hasSereneGraceAbility())
 			probability *= 2;
 
 		return Math.min(probability, 1.0); // never > 100%
@@ -982,82 +1009,97 @@ public class AttackService {
 	// -----------------------------
 	// Reset parameters from Pokemon
 	// -----------------------------
-	private void resetTurnParameters() {
-		battleCtx.getPlayer().getPkCombatting().restartParametersEffect();
-		battleCtx.getIa().getPkCombatting().restartParametersEffect();
+	private void resetParametersEffectEndTurn() {
+		battleCtx.getPkPlayer().restartParametersEffectEndTurn();
+		battleCtx.getPkIA().restartParametersEffectEndTurn();
 	}
 
 	// -----------------------------
 	// Handle attack from IA when player is changing the Pokemon
 	// -----------------------------
-	public boolean handleChangeTurn(Scanner sc) {
-		if (abilityService.isBlockedByMagnetPull(battleCtx, false))
-			return false;
+	public boolean handlePlayerSwitchIAAttacks(Scanner sc) {
+		if (isPokemonForbidenToSwitch(sc))
+			return true;
 
-		if (abilityService.isBlockedByArenaTrap(battleCtx, false))
-			return false;
-
-		if (battleCtx.getIa().getPkCombatting().hasShadowTagAbility()) {
-			System.out.println("No puedes cambiar de Pokémon a causa de Sombra trampa del Pokémon rival");
-			return false;
-		}
-
-		if (battleCtx.getPlayer().getPkCombatting().hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
-			System.out.println("No puedes cambiar de Pokémon ya que está atrapado (bajo un efecto o ataque)");
-			return false;
-		}
-
-		if (battleCtx.getPlayer().getPkCombatting().hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
-			System.out.println("No puedes cambiar de Pokémon ya que está atrapado (bajo su propio ataque)");
-			return false;
-		}
-
-		if (!handlePlayerChange(sc))
-			return false;
-
-		Pokemon pkIA = battleCtx.getIa().getPkCombatting();
+		Pokemon pkIA = battleCtx.getPkIA();
 
 		TurnContext turnCtx = buildTurnContext();
+
+		// Modify stats from IA Pokemon
 		applyModifierStatsPokemon(pkIA, turnCtx);
 		weatherService.applyStatsFromWeather(turnCtx);
 
+		// Evaluate all the status conditions / ephemeral statuses (to determine if can
+		// attack)
 		statusService.evaluateStatusStartOfTurn(pkIA);
 		statusService.canAttackEvaluatingAllStatesToAttack(pkIA);
 
 		if (pkIA.canDonAnythingNextRound()) {
 			prepareIAPokemonAttack();
-			handleChangeSequence(sc, turnCtx); // only IA attacks
+			handleIAAttacksSequence(sc, turnCtx); // only IA attacks
 		} else
 			handleIANotAbleToAct(pkIA);
 
-		// If defender has to change because of "Whirlwind" or "Roar", etc.
+		// => Switching Pokemon it's only done at the end of the turn and after applying
+		// effects => Only way to switch Pokemon is if it's forced to change because of
+		// "Whirlwind" or "Roar", etc.
 		if (battleCtx.getPlayer().isForcedSwitchPokemon())
 			switchPokemonService.handleForcedSwitch(battleCtx.getPlayer());
 
-		handleEndTurnSequence(sc);
+		handlePlayerSwitchIAAttacksEndTurnSequence(sc);
 
-		return true;
+		return false;
+	}
+
+	// -----------------------------
+	// Check if Player can switch Pokemon / or if Pokemon switch is a valid Pokemon
+	// -----------------------------
+	private boolean isPokemonForbidenToSwitch(Scanner sc) {
+		if (abilityService.isBlockedByMagnetPull(battleCtx, false))
+			return true;
+
+		if (abilityService.isBlockedByArenaTrap(battleCtx, false))
+			return true;
+
+		if (battleCtx.getPkIA().hasShadowTagAbility()) {
+			System.out.println("No puedes cambiar de Pokémon a causa de Sombra trampa del Pokémon rival");
+			return true;
+		}
+
+		if (battleCtx.getPkPlayer().hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
+			System.out.println("No puedes cambiar de Pokémon ya que está atrapado (bajo un efecto o ataque)");
+			return true;
+		}
+
+		if (battleCtx.getPkPlayer().hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
+			System.out.println("No puedes cambiar de Pokémon ya que está atrapado (bajo su propio ataque)");
+			return true;
+		}
+
+		if (!handlePlayerChange(sc))
+			return true;
+
+		return false;
 	}
 
 	// -----------------------------
 	// Handle player change
 	// -----------------------------
 	private boolean handlePlayerChange(Scanner sc) {
-		if (battleCtx.getPlayer().getPkCombatting().canDonAnythingNextRound()) {
+		if (battleCtx.getPkPlayer().canDonAnythingNextRound()) {
 			boolean changed = switchPokemonService.changePokemon(sc);
 
 			if (!changed)
 				return false;
 
 		} else {
-			System.out.println(battleCtx.getPlayer().getPkCombatting().getName() + " ("
-					+ battleCtx.getPlayer().getPkCombatting().getId() + ") "
-					+ (battleCtx.getPlayer().getPkCombatting().hasTruantAbility()
+			System.out.println(battleCtx.getPkPlayer().getName() + " (" + battleCtx.getPkPlayer().getId() + ") "
+					+ (battleCtx.getPkPlayer().hasTruantAbility()
 							? "no puede cambiarse este turno a causa de "
-									+ battleCtx.getPlayer().getPkCombatting().getAbilitySelected().getName()
+									+ battleCtx.getPkPlayer().getAbilitySelected().getName()
 							: "no puede cambiarse este turno a causa de algún ataque o estado"));
 
-			battleCtx.getPlayer().getPkCombatting().setCanDonAnythingNextRound(true);
+			battleCtx.getPkPlayer().setCanDonAnythingNextRound(true);
 		}
 		return true;
 	}
@@ -1065,14 +1107,14 @@ public class AttackService {
 	// -----------------------------
 	// Handle change sequence
 	// -----------------------------
-	private void handleChangeSequence(Scanner sc, TurnContext turnCtx) {
+	private void handleIAAttacksSequence(Scanner sc, TurnContext turnCtx) {
 		handleRetaliation(battleCtx.getIa(), battleCtx.getPlayer(), turnCtx);
-		checkForcedPokemonChange(sc);
+		handleIASwitchIfNeeded(sc);
 	}
 
 	// -----------------------------
 	// Handle if IA can do anything this turn (because of abilities or is a rest
-	// turn, etc.)
+	// turn, etc.) + informative message
 	// -----------------------------
 	private void handleIANotAbleToAct(Pokemon pkIA) {
 		if (pkIA.hasTruantAbility())
@@ -1086,22 +1128,35 @@ public class AttackService {
 	}
 
 	// -----------------------------
-	// Apply end turn effects, abilities, etc. (only when handling change turn)
+	// Apply end turn effects status conditions, abilities, etc. (only when handling
+	// Player switching manually - only IA attacks)
 	// -----------------------------
-	private void handleEndTurnSequence(Scanner sc) {
-		abilityService.applyAbilitiesBeforeEndTurn(battleCtx);
+	private void handlePlayerSwitchIAAttacksEndTurnSequence(Scanner sc) {
+		// Only apply "before end turn" ability for IA if hasn't just entered
+		abilityService.applyIAAbilitiesBeforeEndTurnIfNeeded(battleCtx);
 
-		statusService.reduceNumberTurnsEffects(battleCtx.getIa(), battleCtx.getPlayer());
+		// STATUS CONDITIONS
+		// Player
+		statusService.handleStatusConditionsEndTurn(battleCtx.getPkPlayer(), battleCtx.getPkIA());
+		// IA
+		statusService.handleStatusConditionsEndTurn(battleCtx.getPkIA(), battleCtx.getPkPlayer());
+		// Informative : Draining effects are not applied because they are removed when
+		// switching Pokemon
 
-		statusService.reduceDrainedAllTurnsEffects(battleCtx.getIa(), battleCtx.getPlayer());
-		statusService.doDrainedAllTurnsEffect(battleCtx.getPlayer().getPkCombatting(),
-				battleCtx.getIa().getPkCombatting());
-		statusService.reduceDrainedAllTurnsEffects(battleCtx.getPlayer(), battleCtx.getIa());
+		// Only apply "end turn" ability for IA (because Player has switch) if hasn't
+		// just entered
+		abilityService.applyIAEndTurnAbilitiesIfNeeded(battleCtx);
 
-		abilityService.applyEndTurnAbilities(battleCtx);
-
-		resetTurnParameters();
-
+		// Apply weather effects for both players
 		weatherService.applyWeatherEffects(sc);
+
+		// Reset parameters for both players (just in case)
+		resetParametersEffectEndTurn();
+
+		// Switch Pokemon if needed => only switch at the end of the turns (even if
+		// Pokemon have fainted during abilities before the end of the turn because of
+		// some status effects, etc.)
+		switchPokemonService.switchPokemonAfterEndTurnIfNeeded(battleCtx.getPlayer(), sc);
+		switchPokemonService.switchPokemonAfterEndTurnIfNeeded(battleCtx.getIa(), sc);
 	}
 }

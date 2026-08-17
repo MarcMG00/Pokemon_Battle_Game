@@ -25,7 +25,7 @@ public class ColorChangeAbility extends AbilityEffect {
 			return;
 
 		// Attacker doesn't have to have 125_Sheer_force
-		if (attacker.getAbilitySelected() != null && attacker.hasSheerForceAbility())
+		if (attacker.hasSheerForceAbility())
 			return;
 
 		// Movement type

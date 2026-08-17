@@ -32,7 +32,11 @@ public class BattleService {
 			System.out.println("Let's start round nº : " + nbRound);
 			System.out.println("----------------------------------");
 
-			Pokemon pkPlayer = battleCtx.getPlayer().getPkCombatting();
+			Pokemon pkPlayer = battleCtx.getPkPlayer();
+			Pokemon pkIA = battleCtx.getPkIA();
+
+			pkPlayer.restartParametersEffectInitialTurn();
+			pkIA.restartParametersEffectInitialTurn();
 
 			boolean playerIsCharging = pkPlayer.isChargingAttackForNextRound();
 
@@ -44,7 +48,7 @@ public class BattleService {
 			if (attackChoice == 1)
 				attackService.handleAttackTurn(sc);
 			else {
-				boolean cancelled = !attackService.handleChangeTurn(sc);
+				boolean cancelled = attackService.handlePlayerSwitchIAAttacks(sc);
 
 				if (cancelled) {
 					System.out.println("Cambio cancelado. Regresando al menú...");
