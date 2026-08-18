@@ -8,7 +8,6 @@ public class State {
 	// ====================================
 
 	private StatusConditions statusCondition;
-	private boolean canMoveStatusCondition;
 	private int nbTurns;
 	private int percentToBeDefrosted;
 	private Attack attackDisabled;
@@ -18,7 +17,6 @@ public class State {
 
 	public State() {
 		this.statusCondition = StatusConditions.NO_STATUS;
-		this.canMoveStatusCondition = true;
 		this.nbTurns = 0;
 		this.percentToBeDefrosted = 10;
 		this.attackDisabled = new Attack();
@@ -26,7 +24,6 @@ public class State {
 
 	public State(StatusConditions estadoEnum, int numTurnos) {
 		this.statusCondition = estadoEnum;
-		this.canMoveStatusCondition = true;
 		this.nbTurns = numTurnos;
 		this.percentToBeDefrosted = 10;
 		this.attackDisabled = new Attack();
@@ -34,7 +31,6 @@ public class State {
 
 	public State(StatusConditions estadoEnum) {
 		this.statusCondition = estadoEnum;
-		this.canMoveStatusCondition = true;
 		this.nbTurns = 0;
 		this.percentToBeDefrosted = 10;
 		this.attackDisabled = new Attack();
@@ -49,14 +45,6 @@ public class State {
 
 	public void setStatusCondition(StatusConditions estadoEnum) {
 		this.statusCondition = estadoEnum;
-	}
-
-	public boolean getCanMoveStatusCondition() {
-		return canMoveStatusCondition;
-	}
-
-	public void setCanMoveStatusCondition(boolean puedeMoverseEstadoEfimero) {
-		this.canMoveStatusCondition = puedeMoverseEstadoEfimero;
 	}
 
 	public int getNbTurns() {

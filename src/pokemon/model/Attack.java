@@ -32,10 +32,11 @@ public class Attack {
 	private boolean makesContact;
 	private List<SecondaryEffect> secondaryEffects = new ArrayList<>();
 	private boolean alwaysHits;
-	private boolean ignoresAccuracy;
 	private Weather guaranteedWeather;
 	private boolean forceChange;
 	private boolean isPunchMove;
+	private boolean isSelfDestruction;
+	private boolean isAppliedToAttacker;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -60,11 +61,12 @@ public class Attack {
 		this.makesContact = false;
 		this.canHitWhileInvulnerable = new ArrayList<>();
 		this.alwaysHits = false;
-		this.ignoresAccuracy = false;
 		this.guaranteedWeather = Weather.NONE;
 		this.forceChange = false;
 		this.isPunchMove = false;
 		this.category = AttackCategory.NORMAL;
+		this.isSelfDestruction = false;
+		this.isAppliedToAttacker = false;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -88,11 +90,12 @@ public class Attack {
 		this.canHitWhileInvulnerable = new ArrayList<>();
 		this.secondaryEffects = new ArrayList<>();
 		this.alwaysHits = false;
-		this.ignoresAccuracy = false;
 		this.guaranteedWeather = Weather.NONE;
 		this.forceChange = false;
 		this.isPunchMove = false;
 		this.category = AttackCategory.NORMAL;
+		this.isSelfDestruction = false;
+		this.isAppliedToAttacker = false;
 	}
 
 	public Attack(Attack attack) {
@@ -116,11 +119,12 @@ public class Attack {
 		this.canHitWhileInvulnerable = attack.canHitWhileInvulnerable;
 		this.secondaryEffects = attack.secondaryEffects;
 		this.alwaysHits = attack.alwaysHits;
-		this.ignoresAccuracy = attack.ignoresAccuracy;
 		this.guaranteedWeather = attack.guaranteedWeather;
 		this.forceChange = attack.forceChange;
 		this.isPunchMove = attack.isPunchMove;
 		this.category = attack.category;
+		this.isSelfDestruction = attack.isSelfDestruction;
+		this.isAppliedToAttacker = attack.isAppliedToAttacker;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -190,11 +194,11 @@ public class Attack {
 		this.effect = effect;
 	}
 
-	public PokemonType getStrTypeToPkType() {
+	public PokemonType getPkType() {
 		return strTypeToPkType;
 	}
 
-	public void setStrTypeToPkType(PokemonType strTypeToPkType) {
+	public void setPkType(PokemonType strTypeToPkType) {
 		this.strTypeToPkType = strTypeToPkType;
 	}
 
@@ -227,7 +231,7 @@ public class Attack {
 		this.category = category;
 	}
 
-	public List<Integer> getCanHitWhileInvulnerable() {
+	public List<Integer> canHitWhileInvulnerable() {
 		return canHitWhileInvulnerable;
 	}
 
@@ -235,7 +239,7 @@ public class Attack {
 		this.canHitWhileInvulnerable = canHitWhileInvulnerable;
 	}
 
-	public boolean getCanRecieveDamage() {
+	public boolean canRecieveDamage() {
 		return canRecieveDamage;
 	}
 
@@ -267,7 +271,7 @@ public class Attack {
 		this.isOneHitKO = isOneHitKO;
 	}
 
-	public boolean getMakesContact() {
+	public boolean makesContact() {
 		return makesContact;
 	}
 
@@ -291,14 +295,6 @@ public class Attack {
 		this.alwaysHits = alwaysHits;
 	}
 
-	public boolean isIgnoresAccuracy() {
-		return ignoresAccuracy;
-	}
-
-	public void setIgnoresAccuracy(boolean ignoresAccuracy) {
-		this.ignoresAccuracy = ignoresAccuracy;
-	}
-
 	public Weather getGuaranteedWeather() {
 		return guaranteedWeather;
 	}
@@ -307,7 +303,7 @@ public class Attack {
 		this.guaranteedWeather = guaranteedWeather;
 	}
 
-	public boolean isForceChange() {
+	public boolean forcesChange() {
 		return forceChange;
 	}
 
@@ -323,6 +319,22 @@ public class Attack {
 		this.isPunchMove = isPunchMove;
 	}
 
+	public boolean isSelfDestruction() {
+		return isSelfDestruction;
+	}
+
+	public void setSelfDestruction(boolean isSelfDestruction) {
+		this.isSelfDestruction = isSelfDestruction;
+	}
+
+	public boolean isAppliedToAttacker() {
+		return isAppliedToAttacker;
+	}
+
+	public void setAppliedToAttacker(boolean isAppliedToAttacker) {
+		this.isAppliedToAttacker = isAppliedToAttacker;
+	}
+
 	// ==================================== METHODS
 	// ====================================
 
@@ -330,14 +342,14 @@ public class Attack {
 	// Set the type of the attack to his Pokemon type instead of a string
 	// -----------------------------
 	public void transformStrTypeToPokemonType(ArrayList<PokemonType> types) {
-		this.setStrTypeToPkType(types.stream().filter(pk -> pk.getName().equals(this.getType())).findFirst().get());
+		this.setPkType(types.stream().filter(pk -> pk.getName().equals(this.getType())).findFirst().get());
 	}
 
 	// -----------------------------
 	// Check if can hit while target is invulnerable
 	// -----------------------------
 	public boolean canHitWhileTargetInvulnerable(int targetAttackId) {
-		return this.getCanHitWhileInvulnerable() != null && this.getCanHitWhileInvulnerable().contains(targetAttackId);
+		return this.canHitWhileInvulnerable() != null && this.canHitWhileInvulnerable().contains(targetAttackId);
 	}
 
 	// -----------------------------
@@ -355,7 +367,7 @@ public class Attack {
 	}
 
 	// -----------------------------
-	// Check if has a specific secondary effect
+	// Check if has a secondary effect
 	// -----------------------------
 	public boolean hasSecondaryEffect() {
 		return this.getSecondaryEffects() != null;
@@ -374,5 +386,166 @@ public class Attack {
 	// -----------------------------
 	public List<SecondaryEffect> getSecondaryEffectsOfType(SecondaryEffectType effectType) {
 		return this.getSecondaryEffects().stream().filter(e -> e.getType() == effectType).toList();
+	}
+
+	// -----------------------------
+	// Check if attack is Steel type
+	// -----------------------------
+	public boolean isSteelType() {
+		return this.getPkType().getId() == 1;
+	}
+
+	// -----------------------------
+	// Check if attack is Water type
+	// -----------------------------
+	public boolean isWaterType() {
+		return this.getPkType().getId() == 2;
+	}
+
+	// -----------------------------
+	// Check if attack is Bug type
+	// -----------------------------
+	public boolean isBugType() {
+		return this.getPkType().getId() == 3;
+	}
+
+	// -----------------------------
+	// Check if attack is Dragon type
+	// -----------------------------
+	public boolean isDragonType() {
+		return this.getPkType().getId() == 4;
+	}
+
+	// -----------------------------
+	// Check if attack is Steel type
+	// -----------------------------
+	public boolean isElectricType() {
+		return this.getPkType().getId() == 5;
+	}
+
+	// -----------------------------
+	// Check if attack is Ghost type
+	// -----------------------------
+	public boolean isGhostType() {
+		return this.getPkType().getId() == 6;
+	}
+
+	// -----------------------------
+	// Check if attack is Fire type
+	// -----------------------------
+	public boolean isFireType() {
+		return this.getPkType().getId() == 7;
+	}
+
+	// -----------------------------
+	// Check if attack is Fairy type
+	// -----------------------------
+	public boolean isFairyType() {
+		return this.getPkType().getId() == 8;
+	}
+
+	// -----------------------------
+	// Check if attack is Ice type
+	// -----------------------------
+	public boolean isIceType() {
+		return this.getPkType().getId() == 9;
+	}
+
+	// -----------------------------
+	// Check if attack is Fighting type
+	// -----------------------------
+	public boolean isFightingType() {
+		return this.getPkType().getId() == 10;
+	}
+
+	// -----------------------------
+	// Check if attack is Normal type
+	// -----------------------------
+	public boolean isNormalType() {
+		return this.getPkType().getId() == 11;
+	}
+
+	// -----------------------------
+	// Check if attack is Grass type
+	// -----------------------------
+	public boolean isGrassType() {
+		return this.getPkType().getId() == 12;
+	}
+
+	// -----------------------------
+	// Check if attack is Psychic type
+	// -----------------------------
+	public boolean isPsychicType() {
+		return this.getPkType().getId() == 13;
+	}
+
+	// -----------------------------
+	// Check if attack is Rock type
+	// -----------------------------
+	public boolean isRockType() {
+		return this.getPkType().getId() == 14;
+	}
+
+	// -----------------------------
+	// Check if attack is Dark type
+	// -----------------------------
+	public boolean isDarkType() {
+		return this.getPkType().getId() == 15;
+	}
+
+	// -----------------------------
+	// Check if attack is Ground type
+	// -----------------------------
+	public boolean isGroundType() {
+		return this.getPkType().getId() == 16;
+	}
+
+	// -----------------------------
+	// Check if attack is Poison type
+	// -----------------------------
+	public boolean isPoisonType() {
+		return this.getPkType().getId() == 17;
+	}
+
+	// -----------------------------
+	// Check if attack is Flying type
+	// -----------------------------
+	public boolean isFlyingType() {
+		return this.getPkType().getId() == 18;
+	}
+
+	// -----------------------------
+	// Check if attack is 19_Fly
+	// -----------------------------
+	public boolean isFly() {
+		return this.getId() == 19;
+	}
+
+	// -----------------------------
+	// Check if attack is 54_Mist
+	// -----------------------------
+	public boolean isMist() {
+		return this.getId() == 54;
+	}
+
+	// -----------------------------
+	// Check if attack is 76_Solar_beam
+	// -----------------------------
+	public boolean isSolarBeam() {
+		return this.getId() == 76;
+	}
+
+	// -----------------------------
+	// Check if attack is 87_Thunder
+	// -----------------------------
+	public boolean isThunder() {
+		return this.getId() == 87;
+	}
+
+	// -----------------------------
+	// Check if attack is 165_Struggle
+	// -----------------------------
+	public boolean isStruggle() {
+		return this.getId() == 165;
 	}
 }

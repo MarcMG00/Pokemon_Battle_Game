@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import pokemon.enums.Sex;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
-import pokemon.enums.Weather;
 
 public class Pokemon {
 
@@ -41,8 +40,7 @@ public class Pokemon {
 	private ArrayList<Attack> lotDamageAttacks;
 	private ArrayList<Attack> normalAttacks;
 	private ArrayList<Attack> lowAttacks;
-	private ArrayList<Attack> notEffectAttacks;
-	private ArrayList<Integer> fourIdAttacks;
+	private ArrayList<Attack> noEffectAttacks;
 	private int precisionPoints;
 	private int evasionPoints;
 	private State statusCondition;
@@ -60,7 +58,7 @@ public class Pokemon {
 	private boolean canDonAnythingNextRound;
 	private int weight;
 	private boolean hasReceivedDamage;
-	private float damageReceived;
+	private float damageReceived; // Used for physical attacks (because of some abilities, etc.)
 	private boolean isDraining;
 	private Ability AbilitySelected; // main ability that will used only to compare abilities (for example 36_Calc)
 	private boolean justEnteredBattle;
@@ -71,12 +69,6 @@ public class Pokemon {
 	private boolean isLevitating;
 	private Sex sex;
 	private boolean isAttackBoostedFromDownloadAbility;
-	private boolean isUsingAbility;
-
-	private static final String ANSI_CYAN = "\u001B[36m";
-	private static final String ANSI_RESET = "\u001B[0m";
-	public static final String ANSI_RED = "\u001B[31m";
-	public static final String ANSI_YELLOW = "\u001B[33m";
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -107,8 +99,7 @@ public class Pokemon {
 		this.lotDamageAttacks = new ArrayList<>();
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
-		this.notEffectAttacks = new ArrayList<>();
-		this.fourIdAttacks = new ArrayList<>();
+		this.noEffectAttacks = new ArrayList<>();
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
 		this.isChargingAttackForNextRound = false;
@@ -135,7 +126,6 @@ public class Pokemon {
 		this.isLevitating = false;
 		this.sex = Sex.random();
 		this.isAttackBoostedFromDownloadAbility = false;
-		this.isUsingAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
 	}
@@ -167,8 +157,7 @@ public class Pokemon {
 		this.lotDamageAttacks = new ArrayList<>();
 		this.normalAttacks = new ArrayList<>();
 		this.lowAttacks = new ArrayList<>();
-		this.notEffectAttacks = new ArrayList<>();
-		this.fourIdAttacks = new ArrayList<>();
+		this.noEffectAttacks = new ArrayList<>();
 		this.precisionPoints = 0;
 		this.evasionPoints = 0;
 		this.isChargingAttackForNextRound = false;
@@ -195,7 +184,6 @@ public class Pokemon {
 		this.isLevitating = false;
 		this.sex = Sex.random();
 		this.isAttackBoostedFromDownloadAbility = false;
-		this.isUsingAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
 	}
@@ -228,7 +216,6 @@ public class Pokemon {
 		this.otherAttacks = (ArrayList<Attack>) pokemon.otherAttacks.stream().map(Attack::new)
 				.collect(Collectors.toList());
 		this.fourPrincipalAttacks = new ArrayList<>(); // starts empty
-		this.fourIdAttacks = new ArrayList<>();
 
 		this.nextMovement = null;
 		this.lotDamageAttacks = (ArrayList<Attack>) pokemon.lotDamageAttacks.stream().map(Attack::new)
@@ -236,7 +223,7 @@ public class Pokemon {
 		this.normalAttacks = (ArrayList<Attack>) pokemon.normalAttacks.stream().map(Attack::new)
 				.collect(Collectors.toList());
 		this.lowAttacks = (ArrayList<Attack>) pokemon.lowAttacks.stream().map(Attack::new).collect(Collectors.toList());
-		this.notEffectAttacks = (ArrayList<Attack>) pokemon.notEffectAttacks.stream().map(Attack::new)
+		this.noEffectAttacks = (ArrayList<Attack>) pokemon.noEffectAttacks.stream().map(Attack::new)
 				.collect(Collectors.toList());
 
 		this.precisionPoints = 0;
@@ -267,7 +254,6 @@ public class Pokemon {
 		this.isLevitating = false;
 		this.sex = Sex.random();
 		this.isAttackBoostedFromDownloadAbility = false;
-		this.isUsingAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
 	}
@@ -295,112 +281,60 @@ public class Pokemon {
 		return ps;
 	}
 
-	public void setPs(float f) {
-		this.ps = f;
+	public void setPs(float ps) {
+		this.ps = ps;
 	}
 
 	public float getAttack() {
 		return attack;
 	}
 
-	public void setAttack(float attack) {
-		this.attack = attack;
-	}
-
 	public float getDef() {
 		return def;
-	}
-
-	public void setDef(float def) {
-		this.def = def;
 	}
 
 	public float getSpeed() {
 		return speed;
 	}
 
-	public void setSpeed(float speed) {
-		this.speed = speed;
-	}
-
 	public float getSpecialAttack() {
 		return specialAttack;
-	}
-
-	public void setSpecialAttack(float specialAttack) {
-		this.specialAttack = specialAttack;
 	}
 
 	public float getSpecialDefense() {
 		return specialDefense;
 	}
 
-	public void setSpecialDefense(float specialDefense) {
-		this.specialDefense = specialDefense;
-	}
-
 	public float getInitialPs() {
 		return initialPs;
-	}
-
-	public void setInitialPs(float initialPs) {
-		this.initialPs = initialPs;
 	}
 
 	public float getInitialAttack() {
 		return initialAttack;
 	}
 
-	public void setInitialAttack(float initialAttack) {
-		this.initialAttack = initialAttack;
-	}
-
 	public float getInitialDef() {
 		return initialDef;
-	}
-
-	public void setInitialDef(float initialDef) {
-		this.initialDef = initialDef;
 	}
 
 	public float getInitialSpeed() {
 		return initialSpeed;
 	}
 
-	public void setInitialSpeed(float initialSpeed) {
-		this.initialSpeed = initialSpeed;
-	}
-
 	public float getInitialSpecialAttack() {
 		return initialSpecialAttack;
-	}
-
-	public void setInitialSpecialAttack(float initialSpecialAttack) {
-		this.initialSpecialAttack = initialSpecialAttack;
 	}
 
 	public float getInitialSpecialDefense() {
 		return initialSpecialDefense;
 	}
 
-	public void setInitialSpecialDefense(float initialSpecialDefense) {
-		this.initialSpecialDefense = initialSpecialDefense;
-	}
-
 	public ArrayList<Ability> getNormalAbilities() {
 		return normalAbilities;
 	}
 
-	public void setNormalAbilities(ArrayList<Ability> normalAbilities) {
-		this.normalAbilities = normalAbilities;
-	}
-
 	public ArrayList<Ability> getHiddenAbilities() {
 		return hiddenAbilities;
-	}
-
-	public void setHiddenAbilities(ArrayList<Ability> hiddenAbilities) {
-		this.hiddenAbilities = hiddenAbilities;
 	}
 
 	public ArrayList<PokemonType> getTypes() {
@@ -415,32 +349,16 @@ public class Pokemon {
 		return initialTypes;
 	}
 
-	public void setInitialTypes(ArrayList<PokemonType> initialTypes) {
-		this.initialTypes = initialTypes;
-	}
-
 	public ArrayList<Attack> getPhysicalAttacks() {
 		return physicalAttacks;
-	}
-
-	public void setPhysicalAttacks(ArrayList<Attack> physicalAttacks) {
-		this.physicalAttacks = physicalAttacks;
 	}
 
 	public ArrayList<Attack> getSpecialAttacks() {
 		return specialAttacks;
 	}
 
-	public void setSpecialAttacks(ArrayList<Attack> specialAttacks) {
-		this.specialAttacks = specialAttacks;
-	}
-
 	public ArrayList<Attack> getOtherAttacks() {
 		return otherAttacks;
-	}
-
-	public void setOtherAttacks(ArrayList<Attack> otherAttacks) {
-		this.otherAttacks = otherAttacks;
 	}
 
 	public ArrayList<Attack> getFourPrincipalAttacks() {
@@ -483,20 +401,12 @@ public class Pokemon {
 		this.lowAttacks = lowAttacks;
 	}
 
-	public ArrayList<Attack> getNotEffectAttacks() {
-		return notEffectAttacks;
+	public ArrayList<Attack> getNoEffectAttacks() {
+		return noEffectAttacks;
 	}
 
-	public void setNotEffectAttacks(ArrayList<Attack> notEffectAttacks) {
-		this.notEffectAttacks = notEffectAttacks;
-	}
-
-	public ArrayList<Integer> getFourIdAttacks() {
-		return fourIdAttacks;
-	}
-
-	public void setFourIdAttacks(ArrayList<Integer> fourIdAttacks) {
-		this.fourIdAttacks = fourIdAttacks;
+	public void setNoEffectAttacks(ArrayList<Attack> noEffectAttacks) {
+		this.noEffectAttacks = noEffectAttacks;
 	}
 
 	public int getPrecisionStage() {
@@ -527,11 +437,7 @@ public class Pokemon {
 		return ephemeralStatuses;
 	}
 
-	public void setEphemeralStatuses(Map<StatusConditions, State> ephemeralStatuses) {
-		this.ephemeralStatuses = ephemeralStatuses;
-	}
-
-	public boolean getIsChargingAttackForNextRound() {
+	public boolean isChargingAttackForNextRound() {
 		return isChargingAttackForNextRound;
 	}
 
@@ -539,7 +445,7 @@ public class Pokemon {
 		this.isChargingAttackForNextRound = isChargingAttackForNextRound;
 	}
 
-	public boolean getCanAttack() {
+	public boolean canAttack() {
 		return canAttack;
 	}
 
@@ -547,7 +453,7 @@ public class Pokemon {
 		this.canAttack = canAttack;
 	}
 
-	public boolean getHasUsedMinimize() {
+	public boolean hasUsedMinimize() {
 		return hasUsedMinimize;
 	}
 
@@ -555,7 +461,7 @@ public class Pokemon {
 		this.hasUsedMinimize = hasUsedMinimize;
 	}
 
-	public boolean getHasRetreated() {
+	public boolean hasRetreated() {
 		return hasRetreated;
 	}
 
@@ -611,7 +517,7 @@ public class Pokemon {
 		this.lastUsedAttack = lastUsedAttack;
 	}
 
-	public boolean getCanDonAnythingNextRound() {
+	public boolean canDonAnythingNextRound() {
 		return canDonAnythingNextRound;
 	}
 
@@ -627,10 +533,11 @@ public class Pokemon {
 		this.weight = weight;
 	}
 
-	public boolean getHasReceivedDamage() {
+	public boolean hasReceivedDamage() {
 		return hasReceivedDamage;
 	}
 
+	// Only applied for attacks of "Contact" type
 	public void setHasReceivedDamage(boolean hasReceivedDamage) {
 		this.hasReceivedDamage = hasReceivedDamage;
 	}
@@ -643,7 +550,7 @@ public class Pokemon {
 		this.damageReceived = damageReceived;
 	}
 
-	public boolean getIsDraining() {
+	public boolean isDraining() {
 		return isDraining;
 	}
 
@@ -659,7 +566,7 @@ public class Pokemon {
 		this.currentAbility = currentAbility;
 	}
 
-	public boolean getJustEnteredBattle() {
+	public boolean justEnteredBattle() {
 		return justEnteredBattle;
 	}
 
@@ -667,7 +574,7 @@ public class Pokemon {
 		this.justEnteredBattle = justEnteredBattle;
 	}
 
-	public boolean getHasSubstitute() {
+	public boolean hasSubstitute() {
 		return hasSubstitute;
 	}
 
@@ -675,7 +582,7 @@ public class Pokemon {
 		this.hasSubstitute = hasSubstitute;
 	}
 
-	public boolean getIsFireBoostActive() {
+	public boolean isFireBoostActive() {
 		return isFireBoostActive;
 	}
 
@@ -699,7 +606,7 @@ public class Pokemon {
 		this.AbilitySelected = abilitySelected;
 	}
 
-	public boolean getIsLevitating() {
+	public boolean isLevitating() {
 		return isLevitating;
 	}
 
@@ -711,11 +618,7 @@ public class Pokemon {
 		return sex;
 	}
 
-	public void setSex(Sex sex) {
-		this.sex = sex;
-	}
-
-	public boolean getIsAttackBoostedFromDownloadAbility() {
+	public boolean isAttackBoostedFromDownloadAbility() {
 		return isAttackBoostedFromDownloadAbility;
 	}
 
@@ -723,13 +626,8 @@ public class Pokemon {
 		this.isAttackBoostedFromDownloadAbility = isAttackBoostedFromDownloadAbility;
 	}
 
-	public boolean getIsUsingAbility() {
-		return isUsingAbility;
-	}
-
-	public void setIsUsingAbility(boolean isUsingAbility) {
-		this.isUsingAbility = isUsingAbility;
-	}
+	// ==================================== METHODS
+	// ====================================
 
 	// Adds abilities to Pokemon
 	public void addNormalAbility(Ability ablty) {
@@ -771,33 +669,31 @@ public class Pokemon {
 		this.fourPrincipalAttacks.add(attack);
 	}
 
-	// Adds the four final attacks Ids to Pokemon
-	public void addIdAttack(Integer idAtck) {
-		this.fourIdAttacks.add(idAtck);
-	}
-
-	// ==================================== METHODS
-	// ====================================
-
 	// -----------------------------
 	// Check if has normal status conditions
 	// -----------------------------
 	public boolean hasStatusCondition() {
-		return this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS;
+		return this.getStatusCondition().getStatusCondition() != StatusConditions.NO_STATUS
+				// Get asleep state (because it has a number of turns, it works like an
+				// ephemeral status, but it's a normal status condition)
+				|| hasActiveEphemeralStatus(StatusConditions.ASLEEP);
 	}
 
 	// -----------------------------
 	// Check if has a specific status condition
 	// -----------------------------
 	public boolean hasActiveStatusCondition(StatusConditions status) {
-		return this.getStatusCondition().getStatusCondition() == status;
+		return hasStatusCondition() && this.getStatusCondition().getStatusCondition() == status;
 	}
 
 	// -----------------------------
 	// Check if has ephemeral status
 	// -----------------------------
 	public boolean hasEphemeralStatus() {
-		return !this.getEphemeralStatuses().isEmpty();
+		return !this.getEphemeralStatuses().isEmpty()
+				// ASLEEP is a status condition
+				&& (this.getEphemeralStatuses().size() == 1 ? !hasActiveEphemeralStatus(StatusConditions.ASLEEP)
+						: true);
 	}
 
 	// -----------------------------
@@ -831,160 +727,27 @@ public class Pokemon {
 	// -----------------------------
 	// Check if is debilitated
 	// -----------------------------
-	public boolean isDebilitated() {
-		return this.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED;
+	public boolean isFainted() {
+		return this.getPs() <= 0 || this.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED;
 	}
 
 	// -----------------------------
 	// Restart stats after some attacks... (cause not accumulated)
 	// -----------------------------
-	public void restartParametersEffect() {
-		// 95_Quick_Feet => don't restart effect (it will when Pokemon will no more have
-		// status conditions)
-		if (this.getAbilitySelected().getId() != 95)
-			this.setSpeed(this.getInitialSpeed());
-
-		this.setAttack(this.getInitialAttack());
-		this.setSpecialAttack(this.getInitialSpecialAttack());
-		this.setDef(this.getInitialDef());
-		this.setSpecialDefense(this.getInitialSpecialDefense());
-
-		// Can move and attack
-		this.getStatusCondition().setCanMoveStatusCondition(true);
-		this.setCanAttack(true);
-
-		// Reset damage received
-		this.setHasReceivedDamage(false);
-		this.setDamageReceived(0f);
+	public void restartParametersEffectInitialTurn() {
 		this.setJustEnteredBattle(false);
 	}
 
 	// -----------------------------
-	// Get attack stage for normal attack
+	// Restart stats after some attacks... (cause not accumulated)
 	// -----------------------------
-	public float getEffectiveAttack() {
-		int stage = this.getAttackStage();
-		float multiplier;
+	public void restartParametersEffectEndTurn() {
+		this.setCanAttack(true);
+		this.setHasRetreated(false);
 
-		// 55_Hustle ability rises attack by 50%
-		if (this.getAbilitySelected().getId() == 55 && this.getNextMovement().getBases().contains("fisico")) {
-			this.setAttack(this.getAttack() * 1.5f);
-			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad "
-					+ this.getAbilitySelected().getName());
-		}
-
-		// 62_Guts ability rises attack by 50% (if have some of those status conditions)
-		if (this.getAbilitySelected().getId() == 62 && (this.hasStatusCondition() || this.hasEphemeralStatus())) {
-			this.setAttack(this.getAttack() * 1.5f);
-			System.out.println(this.getName() + " aumentó su ataque gracias a su habilidad Agallas");
-		}
-
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
-
-		return this.getAttack() * multiplier;
-	}
-
-	// -----------------------------
-	// Get effective special attack
-	// -----------------------------
-	public float getEffectiveSpecialAttack() {
-		int stage = this.getSpecialAttackStage();
-		float multiplier;
-
-		// 94_Solar_Power increases special attack by 50%
-		if (this.getAbilitySelected().getId() == 94) {
-			this.setSpecialAttack(this.getSpecialAttack() * 1.5f);
-			System.out.println(this.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
-		}
-
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
-
-		return this.getSpecialAttack() * multiplier;
-	}
-
-	// -----------------------------
-	// Get effective defense
-	// -----------------------------
-	public float getEffectiveDefense() {
-		int stage = this.getDefenseStage();
-		float multiplier;
-
-		if (this.getAbilitySelected().getId() == 63 && (!this.hasStatusCondition() || !this.hasEphemeralStatus())) {
-			this.setDef(this.getDef() * 1.5f);
-			System.out.println(this.getName() + " aumentó su defensa gracias a su habilidad Escama especial");
-		}
-
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
-
-		return this.getDef() * multiplier;
-	}
-
-	// -----------------------------
-	// Get effective special defense
-	// -----------------------------
-	public float getEffectiveSpecialDefense() {
-		int stage = this.getSpecialDefenseStage();
-		float multiplier;
-
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
-
-		return this.getSpecialDefense() * multiplier;
-	}
-
-	// -----------------------------
-	// Get effective speed
-	// -----------------------------
-	public float getEffectiveSpeed() {
-		int stage = this.getSpeedStage();
-		float multiplier;
-
-		if (stage >= 0)
-			multiplier = (2f + stage) / 2.0f;
-		else
-			multiplier = 2.0f / (2f - stage);
-
-		return this.getSpeed() * multiplier;
-	}
-
-	// -----------------------------
-	// Get effective precision
-	// -----------------------------
-	public int getEffectivePrecision() {
-		int stage = this.getPrecisionStage();
-		int precisionPoints = stage > 0 ? stage : 1;
-
-		return precisionPoints;
-	}
-
-	// -----------------------------
-	// Get effective evasion
-	// -----------------------------
-	public int getEffectiveEvasion() {
-		int stage = this.getEvasionStage();
-		int evasionPoints = stage > 0 ? stage : 1;
-
-		// 77_Tangled_Feed duplicates evasion by 2 if confused
-		if (this.getAbilitySelected().getId() == 77) {
-			if (this.hasActiveEphemeralStatus(StatusConditions.CONFUSED)) {
-				evasionPoints = Math.min(evasionPoints * 2, 6);
-				System.out.println(this.getName() + " aumentó su evasión gracias a su habilidad "
-						+ this.getAbilitySelected().getName());
-			}
-		}
-
-		return evasionPoints;
+		// Reset damage received
+		this.setHasReceivedDamage(false);
+		this.setDamageReceived(0f);
 	}
 
 	// -----------------------------
@@ -992,552 +755,6 @@ public class Pokemon {
 	// -----------------------------
 	public Attack getNextMovementById(int id) {
 		return this.getFourPrincipalAttacks().stream().filter(a -> a.getId() == id).findFirst().orElse(null);
-	}
-
-	// -----------------------------
-	// Gets if Pokemon can attack because of FROZEN state (check start of the turn
-	// after applying effect of Frozen)
-	// -----------------------------
-	public void canAttackFrozen() {
-		if (this.hasActiveStatusCondition(StatusConditions.FROZEN)) {
-			if (this.getStatusCondition().getCanMoveStatusCondition())
-				this.setCanAttack(true);
-			else
-				this.setCanAttack(false);
-		}
-	}
-
-	// -----------------------------
-	// Gets if Pokemon can attack because of PARALYZED state (check start of the
-	// turn)
-	// -----------------------------
-	public void canAttackParalyzed() {
-		if (this.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
-			if (this.getStatusCondition().getCanMoveStatusCondition()) {
-				this.setCanAttack(true);
-				System.out.println(ANSI_CYAN + this.getName() + " => paralizado - puede atacar" + ANSI_RESET);
-			} else {
-				this.setCanAttack(false);
-				System.out.println(ANSI_CYAN + this.getName() + " => paralizado - no puede atacar" + ANSI_RESET);
-			}
-		}
-	}
-
-	// -----------------------------
-	// Gets if Pokemon can attack because of CONFUSION state (check start of the
-	// turn)
-	// -----------------------------
-	public boolean canAttackConfused() {
-		boolean canAttackConfused = true;
-
-		if (this.hasActiveEphemeralStatus(StatusConditions.CONFUSED)) {
-			State confusedStatus = this.getEphemeralStatus(StatusConditions.CONFUSED);
-			confusedStatus.setNbTurns(confusedStatus.getNbTurns() - 1);
-
-			if (confusedStatus.getNbTurns() <= 0) {
-				this.removeEphemeralStatus(StatusConditions.CONFUSED);
-				System.out.println(this.getName() + " ya no está confuso!");
-			} else {
-				// 50% of probabilities to attack
-				boolean hurtsItself = Math.random() < 0.50;
-
-				if (hurtsItself) {
-					System.out.println(this.getName() + " está confuso...");
-					System.out.println(this.getName() + " está tan confuso que se hace dañó a sí mismo!");
-
-					// Standard damage with a power of 40 points
-					float damage = doConfusedDammage();
-					this.setPs(this.getPs() - damage);
-
-					if (this.getPs() <= 0) {
-						this.setStatusCondition(new State(StatusConditions.DEBILITATED));
-						System.out.println(this.getName() + " quedó debilitado por la confusión!");
-					}
-
-					canAttackConfused = false; // received damage or dies => cannot continue
-				} else
-					System.out.println(this.getName() + " logró atacar pese a la confusión!");
-			}
-		}
-		return canAttackConfused;
-	}
-
-	// -----------------------------
-	// Do effect from FROZEN state (start of the turn before checking if can attack)
-	// -----------------------------
-	public void doFrozenEffect() {
-		if (this.hasActiveStatusCondition(StatusConditions.FROZEN)) {
-			State frozenStatus = this.getStatusCondition();
-
-			int getRidOfStatusProbability = (int) (Math.random() * 100);
-
-			// Only can be thawed if probability <= 10% (at the beginning) => after each
-			// turn, it goes to +10%
-			if (getRidOfStatusProbability <= frozenStatus.getPercentToBeDefrosted()) {
-				this.setStatusCondition(new State());
-				System.out.println(ANSI_CYAN + this.getName() + " se descongeló! (probabilidad inferior a "
-						+ frozenStatus.getPercentToBeDefrosted() + ") : " + getRidOfStatusProbability + ANSI_RESET);
-			} else {
-				frozenStatus.setCanMoveStatusCondition(false);
-				// Adds +10% each turn not thawed
-				frozenStatus.setPercentToBeDefrosted(frozenStatus.getPercentToBeDefrosted() + 10);
-
-				System.out.println(ANSI_CYAN + this.getName() + " => congelado - no puede atacar" + ANSI_RESET);
-			}
-		}
-	}
-
-	// -----------------------------
-	// Do effect from BURNED state (start of the turn)
-	// -----------------------------
-	public void doBurnedEffectStartTurn() {
-		if (this.hasActiveStatusCondition(StatusConditions.BURNED)) {
-			State burnedStatus = this.getStatusCondition();
-			// Reduces current damage by 50%
-			this.setAttack(this.getAttack() / 2f);
-			burnedStatus.setCanMoveStatusCondition(true);
-		}
-	}
-
-	// -----------------------------
-	// Do effect from BURNED state (end of the turn)
-	// -----------------------------
-	public void doBurnedEffectEndTurn() {
-		// 98_Magic_Guard annuls secondary damage effects
-		if (this.getAbilitySelected().getId() == 98)
-			return;
-
-		if (this.hasActiveStatusCondition(StatusConditions.BURNED)) {
-			// Reduces current PS by 6.25%
-			float reducePs = this.getInitialPs() * 0.0625f;
-
-			// 85_Heatproof ability reduces to half the burned effect
-			if (this.getAbilitySelected().getId() == 85)
-				reducePs /= 2;
-
-			this.setPs(this.getPs() - reducePs);
-
-			System.out.println(this.getName() + " se resiente de la quemadura XD - PS actuales : " + this.getPs());
-
-			if (this.getPs() <= 0) {
-				this.setStatusCondition(new State(StatusConditions.DEBILITATED));
-				this.setStatusCondition(new State());
-			}
-		}
-	}
-
-	// -----------------------------
-	// Do effect from PARALYZED state (only start of the turn)
-	// -----------------------------
-	public void doParalyzedEffect() {
-		if (this.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
-			// 95_Quick_Feet increase doesn't apply reduction of speed (continues with the
-			// 50% increased)
-			if (this.getAbilitySelected().getId() != 95) {
-				// Modifies speed of Pokemon (reduces by 50%)
-				this.setSpeed((this.getSpeed() * 50f) / 100f);
-			}
-		}
-	}
-
-	// -----------------------------
-	// Check can move from PARALYZED state (only before attacking)
-	// -----------------------------
-	public void checkCanMoveParalyzed() {
-		if (this.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
-			State paralyzedStatus = this.getStatusCondition();
-
-			int attackProbability = (int) (Math.random() * 100);
-
-			if (attackProbability <= 25)
-				paralyzedStatus.setCanMoveStatusCondition(true);
-			else
-				paralyzedStatus.setCanMoveStatusCondition(false);
-		}
-	}
-
-	// -----------------------------
-	// Do effect from POISONED state (end of the turn)
-	// -----------------------------
-	public void doPoisonedEffectEndTurn() {
-		// 98_Magic_Guard annuls secondary damage effects
-		if (this.getAbilitySelected().getId() == 98)
-			return;
-
-		if (this.hasActiveStatusCondition(StatusConditions.POISONED)) {
-			// 90_Poison_Heal ability heals 12,5% of initial PS
-			if (this.getAbilitySelected().getId() == 90) {
-				float healsPs = this.getInitialPs() * 0.125f;
-				this.setPs(Math.min(this.getPs() + healsPs, this.getInitialPs()));
-
-				System.out.println(this.getName() + " está envenenado, pero recuperó PS gracias a su habilidad "
-						+ this.getAbilitySelected().getName());
-			} else {
-				// Reduces current PS by 6.25%
-				float reducePs = this.getInitialPs() * 0.0625f;
-				this.setPs(this.getPs() - reducePs);
-
-				System.out.println(this.getName() + " está envenenado - PS actuales : " + this.getPs());
-
-				if (this.getPs() <= 0) {
-					this.setStatusCondition(new State(StatusConditions.DEBILITATED));
-					this.setStatusCondition(new State());
-				}
-			}
-		}
-	}
-
-	// -----------------------------
-	// Do effect from ASLEEP state (start of the turn)
-	// -----------------------------
-	public boolean doAsleepEffect() {
-		boolean canAttack = true;
-
-		if (this.hasActiveStatusCondition(StatusConditions.ASLEEP)) {
-			State asleepStatus = this.getStatusCondition();
-			asleepStatus.setNbTurns(asleepStatus.getNbTurns() - 1);
-
-			if (asleepStatus.getNbTurns() <= 0) {
-				this.removeEphemeralStatus(StatusConditions.ASLEEP);
-				System.out.println(this.getName() + " se despertó!");
-			} else {
-				// 1/nbTurns probabilities to wake up
-				double wakeUpProbability = Math.random();
-
-				if (wakeUpProbability <= 1 / asleepStatus.getNbTurns()) {
-					this.removeEphemeralStatus(StatusConditions.ASLEEP);
-					System.out.println(this.getName() + " se despertó!");
-				} else {
-					System.out.println(this.getName() + " está dormido y no puede atacar");
-					canAttack = false;
-				}
-			}
-		}
-		return canAttack;
-	}
-
-	// -----------------------------
-	// Apply confusion damage (only start of the turn)
-	// -----------------------------
-	public float doConfusedDammage() {
-		// There is a random variation when attacking (the total damage is not the same
-		// every time)
-		int randomVariation = (int) ((Math.random() * (100 - 85)) + 85);
-
-		float dmg = 0;
-
-		// Apply damage
-		dmg = ((((40f + 2f) * (40f * (this.getAttack() / this.getDef()))) / 50f) + 2f) * (randomVariation / 100f);
-
-		return dmg;
-	}
-
-	// -----------------------------
-	// Do effect from TRAPPED state (end of the turn)
-	// -----------------------------
-	public void doTrappedEffect() {
-		// 98_Magic_Guard annuls secondary damage effects
-		if (this.getAbilitySelected().getId() == 98)
-			return;
-
-		if (this.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
-			State trappedStatus = this.getEphemeralStatus(StatusConditions.TRAPPED);
-
-			trappedStatus.setNbTurns(trappedStatus.getNbTurns() - 1);
-
-			if (trappedStatus.getNbTurns() <= 0) {
-				this.removeEphemeralStatus(StatusConditions.TRAPPED);
-				System.out.println(this.getName() + " ya no está atrapado!");
-			} else {
-				// Reduces 12,5% from his initial PS
-				float reducePs = this.getInitialPs() * 0.125f;
-				this.setPs(this.getPs() - reducePs);
-
-				System.out.println(this.getName() + " está atado y recibe daño");
-
-				if (this.getPs() <= 0) {
-					this.setStatusCondition(new State(StatusConditions.DEBILITATED));
-					this.removeEphemeralStatus(StatusConditions.TRAPPED);
-				}
-			}
-		}
-	}
-
-	// -----------------------------
-	// Do effect from DRAINED ALL TURNS state (end of the turn) => affects to enemy
-	// -----------------------------
-	public void doDrainedAllTurnsEffect(Pokemon defender) {
-		// 98_Magic_Guard annuls secondary damage effects
-		if (this.getAbilitySelected().getId() == 98)
-			return;
-
-		if (this.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
-			State drainedAllTurnsStaus = this.getEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
-
-			// Turn number "0" allows to avoid applying effect the first turn
-			if (drainedAllTurnsStaus.getNbTurns() != 0) {
-				// Cannot be drained if defender has the ability 64_Liquid_Ooze
-				if (defender.getAbilitySelected().getId() != 64) {
-					// Reduces 12,5% from his initial PS
-					float reducePs = this.getInitialPs() * 0.125f;
-					this.setPs(this.getPs() - reducePs);
-
-					System.out.println(this.getName() + " está drenado y recibe daño; PS restantes : " + this.getPs());
-
-					if (this.getPs() <= 0) {
-						this.setStatusCondition(new State(StatusConditions.DEBILITATED));
-						this.removeEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
-					}
-				}
-			}
-		}
-	}
-
-	// -----------------------------
-	// Reduce nb turns from DRAINED ALL TURNS state (end of the turn) => affects to
-	// enemy
-	// -----------------------------
-	public void startDrainedAllTurnsEffect() {
-		// Turn number "0" allows to avoid applying effect the first turn
-		if (this.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
-			State drainedAllTurnsStaus = this.getEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
-
-			if (drainedAllTurnsStaus.getNbTurns() == 0)
-				drainedAllTurnsStaus.setNbTurns(1);
-		}
-
-	}
-
-	// -----------------------------
-	// Do effect from DRAINED ALL TURNS state (end of the turn) => benefits to
-	// Pokemon doing the attack
-	// -----------------------------
-	public void doDrainedAllTurnsBeneficiaryEffect(Pokemon defender) {
-		if (defender.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
-			State drainedAllTurnsStatusDefender = defender.getEphemeralStatuses().get(StatusConditions.DRAINEDALLTURNS);
-
-			if (defender.getAbilitySelected().getId() == 64) {
-				// Reduces 12,5% from his initial PS
-				float reducePs = this.getInitialPs() * 0.125f;
-				this.setPs(this.getPs() - reducePs);
-
-				System.out.println(this.getName()
-						+ " perdió PS al intentar drenar al rival dada la habilidad rival Viscosecreción; PS restantes : "
-						+ this.getPs());
-			} else {
-				if (drainedAllTurnsStatusDefender.getNbTurns() != 0) {
-					// Increases 12,5% from his initial PS
-					float increasePS = this.getInitialPs() * 0.125f;
-					this.setPs(this.getPs() + increasePS);
-
-					System.out.println(this.getName() + " se curó gracias al efecto activo de Drenadoras");
-				}
-			}
-		}
-	}
-
-	// -----------------------------
-	// Remove DRAINED ALL TURNS state
-	// -----------------------------
-	private void removeDrainedAllTurns() {
-		if (this.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
-			this.setIsDraining(false);
-			this.removeEphemeralStatus(StatusConditions.TRAPPED);
-		}
-	}
-
-	// -----------------------------
-	// Reduce turn from DISABLE state (end of the turn)
-	// -----------------------------
-	public void reduceDisabledAttackTurn() {
-		if (this.hasActiveStatusCondition(StatusConditions.DISABLE)) {
-			State disabledLastaAttackStatus = this.getStatusCondition();
-
-			disabledLastaAttackStatus.setNbTurns(disabledLastaAttackStatus.getNbTurns() - 1);
-
-			if (disabledLastaAttackStatus.getNbTurns() <= 0) {
-				this.setStatusCondition(new State());
-				System.out.println(this.getName() + " ya puede volver a usar "
-						+ disabledLastaAttackStatus.getAttackDisabled().getName());
-			} else
-				System.out.println(this.getName() + " no puede usar todavía "
-						+ disabledLastaAttackStatus.getAttackDisabled().getName());
-		}
-	}
-
-	// -----------------------------
-	// Check and put CONFUSION state if needed (ex : thrash attack (TRAPPED BY OWN
-	// ATTACK state)) (end of the
-	// turn)
-	// -----------------------------
-	public void putConfusedStateIfNeeded() {
-		if (this.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
-			State trappedByOwnAttackStatus = this.getEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK);
-
-			trappedByOwnAttackStatus.setNbTurns(trappedByOwnAttackStatus.getNbTurns() - 1);
-
-			if (trappedByOwnAttackStatus.getNbTurns() <= 0) {
-				this.removeEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK);
-				System.out.println(this.getName() + " ya no está atrapado por su propio ataque!");
-
-				// Puts CONFUSED state because of trapped by his own attack state finished
-				if (!this.hasActiveEphemeralStatus(StatusConditions.CONFUSED)) {
-					// Random number between 2 and 3
-					int nbTurnsHoldingStatus = ((int) (Math.random() * 2) + 2);
-
-					System.out.println(this.getName()
-							+ " se siente confuso (a causa de usar el mismo ataque). Estará confuso durante "
-							+ nbTurnsHoldingStatus + " turnos.");
-
-					State confused = new State(StatusConditions.CONFUSED, nbTurnsHoldingStatus + 1);
-					this.addEphemeralStatus(StatusConditions.CONFUSED, confused);
-				}
-			}
-		}
-	}
-
-	// -----------------------------
-	// Remove states when changing or dying a Pokemon
-	// -----------------------------
-	public void removeStates() {
-		removeDrainedAllTurns();
-	}
-
-	// -----------------------------
-	// Try to put normal status on Pokemon facing
-	// -----------------------------
-	public boolean trySetStatus(State newState, Weather weather, boolean isWeatherSuppressed, Attack attackAttacker) {
-		boolean canBeFrozen = weather != Weather.SUN;
-		Ability ability = this.getAbilitySelected();
-
-		if (ability != null) {
-			// 19_Shield_Dust doesn't allow to get secondary effects
-			if (attackAttacker.hasSecondaryEffect() && ability.getId() == 19) {
-				System.out.println(this.getName()
-						+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
-				return false;
-			}
-		}
-
-		// Get asleep state (because it has a number of turns, it works like an
-		// ephemeral status, but it's a normal status condition)
-		// Already has a status
-		if (this.hasStatusCondition() || this.hasActiveEphemeralStatus(StatusConditions.ASLEEP))
-			return false;
-
-		switch (newState.getStatusCondition()) {
-		case PARALYZED:
-			// Limber ability prevents paralysis
-			if (this.getAbilitySelected().getId() == 7) {
-				System.out.println(this.getName() + " evitó la parálisis gracias a Flexibilidad");
-				return false;
-			} else
-				System.out.println(this.getName() + " fue paralizado");
-			break;
-		case POISONED:
-			// 17_Immunity ability
-			if (this.getAbilitySelected().getId() == 17) {
-				System.out.println(this.getName() + " no puede envenenarse dada su habilidad Inmunidad");
-				return false;
-			} else
-				System.out.println(this.getName() + " fue envenenado");
-			break;
-		case BADLY_POISONED:
-			break;
-		case FROZEN:
-			// 40_Magma_Armor ability
-			if (this.getAbilitySelected().getId() == 40) {
-				System.out.println(this.getName() + " no puede ser congelado dada su habilidad Escudo magma");
-				return false;
-			}
-
-			// Sun forbids to froze
-			if (weather == Weather.SUN) {
-				System.out.println(this.getName() + " no puede ser congelado por el tiempo soleado");
-				return false;
-			}
-
-			// Pokemon is ice type
-			if (this.getTypes().stream().anyMatch(t -> t.getId() == 9)) {
-				System.out.println(this.getName() + " no puede ser congelado ya que es de tipo hielo");
-				return false;
-			}
-
-			if (canBeFrozen && !isWeatherSuppressed && this.getTypes().stream().noneMatch(t -> t.getId() == 9)) {
-				System.out.println(this.getName() + " fue congelado");
-			} else {
-				System.out.println(this.getName()
-						+ " no puede ser congelado por otra razón no mencionada todavía (no debería entrar)");
-				return false;
-			}
-			break;
-		case BURNED:
-			// 41_Water_Vell ability
-			if (this.getAbilitySelected().getId() == 41) {
-				System.out.println(this.getName() + " no puede ser quemado dada su habilidad Velo agua");
-				return false;
-			}
-
-			// Fire Pokemon cannot be burned
-			if (this.getTypes().stream().anyMatch(t -> t.getId() == 7)) {
-				System.out.println(this.getName() + " no puede ser quemado ya que es de tipo fuego");
-				return false;
-			} else
-				System.out.println(this.getName() + " fue quemado");
-			break;
-		case DISABLE:
-			break;
-		default:
-			break;
-		}
-
-		this.setStatusCondition(newState);
-		return true;
-	}
-
-	// -----------------------------
-	// Try to put ephemeral status on Pokemon facing
-	// -----------------------------
-	public boolean trySetEphemeralStatus(StatusConditions status, Attack attackAttacker) {
-		Ability ability = this.getAbilitySelected();
-		if (ability == null)
-			return true;
-
-		// 19_Shield_Dust doesn't allow to get secondary effects
-		if (attackAttacker.hasSecondaryEffect() && ability.getId() == 19) {
-			System.out.println(this.getName()
-					+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
-			return false;
-		}
-
-		switch (status) {
-		case ASLEEP:
-			// 15_Insomnia, 72_Vital_Spirit
-			if (ability.getId() == 15 || ability.getId() == 72) {
-				System.out.println(
-						this.getName() + " no puede dormirse dada su habilidad " + this.getAbilitySelected().getName());
-				return false;
-			}
-			break;
-		case CONFUSED:
-			// 20_Own_Tempo
-			if (ability.getId() == 20) {
-				System.out.println(this.getName() + " no puede confundirse dada su habilidad Ritmo propio");
-				return false;
-			}
-			break;
-		case INFATUATED:
-			// 12_Oblivious
-			if (ability.getId() == 12) {
-				System.out.println(this.getName() + " no puede enamorarse dada su habilidad Despiste");
-				return false;
-			}
-			break;
-		default:
-			break;
-		}
-
-		return true;
 	}
 
 	// -----------------------------
@@ -1552,10 +769,10 @@ public class Pokemon {
 	// -----------------------------
 	public boolean canBeFlinched() {
 		// 98_Magic_Guard annuls secondary damage effects (only by struggle attack)
-		if (this.getAbilitySelected().getId() == 98 && this.getNextMovement().getId() != 165)
+		if (hasMagicGuardAbility() && !this.getNextMovement().isStruggle())
 			return false;
 
-		if (this.getAbilitySelected().getId() == 39) {
+		if (hasInnerFocusAbility()) {
 			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
 					+ " no pudo retroceder dada su habilidad Fuerza mental");
 			return false;
@@ -1564,130 +781,31 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Modify stat stage from rival attacks
+	// Get stage from specific stat
 	// -----------------------------
-	public void modifyStatStage(StatType stat, int stages, boolean isMistEffectActivated) {
-		// 29_Clear_Body / 73_White_Smoke abilities cannot be reduced stats
-		if (this.getAbilitySelected().getId() == 29 || this.getAbilitySelected().getId() == 73) {
-			System.out.println("Las estats de " + this.getName() + " (Id:" + this.getId() + ")"
-					+ " no pueden bajar dada su la habilidad " + this.getAbilitySelected().getName());
-			return;
+	public int getStage(StatType stat) {
+		switch (stat) {
+		case ATTACK:
+			return getAttackStage();
+		case SPECIAL_ATTACK:
+			return getSpecialAttackStage();
+		case DEFENSE:
+			return getDefenseStage();
+		case SPECIAL_DEFENSE:
+			return getSpecialDefenseStage();
+		case PRECISION:
+			return getPrecisionStage();
+		case SPEED:
+			return getSpeedStage();
+		default:
+			throw new IllegalArgumentException("Unknown stat " + stat);
 		}
-
-		if (!isMistEffectActivated) {
-			switch (stat) {
-			case ATTACK:
-				// 52_Hyper_Cutter ability
-				if (this.getAbilitySelected().getId() == 52) {
-					System.out.println("El ataque de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
-					break;
-				}
-
-				if (this.getAttackStage() <= -6) {
-					System.out.println(
-							"El ataque de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.ATTACK, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque!");
-				}
-				break;
-			case SPECIAL_ATTACK:
-				if (this.getSpecialAttackStage() <= -6) {
-					System.out.println("El ataque especial de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.SPECIAL_ATTACK, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su ataque especial!");
-				}
-				break;
-			case DEFENSE:
-				if (this.getDefenseStage() <= -6) {
-					System.out.println(
-							"La defensa de " + this.getName() + " (Id:" + this.getId() + ")" + " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.DEFENSE, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa!");
-				}
-				break;
-			case SPECIAL_DEFENSE:
-				if (this.getSpecialDefenseStage() <= -6) {
-					System.out.println("La defensa especial de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.SPECIAL_DEFENSE, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su defensa especial!");
-				}
-				break;
-			case PRECISION:
-				// 35_Illuminate/ 51_Keen_Eye ability
-				if (this.getAbilitySelected().getId() == 35 || this.getAbilitySelected().getId() == 51) {
-					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar dada su " + this.getAbilitySelected().getName());
-					break;
-				}
-
-				if (this.getPrecisionStage() <= -6) {
-					System.out.println("La precisión de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.PRECISION, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su precisión!");
-				}
-				break;
-			case SPEED:
-				if (this.getSpeedStage() <= -6) {
-					System.out.println("La velocidad de " + this.getName() + " (Id:" + this.getId() + ")"
-							+ " no puede bajar más!");
-				} else {
-					setStageValueStats(StatType.SPEED, stages, true);
-					System.out.println(this.getName() + " (Id:" + this.getId() + ")" + " bajó su velocidad!");
-				}
-				break;
-			case NONE:
-				break;
-			}
-		} else
-			System.out.println(this.getName() + " (Id:" + this.getId() + ")"
-					+ " no pudo bajar las estadísticas a causa de Neblina");
-	}
-
-	// -----------------------------
-	// Reset stats from attacks (to avoid problems each turn) => because of some
-	// boosts, etc.
-	// -----------------------------
-	public void reinitializeStatsAfterAttack() {
-		this.setAttack(this.getInitialAttack());
-		this.setDef(this.getInitialDef());
-	}
-
-	// -----------------------------
-	// Change attacks depending on abilities, etc.
-	// -----------------------------
-	public void checkStatsForAttacks(Attack atkAttacker) {
-		Ability pkAbility = this.getAbilitySelected();
-
-		// 14_Compound_Eyes ability rises precision by 30%
-		if (pkAbility.getId() == 14)
-			atkAttacker.setPrecision(atkAttacker.getPrecision() * 1.3f);
-
-		// 55_Hustle ability reduces precision by 20%
-		if (pkAbility.getId() == 55 && this.getNextMovement().getBases().contains("fisico"))
-			atkAttacker.setPrecision(atkAttacker.getPrecision() * 0.8f);
 	}
 
 	// -----------------------------
 	// Set stage value on stats
 	// -----------------------------
 	public void setStageValueStats(StatType statType, int nbStage, boolean isStatDrop) {
-		// 86_Simple ability duplicates by 2 the stage (whether it's negative or
-		// positive)
-		if (this.getAbilitySelected().getId() == 86) {
-			nbStage *= 2;
-			System.out.println(this.getName() + " (Id:" + this.getId() + ") " + (isStatDrop ? "bajó" : "subió")
-					+ " el doble, dada su habilidad " + this.getAbilitySelected().getName());
-		}
-
 		switch (statType) {
 		case ATTACK:
 			if (isStatDrop)
@@ -1731,16 +849,742 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Don't allow to attack (PkVsPk)
+	// Don't allow to attack
 	// -----------------------------
 	public void denyAttack() {
 		this.setCanAttack(false);
 	}
 
 	// -----------------------------
-	// Allow to attack (PkVsPk)
+	// Allow to attack
 	// -----------------------------
 	public void allowAttack() {
 		this.setCanAttack(true);
+	}
+
+	// -----------------------------
+	// Check if Pokemon has the attack chosen
+	// -----------------------------
+	public boolean hasAttack(int attackId) {
+		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.getId() == attackId);
+	}
+
+	// -----------------------------
+	// Check attack chosen has PP remaining
+	// -----------------------------
+	public boolean hasPP(int attackId) {
+		Attack atk = this.getNextMovementById(attackId);
+		return atk != null && atk.getPp() > 0;
+	}
+
+	// -----------------------------
+	// Check if any attack from Pokemon has PP remaining
+	// -----------------------------
+	public boolean hasAnyPPLeft() {
+		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
+	}
+
+	// -----------------------------
+	// Check if current PS are at or below one third from max PS
+	// -----------------------------
+	public boolean isPSAtOrBelowOneThird() {
+		return this.getPs() < this.getInitialPs() / 3;
+	}
+
+	public boolean hasMaxPS() {
+		return this.getPs() >= this.getInitialPs();
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 1_Stench ability
+	// -----------------------------
+	public boolean hasStenchAbility() {
+		return this.getAbilitySelected().getId() == 1;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 4_Battle_armor ability
+	// -----------------------------
+	public boolean hasBattleArmorAbility() {
+		return this.getAbilitySelected().getId() == 4;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 5_Sturdy ability
+	// -----------------------------
+	public boolean hasSturdyAbility() {
+		return this.getAbilitySelected().getId() == 5;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 6_Damp ability
+	// -----------------------------
+	public boolean hasDampAbility() {
+		return this.getAbilitySelected().getId() == 6;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 7_Limber ability
+	// -----------------------------
+	public boolean hasLimberAbility() {
+		return this.getAbilitySelected().getId() == 7;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 8_Sand_veil ability
+	// -----------------------------
+	public boolean hasSandVeilAbility() {
+		return this.getAbilitySelected().getId() == 8;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 9_Static ability
+	// -----------------------------
+	public boolean hasStaticAbility() {
+		return this.getAbilitySelected().getId() == 9;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 12_Oblivious ability
+	// -----------------------------
+	public boolean hasObliviousAbility() {
+		return this.getAbilitySelected().getId() == 12;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 13_Cloud_nine ability
+	// -----------------------------
+	public boolean hasCloudNineAbility() {
+		return this.getAbilitySelected().getId() == 13;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 14_Compound_eyes ability
+	// -----------------------------
+	public boolean hasCompoundEyesAbility() {
+		return this.getAbilitySelected().getId() == 14;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 15_Insomnia ability
+	// -----------------------------
+	public boolean hasInsomniaAbility() {
+		return this.getAbilitySelected().getId() == 15;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 17_Immunity ability
+	// -----------------------------
+	public boolean hasImmunityAbility() {
+		return this.getAbilitySelected().getId() == 17;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 19_SHield_dust ability
+	// -----------------------------
+	public boolean hasShieldDustAbility() {
+		return this.getAbilitySelected().getId() == 19;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 20_Own_tempo ability
+	// -----------------------------
+	public boolean hasOwnTempoAbility() {
+		return this.getAbilitySelected().getId() == 20;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 21_Suction_cups ability
+	// -----------------------------
+	public boolean hasSuctionCupsAbility() {
+		return this.getAbilitySelected().getId() == 21;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 23_Shadow_tag ability
+	// -----------------------------
+	public boolean hasShadowTagAbility() {
+		return this.getAbilitySelected().getId() == 23;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 24_Rough_skin ability
+	// -----------------------------
+	public boolean hasRoughSkinAbility() {
+		return this.getAbilitySelected().getId() == 24;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 26_Levitate ability
+	// -----------------------------
+	public boolean hasLevitateAbility() {
+		return this.getAbilitySelected().getId() == 26;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 27_Effect_spore ability
+	// -----------------------------
+	public boolean hasEffectSporeAbility() {
+		return this.getAbilitySelected().getId() == 27;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 29_Clear_body ability
+	// -----------------------------
+	public boolean hasClearBodyAbility() {
+		return this.getAbilitySelected().getId() == 29;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 32_Serene_grace ability
+	// -----------------------------
+	public boolean hasSereneGraceAbility() {
+		return this.getAbilitySelected().getId() == 32;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 33_Swift_swim ability
+	// -----------------------------
+	public boolean hasSwiftSwimAbility() {
+		return this.getAbilitySelected().getId() == 33;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 34_Chlorophyll ability
+	// -----------------------------
+	public boolean hasChlorophyllAbility() {
+		return this.getAbilitySelected().getId() == 34;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 35_Illuminate ability
+	// -----------------------------
+	public boolean hasIlluminateAbility() {
+		return this.getAbilitySelected().getId() == 35;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 36_Trace ability
+	// -----------------------------
+	public boolean hasTraceAbility() {
+		return this.getAbilitySelected().getId() == 36;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 37_Huge_power ability
+	// -----------------------------
+	public boolean hasHugePowerAbility() {
+		return this.getAbilitySelected().getId() == 37;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 38_Poison_point ability
+	// -----------------------------
+	public boolean hasPoisonPointAbility() {
+		return this.getAbilitySelected().getId() == 38;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 39_Inner_Focus ability
+	// -----------------------------
+	public boolean hasInnerFocusAbility() {
+		return this.getAbilitySelected().getId() == 39;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 40_Magma_armor ability
+	// -----------------------------
+	public boolean hasMagmaArmorAbility() {
+		return this.getAbilitySelected().getId() == 40;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 41_Water_vail ability
+	// -----------------------------
+	public boolean hasWaterVailAbility() {
+		return this.getAbilitySelected().getId() == 41;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 42_Magnet_pull ability
+	// -----------------------------
+	public boolean hasMagnetPullAbility() {
+		return this.getAbilitySelected().getId() == 42;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 44_Rain_dish ability
+	// -----------------------------
+	public boolean hasRainDishAbility() {
+		return this.getAbilitySelected().getId() == 44;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 47_Thick_fat ability
+	// -----------------------------
+	public boolean hasThickFatAbility() {
+		return this.getAbilitySelected().getId() == 47;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 48_Early_bird ability
+	// -----------------------------
+	public boolean hasEarlyBirdAbility() {
+		return this.getAbilitySelected().getId() == 48;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 49_Flame_body ability
+	// -----------------------------
+	public boolean hasFlameBodtyAbility() {
+		return this.getAbilitySelected().getId() == 49;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 51_Keen_eye ability
+	// -----------------------------
+	public boolean hasKeenEyeAbility() {
+		return this.getAbilitySelected().getId() == 51;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 52_Hyoer_cutter ability
+	// -----------------------------
+	public boolean hasHyperCutterAbility() {
+		return this.getAbilitySelected().getId() == 52;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 54_Truant ability
+	// -----------------------------
+	public boolean hasTruantAbility() {
+		return this.getAbilitySelected().getId() == 54;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 55_Hustle ability
+	// -----------------------------
+	public boolean hasHustleAbility() {
+		return this.getAbilitySelected().getId() == 55;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 56_Cute_charm ability
+	// -----------------------------
+	public boolean hasCuteCharmAbility() {
+		return this.getAbilitySelected().getId() == 56;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 57_Plus ability
+	// -----------------------------
+	public boolean hasPlusAbility() {
+		return this.getAbilitySelected().getId() == 57;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 58_Minus ability
+	// -----------------------------
+	public boolean hasMinusAbility() {
+		return this.getAbilitySelected().getId() == 58;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 59_Forecast ability
+	// -----------------------------
+	public boolean hasForecastAbility() {
+		return this.getAbilitySelected().getId() == 59;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 61_Shed_skin ability
+	// -----------------------------
+	public boolean hasShedSkinAbility() {
+		return this.getAbilitySelected().getId() == 61;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 62_Guts ability
+	// -----------------------------
+	public boolean hasGutsAbility() {
+		return this.getAbilitySelected().getId() == 62;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 63_Marvel_scale ability
+	// -----------------------------
+	public boolean hasMarvelScaleAbility() {
+		return this.getAbilitySelected().getId() == 63;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 64_Liquid_Ooze ability
+	// -----------------------------
+	public boolean hasLiquidOozeAbility() {
+		return this.getAbilitySelected().getId() == 64;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 65_Overgrow ability
+	// -----------------------------
+	public boolean hasOvergrowAbility() {
+		return this.getAbilitySelected().getId() == 65;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 66_Blaze ability
+	// -----------------------------
+	public boolean hasBlazeAbility() {
+		return this.getAbilitySelected().getId() == 66;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 67_Torrent ability
+	// -----------------------------
+	public boolean hasTorrentAbility() {
+		return this.getAbilitySelected().getId() == 67;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 68_Swarm ability
+	// -----------------------------
+	public boolean hasSwarmAbility() {
+		return this.getAbilitySelected().getId() == 68;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 69_Rock_head ability
+	// -----------------------------
+	public boolean hasRockHeadAbility() {
+		return this.getAbilitySelected().getId() == 69;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 71_Arena_trap ability
+	// -----------------------------
+	public boolean hasArenaTrapAbility() {
+		return this.getAbilitySelected().getId() == 71;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 72_Vital_spirit ability
+	// -----------------------------
+	public boolean hasVitalSpiritAbility() {
+		return this.getAbilitySelected().getId() == 72;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 73_White_smoke ability
+	// -----------------------------
+	public boolean hasWhiteSmokeAbility() {
+		return this.getAbilitySelected().getId() == 73;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 74_Pure_power ability
+	// -----------------------------
+	public boolean hasPurePowerAbility() {
+		return this.getAbilitySelected().getId() == 74;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 75_Shell_armor ability
+	// -----------------------------
+	public boolean hasShellArmorAbility() {
+		return this.getAbilitySelected().getId() == 75;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 76_Air_lock ability
+	// -----------------------------
+	public boolean hasAirLockAbility() {
+		return this.getAbilitySelected().getId() == 76;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 77_Tangled_feet ability
+	// -----------------------------
+	public boolean hasTangledFeetAbility() {
+		return this.getAbilitySelected().getId() == 77;
+	}
+
+	// -----------------------------
+	// 77_Tangled_feet ability duplicates evasion by 2 if confused
+	// -----------------------------
+	public boolean isTangledFeetActive() {
+		return hasTangledFeetAbility() && hasActiveEphemeralStatus(StatusConditions.CONFUSED);
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 79_Rivalry ability
+	// -----------------------------
+	public boolean hasRivalryAbility() {
+		return this.getAbilitySelected().getId() == 79;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 80_Steadfast ability
+	// -----------------------------
+	public boolean hasSteadfastAbility() {
+		return this.getAbilitySelected().getId() == 80;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 81_Snow_cloak ability
+	// -----------------------------
+	public boolean hasSnowCloakAbility() {
+		return this.getAbilitySelected().getId() == 81;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 85_HeatProof ability
+	// -----------------------------
+	public boolean hasHeatProofAbility() {
+		return this.getAbilitySelected().getId() == 85;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 86_Simple ability
+	// -----------------------------
+	public boolean hasSimpleAbility() {
+		return this.getAbilitySelected().getId() == 86;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 87_Dry_skin ability
+	// -----------------------------
+	public boolean hasDrySkinAbility() {
+		return this.getAbilitySelected().getId() == 87;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 89_Iron_fist ability
+	// -----------------------------
+	public boolean hasIronFistAbility() {
+		return this.getAbilitySelected().getId() == 89;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 90_Poison_heal ability
+	// -----------------------------
+	public boolean hasPoisonHealAbility() {
+		return this.getAbilitySelected().getId() == 90;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 91_Adaptability ability
+	// -----------------------------
+	public boolean hasAdaptabilityAbility() {
+		return this.getAbilitySelected().getId() == 91;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 92_Skill_link ability
+	// -----------------------------
+	public boolean hasSkillLinkAbility() {
+		return this.getAbilitySelected().getId() == 92;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 94_Solar_power ability
+	// -----------------------------
+	public boolean hasSolarPowerAbility() {
+		return this.getAbilitySelected().getId() == 94;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 95_Quick_feet ability
+	// -----------------------------
+	public boolean hasQuickFeetAbility() {
+		return this.getAbilitySelected().getId() == 95;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 96_Normalize ability
+	// -----------------------------
+	public boolean hasNormalizeAbility() {
+		return this.getAbilitySelected().getId() == 96;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 97_Sniper ability
+	// -----------------------------
+	public boolean hasSniperAbility() {
+		return this.getAbilitySelected().getId() == 97;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 98_Magic_Guard ability
+	// -----------------------------
+	public boolean hasMagicGuardAbility() {
+		return this.getAbilitySelected().getId() == 98;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 99_No_guard ability
+	// -----------------------------
+	public boolean hasNoGuardAbility() {
+		return this.getAbilitySelected().getId() == 99;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 100_Stall ability
+	// -----------------------------
+	public boolean hasStallAbility() {
+		return this.getAbilitySelected().getId() == 100;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 101_Technician ability
+	// -----------------------------
+	public boolean hasTechnicianAbility() {
+		return this.getAbilitySelected().getId() == 101;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 102_Leaf_guard ability
+	// -----------------------------
+	public boolean hasLeafGuardAbility() {
+		return this.getAbilitySelected().getId() == 102;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 105_Super_lock ability
+	// -----------------------------
+	public boolean hasSuperLockAbility() {
+		return this.getAbilitySelected().getId() == 105;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 109_Unaware ability
+	// -----------------------------
+	public boolean hasUnawareAbility() {
+		return this.getAbilitySelected().getId() == 109;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 110_Tinted_lens ability
+	// -----------------------------
+	public boolean hasTintedLensAbility() {
+		return this.getAbilitySelected().getId() == 110;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 111_Filter ability
+	// -----------------------------
+	public boolean hasFilterAbility() {
+		return this.getAbilitySelected().getId() == 111;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 113_Scrappy ability
+	// -----------------------------
+	public boolean hasScrappyAbility() {
+		return this.getAbilitySelected().getId() == 113;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 116_Solid_rock ability
+	// -----------------------------
+	public boolean hasSolidRockAbility() {
+		return this.getAbilitySelected().getId() == 116;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 120_Reckless ability
+	// -----------------------------
+	public boolean hasRecklessAbility() {
+		return this.getAbilitySelected().getId() == 120;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 122_Flowe_gift ability
+	// -----------------------------
+	public boolean hasFlowerGiftAbility() {
+		return this.getAbilitySelected().getId() == 122;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 123_Bad_dreams ability
+	// -----------------------------
+	public boolean hasBadDreamsAbility() {
+		return this.getAbilitySelected().getId() == 123;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 125_Sheer_force ability
+	// -----------------------------
+	public boolean hasSheerForceAbility() {
+		return this.getAbilitySelected().getId() == 125;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 126_Contrary ability
+	// -----------------------------
+	public boolean hasContraryAbility() {
+		return this.getAbilitySelected().getId() == 126;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 128_Defiant ability
+	// -----------------------------
+	public boolean hasDefiantAbility() {
+		return this.getAbilitySelected().getId() == 128;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 129_Defeatist ability
+	// -----------------------------
+	public boolean hasDefeatistAbility() {
+		return this.getAbilitySelected().getId() == 129;
+	}
+
+	// -----------------------------
+	// 129_Deafeatist ability reduces attack by 50% if PS under 50% of initial PS
+	// -----------------------------
+	public boolean isDefeatistActive() {
+		return hasDefeatistAbility() && getPs() <= getInitialPs() / 2;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 130_Cursed_body ability
+	// -----------------------------
+	public boolean hasCursedBodyAbility() {
+		return this.getAbilitySelected().getId() == 130;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 133_Weak_armor ability
+	// -----------------------------
+	public boolean hasWeakArmorAbility() {
+		return this.getAbilitySelected().getId() == 133;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 142_Overcoat ability
+	// -----------------------------
+	public boolean hasOvercoatAbility() {
+		return this.getAbilitySelected().getId() == 142;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 146_Sand_rash ability
+	// -----------------------------
+	public boolean hasSandRashAbility() {
+		return this.getAbilitySelected().getId() == 146;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 159_Sand_force ability
+	// -----------------------------
+	public boolean hasSandForceAbility() {
+		return this.getAbilitySelected().getId() == 159;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 165_Aroma_veil ability
+	// -----------------------------
+	public boolean hasAromaVeilAbility() {
+		return this.getAbilitySelected().getId() == 165;
 	}
 }

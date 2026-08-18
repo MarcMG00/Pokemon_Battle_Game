@@ -14,45 +14,6 @@ import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
-import pokemon.interfce.AirLockAbility;
-import pokemon.interfce.AngerPointAbility;
-import pokemon.interfce.CloudNineAbility;
-import pokemon.interfce.ColorChangeAbility;
-import pokemon.interfce.CuteCharmAbility;
-import pokemon.interfce.DownloadAbility;
-import pokemon.interfce.DrizzleAbility;
-import pokemon.interfce.DroughtAbility;
-import pokemon.interfce.DrySkinAbility;
-import pokemon.interfce.EffectSporeAbility;
-import pokemon.interfce.EmptyAbility;
-import pokemon.interfce.FlameBodyAbility;
-import pokemon.interfce.FlashFireAbility;
-import pokemon.interfce.ForecastAbility;
-import pokemon.interfce.HydratationAbility;
-import pokemon.interfce.IntimidateAbility;
-import pokemon.interfce.LevitateAbility;
-import pokemon.interfce.LightningRodAbility;
-import pokemon.interfce.MinusAbility;
-import pokemon.interfce.MotorDriveAbility;
-import pokemon.interfce.NaturalCureAbility;
-import pokemon.interfce.NormalizeAbility;
-import pokemon.interfce.PlusAbility;
-import pokemon.interfce.PoisonPointAbility;
-import pokemon.interfce.PressureAbility;
-import pokemon.interfce.QuickFeetAbility;
-import pokemon.interfce.RainDishAbility;
-import pokemon.interfce.RoughSkinAbility;
-import pokemon.interfce.SandStreamAbility;
-import pokemon.interfce.ShedSkinAbility;
-import pokemon.interfce.SpeedBoostAbility;
-import pokemon.interfce.StaticAbility;
-import pokemon.interfce.SteadfastAbility;
-import pokemon.interfce.StenchAbility;
-import pokemon.interfce.SynchronizeAbility;
-import pokemon.interfce.TraceAbility;
-import pokemon.interfce.VoltAbsorbAbility;
-import pokemon.interfce.WaterAbsorbAbility;
-import pokemon.interfce.WonderGuardAbility;
 import pokemon.model.Ability;
 import pokemon.model.Attack;
 import pokemon.model.Pokemon;
@@ -116,10 +77,6 @@ public class ReaderData {
 
 	public HashMap<String, HashMap<String, ArrayList<PokemonType>>> getEffectPerTypes() {
 		return effectPerTypes;
-	}
-
-	public void setEffectPerTypes(HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
-		this.effectPerTypes = effectPerTypes;
 	}
 
 	public ArrayList<Attack> getAttacks() {
@@ -244,7 +201,7 @@ public class ReaderData {
 					break;
 				else {
 					Ability abilityToAdd = new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]);
-					setAbilityEffect(abilityToAdd);
+					setAbilityIsWeatherType(abilityToAdd);
 
 					this.getAbilities().add(abilityToAdd);
 					abilities.add(abilityToAdd);
@@ -474,7 +431,8 @@ public class ReaderData {
 	// -----------------------------
 	// Reads typesList.csv file and adds the effects against other types
 	// -----------------------------
-	public void readPkTypesEffectsToOtherTypes(Map<Integer, PokemonType> typeById) {
+	public void readPkTypesEffectsToOtherTypes(Map<Integer, PokemonType> typeById,
+			HashMap<String, HashMap<String, ArrayList<PokemonType>>> effectPerTypes) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(SAMPLE_CSV_ALL_TYPES))) {
 
 			bufferedReader.readLine(); // skip header
@@ -519,7 +477,7 @@ public class ReaderData {
 				}
 
 				// Save into main dictionary
-				this.getEffectPerTypes().put(typeName, types);
+				effectPerTypes.put(typeName, types);
 			}
 
 			System.out.println("Finished reading readPokeTypeEffectsToOtherTypes");
@@ -740,6 +698,8 @@ public class ReaderData {
 				setAttackForceChange(attack);
 				// Set if attack is punch type
 				setAttackIsPunch(attack);
+				// Set the attack is applied to attacker its self
+				setAttackIsAppliedOnItsSelf(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -751,10 +711,10 @@ public class ReaderData {
 			try {
 				if (fileReader != null)
 					fileReader.close();
-				
+
 				if (bufferedReader != null)
 					bufferedReader.close();
-				
+
 				System.out.println("Finished reading readAttacks");
 			} catch (IOException e) {
 				System.out.println("Exception closing the file : " + e.getMessage());
@@ -924,172 +884,23 @@ public class ReaderData {
 //			}
 //		}
 
-	// -----------------------------
-	// Set the ability effect of the attack
-	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
-	// / 60 (when applying objects) / 82 (when applying objects) / 80 (to complete)
-	// / 83 (to complete) / 84 (when applying
-	// objects) / 90 (to complete)
-	// -----------------------------
-	private static void setAbilityEffect(Ability ability) {
+	private static void setAbilityIsWeatherType(Ability ability) {
 		switch (ability.getId()) {
-		// Hedor/Stench
-		case 1:
-			ability.setEffect(new StenchAbility());
-			break;
 		// Llovizna/Drizzle
 		case 2:
-			ability.setEffect(new DrizzleAbility());
 			ability.setIsWeatherType(true);
-			break;
-		// Impulso/Speed boost
-		case 3:
-			ability.setEffect(new SpeedBoostAbility());
-			break;
-		// Electricidad estática/Static
-		case 9:
-			ability.setEffect(new StaticAbility());
-			break;
-		// Absorbe electricidad/Volt absorb
-		case 10:
-			ability.setEffect(new VoltAbsorbAbility());
-			break;
-		// Absorbe agua/Water absorb
-		case 11:
-			ability.setEffect(new WaterAbsorbAbility());
-			break;
-		// Aclimatación/Cloud nine
-		case 13:
-			ability.setEffect(new CloudNineAbility());
-			break;
-		// Cambio color/Color change
-		case 16:
-			ability.setEffect(new ColorChangeAbility());
-			break;
-		// Absorbe fuego/Flash fire
-		case 18:
-			ability.setEffect(new FlashFireAbility());
-			break;
-		// Intimidación/Intimidate
-		case 22:
-			ability.setEffect(new IntimidateAbility());
-			break;
-		// Piel tosca/Rough skin
-		case 24:
-			ability.setEffect(new RoughSkinAbility());
-			break;
-		// Superguarda/Wonder guard
-		case 25:
-			ability.setEffect(new WonderGuardAbility());
-			break;
-		// Levitación/Levitate
-		case 26:
-			ability.setEffect(new LevitateAbility());
-			break;
-		// Efecto espora/Effect spore
-		case 27:
-			ability.setEffect(new EffectSporeAbility());
-			break;
-		// Sincronía/Synchronize
-		case 28:
-			ability.setEffect(new SynchronizeAbility());
-			break;
-		// Cura natural/Natural cure
-		case 30:
-			ability.setEffect(new NaturalCureAbility());
-			break;
-		// Pararrayos/Lightning rod
-		case 31:
-			ability.setEffect(new LightningRodAbility());
-			break;
-		// Calco/Trace
-		case 36:
-			ability.setEffect(new TraceAbility());
-			break;
-		// Punto tóxico/Poison point
-		case 38:
-			ability.setEffect(new PoisonPointAbility());
-			break;
-		// Cura lluvia/Rain dish
-		case 44:
-			ability.setEffect(new RainDishAbility());
 			break;
 		// Chorro arena/Sand stream
 		case 45:
-			ability.setEffect(new SandStreamAbility());
 			ability.setIsWeatherType(true);
-			break;
-		// Presión/Pressure
-		case 46:
-			ability.setEffect(new PressureAbility());
-			break;
-		// Cuerpo llama/Flame body
-		case 49:
-			ability.setEffect(new FlameBodyAbility());
-			break;
-		// Gran encanto/Cute charm
-		case 56:
-			ability.setEffect(new CuteCharmAbility());
-			break;
-		// Más/Plus
-		case 57:
-			ability.setEffect(new PlusAbility());
-			break;
-		// Menos/Minus
-		case 58:
-			ability.setEffect(new MinusAbility());
-			break;
-		// Predicción/Forecast
-		case 59:
-			ability.setEffect(new ForecastAbility());
-			break;
-		// Mudar/Shed skin
-		case 61:
-			ability.setEffect(new ShedSkinAbility());
 			break;
 		// Sequía/Drought
 		case 70:
-			ability.setEffect(new DroughtAbility());
 			ability.setIsWeatherType(true);
 			break;
-		// Esclusa de aire/Air lock
-		case 76:
-			ability.setEffect(new AirLockAbility());
-			break;
-		// Electromotor/Motor drive
-		case 78:
-			ability.setEffect(new MotorDriveAbility());
-			break;
-		// Impasible/Steadfast
-		case 80:
-			ability.setEffect(new SteadfastAbility());
-			break;
-		// Irascible/Anger point
-		case 83:
-			ability.setEffect(new AngerPointAbility());
-			break;
-		// Piel seca/Dry skin
-		case 87:
-			ability.setEffect(new DrySkinAbility());
-			break;
-		// Descarga/Download
-		case 88:
-			ability.setEffect(new DownloadAbility());
-			break;
-		// Hidratación/Hydratation
-		case 93:
-			ability.setEffect(new HydratationAbility());
-			break;
-		// Pies rápidos/Quick feet
-		case 95:
-			ability.setEffect(new QuickFeetAbility());
-			break;
-		// Normalidad/Normalize
-		case 96:
-			ability.setEffect(new NormalizeAbility());
-			break;
 		default:
-			ability.setEffect(new EmptyAbility());
+			ability.setIsWeatherType(false);
+			break;
 		}
 	}
 
@@ -1101,10 +912,19 @@ public class ReaderData {
 
 		switch (attack.getId()) {
 		case 16:
+			canHitWhileInvulnerable.add(19);
+			canHitWhileInvulnerable.add(340);
+			canHitWhileInvulnerable.add(507);
+		case 57:
+			canHitWhileInvulnerable.add(291);
 		case 87:
+			canHitWhileInvulnerable.add(19);
 		case 239:
+			canHitWhileInvulnerable.add(19);
 		case 327:
+			canHitWhileInvulnerable.add(19);
 		case 479:
+			canHitWhileInvulnerable.add(19);
 		case 542:
 			canHitWhileInvulnerable.add(19);
 			break;
@@ -1135,6 +955,7 @@ public class ReaderData {
 	private static void setCategoryAttackType(Attack attack) {
 		switch (attack.getId()) {
 		case 19:
+		case 76:
 			attack.setCategory(AttackCategory.CHARGED);
 			break;
 		default:
@@ -1157,11 +978,27 @@ public class ReaderData {
 	}
 
 	// -----------------------------
-	// Set if the attack is one hit KO
+	// Set if the attack makes contact (physical attack)
 	// -----------------------------
 	private static void setAttackMakesContact(Attack attack) {
 		if (attack.getBases() != null && attack.getBases().contains("fisico"))
 			attack.setMakesContact(true);
+	}
+
+	// -----------------------------
+	// Set if the attack makes contact (physical attack)
+	// -----------------------------
+	private static void setAttackIsAppliedOnItsSelf(Attack attack) {
+		switch (attack.getId()) {
+		case 14:
+		case 74:
+		case 96:
+		case 97:
+			attack.setAppliedToAttacker(true);
+			break;
+		default:
+			attack.setAppliedToAttacker(false);
+		}
 	}
 
 	// -----------------------------
