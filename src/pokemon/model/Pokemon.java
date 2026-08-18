@@ -529,6 +529,10 @@ public class Pokemon {
 		return weight;
 	}
 
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
 	public boolean hasReceivedDamage() {
 		return hasReceivedDamage;
 	}
