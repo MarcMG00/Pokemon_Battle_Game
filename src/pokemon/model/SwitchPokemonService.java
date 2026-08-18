@@ -173,8 +173,8 @@ public class SwitchPokemonService {
 	public void refreshAttackOrders() {
 		AttackAnalyzer.orderAttacksByDamage(battleCtx.getPkIA(), battleCtx.getIa().getPkFacing(),
 				battleCtx.getEffectPerTypes());
-		AttackAnalyzer.orderAttacksByDamage(battleCtx.getPkPlayer(),
-				battleCtx.getPlayer().getPkFacing(), battleCtx.getEffectPerTypes());
+		AttackAnalyzer.orderAttacksByDamage(battleCtx.getPkPlayer(), battleCtx.getPlayer().getPkFacing(),
+				battleCtx.getEffectPerTypes());
 	}
 
 	// -----------------------------
@@ -221,6 +221,8 @@ public class SwitchPokemonService {
 		Pokemon pkCombating = defender.getPkCombatting();
 		Pokemon pkFacing = defender.getPkFacing();
 
+		defender.setForcedSwitchPokemon(false);
+
 		statusService.removeStates(pkCombating);
 		// Remove some states from Pokemon remaining in the field
 		statusService.removeDrainingState(pkFacing);
@@ -228,18 +230,14 @@ public class SwitchPokemonService {
 		// Get available Pokemon
 		List<Pokemon> pkAvailable = getAvailablePokemonForSwitch(defender);
 
-		if (pkAvailable.isEmpty()) {
-			defender.setForcedSwitchPokemon(false);
+		if (pkAvailable.isEmpty())
 			return; // Cannot change => does not anything
-		}
 
 		Pokemon newPkEntering = chooseRandomPokemon(pkAvailable);
 
 		printForcedSwitchMessage(defender, newPkEntering);
 
 		performForcedSwitch(battleCtx, defender, newPkEntering);
-
-		defender.setForcedSwitchPokemon(false);
 	}
 
 	// -----------------------------

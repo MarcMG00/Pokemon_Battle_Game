@@ -1,8 +1,5 @@
 package pokemon.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import pokemon.enums.AttackCategory;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
@@ -315,7 +312,7 @@ public class StatusService {
 
 					// Standard damage with a power of 40 points
 					float damage = doConfusedDammageStartTurn(pk);
-					pk.setPs(pk.getPs() - damage);
+					pk.setPs(Math.max(pk.getPs() - damage, 0));
 
 					if (pk.isFainted()) {
 						pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
@@ -371,7 +368,7 @@ public class StatusService {
 			if (pk.hasHeatProofAbility())
 				reducePs /= 2;
 
-			pk.setPs(pk.getPs() - reducePs);
+			pk.setPs(Math.max(pk.getPs() - reducePs, 0));
 
 			System.out.println(pk.getName() + " se resiente de la quemadura XD - PS actuales : " + pk.getPs());
 
@@ -419,7 +416,7 @@ public class StatusService {
 			} else {
 				// Reduces current PS by 6.25%
 				float reducePs = pk.getInitialPs() * 0.0625f;
-				pk.setPs(pk.getPs() - reducePs);
+				pk.setPs(Math.max(pk.getPs() - reducePs, 0));
 
 				System.out.println(pk.getName() + " está envenenado - PS actuales : " + pk.getPs());
 
@@ -493,7 +490,7 @@ public class StatusService {
 			} else {
 				// Reduces 12,5% from his initial PS
 				float reducePs = pk.getInitialPs() * 0.125f;
-				pk.setPs(pk.getPs() - reducePs);
+				pk.setPs(Math.max(pk.getPs() - reducePs, 0));
 
 				System.out.println(pk.getName() + " está atado y recibe daño");
 
@@ -527,7 +524,7 @@ public class StatusService {
 				if (drainedAllTurnsStatusDefender.getNbTurns() != 0) {
 					// Increases 12,5% from his initial PS
 					float increasePS = attacker.getInitialPs() * 0.125f;
-					attacker.setPs(attacker.getPs() + increasePS);
+					attacker.setPs(Math.min(attacker.getPs() + increasePS, attacker.getInitialPs()));
 
 					System.out.println(attacker.getName() + " se curó gracias al efecto activo de Drenadoras");
 				}
@@ -622,7 +619,7 @@ public class StatusService {
 		if (attacker.hasBadDreamsAbility() && defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 			// Reduces current PS by 1/8 from max PS
 			float reducePs = defender.getInitialPs() * 0.125f;
-			defender.setPs(defender.getPs() - reducePs);
+			defender.setPs(Math.max(defender.getPs() - reducePs, 0));
 
 			System.out.println(
 					defender.getName() + " sufre daño a causa de la habilidad Mal Sueño de " + attacker.getName());

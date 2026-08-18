@@ -296,7 +296,7 @@ public class AccuracyService {
 
 				float recoil = attackerInitialPs / 2f;
 
-				attacker.setPs(attacker.getPs() - recoil);
+				attacker.setPs(Math.max(attacker.getPs() - recoil, 0));
 
 				System.out.println(attacker.getName()
 						+ " se dañó a si mismo jajajaji. (Patada salto, Patada Salto Alta,  Patada Hacha, Plancha Voltaica)");

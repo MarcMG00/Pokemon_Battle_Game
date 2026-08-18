@@ -22,7 +22,7 @@ public class AftermathAbility extends AbilityEffect {
 
 		// Remove 25% of max PS from defender
 		float removePS = attacker.getInitialPs() * 0.25f;
-		attacker.setPs(attacker.getPs() - removePS);
+		attacker.setPs(Math.max(attacker.getPs() - removePS, 0));
 
 		System.out.println(attacker.getName() + " sufrió daño dada la habilidad Detonación de " + defender.getName());
 	}

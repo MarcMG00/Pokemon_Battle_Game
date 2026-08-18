@@ -29,7 +29,7 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 			attacker.setIsChargingAttackForNextRound(false);
 			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-			ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+			ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 
 			ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
@@ -60,7 +60,7 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 		attacker.setIsChargingAttackForNextRound(false);
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 
 		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 

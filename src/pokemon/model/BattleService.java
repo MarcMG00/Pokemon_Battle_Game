@@ -23,9 +23,8 @@ public class BattleService {
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
 
-		abilityService.applyAbilitiesStartBattle(battleCtx);
-
-		weatherService.applyEntryWeatherAbilities();
+		abilityService.resolveEntryAbilities(battleCtx);
+		weatherService.applyWeatherSuppressionIfNeeded(battleCtx);
 
 		while (battleCtx.getIa().getPokemon().size() >= 1 && battleCtx.getPlayer().getPokemon().size() >= 1) {
 			System.out.println("----------------------------------");

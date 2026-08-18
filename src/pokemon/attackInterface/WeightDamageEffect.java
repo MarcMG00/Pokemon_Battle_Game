@@ -38,7 +38,7 @@ public class WeightDamageEffect implements AttackEffect {
 		float dmg = result.getDamage();
 
 		attack.setPp(attack.getPp() - 1);
-		defender.setPs(defender.getPs() - dmg);
+		defender.setPs(Math.max(defender.getPs() - dmg, 0));
 
 		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 

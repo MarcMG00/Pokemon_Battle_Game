@@ -53,7 +53,7 @@ public class MultiHitEffect implements AttackEffect {
 		System.out.println("Golpeó " + hits + " veces");
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
-		ctx.getDefender().setPs(ctx.getDefender().getPs() - totalDamage);
+		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - totalDamage, 0));
 
 		return result;
 	}

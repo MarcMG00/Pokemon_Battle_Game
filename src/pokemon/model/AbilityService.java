@@ -70,17 +70,59 @@ public class AbilityService {
 	}
 
 	// -----------------------------
+	// Apply abilities on battle start (handle by speed order)
+	// -----------------------------
+	public void resolveEntryAbilities(BattleContext battleCtx) {
+		Pokemon pkPlayer = battleCtx.getPkPlayer();
+		Pokemon pkIA = battleCtx.getPkIA();
+
+		for (Pokemon pokemon : getEntryOrder(pkPlayer, pkIA)) {
+			Pokemon opponent = pokemon == pkPlayer ? pkIA : pkPlayer;
+
+			pokemon.getAbilitySelected().getEffect().onSwitchIn(battleCtx, opponent);
+		}
+	}
+
+	// -----------------------------
+	// Get ability Pokemon order execution
+	// -----------------------------
+	private List<Pokemon> getEntryOrder(Pokemon pkPlayer, Pokemon pkIA) {
+
+		if (pkPlayer.getSpeed() > pkIA.getSpeed())
+			return List.of(pkPlayer, pkIA);
+
+		return List.of(pkIA, pkPlayer);
+	}
+
+	// -----------------------------
 	// Apply abilities on battle start (that are not weather type)
 	// -----------------------------
 	public void applyAbilitiesStartBattle(BattleContext battleCtx) {
-		boolean pkPlayerHasWeatherType = battleCtx.getPkPlayer().getAbilitySelected().isWeatherType();
-		boolean pkIAHasWeatherType = battleCtx.getPkIA().getAbilitySelected().isWeatherType();
+		Pokemon pkPlayer = battleCtx.getPkPlayer();
+		Pokemon pkIA = battleCtx.getPkIA();
 
-		if (!pkPlayerHasWeatherType)
-			battleCtx.getPkPlayer().getAbilitySelected().getEffect().onSwitchIn(battleCtx, battleCtx.getPkIA());
+		boolean pkPlayerHasWeatherType = pkPlayer.getAbilitySelected().isWeatherType();
+		boolean pkIAHasWeatherType = pkIA.getAbilitySelected().isWeatherType();
 
-		if (!pkIAHasWeatherType)
-			battleCtx.getPkIA().getAbilitySelected().getEffect().onSwitchIn(battleCtx, battleCtx.getPkPlayer());
+		if (pkPlayerHasWeatherType && pkIAHasWeatherType)
+			return;
+
+		if (!pkPlayerHasWeatherType && pkIAHasWeatherType) {
+			pkPlayer.getAbilitySelected().getEffect().onSwitchIn(battleCtx, battleCtx.getPkIA());
+			return;
+		}
+
+		if (!pkIAHasWeatherType && pkPlayerHasWeatherType) {
+			pkIA.getAbilitySelected().getEffect().onSwitchIn(battleCtx, battleCtx.getPkPlayer());
+			return;
+		}
+
+		// Both have normal abilities => slower wins
+		Pokemon slower = pkPlayer.getSpeed() <= pkIA.getSpeed() ? pkPlayer : pkIA;
+		Pokemon faster = pkPlayer.getSpeed() > pkIA.getSpeed() ? pkPlayer : pkIA;
+
+		faster.getAbilitySelected().getEffect().onSwitchIn(battleCtx, slower);
+		slower.getAbilitySelected().getEffect().onSwitchIn(battleCtx, faster);
 	}
 
 	// -----------------------------

@@ -1,7 +1,6 @@
 package pokemon.model;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -37,7 +36,6 @@ import pokemon.attackInterface.WeightDamageEffect;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
-import pokemon.enums.Weather;
 
 public class AttackService {
 	public static final String ANSI_BLACK = "\u001B[30m";
@@ -307,7 +305,9 @@ public class AttackService {
 		// Apply abilities at the end of turn (if boost some stats, etc.)
 		abilityService.applyEndTurnAbilitiesIfNeeded(battleCtx, playerAttacksFirst);
 
-		weatherService.applyWeatherEffects(sc);
+		if (!battleCtx.isWeatherSuppressed())
+			weatherService.applyWeatherEffects(sc);
+
 		// Reset some paramenters
 		resetParametersEffectEndTurn();
 
@@ -368,7 +368,7 @@ public class AttackService {
 	}
 
 	// -----------------------------
-	// Select Struggle as attack if no more PP remaining in any attack
+	// Select 165_Struggle as attack if no more PP remaining in any attack
 	// -----------------------------
 	private int handleStruggle(Pokemon pk) {
 		System.out.println(pk.getName() + " no tiene más PPs en ningún ataque.");
@@ -414,11 +414,11 @@ public class AttackService {
 	// Print Pokemon states (for debug)
 	// -----------------------------
 	private void printPokemonStates() {
-		// Normal status player
+		// NORMAL STATUSES player
 		System.out.println(ANSI_YELLOW + "Estado normal del Pokémon del jugador : "
 				+ battleCtx.getPkPlayer().getStatusCondition().getStatusCondition() + ANSI_RESET);
 
-		// Ephemeral status player
+		// EPHEMERAL STATUSES PLAYER
 		System.out.println(ANSI_YELLOW + "Estados efímeros del Pokémon del jugador : " + ANSI_RESET);
 		if (battleCtx.getPkPlayer().hasEphemeralStatus()) {
 			System.out.println(ANSI_YELLOW + "[" + ANSI_RESET);
@@ -428,11 +428,11 @@ public class AttackService {
 			System.out.println(ANSI_YELLOW + "]" + ANSI_RESET);
 		}
 
-		// Normal status IA
+		// NORMAL STATUSES IA
 		System.out.println(ANSI_YELLOW + "Estado normal del Pokémon de la máquina : "
 				+ battleCtx.getPkIA().getStatusCondition().getStatusCondition() + ANSI_RESET);
 
-		// Ephemeral status IA
+		// EPHEMERAL STATUSES IA
 		System.out.println(ANSI_YELLOW + "Estados efímeros del Pokémon de la máquina : " + ANSI_RESET);
 		if (battleCtx.getPkIA().hasEphemeralStatus()) {
 			System.out.println(ANSI_YELLOW + "[" + ANSI_RESET);
@@ -1148,7 +1148,8 @@ public class AttackService {
 		abilityService.applyIAEndTurnAbilitiesIfNeeded(battleCtx);
 
 		// Apply weather effects for both players
-		weatherService.applyWeatherEffects(sc);
+		if (!battleCtx.isWeatherSuppressed())
+			weatherService.applyWeatherEffects(sc);
 
 		// Reset parameters for both players (just in case)
 		resetParametersEffectEndTurn();

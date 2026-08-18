@@ -12,63 +12,16 @@ public class WeatherService {
 	}
 
 	// -----------------------------
-	// Sets the weather ability on first combat (if any)
+	// Suppress weather ability (ex : 13_Cloud_Nine or 76_Air_Lock)
 	// -----------------------------
-	public void applyEntryWeatherAbilities() {
-		Pokemon p1 = battleCtx.getPkPlayer();
-		Pokemon p2 = battleCtx.getPkIA();
+	public void applyWeatherSuppressionIfNeeded(BattleContext battleCtx) {
+		Pokemon pkPlayer = battleCtx.getPkPlayer();
+		Pokemon pkIA = battleCtx.getPkIA();
 
-		applyWeatherAbility(p1, p2);
-		applyWeatherAbility(p2, p1);
+		boolean suppressed = pkPlayer.hasCloudNineAbility() || pkPlayer.hasAirLockAbility()
+				|| pkIA.hasCloudNineAbility() || pkIA.hasAirLockAbility();
 
-		applyWeatherSuppression(p1, p2);
-		applyWeatherSuppression(p2, p1);
-	}
-
-	// -----------------------------
-	// Use only weather abilities
-	// -----------------------------
-	private void applyWeatherAbility(Pokemon pk1, Pokemon pk2) {
-		Ability a1 = pk1.getAbilitySelected();
-		Ability a2 = pk2.getAbilitySelected();
-
-		Ability weatherA1 = isWeatherAbility(a1) ? a1 : null;
-		Ability weatherA2 = isWeatherAbility(a2) ? a2 : null;
-
-		if (weatherA1 == null && weatherA2 == null)
-			return;
-
-		if (weatherA1 != null && weatherA2 == null) {
-			weatherA1.getEffect().onSwitchIn(battleCtx, pk2);
-			return;
-		}
-
-		if (weatherA2 != null && weatherA1 == null) {
-			weatherA2.getEffect().onSwitchIn(battleCtx, pk1);
-			return;
-		}
-
-		// Both have weather → slower wins
-		Pokemon slower = pk1.getSpeed() <= pk2.getSpeed() ? pk1 : pk2;
-		Pokemon faster = pk1.getSpeed() > pk2.getSpeed() ? pk1 : pk2;
-
-		slower.getAbilitySelected().getEffect().onSwitchIn(battleCtx, faster);
-	}
-
-	// -----------------------------
-	// Suppress weather ability by 13_Cloud_Nine or 76_Air_Lock
-	// -----------------------------
-	private void applyWeatherSuppression(Pokemon attacker, Pokemon defender) {
-		// 13_Cloud_nine / 76_Air_lock
-		if (attacker.hasCloudNineAbility() || attacker.hasAirLockAbility())
-			attacker.getAbilitySelected().getEffect().onSwitchIn(battleCtx, defender);
-	}
-
-	// -----------------------------
-	// Check if ability is wetaher type
-	// -----------------------------
-	private boolean isWeatherAbility(Ability ability) {
-		return ability != null && ability.isWeatherType();
+		battleCtx.setWeatherSuppressed(suppressed);
 	}
 
 	// -----------------------------
@@ -116,6 +69,7 @@ public class WeatherService {
 	// Sandstorm effect
 	// -----------------------------
 	private void applySandstormEffect(Pokemon pokemon) {
+		// BOOST
 		if (isImmuneToSandstormByType(pokemon))
 			return;
 
@@ -125,6 +79,7 @@ public class WeatherService {
 			return;
 		}
 
+		// DAMAGE
 		applyDamageByPercentage(pokemon, 0.0625f, pokemon.getName() + " ha sido zarandeado por la tormenta de arena");
 	}
 
@@ -132,6 +87,7 @@ public class WeatherService {
 	// Sun effect
 	// -----------------------------
 	private void applySunEffect(Pokemon pokemon) {
+		// DAMAGE
 		if (pokemon.hasDrySkinAbility() || pokemon.hasSolarPowerAbility())
 			applyDamageByPercentage(pokemon, 0.125f, pokemon.getName() + " (Id:" + pokemon.getId()
 					+ "), recibie daño dada su habilidad " + pokemon.getAbilitySelected().getName() + " (hace SOL)");
@@ -141,6 +97,7 @@ public class WeatherService {
 	// Rain effect
 	// -----------------------------
 	private void applyRainEffect(Pokemon pokemon) {
+		// BOOST
 		if (pokemon.hasDrySkinAbility())
 			applyHealByPercentage(pokemon, 0.125f,
 					pokemon.getName() + " (Id:" + pokemon.getId() + "), recupera PS dada su habilidad "
@@ -156,6 +113,7 @@ public class WeatherService {
 	// Hail effect
 	// -----------------------------
 	private void applyHailEffect(Pokemon pokemon) {
+		// BOOST
 		if (isImmuneToHailByType(pokemon))
 			return;
 
@@ -165,6 +123,7 @@ public class WeatherService {
 			return;
 		}
 
+		// DAMAGE
 		applyDamageByPercentage(pokemon, 0.0625f, pokemon.getName() + " ha sido zarandeado por el granizo");
 	}
 
@@ -173,7 +132,7 @@ public class WeatherService {
 	// -----------------------------
 	private void applyDamageByPercentage(Pokemon pokemon, float percentage, String message) {
 		float amount = pokemon.getInitialPs() * percentage;
-		pokemon.setPs(pokemon.getPs() - amount);
+		pokemon.setPs(Math.max(pokemon.getPs() - amount, 0));
 
 		System.out.println(message);
 	}
@@ -183,7 +142,7 @@ public class WeatherService {
 	// -----------------------------
 	private void applyHealByPercentage(Pokemon pokemon, float percentage, String message) {
 		float amount = pokemon.getInitialPs() * percentage;
-		pokemon.setPs(pokemon.getPs() + amount);
+		pokemon.setPs(Math.min(pokemon.getPs() + amount, pokemon.getInitialPs()));
 
 		System.out.println(message);
 	}

@@ -227,17 +227,7 @@ public class DamageService {
 	// Apply defensive abilities
 	// -----------------------------
 	private float applyDefensiveAbilities(Pokemon defender, Pokemon attacker, Attack attack, float damage) {
-		Ability defAbility = defender.getAbilitySelected();
-
 		// REDUCE DAMAGE
-		// 5_Sturdy ability cannot be defeated by one hit KO or by one attack if PS are
-		// on max
-		if (defender.hasSturdyAbility() && !defAbility.alreadyUsedOnEnter() && defender.hasMaxPS()
-				&& damage >= defender.getInitialPs()) {
-			defAbility.setAlreadyUsedOnEnter(true);
-			return defender.getInitialPs() - 1f;
-		}
-
 		// 47_Thick_Fat ability/ 85_Heatproof reduces damage by 2 (only if attack type
 		// it's fire or ice type)
 		if ((defender.hasThickFatAbility() && (attack.isFireType() || attack.isIceType()))

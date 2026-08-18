@@ -8,7 +8,7 @@ public class RoughSkinAbility extends AbilityEffect {
 	public RoughSkinAbility(Pokemon owner) {
 		super(owner);
 	}
-	
+
 	@Override
 	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
 		if (attackCtx.getDefender().hasRoughSkinAbility())
@@ -26,7 +26,7 @@ public class RoughSkinAbility extends AbilityEffect {
 		float attackerInitialPs = attackCtx.getAttacker().getInitialPs();
 		// Removes 6,25% of initial PS
 		float damage = attackerInitialPs * (1f - 0.625f);
-		attackCtx.getAttacker().setPs(attackCtx.getAttacker().getPs() - damage);
+		attackCtx.getAttacker().setPs(Math.max(attackCtx.getAttacker().getPs() - damage, 0));
 
 		System.out.println(
 				attackCtx.getAttacker().getName() + " fue dañado por la habilidad Piel tosca del Pokémon rival");

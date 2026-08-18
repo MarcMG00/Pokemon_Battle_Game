@@ -19,7 +19,7 @@ public class CounterAttackEffect implements AttackEffect {
 
 			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-			ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+			ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 
 			ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
