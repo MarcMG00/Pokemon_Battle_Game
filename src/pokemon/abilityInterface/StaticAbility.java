@@ -3,9 +3,14 @@ package pokemon.abilityInterface;
 import pokemon.enums.StatusConditions;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
+import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class StaticAbility implements AbilityEffect {
+public class StaticAbility extends AbilityEffect {
+	public StaticAbility(Pokemon owner) {
+		super(owner);
+	}
+	
 	private static final double PARALYSIS_CHANCE = 0.30;
 
 	@Override

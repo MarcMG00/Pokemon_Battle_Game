@@ -5,16 +5,17 @@ import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.StatService;
 
-public class IntimidateAbility implements AbilityEffect {
-	private int stages;
-	private final StatService statService;
-
-	public IntimidateAbility() {
+public class IntimidateAbility extends AbilityEffect {
+	public IntimidateAbility(Pokemon owner) {
+		super(owner);
 		this.statService = new StatService();
 	}
 
+	private int stages;
+	private final StatService statService;
+
 	@Override
-	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
+	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
 		boolean isReduceStatStage = true;
 
 		System.out.println(owner.getName() + " intimidó a " + defender.getName());
@@ -24,7 +25,7 @@ public class IntimidateAbility implements AbilityEffect {
 			isReduceStatStage = false;
 
 		// Check immunity (Oblivious, Own tempo, etc.)
-		if (defender.getAbilitySelected() != null && statService.isIntimidateImmune(defender)) {
+		if (statService.isIntimidateImmune(defender)) {
 			System.out.println(
 					defender.getName() + " no se intimidó gracias a " + defender.getAbilitySelected().getName());
 			return;

@@ -4,9 +4,13 @@ import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class NormalizeAbility implements AbilityEffect {
+public class NormalizeAbility extends AbilityEffect {
+	public NormalizeAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
-	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
+	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
 		// Pass each attack to NORMAL type
 		for (Attack attack : owner.getFourPrincipalAttacks()) {
 			attack.setType("NORMAL");

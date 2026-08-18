@@ -7,10 +7,14 @@ import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.PokemonType;
 
-public class ForecastAbility implements AbilityEffect {
+public class ForecastAbility extends AbilityEffect {
+	public ForecastAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
-	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
-		// Only change type of defender if ability is Forecast
+	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
+		// Only change type if ability is Forecast
 		if (!owner.hasForecastAbility())
 			return;
 
@@ -27,17 +31,17 @@ public class ForecastAbility implements AbilityEffect {
 		switch (actualWeather) {
 		case RAIN:
 			newType.add(types.stream().filter(t -> t.getId() == 2).findFirst().get());
-			defender.setTypes(newType);
+			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Agua gracias a su habilidad Predicción");
 			break;
 		case SUN:
 			newType.add(types.stream().filter(t -> t.getId() == 7).findFirst().get());
-			defender.setTypes(newType);
+			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Fuego gracias a su habilidad Predicción");
 			break;
 		case HAIL:
 			newType.add(types.stream().filter(t -> t.getId() == 9).findFirst().get());
-			defender.setTypes(newType);
+			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Hielo gracias a su habilidad Predicción");
 			break;
 		default:
@@ -46,15 +50,15 @@ public class ForecastAbility implements AbilityEffect {
 	}
 
 	@Override
-	public void onSwitchOut(BattleContext battleCtx, Pokemon owner) {
+	public void onSwitchOut(BattleContext battleCtx) {
 		// Reset types
 		owner.setTypes(owner.getInitialTypes());
 	}
 
 	@Override
-	public void duringBattle(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
-		// Only change type of defender if ability is Forecast
-		if (!owner.hasForecastAbility())
+	public void duringBattle(BattleContext battleCtx, Pokemon attacker) {
+		// Only change type if ability is Forecast
+		if (!owner.hasTraceAbility() && !attacker.hasForecastAbility())
 			return;
 
 		// Weather hasn't to be suppressed
@@ -70,17 +74,17 @@ public class ForecastAbility implements AbilityEffect {
 		switch (actualWeather) {
 		case RAIN:
 			newType.add(types.stream().filter(t -> t.getId() == 2).findFirst().get());
-			defender.setTypes(newType);
+			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Agua gracias a su habilidad Predicción");
 			break;
 		case SUN:
 			newType.add(types.stream().filter(t -> t.getId() == 7).findFirst().get());
-			defender.setTypes(newType);
+			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Fuego gracias a su habilidad Predicción");
 			break;
 		case HAIL:
 			newType.add(types.stream().filter(t -> t.getId() == 9).findFirst().get());
-			defender.setTypes(newType);
+			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Hielo gracias a su habilidad Predicción");
 			break;
 		default:

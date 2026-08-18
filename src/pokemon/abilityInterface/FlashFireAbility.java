@@ -7,28 +7,32 @@ import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class FlashFireAbility implements AbilityEffect {
+public class FlashFireAbility extends AbilityEffect {
+	public FlashFireAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
-	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack) {
+	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Attack attack) {
 		// Only fire movements
 		if (!attack.isFireType())
 			return true;
 
 		// If Pokemon frozen => don't activate the ability
-		if (defender.hasActiveStatusCondition(StatusConditions.FROZEN))
+		if (owner.hasActiveStatusCondition(StatusConditions.FROZEN))
 			return true;
 
 		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + attack.getName());
 
 		// If already has the boost => only immunity (no cumulative)
-		if (defender.getIsFireBoostActive()) {
-			System.out.println(defender.getName() + " absorbió el ataque de fuego!");
+		if (owner.isFireBoostActive()) {
+			System.out.println(owner.getName() + " absorbió el ataque de fuego!");
 			return false; // cannot be attacked
 		}
 
 		// First fire attack => activate the ability
-		defender.setIsFireBoostActive(true);
-		System.out.println(defender.getName() + " activó Absorbe Fuego!");
+		owner.setIsFireBoostActive(true);
+		System.out.println(owner.getName() + " activó Absorbe Fuego!");
 
 		return false; // cannot be attacked
 	}
@@ -45,7 +49,7 @@ public class FlashFireAbility implements AbilityEffect {
 	}
 
 	@Override
-	public void onSwitchOut(BattleContext battleCtx, Pokemon owner) {
+	public void onSwitchOut(BattleContext battleCtx) {
 		// Reinitialize the activation of ability
 		owner.setIsFireBoostActive(false);
 	}

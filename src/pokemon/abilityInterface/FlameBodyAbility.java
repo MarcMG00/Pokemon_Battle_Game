@@ -3,9 +3,14 @@ package pokemon.abilityInterface;
 import pokemon.enums.StatusConditions;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
+import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class FlameBodyAbility implements AbilityEffect {
+public class FlameBodyAbility extends AbilityEffect {
+	public FlameBodyAbility(Pokemon owner) {
+		super(owner);
+	}
+	
 	private static final double BURNED_CHANCE = 0.30;
 
 	@Override

@@ -31,7 +31,7 @@ public class DamageService {
 		Attack attack = ctx.getAttack();
 		float power = ctx.getPower();
 
-		float modifiedPower = calculateModifiedPower(attacker, defender, attack, power);
+		float modifiedPower = calculateModifiedPowerByAbility(attacker, defender, attack, power);
 		float baseDamage = calculateBaseDamage(attacker, defender, attack, modifiedPower, ctx);
 		CriticalResult critResult = applyCriticalIfNeeded(attacker, attack, baseDamage, ctx);
 
@@ -48,7 +48,7 @@ public class DamageService {
 	// -----------------------------
 	// Modify power depending on abilities from attacker
 	// -----------------------------
-	private float calculateModifiedPower(Pokemon attacker, Pokemon defender, Attack attack, float power) {
+	private float calculateModifiedPowerByAbility(Pokemon attacker, Pokemon defender, Attack attack, float power) {
 		power *= applyPhysicalAbilities(attacker, attack);
 		power *= applyBoostAbilitiesFromReducedPS(attacker, attack);
 		power *= applyRivalry(attacker, defender);
@@ -133,7 +133,7 @@ public class DamageService {
 	// Apply 91_Adaptable ability
 	// -----------------------------
 	private float applyAdaptable(Pokemon attacker, Attack attack) {
-		if (attacker.hasAdaptabilityAbility() && attacker.getTypes().contains(attack.getStrTypeToPkType()))
+		if (attacker.hasAdaptabilityAbility() && attacker.getTypes().contains(attack.getPkType()))
 			return 1.75f;
 
 		return 1f;
@@ -143,9 +143,6 @@ public class DamageService {
 	// Apply general abilities concerning the attack of the Pokemon
 	// -----------------------------
 	private float applyPowerAttackModifiers(Pokemon attacker, Attack attack) {
-		if (attacker.getAbilitySelected() == null)
-			return 1f;
-
 		// 96_Normalize increase power 20% more
 		if (attacker.hasNormalizeAbility())
 			return 1.2f;
@@ -162,9 +159,6 @@ public class DamageService {
 	// Apply abilities depending on power level of the attack
 	// -----------------------------
 	private float applyPowerDependingPowerAttack(Pokemon attacker, Attack attack) {
-		if (attacker.getAbilitySelected() == null)
-			return 1f;
-
 		// 101_Technician ability
 		if (attacker.hasTechnicianAbility() && attack.getPower() <= 60f)
 			return 1.5f;
@@ -199,7 +193,7 @@ public class DamageService {
 				* randomVariation * base;
 
 		// 18_Flash_Fire boost ability
-		if (attacker.getIsFireBoostActive() && attack.isFireType())
+		if (attacker.isFireBoostActive() && attack.isFireType())
 			damage *= 1.5f;
 
 		return damage;
@@ -233,22 +227,14 @@ public class DamageService {
 	// Apply defensive abilities
 	// -----------------------------
 	private float applyDefensiveAbilities(Pokemon defender, Pokemon attacker, Attack attack, float damage) {
-		Ability defAbility = defender.getAbilitySelected();
-
-		// 5_Sturdy ability cannot be defeated by one hit KO or by one attack if PS are
-		// on max
-		if (defender.hasSturdyAbility() && !defAbility.getAlreadyUsedOnEnter() && defender.hasMaxPS()
-				&& damage >= defender.getInitialPs()) {
-			defAbility.setAlreadyUsedOnEnter(true);
-			return defender.getInitialPs() - 1f;
-		}
-
+		// REDUCE DAMAGE
 		// 47_Thick_Fat ability/ 85_Heatproof reduces damage by 2 (only if attack type
 		// it's fire or ice type)
 		if ((defender.hasThickFatAbility() && (attack.isFireType() || attack.isIceType()))
 				|| (defender.hasHeatProofAbility() && attack.isFireType()))
 			return damage / 2f;
 
+		// INCREASE DAMAGE
 		// 87_Dry_Skin ability with a fire attack, do 25% more damage
 		if (defender.hasDrySkinAbility() && attack.isFireType())
 			return damage * 1.25f;
@@ -288,7 +274,7 @@ public class DamageService {
 	public boolean getCriticity(AttackContext ctx) {
 		double randomCritic = Math.random() * 100d;
 
-		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
+		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker());
 
 		// 10% of probabilities to have a critic attack
 		if (randomCritic <= 10)
@@ -303,7 +289,7 @@ public class DamageService {
 	public boolean getHighCriticity30(AttackContext ctx) {
 		double randomCritic = Math.random() * 100d;
 
-		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
+		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker());
 
 		// 30% of probabilities to have a critic attack
 		if (randomCritic <= 30)
@@ -318,7 +304,7 @@ public class DamageService {
 	public boolean getHighCriticity40(AttackContext ctx) {
 		double randomCritic = Math.random() * 100d;
 
-		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker().getAbilitySelected());
+		randomCritic *= getCriticalIndexIfNeeded(ctx.getAttacker());
 
 		// 40% of probabilities to have a critic attack
 		if (randomCritic <= 40)
@@ -330,10 +316,10 @@ public class DamageService {
 	// -----------------------------
 	// Rises probability of getting a critical attack if needed
 	// -----------------------------
-	public double getCriticalIndexIfNeeded(Ability ability) {
+	public double getCriticalIndexIfNeeded(Pokemon attacker) {
 		// 105_Super_Lock rises by 12,5% the probability of getting a critical attack
 		// (index 1)
-		if (ability.getId() == 105)
+		if (attacker.hasSuperLockAbility())
 			return 1d + (12.5d / 100d);
 
 		return 1d;

@@ -3,9 +3,13 @@ package pokemon.abilityInterface;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class DownloadAbility implements AbilityEffect {
+public class DownloadAbility extends AbilityEffect {
+	public DownloadAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
-	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
+	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
 
 		if (battleCtx.getStatService().getEffectiveDefense(defender, false) < battleCtx.getStatService()
 				.getEffectiveSpecialDefense(defender, false, battleCtx.getWeather())) {
@@ -19,9 +23,9 @@ public class DownloadAbility implements AbilityEffect {
 	}
 
 	@Override
-	public void onSwitchOut(BattleContext battleCtx, Pokemon owner) {
+	public void onSwitchOut(BattleContext battleCtx) {
 		// Reinitialize the activation of ability => reduce one level the stat increased
-		if (owner.getIsAttackBoostedFromDownloadAbility()) {
+		if (owner.isAttackBoostedFromDownloadAbility()) {
 			owner.setAttackStage(Math.max(owner.getAttackStage() - 1, -6));
 		} else {
 			owner.setSpecialAttackStage(Math.max(owner.getSpecialAttackStage() - 1, -6));

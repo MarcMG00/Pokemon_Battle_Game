@@ -7,7 +7,11 @@ import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class SynchronizeAbility implements AbilityEffect {
+public class SynchronizeAbility extends AbilityEffect {
+	public SynchronizeAbility(Pokemon owner) {
+		super(owner);
+	}
+	
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {

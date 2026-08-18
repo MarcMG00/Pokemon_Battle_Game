@@ -3,9 +3,14 @@ package pokemon.abilityInterface;
 import pokemon.enums.StatusConditions;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResult;
+import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class EffectSporeAbility implements AbilityEffect {
+public class EffectSporeAbility extends AbilityEffect {
+	public EffectSporeAbility(Pokemon owner) {
+		super(owner);
+	}
+	
 	private static final double STATUS_PROBABILITY = 0.10d;
 
 	@Override

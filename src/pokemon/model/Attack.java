@@ -32,7 +32,6 @@ public class Attack {
 	private boolean makesContact;
 	private List<SecondaryEffect> secondaryEffects = new ArrayList<>();
 	private boolean alwaysHits;
-	private boolean ignoresAccuracy;
 	private Weather guaranteedWeather;
 	private boolean forceChange;
 	private boolean isPunchMove;
@@ -62,7 +61,6 @@ public class Attack {
 		this.makesContact = false;
 		this.canHitWhileInvulnerable = new ArrayList<>();
 		this.alwaysHits = false;
-		this.ignoresAccuracy = false;
 		this.guaranteedWeather = Weather.NONE;
 		this.forceChange = false;
 		this.isPunchMove = false;
@@ -92,7 +90,6 @@ public class Attack {
 		this.canHitWhileInvulnerable = new ArrayList<>();
 		this.secondaryEffects = new ArrayList<>();
 		this.alwaysHits = false;
-		this.ignoresAccuracy = false;
 		this.guaranteedWeather = Weather.NONE;
 		this.forceChange = false;
 		this.isPunchMove = false;
@@ -122,7 +119,6 @@ public class Attack {
 		this.canHitWhileInvulnerable = attack.canHitWhileInvulnerable;
 		this.secondaryEffects = attack.secondaryEffects;
 		this.alwaysHits = attack.alwaysHits;
-		this.ignoresAccuracy = attack.ignoresAccuracy;
 		this.guaranteedWeather = attack.guaranteedWeather;
 		this.forceChange = attack.forceChange;
 		this.isPunchMove = attack.isPunchMove;
@@ -198,11 +194,11 @@ public class Attack {
 		this.effect = effect;
 	}
 
-	public PokemonType getStrTypeToPkType() {
+	public PokemonType getPkType() {
 		return strTypeToPkType;
 	}
 
-	public void setStrTypeToPkType(PokemonType strTypeToPkType) {
+	public void setPkType(PokemonType strTypeToPkType) {
 		this.strTypeToPkType = strTypeToPkType;
 	}
 
@@ -235,7 +231,7 @@ public class Attack {
 		this.category = category;
 	}
 
-	public List<Integer> getCanHitWhileInvulnerable() {
+	public List<Integer> canHitWhileInvulnerable() {
 		return canHitWhileInvulnerable;
 	}
 
@@ -243,7 +239,7 @@ public class Attack {
 		this.canHitWhileInvulnerable = canHitWhileInvulnerable;
 	}
 
-	public boolean getCanRecieveDamage() {
+	public boolean canRecieveDamage() {
 		return canRecieveDamage;
 	}
 
@@ -299,14 +295,6 @@ public class Attack {
 		this.alwaysHits = alwaysHits;
 	}
 
-	public boolean isIgnoresAccuracy() {
-		return ignoresAccuracy;
-	}
-
-	public void setIgnoresAccuracy(boolean ignoresAccuracy) {
-		this.ignoresAccuracy = ignoresAccuracy;
-	}
-
 	public Weather getGuaranteedWeather() {
 		return guaranteedWeather;
 	}
@@ -315,7 +303,7 @@ public class Attack {
 		this.guaranteedWeather = guaranteedWeather;
 	}
 
-	public boolean isForceChange() {
+	public boolean forcesChange() {
 		return forceChange;
 	}
 
@@ -354,14 +342,14 @@ public class Attack {
 	// Set the type of the attack to his Pokemon type instead of a string
 	// -----------------------------
 	public void transformStrTypeToPokemonType(ArrayList<PokemonType> types) {
-		this.setStrTypeToPkType(types.stream().filter(pk -> pk.getName().equals(this.getType())).findFirst().get());
+		this.setPkType(types.stream().filter(pk -> pk.getName().equals(this.getType())).findFirst().get());
 	}
 
 	// -----------------------------
 	// Check if can hit while target is invulnerable
 	// -----------------------------
 	public boolean canHitWhileTargetInvulnerable(int targetAttackId) {
-		return this.getCanHitWhileInvulnerable() != null && this.getCanHitWhileInvulnerable().contains(targetAttackId);
+		return this.canHitWhileInvulnerable() != null && this.canHitWhileInvulnerable().contains(targetAttackId);
 	}
 
 	// -----------------------------
@@ -404,126 +392,126 @@ public class Attack {
 	// Check if attack is Steel type
 	// -----------------------------
 	public boolean isSteelType() {
-		return this.getStrTypeToPkType().getId() == 1;
+		return this.getPkType().getId() == 1;
 	}
 
 	// -----------------------------
 	// Check if attack is Water type
 	// -----------------------------
 	public boolean isWaterType() {
-		return this.getStrTypeToPkType().getId() == 2;
+		return this.getPkType().getId() == 2;
 	}
 
 	// -----------------------------
 	// Check if attack is Bug type
 	// -----------------------------
 	public boolean isBugType() {
-		return this.getStrTypeToPkType().getId() == 3;
+		return this.getPkType().getId() == 3;
 	}
 
 	// -----------------------------
 	// Check if attack is Dragon type
 	// -----------------------------
 	public boolean isDragonType() {
-		return this.getStrTypeToPkType().getId() == 4;
+		return this.getPkType().getId() == 4;
 	}
 
 	// -----------------------------
 	// Check if attack is Steel type
 	// -----------------------------
 	public boolean isElectricType() {
-		return this.getStrTypeToPkType().getId() == 5;
+		return this.getPkType().getId() == 5;
 	}
 
 	// -----------------------------
 	// Check if attack is Ghost type
 	// -----------------------------
 	public boolean isGhostType() {
-		return this.getStrTypeToPkType().getId() == 6;
+		return this.getPkType().getId() == 6;
 	}
 
 	// -----------------------------
 	// Check if attack is Fire type
 	// -----------------------------
 	public boolean isFireType() {
-		return this.getStrTypeToPkType().getId() == 7;
+		return this.getPkType().getId() == 7;
 	}
 
 	// -----------------------------
 	// Check if attack is Fairy type
 	// -----------------------------
 	public boolean isFairyType() {
-		return this.getStrTypeToPkType().getId() == 8;
+		return this.getPkType().getId() == 8;
 	}
 
 	// -----------------------------
 	// Check if attack is Ice type
 	// -----------------------------
 	public boolean isIceType() {
-		return this.getStrTypeToPkType().getId() == 9;
+		return this.getPkType().getId() == 9;
 	}
 
 	// -----------------------------
 	// Check if attack is Fighting type
 	// -----------------------------
 	public boolean isFightingType() {
-		return this.getStrTypeToPkType().getId() == 10;
+		return this.getPkType().getId() == 10;
 	}
 
 	// -----------------------------
 	// Check if attack is Normal type
 	// -----------------------------
 	public boolean isNormalType() {
-		return this.getStrTypeToPkType().getId() == 11;
+		return this.getPkType().getId() == 11;
 	}
 
 	// -----------------------------
 	// Check if attack is Grass type
 	// -----------------------------
 	public boolean isGrassType() {
-		return this.getStrTypeToPkType().getId() == 12;
+		return this.getPkType().getId() == 12;
 	}
 
 	// -----------------------------
 	// Check if attack is Psychic type
 	// -----------------------------
 	public boolean isPsychicType() {
-		return this.getStrTypeToPkType().getId() == 13;
+		return this.getPkType().getId() == 13;
 	}
 
 	// -----------------------------
 	// Check if attack is Rock type
 	// -----------------------------
 	public boolean isRockType() {
-		return this.getStrTypeToPkType().getId() == 14;
+		return this.getPkType().getId() == 14;
 	}
 
 	// -----------------------------
 	// Check if attack is Dark type
 	// -----------------------------
 	public boolean isDarkType() {
-		return this.getStrTypeToPkType().getId() == 15;
+		return this.getPkType().getId() == 15;
 	}
 
 	// -----------------------------
 	// Check if attack is Ground type
 	// -----------------------------
 	public boolean isGroundType() {
-		return this.getStrTypeToPkType().getId() == 16;
+		return this.getPkType().getId() == 16;
 	}
 
 	// -----------------------------
 	// Check if attack is Poison type
 	// -----------------------------
 	public boolean isPoisonType() {
-		return this.getStrTypeToPkType().getId() == 17;
+		return this.getPkType().getId() == 17;
 	}
 
 	// -----------------------------
 	// Check if attack is Flying type
 	// -----------------------------
 	public boolean isFlyingType() {
-		return this.getStrTypeToPkType().getId() == 18;
+		return this.getPkType().getId() == 18;
 	}
 
 	// -----------------------------
@@ -545,6 +533,13 @@ public class Attack {
 	// -----------------------------
 	public boolean isSolarBeam() {
 		return this.getId() == 76;
+	}
+
+	// -----------------------------
+	// Check if attack is 87_Thunder
+	// -----------------------------
+	public boolean isThunder() {
+		return this.getId() == 87;
 	}
 
 	// -----------------------------

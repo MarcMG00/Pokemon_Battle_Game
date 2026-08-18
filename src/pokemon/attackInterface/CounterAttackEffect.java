@@ -11,7 +11,7 @@ public class CounterAttackEffect implements AttackEffect {
 		Pokemon attacker = ctx.getAttacker();
 		AttackResult result = new AttackResult();
 
-		if (attacker.getHasReceivedDamage()) {
+		if (attacker.hasReceivedDamage()) {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó Contraataque");
 
 			float dmg = attacker.getDamageReceived() * 2f;
@@ -19,7 +19,7 @@ public class CounterAttackEffect implements AttackEffect {
 
 			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-			ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+			ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 
 			ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 

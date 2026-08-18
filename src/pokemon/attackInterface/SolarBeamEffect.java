@@ -25,10 +25,11 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 			result = damageService.doDamage(ctx);
 			float dmg = result.getDamage();
 
+			// Ensure we don't keep charging state if we were prevented from attacking
 			attacker.setIsChargingAttackForNextRound(false);
 			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-			ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+			ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 
 			ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
@@ -36,7 +37,7 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 		}
 
 		// First turn charge
-		if (!attacker.getIsChargingAttackForNextRound()) {
+		if (!attacker.isChargingAttackForNextRound()) {
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " se prepara para "
 					+ ctx.getAttack().getName());
 
@@ -55,10 +56,11 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 		result = damageService.doDamage(ctx);
 		float dmg = result.getDamage();
 
+		// Ensure we don't keep charging state
 		attacker.setIsChargingAttackForNextRound(false);
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 
 		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 

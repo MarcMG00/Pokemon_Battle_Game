@@ -29,7 +29,7 @@ public class RecoilDamageEffect implements AttackEffect {
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 
 		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
@@ -43,7 +43,7 @@ public class RecoilDamageEffect implements AttackEffect {
 
 		float recoil = dmg * recoilPercent;
 
-		attacker.setPs(attacker.getPs() - recoil);
+		attacker.setPs(Math.max(attacker.getPs() - recoil, 0));
 
 		System.out.println(
 				attacker.getName() + " (Id:" + attacker.getId() + ") sufrió daño por retroceso (" + recoil + ")");

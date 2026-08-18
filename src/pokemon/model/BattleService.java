@@ -23,19 +23,21 @@ public class BattleService {
 		int nbRound = 1;
 		Scanner sc = new Scanner(System.in);
 
-		abilityService.applyAbilities(battleCtx, battleCtx.getPlayer().getPkCombatting(),
-				battleCtx.getIa().getPkCombatting());
-
-		weatherService.applyEntryWeatherAbilities();
+		abilityService.resolveEntryAbilities(battleCtx);
+		weatherService.applyWeatherSuppressionIfNeeded(battleCtx);
 
 		while (battleCtx.getIa().getPokemon().size() >= 1 && battleCtx.getPlayer().getPokemon().size() >= 1) {
 			System.out.println("----------------------------------");
 			System.out.println("Let's start round nº : " + nbRound);
 			System.out.println("----------------------------------");
 
-			Pokemon pkPlayer = battleCtx.getPlayer().getPkCombatting();
+			Pokemon pkPlayer = battleCtx.getPkPlayer();
+			Pokemon pkIA = battleCtx.getPkIA();
 
-			boolean playerIsCharging = pkPlayer.getIsChargingAttackForNextRound();
+			pkPlayer.restartParametersEffectInitialTurn();
+			pkIA.restartParametersEffectInitialTurn();
+
+			boolean playerIsCharging = pkPlayer.isChargingAttackForNextRound();
 
 			boolean playerIsTrapped = pkPlayer.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)
 					&& pkPlayer.getEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK).getNbTurns() > 0;
@@ -45,22 +47,19 @@ public class BattleService {
 			if (attackChoice == 1)
 				attackService.handleAttackTurn(sc);
 			else {
-				if (battleCtx.getIa().getPkCombatting().hasShadowTagAbility()) {
-					System.out.println("No puedes cambiar de Pokémon a causa de Sombra trampa");
+				boolean cancelled = attackService.handlePlayerSwitchIAAttacks(sc);
 
+				if (cancelled) {
+					System.out.println("Cambio cancelado. Regresando al menú...");
 					nbRound--;
-
-				} else {
-					boolean cancelled = !attackService.handleChangeTurn(sc);
-
-					if (cancelled) {
-						System.out.println("Cambio cancelado. Regresando al menú...");
-						nbRound--;
-					}
 				}
 			}
 
 			nbRound++;
 		}
+
+		System.out.println("----------------------------------");
+		System.out.println("Fin del combate...");
+		System.out.println("----------------------------------");
 	}
 }

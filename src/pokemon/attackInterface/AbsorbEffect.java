@@ -23,12 +23,12 @@ public class AbsorbEffect implements AttackEffect {
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		ctx.getDefender().setPs(ctx.getDefender().getPs() - dmg);
+		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 
 		// Pokemon combating gets or loses health
 		if (ctx.getDefender().hasLiquidOozeAbility()) {
 			// The half of damage done
-			attacker.setPs(attacker.getPs() - (dmg / 2f));
+			attacker.setPs(Math.max(attacker.getPs() - (dmg / 2f), 0));
 			System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")"
 					+ " perdió PS al intentar drenar al rival dada la habilidad Viscosecreción");
 

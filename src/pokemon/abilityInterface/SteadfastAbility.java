@@ -5,12 +5,16 @@ import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class SteadfastAbility implements AbilityEffect {
+public class SteadfastAbility extends AbilityEffect {
+	public SteadfastAbility(Pokemon owner) {
+		super(owner);
+	}
+	
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
 		// 1️ - The attack has to retreat defender
-		if (!defender.getHasRetreated())
+		if (!defender.hasRetreated())
 			return;
 
 		if (defender.getSpeedStage() >= 6) {

@@ -7,7 +7,11 @@ import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class CursedBodyAbility implements AbilityEffect {
+public class CursedBodyAbility extends AbilityEffect {
+	public CursedBodyAbility(Pokemon owner) {
+		super(owner);
+	}
+	
 	private static final double PROBABILITY = 0.30d;
 
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,

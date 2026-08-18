@@ -9,52 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import pokemon.abilityInterface.AftermathAbility;
-import pokemon.abilityInterface.AirLockAbility;
-import pokemon.abilityInterface.AngerPointAbility;
-import pokemon.abilityInterface.AnticipationAbility;
-import pokemon.abilityInterface.CloudNineAbility;
-import pokemon.abilityInterface.ColorChangeAbility;
-import pokemon.abilityInterface.CursedBodyAbility;
-import pokemon.abilityInterface.CuteCharmAbility;
-import pokemon.abilityInterface.DownloadAbility;
-import pokemon.abilityInterface.DrizzleAbility;
-import pokemon.abilityInterface.DroughtAbility;
-import pokemon.abilityInterface.DrySkinAbility;
-import pokemon.abilityInterface.EffectSporeAbility;
-import pokemon.abilityInterface.EmptyAbility;
-import pokemon.abilityInterface.FlameBodyAbility;
-import pokemon.abilityInterface.FlashFireAbility;
-import pokemon.abilityInterface.ForecastAbility;
-import pokemon.abilityInterface.HydratationAbility;
-import pokemon.abilityInterface.IceBodyAbility;
-import pokemon.abilityInterface.IntimidateAbility;
-import pokemon.abilityInterface.LevitateAbility;
-import pokemon.abilityInterface.LightningRodAbility;
-import pokemon.abilityInterface.MinusAbility;
-import pokemon.abilityInterface.MotorDriveAbility;
-import pokemon.abilityInterface.NaturalCureAbility;
-import pokemon.abilityInterface.NormalizeAbility;
-import pokemon.abilityInterface.PlusAbility;
-import pokemon.abilityInterface.PoisonPointAbility;
-import pokemon.abilityInterface.PressureAbility;
-import pokemon.abilityInterface.QuickFeetAbility;
-import pokemon.abilityInterface.RainDishAbility;
-import pokemon.abilityInterface.RoughSkinAbility;
-import pokemon.abilityInterface.SandStreamAbility;
-import pokemon.abilityInterface.ShedSkinAbility;
-import pokemon.abilityInterface.SnowWarningAbility;
-import pokemon.abilityInterface.SpeedBoostAbility;
-import pokemon.abilityInterface.StaticAbility;
-import pokemon.abilityInterface.SteadfastAbility;
-import pokemon.abilityInterface.StenchAbility;
-import pokemon.abilityInterface.StormDrainAbility;
-import pokemon.abilityInterface.SynchronizeAbility;
-import pokemon.abilityInterface.TraceAbility;
-import pokemon.abilityInterface.VoltAbsorbAbility;
-import pokemon.abilityInterface.WaterAbsorbAbility;
-import pokemon.abilityInterface.WeakArmorAbility;
-import pokemon.abilityInterface.WonderGuardAbility;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.SecondaryEffectType;
 import pokemon.enums.StatType;
@@ -247,7 +201,7 @@ public class ReaderData {
 					break;
 				else {
 					Ability abilityToAdd = new Ability(Integer.parseInt(ablty[0]), ablty[1].toUpperCase(), ablty[2]);
-					setAbilityEffect(abilityToAdd);
+					setAbilityIsWeatherType(abilityToAdd);
 
 					this.getAbilities().add(abilityToAdd);
 					abilities.add(abilityToAdd);
@@ -930,204 +884,22 @@ public class ReaderData {
 //			}
 //		}
 
-	// -----------------------------
-	// Set the ability effect of the attack
-	// TODO >> 006 / 008 / 012 / 43 (during attacks ?) / 53 (when applying objects)
-	// / 60 (when applying objects) / 82 (when applying objects) / 81 (to complete)
-	// / 83 (to complete) / 84 (when applying
-	// objects) / 90 (to complete) / 98 (to complete) / 99 (to complete) / 100 (to
-	// complete) / 103 (when applying objects)/ 104 (when having more abilities) /
-	// 108 (when all attacks will be programmed) / 112 (when having more attacks) /
-	// 119 (when applying objects) / 121 (when applying objects) / 124 (when
-	// applying objects) / 125 (to complete)
-	// -----------------------------
-	private static void setAbilityEffect(Ability ability) {
+	private static void setAbilityIsWeatherType(Ability ability) {
 		switch (ability.getId()) {
-		// Hedor/Stench
-		case 1:
-			ability.setEffect(new StenchAbility());
-			break;
 		// Llovizna/Drizzle
 		case 2:
-			ability.setEffect(new DrizzleAbility());
 			ability.setIsWeatherType(true);
-			break;
-		// Impulso/Speed boost
-		case 3:
-			ability.setEffect(new SpeedBoostAbility());
-			break;
-		// Electricidad estática/Static
-		case 9:
-			ability.setEffect(new StaticAbility());
-			break;
-		// Absorbe electricidad/Volt absorb
-		case 10:
-			ability.setEffect(new VoltAbsorbAbility());
-			break;
-		// Absorbe agua/Water absorb
-		case 11:
-			ability.setEffect(new WaterAbsorbAbility());
-			break;
-		// Aclimatación/Cloud nine
-		case 13:
-			ability.setEffect(new CloudNineAbility());
-			break;
-		// Cambio color/Color change
-		case 16:
-			ability.setEffect(new ColorChangeAbility());
-			break;
-		// Absorbe fuego/Flash fire
-		case 18:
-			ability.setEffect(new FlashFireAbility());
-			break;
-		// Intimidación/Intimidate
-		case 22:
-			ability.setEffect(new IntimidateAbility());
-			break;
-		// Piel tosca/Rough skin
-		case 24:
-			ability.setEffect(new RoughSkinAbility());
-			break;
-		// Superguarda/Wonder guard
-		case 25:
-			ability.setEffect(new WonderGuardAbility());
-			break;
-		// Levitación/Levitate
-		case 26:
-			ability.setEffect(new LevitateAbility());
-			break;
-		// Efecto espora/Effect spore
-		case 27:
-			ability.setEffect(new EffectSporeAbility());
-			break;
-		// Sincronía/Synchronize
-		case 28:
-			ability.setEffect(new SynchronizeAbility());
-			break;
-		// Cura natural/Natural cure
-		case 30:
-			ability.setEffect(new NaturalCureAbility());
-			break;
-		// Pararrayos/Lightning rod
-		case 31:
-			ability.setEffect(new LightningRodAbility());
-			break;
-		// Calco/Trace
-		case 36:
-			ability.setEffect(new TraceAbility());
-			break;
-		// Punto tóxico/Poison point
-		case 38:
-			ability.setEffect(new PoisonPointAbility());
-			break;
-		// Cura lluvia/Rain dish
-		case 44:
-			ability.setEffect(new RainDishAbility());
 			break;
 		// Chorro arena/Sand stream
 		case 45:
-			ability.setEffect(new SandStreamAbility());
 			ability.setIsWeatherType(true);
-			break;
-		// Presión/Pressure
-		case 46:
-			ability.setEffect(new PressureAbility());
-			break;
-		// Cuerpo llama/Flame body
-		case 49:
-			ability.setEffect(new FlameBodyAbility());
-			break;
-		// Gran encanto/Cute charm
-		case 56:
-			ability.setEffect(new CuteCharmAbility());
-			break;
-		// Más/Plus
-		case 57:
-			ability.setEffect(new PlusAbility());
-			break;
-		// Menos/Minus
-		case 58:
-			ability.setEffect(new MinusAbility());
-			break;
-		// Predicción/Forecast
-		case 59:
-			ability.setEffect(new ForecastAbility());
-			break;
-		// Mudar/Shed skin
-		case 61:
-			ability.setEffect(new ShedSkinAbility());
 			break;
 		// Sequía/Drought
 		case 70:
-			ability.setEffect(new DroughtAbility());
 			ability.setIsWeatherType(true);
 			break;
-		// Esclusa de aire/Air lock
-		case 76:
-			ability.setEffect(new AirLockAbility());
-			break;
-		// Electromotor/Motor drive
-		case 78:
-			ability.setEffect(new MotorDriveAbility());
-			break;
-		// Impasible/Steadfast
-		case 80:
-			ability.setEffect(new SteadfastAbility());
-			break;
-		// Irascible/Anger point
-		case 83:
-			ability.setEffect(new AngerPointAbility());
-			break;
-		// Piel seca/Dry skin
-		case 87:
-			ability.setEffect(new DrySkinAbility());
-			break;
-		// Descarga/Download
-		case 88:
-			ability.setEffect(new DownloadAbility());
-			break;
-		// Hidratación/Hydratation
-		case 93:
-			ability.setEffect(new HydratationAbility());
-			break;
-		// Pies rápidos/Quick feet
-		case 95:
-			ability.setEffect(new QuickFeetAbility());
-			break;
-		// Normalidad/Normalize
-		case 96:
-			ability.setEffect(new NormalizeAbility());
-			break;
-		// Detonación/Aftermath
-		case 106:
-			ability.setEffect(new AftermathAbility());
-			break;
-		// Anticipación/Anticipation
-		case 107:
-			ability.setEffect(new AnticipationAbility());
-			break;
-		// Colector/Storm drain
-		case 114:
-			ability.setEffect(new StormDrainAbility());
-			break;
-		// Gélido/Ice body
-		case 115:
-			ability.setEffect(new IceBodyAbility());
-			break;
-		// Nevada/Snow warning
-		case 117:
-			ability.setEffect(new SnowWarningAbility());
-			break;
-		// Cuerpo maldito/Cursed body
-		case 130:
-			ability.setEffect(new CursedBodyAbility());
-			break;
-		// Armadura frágil/Weak armor
-		case 133:
-			ability.setEffect(new WeakArmorAbility());
-			break;
 		default:
-			ability.setEffect(new EmptyAbility());
+			ability.setIsWeatherType(false);
 			break;
 		}
 	}
@@ -1183,6 +955,7 @@ public class ReaderData {
 	private static void setCategoryAttackType(Attack attack) {
 		switch (attack.getId()) {
 		case 19:
+		case 76:
 			attack.setCategory(AttackCategory.CHARGED);
 			break;
 		default:

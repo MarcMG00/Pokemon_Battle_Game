@@ -1,8 +1,5 @@
 package pokemon.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import pokemon.enums.AttackCategory;
 import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
@@ -42,104 +39,102 @@ public class StatusService {
 	// -----------------------------
 	private boolean shouldEvaluateStatus(Pokemon pk) {
 		boolean secondTurnCharged = pk.getNextMovement() != null
-				&& pk.getNextMovement().getCategory() == AttackCategory.CHARGED && pk.getIsChargingAttackForNextRound();
+				&& pk.getNextMovement().getCategory() == AttackCategory.CHARGED && pk.isChargingAttackForNextRound();
 
 		boolean normalAttack = pk.getNextMovement() != null
 				&& pk.getNextMovement().getCategory() != AttackCategory.CHARGED;
 
-		return (secondTurnCharged || normalAttack) && pk.getCanDonAnythingNextRound();
+		return (secondTurnCharged || normalAttack) && pk.canDonAnythingNextRound();
 	}
 
 	// -----------------------------
 	// Helper: Evaluate states BEFORE ordering "who should attack first" decision.
 	// Some states decrease their turn at the beginning of the turn and apply
-	// effects for example when paralyzed, it reduces speed
+	// effects for example when frozen, it can remove the status before attacking
 	// -----------------------------
 	public void evaluateStatusStartOfTurn(Pokemon pk) {
 		doFrozenEffectStartTurn(pk);
 	}
 
 	// -----------------------------
-	// Clear DRAINED ALL TURNS effects for both Pokemon
-	// -----------------------------
-	public void clearDrainEffects(Pokemon pkA, Pokemon pkB) {
-		pkA.setIsDraining(false);
-		pkB.setIsDraining(false);
-		removeStates(pkA);
-		removeStates(pkB);
-	}
-
-	// -----------------------------
 	// Helper: Evaluate states BEFORE attacking. Some states influence the
 	// probability of attacking, for example when confused, paralyzed, etc.
 	// -----------------------------
-	public boolean canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
-		canAttackFrozenStartTurn(pk);
-		checkCanMoveParalyzed(pk);
-		canAttackParalyzedStartTurn(pk);
+	public void canAttackEvaluatingAllStatesToAttack(Pokemon pk) {
+		boolean canAttackFrozen = canAttackFrozenStartTurn(pk);
+		boolean canAttackParalyzed = canAttackParalyzedStartTurn(pk);
 		boolean canAttackConfused = canAttackConfusedStartTurn(pk);
-		boolean canAttackAsleep = doAsleepEffectStartTurn(pk);
+		boolean canAttackAsleep = canAttackAsleepStartTurn(pk);
 
-		boolean canAttack = pk.getCanAttack() && canAttackConfused && canAttackAsleep;
+		boolean canAttack = canAttackFrozen && canAttackParalyzed && canAttackConfused && canAttackAsleep;
 		pk.setCanAttack(canAttack);
-
-		return canAttack;
 	}
 
 	// -----------------------------
 	// Do status conditions end of turn effects
 	// -----------------------------
-	public List<Player> applyTurnStatusReductions(BattleContext battleCtx) {
-		List<Player> faintedPlayers = new ArrayList<>();
-
-		if (reduceNumberTurnsEffects(battleCtx.getPlayer(), battleCtx.getIa()).isAttackerFainted())
-			faintedPlayers.add(battleCtx.getPlayer());
-
-		if (reduceNumberTurnsEffects(battleCtx.getIa(), battleCtx.getPlayer()).isAttackerFainted())
-			faintedPlayers.add(battleCtx.getIa());
-
-		reduceDrainedAllTurnsEffects(battleCtx.getPlayer(), battleCtx.getIa());
-		reduceDrainedAllTurnsEffects(battleCtx.getIa(), battleCtx.getPlayer());
-
-		return faintedPlayers;
+	public void applyTurnStatusReductions(BattleContext battleCtx) {
+		handleStatusConditionsEndTurn(battleCtx.getPkPlayer(), battleCtx.getPkIA());
+		handleStatusConditionsEndTurn(battleCtx.getPkIA(), battleCtx.getPkPlayer());
 	}
 
 	// -----------------------------
-	// Helper: Reduce number of turns remaining on states
+	// Start draining state if needed
 	// -----------------------------
-	public StatusResult reduceNumberTurnsEffects(Player playerAttacker, Player playerDefender) {
-		// Normal status
-		doBurnedEffectEndTurn(playerAttacker.getPkCombatting());
-		doPoisonedEffectEndTurn(playerAttacker.getPkCombatting());
-		doAsleepEffectEndTurn(playerAttacker.getPkCombatting(), playerDefender.getPkCombatting());
-		// Ephemeral status
-		doTrappedEffect(playerAttacker.getPkCombatting());
-		putConfusedStateIfNeeded(playerAttacker.getPkCombatting());
-		reduceDisabledAttackTurn(playerAttacker.getPkCombatting());
-		doDrainedAllTurnsEffect(playerAttacker.getPkCombatting(), playerDefender.getPkCombatting());
+	public void startDrainingEffectIfNeeded(BattleContext battleCtx) {
+		startDrainedAllTurnsEffect(battleCtx.getPkPlayer());
+		startDrainedAllTurnsEffect(battleCtx.getPkIA());
+	}
+
+	// -----------------------------
+	// Apply effects from Draining/ drained state
+	// -----------------------------
+	public void handleDrainingStatusEffects(Pokemon attacker, Pokemon defender) {
+		// Attacker may fainted before the possibility to drain
+		if (attacker.isFainted())
+			return;
 
 		// Get PS from drained rival Pokemon
-		if (playerAttacker.getPkCombatting().getIsDraining()) {
+		if (attacker.isDraining()) {
 			// Get drained all turns state from defender
-			State drainedAllTurnsStatus = playerDefender.getPkCombatting()
-					.getEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
+			State drainedAllTurnsStatus = defender.getEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
 
 			// Only can drain if it's not the same turn attacking with the draining attack
 			// (Leech seed..)
 			if (drainedAllTurnsStatus.getNbTurns() != 0)
-				doDrainedAllTurnsBeneficiaryEffect(playerAttacker.getPkCombatting(), playerDefender.getPkCombatting());
+				doDrainedAllTurnsBeneficiaryEffect(attacker, defender);
 		}
+	}
 
-		// Force switch if (for example), after getting drained, has no more PS
-		return new StatusResult(playerAttacker.getPkCombatting().isFainted());
+	// -----------------------------
+	// Reduce number of turns remaining on status conditions/ ephemeral statuses
+	// (end of the turn) => only apply statuses that do damage to attacker. Check if
+	// Pokemon has fainted (and so avoid hurting rival Pokemon with next conditions)
+	// -----------------------------
+	public void handleStatusConditionsEndTurn(Pokemon pkAttacker, Pokemon pkDefender) {
+		// Some status conditions
+		doBurnedEffectEndTurn(pkAttacker);
+		doPoisonedEffectEndTurn(pkAttacker);
+		doAsleepEffectEndTurn(pkAttacker, pkDefender);
+
+		// Some ephemeral statuses
+		doTrappedEffect(pkAttacker);
+		putConfusedStateIfNeeded(pkAttacker);
+		reduceDisabledAttackTurn(pkAttacker);
 	}
 
 	// -----------------------------
 	// Reduce DrainedAllTruns status in last (because it doesn't start on the first
 	// turn it was drained)
 	// -----------------------------
-	public void reduceDrainedAllTurnsEffects(Player playerAttacker, Player playerDefender) {
-		startDrainedAllTurnsEffect(playerAttacker.getPkCombatting());
+	public void startDrainedAllTurnsEffect(Pokemon Pokemon) {
+		// Turn number "0" allows to avoid applying effect the first turn
+		if (Pokemon.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
+			State drainedAllTurnsStaus = Pokemon.getEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
+
+			if (drainedAllTurnsStaus.getNbTurns() == 0)
+				drainedAllTurnsStaus.setNbTurns(1);
+		}
 	}
 
 	// -----------------------------
@@ -157,13 +152,11 @@ public class StatusService {
 			return;
 		}
 
-		if (pk.getAbilitySelected() != null) {
-			// 19_Shield_Dust doesn't allow to get secondary effects
-			if (attackAttacker.hasSecondaryEffect() && pk.hasShieldDustAbility()) {
-				System.out.println(pk.getName()
-						+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
-				return;
-			}
+		// 19_Shield_Dust doesn't allow to get secondary effects
+		if (attackAttacker.hasSecondaryEffect() && pk.hasShieldDustAbility()) {
+			System.out.println(pk.getName()
+					+ " no puede verse afectado por problemas de estado secundarios dada su habilidad Polvo escudo");
+			return;
 		}
 
 		// Already has a status
@@ -203,7 +196,7 @@ public class StatusService {
 			}
 
 			// Pokemon is ice type
-			if (pk.getTypes().stream().anyMatch(t -> t.getId() == 9)) {
+			if (pk.getTypes().stream().anyMatch(t -> t.isIceType())) {
 				System.out.println(pk.getName() + " no puede ser congelado ya que es de tipo hielo");
 				return;
 			}
@@ -226,7 +219,7 @@ public class StatusService {
 			}
 
 			// Fire Pokemon cannot be burned
-			if (pk.getTypes().stream().anyMatch(t -> t.getId() == 7)) {
+			if (pk.getTypes().stream().anyMatch(t -> t.isFireType())) {
 				System.out.println(pk.getName() + " no puede ser quemado ya que es de tipo fuego");
 				return;
 			} else
@@ -286,29 +279,13 @@ public class StatusService {
 	// Gets if Pokemon can attack because of FROZEN state (check start of the turn
 	// after applying effect of Frozen)
 	// -----------------------------
-	public void canAttackFrozenStartTurn(Pokemon pk) {
-		if (pk.hasActiveStatusCondition(StatusConditions.FROZEN)) {
-			if (pk.getStatusCondition().getCanMoveStatusCondition())
-				pk.setCanAttack(true);
-			else
-				pk.setCanAttack(false);
-		}
-	}
+	public boolean canAttackFrozenStartTurn(Pokemon pk) {
+		boolean canAttack = true;
 
-	// -----------------------------
-	// Gets if Pokemon can attack because of PARALYZED state (check start of the
-	// turn)
-	// -----------------------------
-	public void canAttackParalyzedStartTurn(Pokemon pk) {
-		if (pk.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
-			if (pk.getStatusCondition().getCanMoveStatusCondition()) {
-				pk.setCanAttack(true);
-				System.out.println(ANSI_CYAN + pk.getName() + " => paralizado - puede atacar" + ANSI_RESET);
-			} else {
-				pk.setCanAttack(false);
-				System.out.println(ANSI_CYAN + pk.getName() + " => paralizado - no puede atacar" + ANSI_RESET);
-			}
-		}
+		if (pk.hasActiveStatusCondition(StatusConditions.FROZEN))
+			canAttack = false;
+
+		return canAttack;
 	}
 
 	// -----------------------------
@@ -335,7 +312,7 @@ public class StatusService {
 
 					// Standard damage with a power of 40 points
 					float damage = doConfusedDammageStartTurn(pk);
-					pk.setPs(pk.getPs() - damage);
+					pk.setPs(Math.max(pk.getPs() - damage, 0));
 
 					if (pk.isFainted()) {
 						pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
@@ -343,8 +320,9 @@ public class StatusService {
 					}
 
 					canAttackConfused = false; // received damage or dies => cannot continue
-				} else
-					System.out.println(pk.getName() + " está confuso...");
+				} else {
+					System.out.println(pk.getName() + " está confuso... (pero podrá atacar)");
+				}
 			}
 		}
 		return canAttackConfused;
@@ -366,7 +344,6 @@ public class StatusService {
 				System.out.println(ANSI_CYAN + pk.getName() + " se descongeló! (probabilidad inferior a "
 						+ frozenStatus.getPercentToBeDefrosted() + ") : " + getRidOfStatusProbability + ANSI_RESET);
 			} else {
-				frozenStatus.setCanMoveStatusCondition(false);
 				// Adds +10% each turn not thawed
 				frozenStatus.setPercentToBeDefrosted(frozenStatus.getPercentToBeDefrosted() + 10);
 
@@ -391,7 +368,7 @@ public class StatusService {
 			if (pk.hasHeatProofAbility())
 				reducePs /= 2;
 
-			pk.setPs(pk.getPs() - reducePs);
+			pk.setPs(Math.max(pk.getPs() - reducePs, 0));
 
 			System.out.println(pk.getName() + " se resiente de la quemadura XD - PS actuales : " + pk.getPs());
 
@@ -403,17 +380,21 @@ public class StatusService {
 	// -----------------------------
 	// Check can move from PARALYZED state (only before attacking)
 	// -----------------------------
-	public void checkCanMoveParalyzed(Pokemon pk) {
-		if (pk.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
-			State paralyzedStatus = pk.getStatusCondition();
+	public boolean canAttackParalyzedStartTurn(Pokemon pk) {
+		boolean canAttack = true;
 
+		if (pk.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			int attackProbability = (int) (Math.random() * 100);
 
-			if (attackProbability <= 25)
-				paralyzedStatus.setCanMoveStatusCondition(true);
-			else
-				paralyzedStatus.setCanMoveStatusCondition(false);
+			if (attackProbability > 25) {
+				canAttack = false;
+				System.out.println(ANSI_CYAN + pk.getName() + " => paralizado - no puede atacar" + ANSI_RESET);
+			} else {
+				System.out.println(ANSI_CYAN + pk.getName() + " => paralizado - puede atacar" + ANSI_RESET);
+			}
 		}
+
+		return canAttack;
 	}
 
 	// -----------------------------
@@ -435,7 +416,7 @@ public class StatusService {
 			} else {
 				// Reduces current PS by 6.25%
 				float reducePs = pk.getInitialPs() * 0.0625f;
-				pk.setPs(pk.getPs() - reducePs);
+				pk.setPs(Math.max(pk.getPs() - reducePs, 0));
 
 				System.out.println(pk.getName() + " está envenenado - PS actuales : " + pk.getPs());
 
@@ -448,7 +429,7 @@ public class StatusService {
 	// -----------------------------
 	// Do effect from ASLEEP state (start of the turn)
 	// -----------------------------
-	public boolean doAsleepEffectStartTurn(Pokemon pk) {
+	public boolean canAttackAsleepStartTurn(Pokemon pk) {
 		boolean canAttack = true;
 
 		if (pk.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
@@ -509,7 +490,7 @@ public class StatusService {
 			} else {
 				// Reduces 12,5% from his initial PS
 				float reducePs = pk.getInitialPs() * 0.125f;
-				pk.setPs(pk.getPs() - reducePs);
+				pk.setPs(Math.max(pk.getPs() - reducePs, 0));
 
 				System.out.println(pk.getName() + " está atado y recibe daño");
 
@@ -520,61 +501,21 @@ public class StatusService {
 	}
 
 	// -----------------------------
-	// Do effect from DRAINED ALL TURNS state (end of the turn) => affects to enemy
-	// -----------------------------
-	public void doDrainedAllTurnsEffect(Pokemon attacker, Pokemon defender) {
-		// 98_Magic_Guard annuls secondary damage effects
-		if (attacker.hasMagicGuardAbility())
-			return;
-
-		if (attacker.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
-			State drainedAllTurnsStaus = attacker.getEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
-
-			// Turn number "0" allows to avoid applying effect the first turn
-			if (drainedAllTurnsStaus.getNbTurns() != 0) {
-				// Cannot be drained if defender has the ability 64_Liquid_Ooze
-				if (!defender.hasLiquidOozeAbility()) {
-					// Reduces 12,5% from his initial PS
-					float reducePs = attacker.getInitialPs() * 0.125f;
-					attacker.setPs(attacker.getPs() - reducePs);
-
-					System.out.println(
-							attacker.getName() + " está drenado y recibe daño; PS restantes : " + attacker.getPs());
-
-					if (attacker.isFainted())
-						attacker.setStatusCondition(new State(StatusConditions.DEBILITATED));
-				}
-			}
-		}
-	}
-
-	// -----------------------------
-	// Reduce nb turns from DRAINED ALL TURNS state (end of the turn) => affects to
-	// enemy
-	// -----------------------------
-	private void startDrainedAllTurnsEffect(Pokemon pk) {
-		// Turn number "0" allows to avoid applying effect the first turn
-		if (pk.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
-			State drainedAllTurnsStaus = pk.getEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
-
-			if (drainedAllTurnsStaus.getNbTurns() == 0)
-				drainedAllTurnsStaus.setNbTurns(1);
-		}
-
-	}
-
-	// -----------------------------
 	// Do effect from DRAINED ALL TURNS state (end of the turn) => benefits to
 	// Pokemon doing the attack
 	// -----------------------------
 	private void doDrainedAllTurnsBeneficiaryEffect(Pokemon attacker, Pokemon defender) {
-		if (defender.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
+		// 98_Magic_Guard annuls secondary damage effects
+		if (attacker.hasMagicGuardAbility())
+			return;
+
+		if (defender.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS) && attacker.isDraining()) {
 			State drainedAllTurnsStatusDefender = defender.getEphemeralStatuses().get(StatusConditions.DRAINEDALLTURNS);
 
 			if (defender.hasLiquidOozeAbility()) {
 				// Reduces 12,5% from his initial PS
 				float reducePs = attacker.getInitialPs() * 0.125f;
-				attacker.setPs(attacker.getPs() - reducePs);
+				attacker.setPs(Math.max(attacker.getPs() - reducePs, 0));
 
 				System.out.println(attacker.getName()
 						+ " perdió PS al intentar drenar al rival dada la habilidad rival Viscosecreción; PS restantes : "
@@ -583,7 +524,7 @@ public class StatusService {
 				if (drainedAllTurnsStatusDefender.getNbTurns() != 0) {
 					// Increases 12,5% from his initial PS
 					float increasePS = attacker.getInitialPs() * 0.125f;
-					attacker.setPs(attacker.getPs() + increasePS);
+					attacker.setPs(Math.min(attacker.getPs() + increasePS, attacker.getInitialPs()));
 
 					System.out.println(attacker.getName() + " se curó gracias al efecto activo de Drenadoras");
 				}
@@ -592,13 +533,23 @@ public class StatusService {
 	}
 
 	// -----------------------------
+	// Remove states when switching a Pokemon or a Pokemon has fainted
+	// -----------------------------
+	public void removeStates(Pokemon pk) {
+		removeDrainingState(pk);
+
+		// Trapped normally is removed when a Pokemon has fainted
+		// But if for any case Pokemon has switched alive, remove the status
+		pk.removeEphemeralStatus(StatusConditions.TRAPPED);
+		pk.removeEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK);
+	}
+
+	// -----------------------------
 	// Remove DRAINED ALL TURNS state
 	// -----------------------------
-	private void removeDrainedAllTurns(Pokemon pk) {
-		if (pk.hasActiveEphemeralStatus(StatusConditions.DRAINEDALLTURNS)) {
-			pk.setIsDraining(false);
-			pk.removeEphemeralStatus(StatusConditions.TRAPPED);
-		}
+	public void removeDrainingState(Pokemon pk) {
+		pk.removeEphemeralStatus(StatusConditions.DRAINEDALLTURNS);
+		pk.setIsDraining(false);
 	}
 
 	// -----------------------------
@@ -668,7 +619,7 @@ public class StatusService {
 		if (attacker.hasBadDreamsAbility() && defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 			// Reduces current PS by 1/8 from max PS
 			float reducePs = defender.getInitialPs() * 0.125f;
-			defender.setPs(defender.getPs() - reducePs);
+			defender.setPs(Math.max(defender.getPs() - reducePs, 0));
 
 			System.out.println(
 					defender.getName() + " sufre daño a causa de la habilidad Mal Sueño de " + attacker.getName());
@@ -681,12 +632,4 @@ public class StatusService {
 
 		return false;
 	}
-
-	// -----------------------------
-	// Remove states when changing or dying a Pokemon
-	// -----------------------------
-	public void removeStates(Pokemon pk) {
-		removeDrainedAllTurns(pk);
-	}
-
 }

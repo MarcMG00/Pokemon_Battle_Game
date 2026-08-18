@@ -4,9 +4,13 @@ import pokemon.enums.Weather;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class IceBodyAbility implements AbilityEffect {
+public class IceBodyAbility extends AbilityEffect {
+	public IceBodyAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
-	public void endOfTurn(BattleContext battleCtx, Pokemon owner) {
+	public void endOfTurn(BattleContext battleCtx) {
 		if (battleCtx.getWeather() != Weather.HAIL)
 			return;
 

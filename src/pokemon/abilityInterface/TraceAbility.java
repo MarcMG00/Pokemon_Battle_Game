@@ -5,9 +5,13 @@ import pokemon.model.Ability;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
-public class TraceAbility implements AbilityEffect {
+public class TraceAbility extends AbilityEffect {
+	public TraceAbility(Pokemon owner) {
+		super(owner);
+	}
+
 	@Override
-	public void onSwitchIn(BattleContext battleCtx, Pokemon owner, Pokemon defender) {
+	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
 		if (defender.hasStenchAbility()) {
 			System.out.println(owner.getName() + " no puede copiar la habilidad de " + defender.getName() + " : "
 					+ defender.getAbilitySelected().getName());
@@ -22,8 +26,8 @@ public class TraceAbility implements AbilityEffect {
 
 		owner.setAbilitySelected(AbilityDeepCopy);
 
-		System.out
-				.println(owner.getName() + " copió la habilidad de " + defender.getName() + " dada su habilidad Calco");
+		System.out.println(owner.getName() + " copió la habilidad " + defender.getAbilitySelected().getName() + " de "
+				+ defender.getName() + " dada su habilidad Calco");
 
 		// Applies immediately abilities that are onSwitchIn or startBattle
 		if ((owner.hasActiveEphemeralStatus(StatusConditions.ASLEEP))) {
@@ -35,11 +39,11 @@ public class TraceAbility implements AbilityEffect {
 						+ defender.getAbilitySelected().getName());
 			}
 		}
-		owner.getAbilitySelected().getEffect().onSwitchIn(battleCtx, owner, defender);
+		owner.getAbilitySelected().getEffect().onSwitchIn(battleCtx, defender);
 	}
 
 	@Override
-	public void onSwitchOut(BattleContext battleCtx, Pokemon owner) {
+	public void onSwitchOut(BattleContext battleCtx) {
 		System.out.println(owner.getName() + " dejó de copiar la habilidad del rival");
 		owner.setAbilitySelected(new Ability(owner.getBaseAbility()));
 	}

@@ -17,15 +17,14 @@ public class AttackContext {
 	private final StatusService statusService;
 	private final StatService statService;
 
-	public AttackContext(Pokemon attacker, Pokemon defender, Player attackingPlayer, Player defendingPlayer,
-			Attack attack, Weather weather, boolean isWeatherSuppressed, boolean isMistActive,
-			boolean isCriticalAttack) {
+	public AttackContext(Player attackingPlayer, Player defendingPlayer, Weather weather, boolean isWeatherSuppressed,
+			boolean isMistActive) {
 
-		this.attacker = attacker;
-		this.defender = defender;
+		this.attacker = attackingPlayer.getPkCombatting();
+		this.defender = attackingPlayer.getPkFacing();
 		this.attackingPlayer = attackingPlayer;
 		this.defendingPlayer = defendingPlayer;
-		this.attack = attack;
+		this.attack = attackingPlayer.getPkCombatting().getNextMovement();
 		this.weather = weather;
 		this.isWeatherSuppressed = isWeatherSuppressed;
 		this.isMistActive = isMistActive;
