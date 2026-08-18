@@ -1,0 +1,35 @@
+package pokemon.abilityInterface;
+
+import pokemon.model.BattleContext;
+import pokemon.model.Pokemon;
+
+public class DownloadAbility extends AbilityEffect {
+	public DownloadAbility(Pokemon owner) {
+		super(owner);
+	}
+
+	@Override
+	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
+
+		if (battleCtx.getStatService().getEffectiveDefense(defender, false) < battleCtx.getStatService()
+				.getEffectiveSpecialDefense(defender, false, battleCtx.getWeather())) {
+			owner.setAttackStage(Math.min(owner.getAttackStage() + 1, 6));
+			owner.setIsAttackBoostedFromDownloadAbility(true);
+			System.out.println("El ataque de " + owner.getName() + " aumentó gracias a su habilidad Descarga");
+		} else {
+			owner.setSpecialAttackStage(Math.min(owner.getSpecialAttackStage() + 1, 6));
+			System.out.println("El ataque especial de " + owner.getName() + " aumentó gracias a su habilidad Descarga");
+		}
+	}
+
+	@Override
+	public void onSwitchOut(BattleContext battleCtx) {
+		// Reinitialize the activation of ability => reduce one level the stat increased
+		if (owner.isAttackBoostedFromDownloadAbility()) {
+			owner.setAttackStage(Math.max(owner.getAttackStage() - 1, -6));
+		} else {
+			owner.setSpecialAttackStage(Math.max(owner.getSpecialAttackStage() - 1, -6));
+		}
+		owner.setIsAttackBoostedFromDownloadAbility(false);
+	}
+}

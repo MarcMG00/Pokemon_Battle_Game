@@ -98,4 +98,130 @@ public class PokemonType {
 	public void setNoEffect(ArrayList<Integer> noEffect) {
 		this.noEffect = noEffect;
 	}
+	
+	// -----------------------------
+		// Check if Pokemon type is Steel type
+		// -----------------------------
+		public boolean isSteelType() {
+			return this.getId() == 1;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Water type
+		// -----------------------------
+		public boolean isWaterType() {
+			return this.getId() == 2;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Bug type
+		// -----------------------------
+		public boolean isBugType() {
+			return this.getId() == 3;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Dragon type
+		// -----------------------------
+		public boolean isDragonType() {
+			return this.getId() == 4;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Steel type
+		// -----------------------------
+		public boolean isElectricType() {
+			return this.getId() == 5;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Ghost type
+		// -----------------------------
+		public boolean isGhostType() {
+			return this.getId() == 6;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Fire type
+		// -----------------------------
+		public boolean isFireType() {
+			return this.getId() == 7;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Fairy type
+		// -----------------------------
+		public boolean isFairyType() {
+			return this.getId() == 8;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Ice type
+		// -----------------------------
+		public boolean isIceType() {
+			return this.getId() == 9;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Fighting type
+		// -----------------------------
+		public boolean isFightingType() {
+			return this.getId() == 10;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Normal type
+		// -----------------------------
+		public boolean isNormalType() {
+			return this.getId() == 11;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Grass type
+		// -----------------------------
+		public boolean isGrassType() {
+			return this.getId() == 12;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Psychic type
+		// -----------------------------
+		public boolean isPsychicType() {
+			return this.getId() == 13;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Rock type
+		// -----------------------------
+		public boolean isRockType() {
+			return this.getId() == 14;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Dark type
+		// -----------------------------
+		public boolean isDarkType() {
+			return this.getId() == 15;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Ground type
+		// -----------------------------
+		public boolean isGroundType() {
+			return this.getId() == 16;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Poison type
+		// -----------------------------
+		public boolean isPoisonType() {
+			return this.getId() == 17;
+		}
+
+		// -----------------------------
+		// Check if Pokemon type is Flying type
+		// -----------------------------
+		public boolean isFlyingType() {
+			return this.getId() == 18;
+		}
 }
