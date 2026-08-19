@@ -232,8 +232,7 @@ public class AttackService {
 		attackEffects.put(86, new ParalyzeEffect()); // Onda trueno/Thunder wave (tested)
 
 		// Attack and remove constant PS from initial attacker Pokemon
-		// (Forcejeo/Struggle, etc.)
-		attackEffects.put(165, new FixedRecoilDamageEffect(damageService));
+		attackEffects.put(165, new FixedRecoilDamageEffect(damageService)); // Forcejeo/Struggle (tested)
 	}
 
 	// -----------------------------
@@ -574,17 +573,9 @@ public class AttackService {
 		Pokemon pkAttacker = attacker.getPkCombatting();
 
 		// If retreated, Pokemon cannot attack
-		if (pkAttacker.hasRetreated()) {
+		// Put informative message
+		if (pkAttacker.hasRetreated() && !pkAttacker.isFainted()) {
 			System.out.println(pkAttacker.getName() + " retrocedió.");
-			return true;
-		}
-
-		// If Pokemon is debilitated, force switch
-		if (pkAttacker.isFainted()) {
-			statusService.removeStates(pkAttacker);
-			// Remove some states from Pokemon remaining in the field
-			statusService.removeDrainingState(defender.getPkCombatting());
-			checkForcedPokemonChange(sc);
 			return true;
 		}
 
@@ -593,7 +584,7 @@ public class AttackService {
 			switchPokemonService.handleForcedSwitch(attacker);
 			return true;
 		}
-		
+
 		return false;
 	}
 

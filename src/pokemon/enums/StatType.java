@@ -6,6 +6,7 @@ public enum StatType {
 	DEFENSE,
 	SPECIAL_DEFENSE,
 	PRECISION,
+	EVASION,
 	SPEED,
 	NONE,
 }

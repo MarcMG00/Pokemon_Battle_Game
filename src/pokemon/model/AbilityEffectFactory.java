@@ -26,6 +26,7 @@ import pokemon.abilityInterface.LevitateAbility;
 import pokemon.abilityInterface.LightMetalAbility;
 import pokemon.abilityInterface.LightningRodAbility;
 import pokemon.abilityInterface.MinusAbility;
+import pokemon.abilityInterface.MoodyAbility;
 import pokemon.abilityInterface.MotorDriveAbility;
 import pokemon.abilityInterface.NaturalCureAbility;
 import pokemon.abilityInterface.NormalizeAbility;
@@ -60,7 +61,8 @@ public class AbilityEffectFactory {
 	// complete) / 103 (when applying objects)/ 104 (when having more abilities) /
 	// 108 (when all attacks will be programmed) / 112 (when having more attacks) /
 	// 119 (when applying objects) / 121 (when applying objects) / 124 (when
-	// applying objects) / 125 (to complete)
+	// applying objects) / 125 (to complete) / 139 (when having objects) / 140 (no
+	// dual combat)
 	// -----------------------------
 	public static AbilityEffect createEffect(Ability ability, Pokemon owner) {
 		switch (ability.getId()) {
@@ -205,6 +207,9 @@ public class AbilityEffectFactory {
 		// Metal liviano/Light metal
 		case 135:
 			return new LightMetalAbility(owner);
+		// Veleta/Moody
+		case 141:
+			return new MoodyAbility(owner);
 		default:
 			return new EmptyAbility(owner);
 		}
