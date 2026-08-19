@@ -23,6 +23,7 @@ import pokemon.abilityInterface.HydratationAbility;
 import pokemon.abilityInterface.IceBodyAbility;
 import pokemon.abilityInterface.IntimidateAbility;
 import pokemon.abilityInterface.LevitateAbility;
+import pokemon.abilityInterface.LightMetalAbility;
 import pokemon.abilityInterface.LightningRodAbility;
 import pokemon.abilityInterface.MinusAbility;
 import pokemon.abilityInterface.MotorDriveAbility;
@@ -201,6 +202,9 @@ public class AbilityEffectFactory {
 		// Metal pesado/Heavy metal
 		case 134:
 			return new HeavyMetalAbility(owner);
+		// Metal liviano/Light metal
+		case 135:
+			return new LightMetalAbility(owner);
 		default:
 			return new EmptyAbility(owner);
 		}
