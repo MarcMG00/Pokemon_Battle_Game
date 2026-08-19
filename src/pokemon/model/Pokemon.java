@@ -1575,6 +1575,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 138_Flare boost ability
+	// -----------------------------
+	public boolean hasFlareBoostAbility() {
+		return this.getAbilitySelected().getId() == 138;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 142_Overcoat ability
 	// -----------------------------
 	public boolean hasOvercoatAbility() {

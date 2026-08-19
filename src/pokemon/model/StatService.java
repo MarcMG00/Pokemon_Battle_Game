@@ -41,7 +41,7 @@ public class StatService {
 		if (attacker.isDefeatistActive())
 			attack /= 2f;
 
-		// 136_Toxic_boost rises power by 50% if attacker is poisoned
+		// 137_Toxic_boost rises attack by 50% if attacker is poisoned
 		if (attacker.hasToxicBoostAbility() && (attacker.hasActiveStatusCondition(StatusConditions.POISONED)
 				|| attacker.hasActiveStatusCondition(StatusConditions.BADLY_POISONED))) {
 			attack *= 1.5f;
@@ -62,29 +62,37 @@ public class StatService {
 	// -----------------------------
 	// Get effective special attack
 	// -----------------------------
-	public float getEffectiveSpecialAttack(Pokemon pk, boolean ignoreStage, Weather weather) {
-		int stage = pk.getSpecialAttackStage();
+	public float getEffectiveSpecialAttack(Pokemon attacker, boolean ignoreStage, Weather weather) {
+		int stage = attacker.getSpecialAttackStage();
 		float multiplier;
-		float specialAttack = pk.getSpecialAttack();
+		float specialAttack = attacker.getSpecialAttack();
 
 		// 57_Plus ability
-		if (pk.hasPlusAbility() && pk.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasMinusAbility()))
+		if (attacker.hasPlusAbility()
+				&& attacker.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasMinusAbility()))
 			specialAttack *= 1.5f;
 
 		// 58_Minus ability
-		if (pk.hasMinusAbility() && pk.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasPlusAbility()))
+		if (attacker.hasMinusAbility()
+				&& attacker.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasPlusAbility()))
 			specialAttack *= 1.5f;
 
 		// 94_Solar_Power increases special attack by 50%
-		if (weather == Weather.SUN && pk.hasSolarPowerAbility()) {
+		if (weather == Weather.SUN && attacker.hasSolarPowerAbility()) {
 			specialAttack *= 1.5f;
-			System.out.println(pk.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
+			System.out.println(attacker.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
 		}
 
 		// 129_Deafeatist ability reduces special attack by 50% if PS under 50% of
 		// initial PS
-		if (pk.isDefeatistActive())
+		if (attacker.isDefeatistActive())
 			specialAttack /= 2f;
+
+		// 138_Flare_boost rises special attack by 50% if attacker is burned
+		if (attacker.hasFlareBoostAbility() && attacker.hasActiveStatusCondition(StatusConditions.BURNED)) {
+			specialAttack *= 1.5f;
+			System.out.println(attacker.getName() + " aumentó su ataque gracias a su habilidad Impetu Ardiente");
+		}
 
 		if (!ignoreStage) {
 			if (stage >= 0)
