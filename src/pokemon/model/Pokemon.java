@@ -1561,6 +1561,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 135_Multiscale ability
+	// -----------------------------
+	public boolean hasMultiscaleAbility() {
+		return this.getAbilitySelected().getId() == 135;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 142_Overcoat ability
 	// -----------------------------
 	public boolean hasOvercoatAbility() {
