@@ -8,37 +8,45 @@ public class StatService {
 	// -----------------------------
 	// Get attack stage for normal attack
 	// -----------------------------
-	public float getEffectiveAttack(Pokemon pk, boolean ignoreStage, Weather weather) {
-		int stage = pk.getAttackStage();
+	public float getEffectiveAttack(Pokemon attacker, boolean ignoreStage, Weather weather) {
+		int stage = attacker.getAttackStage();
 		float multiplier;
-		float attack = pk.getAttack();
+		float attack = attacker.getAttack();
 
-		if (pk.hasActiveStatusCondition(StatusConditions.BURNED))
-			// Reduces current damage by 50%
+		// Reduces current damage by 50% (only if doesn't activate abilities with status
+		// conditions rules)
+		if (attacker.hasActiveStatusCondition(StatusConditions.BURNED) && !attacker.hasGutsAbility())
 			attack /= 2f;
 
 		// 55_Hustle ability rises attack by 50%
-		if (pk.hasHustleAbility() && pk.getNextMovement().getBases().contains("fisico")) {
+		if (attacker.hasHustleAbility() && attacker.getNextMovement().getBases().contains("fisico")) {
 			attack *= 1.5f;
-			System.out.println(
-					pk.getName() + " aumentó su ataque gracias a su habilidad " + pk.getAbilitySelected().getName());
+			System.out.println(attacker.getName() + " aumentó su ataque gracias a su habilidad "
+					+ attacker.getAbilitySelected().getName());
 		}
 
 		// 62_Guts ability rises attack by 50%
-		if (pk.hasGutsAbility() && (pk.hasStatusCondition() || pk.hasEphemeralStatus())) {
+		if (attacker.hasGutsAbility() && (attacker.hasStatusCondition() || attacker.hasEphemeralStatus())) {
 			attack *= 1.5f;
-			System.out.println(pk.getName() + " aumentó su ataque gracias a su habilidad Agallas");
+			System.out.println(attacker.getName() + " aumentó su ataque gracias a su habilidad Agallas");
 		}
 
 		// 122_Flower_Gift ability increases attack by 50%
-		if (weather == Weather.SUN && pk.hasFlowerGiftAbility()) {
+		if (weather == Weather.SUN && attacker.hasFlowerGiftAbility()) {
 			attack *= 1.5f;
-			System.out.println(pk.getName() + " aumentó su ataque gracias a su habilidad Don Floral");
+			System.out.println(attacker.getName() + " aumentó su ataque gracias a su habilidad Don Floral");
 		}
 
 		// 129_Deafeatist ability reduces attack by 50% if PS under 50% of initial PS
-		if (pk.isDefeatistActive())
+		if (attacker.isDefeatistActive())
 			attack /= 2f;
+
+		// 136_Toxic_boost rises power by 50% if attacker is poisoned
+		if (attacker.hasToxicBoostAbility() && (attacker.hasActiveStatusCondition(StatusConditions.POISONED)
+				|| attacker.hasActiveStatusCondition(StatusConditions.BADLY_POISONED))) {
+			attack *= 1.5f;
+			System.out.println(attacker.getName() + " aumentó su ataque gracias a su habilidad Impetu Tóxico");
+		}
 
 		if (!ignoreStage) {
 			if (stage >= 0)

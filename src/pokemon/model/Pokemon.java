@@ -1561,10 +1561,17 @@ public class Pokemon {
 	}
 
 	// -----------------------------
-	// Check if Pokemon has 135_Multiscale ability
+	// Check if Pokemon has 136_Multiscale ability
 	// -----------------------------
 	public boolean hasMultiscaleAbility() {
-		return this.getAbilitySelected().getId() == 135;
+		return this.getAbilitySelected().getId() == 136;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 137_Toxic boost ability
+	// -----------------------------
+	public boolean hasToxicBoostAbility() {
+		return this.getAbilitySelected().getId() == 137;
 	}
 
 	// -----------------------------

@@ -576,7 +576,7 @@ public class AttackService {
 		// If retreated, Pokemon cannot attack
 		if (pkAttacker.hasRetreated()) {
 			System.out.println(pkAttacker.getName() + " retrocedió.");
-			return false;
+			return true;
 		}
 
 		// If Pokemon is debilitated, force switch
@@ -593,6 +593,7 @@ public class AttackService {
 			switchPokemonService.handleForcedSwitch(attacker);
 			return true;
 		}
+		
 		return false;
 	}
 
