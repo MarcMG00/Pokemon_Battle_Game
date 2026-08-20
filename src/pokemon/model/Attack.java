@@ -536,6 +536,27 @@ public class Attack {
 	}
 
 	// -----------------------------
+	// Check if attack is 77_Poison_powder
+	// -----------------------------
+	public boolean isPoisonPowder() {
+		return this.getId() == 77;
+	}
+
+	// -----------------------------
+	// Check if attack is 78_Stun_spore
+	// -----------------------------
+	public boolean isStunSpore() {
+		return this.getId() == 78;
+	}
+
+	// -----------------------------
+	// Check if attack is 79_Sleep_powder
+	// -----------------------------
+	public boolean isSleepPowder() {
+		return this.getId() == 79;
+	}
+
+	// -----------------------------
 	// Check if attack is 87_Thunder
 	// -----------------------------
 	public boolean isThunder() {
@@ -547,5 +568,40 @@ public class Attack {
 	// -----------------------------
 	public boolean isStruggle() {
 		return this.getId() == 165;
+	}
+
+	// -----------------------------
+	// Check if attack is 147_Spore
+	// -----------------------------
+	public boolean isSpore() {
+		return this.getId() == 147;
+	}
+
+	// -----------------------------
+	// Check if attack is 178_Cotton_spore
+	// -----------------------------
+	public boolean isCottonSpore() {
+		return this.getId() == 178;
+	}
+
+	// -----------------------------
+	// Check if attack is 476_Rage_powder
+	// -----------------------------
+	public boolean isRagePowder() {
+		return this.getId() == 476;
+	}
+
+	// -----------------------------
+	// Check if attack is 600_Powder
+	// -----------------------------
+	public boolean isPowder() {
+		return this.getId() == 600;
+	}
+
+	// -----------------------------
+	// Check if attack is 750_Magic_powder
+	// -----------------------------
+	public boolean isMagicPowder() {
+		return this.getId() == 750;
 	}
 }

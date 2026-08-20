@@ -30,6 +30,7 @@ import pokemon.abilityInterface.MoodyAbility;
 import pokemon.abilityInterface.MotorDriveAbility;
 import pokemon.abilityInterface.NaturalCureAbility;
 import pokemon.abilityInterface.NormalizeAbility;
+import pokemon.abilityInterface.OvercoatAbility;
 import pokemon.abilityInterface.PlusAbility;
 import pokemon.abilityInterface.PoisonPointAbility;
 import pokemon.abilityInterface.PressureAbility;
@@ -210,6 +211,9 @@ public class AbilityEffectFactory {
 		// Veleta/Moody
 		case 141:
 			return new MoodyAbility(owner);
+		// Funda/Overcoat
+		case 142:
+			return new OvercoatAbility(owner);
 		default:
 			return new EmptyAbility(owner);
 		}

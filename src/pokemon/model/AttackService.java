@@ -665,37 +665,10 @@ public class AttackService {
 	// Check if needed to chose a new Pokemon (ex : combating Pokemon dies from
 	// burning in final turn while flying, etc.)
 	// -----------------------------
-	private void checkForcedPokemonChange(Scanner sc) {
-		// Player is debilitated
-		if (battleCtx.getPkPlayer().isFainted())
-			handlePlayerPokemonDefeated(sc);
-
-		// IA is debilitated
-		if (battleCtx.getPkIA().isFainted())
-			handleIAPokemonDefeated();
-	}
-
-	// -----------------------------
-	// Check if needed to chose a new Pokemon (ex : combating Pokemon dies from
-	// burning in final turn while flying, etc.)
-	// -----------------------------
 	private void handleIASwitchIfNeeded(Scanner sc) {
 		// IA is debilitated
 		if (battleCtx.getPkIA().isFainted())
 			handleIAPokemonDefeated();
-	}
-
-	// -----------------------------
-	// Select new Pokemon from player
-	// -----------------------------
-	private void handlePlayerPokemonDefeated(Scanner sc) {
-		System.out.println(battleCtx.getPkPlayer().getName() + " fue derrotado.");
-		System.out.println("¿Qué Pokémon deberías escoger?");
-
-		boolean changed = false;
-
-		while (!changed)
-			changed = switchPokemonService.changePokemon(sc);
 	}
 
 	// -----------------------------
