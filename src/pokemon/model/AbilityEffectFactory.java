@@ -33,6 +33,7 @@ import pokemon.abilityInterface.NormalizeAbility;
 import pokemon.abilityInterface.OvercoatAbility;
 import pokemon.abilityInterface.PlusAbility;
 import pokemon.abilityInterface.PoisonPointAbility;
+import pokemon.abilityInterface.PoisonTouchAbility;
 import pokemon.abilityInterface.PressureAbility;
 import pokemon.abilityInterface.QuickFeetAbility;
 import pokemon.abilityInterface.RainDishAbility;
@@ -214,6 +215,9 @@ public class AbilityEffectFactory {
 		// Funda/Overcoat
 		case 142:
 			return new OvercoatAbility(owner);
+		// Punto Tóxico/Poison Touch
+		case 143:
+			return new PoisonTouchAbility(owner);
 		default:
 			return new EmptyAbility(owner);
 		}

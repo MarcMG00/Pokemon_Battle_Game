@@ -180,8 +180,6 @@ public class StatusService {
 			} else
 				System.out.println(pk.getName() + " fue envenenado");
 			break;
-		case BADLY_POISONED:
-			break;
 		case FROZEN:
 			// 40_Magma_Armor ability
 			if (pk.hasMagmaArmorAbility()) {

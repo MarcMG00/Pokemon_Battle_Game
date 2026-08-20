@@ -42,8 +42,7 @@ public class StatService {
 			attack /= 2f;
 
 		// 137_Toxic_boost rises attack by 50% if attacker is poisoned
-		if (attacker.hasToxicBoostAbility() && (attacker.hasActiveStatusCondition(StatusConditions.POISONED)
-				|| attacker.hasActiveStatusCondition(StatusConditions.BADLY_POISONED))) {
+		if (attacker.hasToxicBoostAbility() && attacker.hasActiveStatusCondition(StatusConditions.POISONED)) {
 			attack *= 1.5f;
 			System.out.println(attacker.getName() + " aumentó su ataque gracias a su habilidad Impetu Tóxico");
 		}
