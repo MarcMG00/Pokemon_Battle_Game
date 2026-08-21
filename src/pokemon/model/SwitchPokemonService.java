@@ -123,7 +123,7 @@ public class SwitchPokemonService {
 	// Check if Pokemon can be selected
 	// -----------------------------
 	private boolean canPokemonBeSelected(Pokemon selected) {
-		if (selected.isFainted()) {
+		if (selected.hasFainted()) {
 			System.out.println(selected.getName() + " (Id:" + selected.getId() + ") fue debilitado. Escoge otro.");
 			return false;
 		}
@@ -160,7 +160,7 @@ public class SwitchPokemonService {
 	// Chech Pokemon selected is not the one already on the field
 	// -----------------------------
 	private boolean isInvalidPokemonChoice(int id) {
-		if (battleCtx.getPkPlayer().getId() == id && !battleCtx.getPkIA().isFainted()) {
+		if (battleCtx.getPkPlayer().getId() == id && !battleCtx.getPkIA().hasFainted()) {
 			System.out.println("Ese Pokémon ya está combatiendo.");
 			return true;
 		}
@@ -244,7 +244,7 @@ public class SwitchPokemonService {
 	// Get available Pokemon for forced switch
 	// -----------------------------
 	private List<Pokemon> getAvailablePokemonForSwitch(Player defender) {
-		return defender.getPokemon().stream().filter(p -> !p.isFainted() && p != defender.getPkCombatting()).toList();
+		return defender.getPokemon().stream().filter(p -> !p.hasFainted() && p != defender.getPkCombatting()).toList();
 	}
 
 	// -----------------------------
@@ -404,7 +404,7 @@ public class SwitchPokemonService {
 		Pokemon pkLeaver = owner.getPkCombatting();
 		Pokemon pkPlayer = battleCtx.getPkPlayer();
 
-		if (!pkLeaver.isFainted())
+		if (!pkLeaver.hasFainted())
 			return;
 
 		// Mark as debilitated
@@ -422,7 +422,7 @@ public class SwitchPokemonService {
 			Pokemon pkEnteringIA = decideBestChangePokemon(owner, pkPlayer, battleCtx.getEffectPerTypes());
 
 			if (pkEnteringIA == null)
-				pkEnteringIA = owner.getPokemon().stream().filter(p -> !p.isFainted()).findFirst().orElse(null);
+				pkEnteringIA = owner.getPokemon().stream().filter(p -> !p.hasFainted()).findFirst().orElse(null);
 
 			if (pkEnteringIA != null) {
 				resetPokemonBeforeSwitch(pkLeaver);

@@ -37,6 +37,7 @@ import pokemon.abilityInterface.PoisonTouchAbility;
 import pokemon.abilityInterface.PressureAbility;
 import pokemon.abilityInterface.QuickFeetAbility;
 import pokemon.abilityInterface.RainDishAbility;
+import pokemon.abilityInterface.RegeneratorAbility;
 import pokemon.abilityInterface.RoughSkinAbility;
 import pokemon.abilityInterface.SandStreamAbility;
 import pokemon.abilityInterface.ShedSkinAbility;
@@ -218,6 +219,9 @@ public class AbilityEffectFactory {
 		// Punto Tóxico/Poison Touch
 		case 143:
 			return new PoisonTouchAbility(owner);
+		// Regeneración/Regenerator
+		case 144:
+			return new RegeneratorAbility(owner);
 		default:
 			return new EmptyAbility(owner);
 		}

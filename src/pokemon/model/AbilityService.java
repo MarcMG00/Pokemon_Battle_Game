@@ -181,7 +181,8 @@ public class AbilityService {
 
 	// -----------------------------
 	// Remove abilities effects before changing to new pokemon (ex : remove
-	// 13_Clou_Nine)
+	// 13_Clou_Nine or reset abilities like Plus/Minus or get more PS with
+	// Regenerator, etc.)
 	// -----------------------------
 	public void applyAbilityOnSwitchOutIfNeeded(BattleContext battleCtx, Pokemon leaver) {
 		Ability ability = leaver.getBaseAbility();
@@ -189,7 +190,12 @@ public class AbilityService {
 		if (ability.getId() == 5000)
 			return;
 
+		// Do switch out - ability
 		ability.getEffect().onSwitchOut(battleCtx);
+		// Do switch out condition - ability => for now, it only can be applied if
+		// hasn't faint
+		if (!leaver.hasFainted())
+			ability.getEffect().onSwitchOutCondition(battleCtx);
 	}
 
 	// -----------------------------
@@ -252,7 +258,7 @@ public class AbilityService {
 		Pokemon pk = isPlayer ? battleCtx.getPkPlayer() : battleCtx.getPkIA();
 		Ability ability = pk.getAbilitySelected();
 
-		if (pk.isFainted())
+		if (pk.hasFainted())
 			return;
 
 		if (ability.getId() == 5000)

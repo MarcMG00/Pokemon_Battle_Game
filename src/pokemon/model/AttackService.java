@@ -254,7 +254,7 @@ public class AttackService {
 		printPokemonStates();
 
 		Pokemon pkPlayer = battleCtx.getPkPlayer();
-		// Informative : don't stock IA Pokemon in a var because it may change, so pass
+		// Informative : don't stock IA Pokemon in a var because it may switch, so pass
 		// through the IAPlayer instead
 
 		TurnContext turnCtx = buildTurnContext();
@@ -574,7 +574,7 @@ public class AttackService {
 
 		// If retreated, Pokemon cannot attack
 		// Put informative message
-		if (pkAttacker.hasRetreated() && !pkAttacker.isFainted()) {
+		if (pkAttacker.hasRetreated() && !pkAttacker.hasFainted()) {
 			System.out.println(pkAttacker.getName() + " retrocedió.");
 			return true;
 		}
@@ -667,7 +667,7 @@ public class AttackService {
 	// -----------------------------
 	private void handleIASwitchIfNeeded(Scanner sc) {
 		// IA is debilitated
-		if (battleCtx.getPkIA().isFainted())
+		if (battleCtx.getPkIA().hasFainted())
 			handleIAPokemonDefeated();
 	}
 
@@ -688,7 +688,7 @@ public class AttackService {
 				battleCtx.getEffectPerTypes());
 
 		if (pkEnteringIA == null)
-			pkEnteringIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.isFainted()).findFirst().get();
+			pkEnteringIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.hasFainted()).findFirst().get();
 
 		switchPokemonService.resetPokemonBeforeSwitch(pkIA);
 
@@ -711,7 +711,7 @@ public class AttackService {
 		Pokemon pkAttacker = attacker.getPkCombatting();
 		Pokemon pkDefender = defender.getPkCombatting();
 
-		if (pkAttacker.isFainted()) {
+		if (pkAttacker.hasFainted()) {
 			handleDebilitatedPokemon(pkAttacker, pkDefender, attacker == battleCtx.getPlayer());
 			return;
 		}
@@ -877,12 +877,12 @@ public class AttackService {
 
 		// System.out.println("PS actuales de " + ctx.getDefender().getName() + " : " +
 		// ctx.getDefender().getPs());
-		if (ctx.getDefender().isFainted())
+		if (ctx.getDefender().hasFainted())
 			ctx.getDefender().setStatusCondition(new State(StatusConditions.DEBILITATED));
 
 		// System.out.println("PS actuales de " + ctx.getAttacker().getName() + " : " +
 		// ctx.getAttacker().getPs());
-		if (ctx.getAttacker().isFainted())
+		if (ctx.getAttacker().hasFainted())
 			ctx.getAttacker().setStatusCondition(new State(StatusConditions.DEBILITATED));
 	}
 

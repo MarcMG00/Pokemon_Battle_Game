@@ -727,7 +727,7 @@ public class Pokemon {
 	// -----------------------------
 	// Check if is debilitated
 	// -----------------------------
-	public boolean isFainted() {
+	public boolean hasFainted() {
 		return this.getPs() <= 0 || this.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED;
 	}
 

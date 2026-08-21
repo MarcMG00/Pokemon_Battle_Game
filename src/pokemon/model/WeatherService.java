@@ -180,10 +180,10 @@ public class WeatherService {
 	// Apply weather effects at the end of the turn (both players)
 	// -----------------------------
 	public void applyWeatherEffects(Scanner sc) {
-		if (!battleCtx.getPkPlayer().isFainted())
+		if (!battleCtx.getPkPlayer().hasFainted())
 			applyStatsFromWeatherEndOfTurn(battleCtx.getPkPlayer());
 
-		if (!battleCtx.getPkIA().isFainted())
+		if (!battleCtx.getPkIA().hasFainted())
 			applyStatsFromWeatherEndOfTurn(battleCtx.getPkIA());
 
 		reduceNbTurnsMistActive();
