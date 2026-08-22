@@ -33,27 +33,40 @@ public class StatReduceEffect implements AttackEffect {
 
 		// Mist
 		if (ctx.isMistActive()) {
-			System.out.println("No se pueden bajar estadísticas debido a Neblina");
+			System.out.println("No se pueden bajar las estadísticas debido a Neblina");
 			return result;
 		}
 
-		// 29_Clear_Body
-		if (target.hasClearBodyAbility()) {
+		// 29_Clear_Body / 73_White_Smoke abilities cannot be reduced stats
+		if (target.hasClearBodyAbility() || target.hasWhiteSmokeAbility()) {
 			System.out.println(
 					"Las estadísticas no pueden bajar por la habilidad " + target.getAbilitySelected().getName());
 			return result;
 		}
 
-		// Precision
+		// ATTACK
+		// 52_Hyper_Cutter cannot reduce attack
+		if (target.hasHyperCutterAbility() && stat == StatType.ATTACK) {
+			System.out.println("El ataque no puede bajar por la habilidad " + target.getAbilitySelected().getName());
+			return result;
+		}
+
+		// DEFENSE
+		// 145_Big_Pecks cannot reduce Defense
+		if (target.hasBigPecksAbility() && stat == StatType.DEFENSE) {
+			System.out.println("La defensa no puede bajar por la habilidad " + target.getAbilitySelected().getName());
+			return result;
+		}
+
+		// PRECISION
 		// 35_Illuminate and 51_Keen_eye cannot be reduced precision
-		if (stat == StatType.PRECISION
-				&& (target.hasIlluminateAbility() || target.hasKeenEyeAbility())) {
+		if (stat == StatType.PRECISION && (target.hasIlluminateAbility() || target.hasKeenEyeAbility())) {
 			System.out.println("La precisión no puede bajar por la habilidad " + target.getAbilitySelected().getName());
 			return result;
 		}
 
 		if (target.getStage(stat) <= -6) {
-			System.out.println(stat + " de " + target.getName() + " no puede bajar más");
+			System.out.println(stat + " de " + target.getName() + " no puede bajar más!");
 			return result;
 		}
 

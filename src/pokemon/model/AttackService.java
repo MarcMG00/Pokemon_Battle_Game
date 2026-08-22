@@ -930,7 +930,7 @@ public class AttackService {
 				if (!ctx.getDefender().canBeFlinched())
 					break;
 
-				if (abilityAttacker != null && ctx.getAttacker().hasStenchAbility())
+				if (ctx.getAttacker().hasStenchAbility())
 					abilityAttacker.getEffect().afterAttack(null, ctx.getAttacker(), ctx.getDefender(), ctx.getAttack(),
 							dmg, effect.getProbability(), result.isCriticalAttack(), ctx.getWeather(),
 							ctx.isWeatherSuppressed());

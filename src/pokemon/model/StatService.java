@@ -224,7 +224,7 @@ public class StatService {
 
 		if (isMistEffectActivated) {
 			System.out.println(defender.getName() + " (Id:" + defender.getId() + ")"
-					+ " no pudo bajar las estadísticas gracias a Neblina");
+					+ " no pudo bajar las estadísticas debido a Neblina");
 			return;
 		}
 
@@ -267,18 +267,18 @@ public class StatService {
 	// -----------------------------
 	// Check if can drop stats
 	// -----------------------------
-	public boolean isStatDropImmune(Pokemon pk, StatType stat) {
+	public boolean isStatDropImmune(Pokemon defender, StatType stat) {
 		// 29_Clear_Body / 73_White_Smoke abilities cannot be reduced stats
-		if (pk.hasClearBodyAbility() || pk.hasWhiteSmokeAbility())
+		if (defender.hasClearBodyAbility() || defender.hasWhiteSmokeAbility())
 			return true;
 
 		switch (stat) {
 		case ATTACK:
-			return pk.hasHyperCutterAbility();
-
+			return defender.hasHyperCutterAbility();
 		case PRECISION:
-			return pk.hasKeenEyeAbility() || pk.hasIlluminateAbility();
-
+			return defender.hasKeenEyeAbility() || defender.hasIlluminateAbility();
+		case DEFENSE:
+			return defender.hasBigPecksAbility();
 		default:
 			return false;
 		}

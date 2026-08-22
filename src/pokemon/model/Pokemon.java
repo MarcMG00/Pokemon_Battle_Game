@@ -1589,6 +1589,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 145_Big_pecks ability
+	// -----------------------------
+	public boolean hasBigPecksAbility() {
+		return this.getAbilitySelected().getId() == 145;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 146_Sand_rash ability
 	// -----------------------------
 	public boolean hasSandRashAbility() {
