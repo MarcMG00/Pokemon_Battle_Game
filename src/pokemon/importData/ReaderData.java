@@ -920,6 +920,8 @@ public class ReaderData {
 			canHitWhileInvulnerable.add(507);
 		case 57:
 			canHitWhileInvulnerable.add(291);
+		case 89:
+			canHitWhileInvulnerable.add(91);
 		case 87:
 			canHitWhileInvulnerable.add(19);
 		case 239:

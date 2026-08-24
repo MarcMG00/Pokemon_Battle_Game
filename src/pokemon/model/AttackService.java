@@ -113,6 +113,7 @@ public class AttackService {
 		attackEffects.put(84, simpleDamage); // Impactrueno/Thunder shock (tested)
 		attackEffects.put(85, simpleDamage); // Rayo/Thunderbolt (tested)
 		attackEffects.put(87, simpleDamage); // Trueno/Thunder (tested)
+		attackEffects.put(88, simpleDamage); // Lanzarrocas/Rock Throw (tested)
 
 		// Multi-hit attacks (normal damage)
 		attackEffects.put(3, new MultiHitEffect(helperService, damageService, 1, 5)); // Doble bofetón/Double slap
@@ -142,6 +143,7 @@ public class AttackService {
 		// Rise power if charging an attack and can hit while invulnerable
 		attackEffects.put(16, new ConditionalPowerEffect(damageService, 2f)); // Tornado/Gust (tested)
 		attackEffects.put(57, new ConditionalPowerEffect(damageService, 2f)); // Surf/Surf (tested)
+		attackEffects.put(89, new ConditionalPowerEffect(damageService, 2f)); // Terremoto/Earthquake (tested)
 
 		// Forced switch
 		attackEffects.put(18, new ForceSwitchEffect()); // Remolino/Whirlwind (tested)
