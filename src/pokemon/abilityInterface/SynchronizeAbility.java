@@ -11,7 +11,7 @@ public class SynchronizeAbility extends AbilityEffect {
 	public SynchronizeAbility(Pokemon owner) {
 		super(owner);
 	}
-	
+
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
@@ -24,8 +24,7 @@ public class SynchronizeAbility extends AbilityEffect {
 			return;
 
 		// Poisoned status
-		if (defender.hasActiveStatusCondition(StatusConditions.POISONED)
-				|| defender.hasActiveStatusCondition(StatusConditions.BADLY_POISONED)) {
+		if (defender.hasActiveStatusCondition(StatusConditions.POISONED)) {
 			System.out.println(attacker.getName() + " fue envenenado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.POISONED));
 			return;

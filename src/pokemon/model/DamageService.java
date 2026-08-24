@@ -234,6 +234,11 @@ public class DamageService {
 				|| (defender.hasHeatProofAbility() && attack.isFireType()))
 			return damage / 2f;
 
+		// 135_Multiscale reduces by 2 the damage if has all the PS
+		// Informative : doesn't affect to attacks with fixed damage
+		if (defender.hasMultiscaleAbility() && defender.hasMaxPS())
+			return damage / 2f;
+
 		// INCREASE DAMAGE
 		// 87_Dry_Skin ability with a fire attack, do 25% more damage
 		if (defender.hasDrySkinAbility() && attack.isFireType())

@@ -15,7 +15,6 @@ public enum StatusConditions {
 	// Status conditions / Estados persitentes
 	PARALYZED("paralizado"), // paralizado
 	POISONED("envenenado"), // envenenado
-	BADLY_POISONED("gravemente envenanado"), // gravemente envenando
 	FROZEN("congelado"), // congelado
 	ASLEEP("dormido"), // dormido
 	BURNED("quemado"), // quemado

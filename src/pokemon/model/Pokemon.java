@@ -529,6 +529,10 @@ public class Pokemon {
 		return weight;
 	}
 
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
 	public boolean hasReceivedDamage() {
 		return hasReceivedDamage;
 	}
@@ -723,7 +727,7 @@ public class Pokemon {
 	// -----------------------------
 	// Check if is debilitated
 	// -----------------------------
-	public boolean isFainted() {
+	public boolean hasFainted() {
 		return this.getPs() <= 0 || this.getStatusCondition().getStatusCondition() == StatusConditions.DEBILITATED;
 	}
 
@@ -1557,6 +1561,27 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 136_Multiscale ability
+	// -----------------------------
+	public boolean hasMultiscaleAbility() {
+		return this.getAbilitySelected().getId() == 136;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 137_Toxic boost ability
+	// -----------------------------
+	public boolean hasToxicBoostAbility() {
+		return this.getAbilitySelected().getId() == 137;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 138_Flare boost ability
+	// -----------------------------
+	public boolean hasFlareBoostAbility() {
+		return this.getAbilitySelected().getId() == 138;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 142_Overcoat ability
 	// -----------------------------
 	public boolean hasOvercoatAbility() {
@@ -1564,10 +1589,24 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 145_Big_pecks ability
+	// -----------------------------
+	public boolean hasBigPecksAbility() {
+		return this.getAbilitySelected().getId() == 145;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 146_Sand_rash ability
 	// -----------------------------
 	public boolean hasSandRashAbility() {
 		return this.getAbilitySelected().getId() == 146;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 147_Wonder_skin ability
+	// -----------------------------
+	public boolean hasWonderSkinAbility() {
+		return this.getAbilitySelected().getId() == 147;
 	}
 
 	// -----------------------------

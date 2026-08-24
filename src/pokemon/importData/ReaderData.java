@@ -700,6 +700,9 @@ public class ReaderData {
 				setAttackIsPunch(attack);
 				// Set the attack is applied to attacker its self
 				setAttackIsAppliedOnItsSelf(attack);
+				// Set if attack is state type (don't do damage and have support/secondary
+				// effects, etc. against PK facing)
+				setIsStateAttackAgainstPkFacing(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -998,6 +1001,163 @@ public class ReaderData {
 			break;
 		default:
 			attack.setAppliedToAttacker(false);
+		}
+	}
+
+	// -----------------------------
+	// Set if the attack is state type and has secondary effects agianst Pokémon
+	// facing, or support on attacker etc. => used for abilities like
+	// 147_Wonder_Skin
+	// -----------------------------
+	private static void setIsStateAttackAgainstPkFacing(Attack attack) {
+		switch (attack.getId()) {
+		case 18:
+		case 28:
+		case 39:
+		case 43:
+		case 45:
+		case 46:
+		case 47:
+		case 48:
+		case 50:
+		case 54:
+		case 73:
+		case 77:
+		case 78:
+		case 79:
+		case 81:
+		case 86:
+		case 92:
+		case 95:
+		case 103:
+		case 108:
+		case 109:
+		case 114:
+		case 134:
+		case 137:
+		case 139:
+		case 142:
+		case 147:
+		case 148:
+		case 169:
+		case 171:
+		case 174: // if used by a ghost type
+		case 178:
+		case 180:
+		case 184:
+		case 186:
+		case 191:
+		case 193: // if used by a ghost type
+		case 194:
+		case 195:
+		case 201:
+		case 204:
+		case 207:
+		case 212:
+		case 213:
+		case 227:
+		case 230:
+		case 240:
+		case 241:
+		case 258:
+		case 259:
+		case 260:
+		case 261:
+		case 262:
+		case 266:
+		case 269:
+		case 270:
+		case 271:
+		case 273:
+		case 277:
+		case 281:
+		case 285:
+		case 286:
+		case 288:
+		case 297:
+		case 298:
+		case 300:
+		case 313:
+		case 316: // if used by a ghost type
+		case 319:
+		case 320:
+		case 321:
+		case 335:
+		case 346:
+		case 356:
+		case 357: // if used by a dark type
+		case 373:
+		case 375:
+		case 377:
+		case 380:
+		case 384:
+		case 385:
+		case 388:
+		case 390:
+		case 391:
+		case 415:
+		case 432:
+		case 433:
+		case 445:
+		case 446:
+		case 464:
+		case 470:
+		case 471:
+		case 472:
+		case 477:
+		case 478:
+		case 487:
+		case 493:
+		case 494:
+		case 495:
+		case 511:
+		case 516:
+		case 564:
+		case 567:
+		case 568:
+		case 569:
+		case 571:
+		case 575:
+		case 576:
+		case 579: // not sure (support type ?)
+		case 580: // not sure (support type ?)
+		case 581: // not sure (support type ?)
+		case 582:
+		case 587:
+		case 589:
+		case 590:
+		case 596:
+		case 598:
+		case 599:
+		case 600:
+		case 604:
+		case 608:
+		case 661:
+		case 668:
+		case 672:
+		case 678:
+		case 683:
+		case 685: // not sure
+		case 689: // not sure
+		case 715:
+		case 747:
+		case 748:
+		case 749:
+		case 750:
+		case 752:
+		case 756:
+		case 777: // not sure
+		case 792:
+		case 810:
+		case 852:
+		case 858:
+		case 881:
+		case 883:
+		case 909:
+			attack.setIsStateAttackAgainstPkFacing(true);
+			break;
+		default:
+			attack.setIsStateAttackAgainstPkFacing(false);
 		}
 	}
 

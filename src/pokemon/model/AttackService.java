@@ -232,8 +232,7 @@ public class AttackService {
 		attackEffects.put(86, new ParalyzeEffect()); // Onda trueno/Thunder wave (tested)
 
 		// Attack and remove constant PS from initial attacker Pokemon
-		// (Forcejeo/Struggle, etc.)
-		attackEffects.put(165, new FixedRecoilDamageEffect(damageService));
+		attackEffects.put(165, new FixedRecoilDamageEffect(damageService)); // Forcejeo/Struggle (tested)
 	}
 
 	// -----------------------------
@@ -255,7 +254,7 @@ public class AttackService {
 		printPokemonStates();
 
 		Pokemon pkPlayer = battleCtx.getPkPlayer();
-		// Informative : don't stock IA Pokemon in a var because it may change, so pass
+		// Informative : don't stock IA Pokemon in a var because it may switch, so pass
 		// through the IAPlayer instead
 
 		TurnContext turnCtx = buildTurnContext();
@@ -574,17 +573,9 @@ public class AttackService {
 		Pokemon pkAttacker = attacker.getPkCombatting();
 
 		// If retreated, Pokemon cannot attack
-		if (pkAttacker.hasRetreated()) {
+		// Put informative message
+		if (pkAttacker.hasRetreated() && !pkAttacker.hasFainted()) {
 			System.out.println(pkAttacker.getName() + " retrocedió.");
-			return false;
-		}
-
-		// If Pokemon is debilitated, force switch
-		if (pkAttacker.isFainted()) {
-			statusService.removeStates(pkAttacker);
-			// Remove some states from Pokemon remaining in the field
-			statusService.removeDrainingState(defender.getPkCombatting());
-			checkForcedPokemonChange(sc);
 			return true;
 		}
 
@@ -593,6 +584,7 @@ public class AttackService {
 			switchPokemonService.handleForcedSwitch(attacker);
 			return true;
 		}
+
 		return false;
 	}
 
@@ -673,37 +665,10 @@ public class AttackService {
 	// Check if needed to chose a new Pokemon (ex : combating Pokemon dies from
 	// burning in final turn while flying, etc.)
 	// -----------------------------
-	private void checkForcedPokemonChange(Scanner sc) {
-		// Player is debilitated
-		if (battleCtx.getPkPlayer().isFainted())
-			handlePlayerPokemonDefeated(sc);
-
-		// IA is debilitated
-		if (battleCtx.getPkIA().isFainted())
-			handleIAPokemonDefeated();
-	}
-
-	// -----------------------------
-	// Check if needed to chose a new Pokemon (ex : combating Pokemon dies from
-	// burning in final turn while flying, etc.)
-	// -----------------------------
 	private void handleIASwitchIfNeeded(Scanner sc) {
 		// IA is debilitated
-		if (battleCtx.getPkIA().isFainted())
+		if (battleCtx.getPkIA().hasFainted())
 			handleIAPokemonDefeated();
-	}
-
-	// -----------------------------
-	// Select new Pokemon from player
-	// -----------------------------
-	private void handlePlayerPokemonDefeated(Scanner sc) {
-		System.out.println(battleCtx.getPkPlayer().getName() + " fue derrotado.");
-		System.out.println("¿Qué Pokémon deberías escoger?");
-
-		boolean changed = false;
-
-		while (!changed)
-			changed = switchPokemonService.changePokemon(sc);
 	}
 
 	// -----------------------------
@@ -723,7 +688,7 @@ public class AttackService {
 				battleCtx.getEffectPerTypes());
 
 		if (pkEnteringIA == null)
-			pkEnteringIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.isFainted()).findFirst().get();
+			pkEnteringIA = battleCtx.getIa().getPokemon().stream().filter(pk -> !pk.hasFainted()).findFirst().get();
 
 		switchPokemonService.resetPokemonBeforeSwitch(pkIA);
 
@@ -746,7 +711,7 @@ public class AttackService {
 		Pokemon pkAttacker = attacker.getPkCombatting();
 		Pokemon pkDefender = defender.getPkCombatting();
 
-		if (pkAttacker.isFainted()) {
+		if (pkAttacker.hasFainted()) {
 			handleDebilitatedPokemon(pkAttacker, pkDefender, attacker == battleCtx.getPlayer());
 			return;
 		}
@@ -912,12 +877,12 @@ public class AttackService {
 
 		// System.out.println("PS actuales de " + ctx.getDefender().getName() + " : " +
 		// ctx.getDefender().getPs());
-		if (ctx.getDefender().isFainted())
+		if (ctx.getDefender().hasFainted())
 			ctx.getDefender().setStatusCondition(new State(StatusConditions.DEBILITATED));
 
 		// System.out.println("PS actuales de " + ctx.getAttacker().getName() + " : " +
 		// ctx.getAttacker().getPs());
-		if (ctx.getAttacker().isFainted())
+		if (ctx.getAttacker().hasFainted())
 			ctx.getAttacker().setStatusCondition(new State(StatusConditions.DEBILITATED));
 	}
 
@@ -965,7 +930,7 @@ public class AttackService {
 				if (!ctx.getDefender().canBeFlinched())
 					break;
 
-				if (abilityAttacker != null && ctx.getAttacker().hasStenchAbility())
+				if (ctx.getAttacker().hasStenchAbility())
 					abilityAttacker.getEffect().afterAttack(null, ctx.getAttacker(), ctx.getDefender(), ctx.getAttack(),
 							dmg, effect.getProbability(), result.isCriticalAttack(), ctx.getWeather(),
 							ctx.isWeatherSuppressed());

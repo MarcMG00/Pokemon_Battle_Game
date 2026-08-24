@@ -19,6 +19,10 @@ public abstract class AbilityEffect {
 
 	public void onSwitchOut(BattleContext battleCtx) {
 	}
+	
+	// Some abilities can be used if owner is still alive and has switch manually or forced
+	public void onSwitchOutCondition(BattleContext battleCtx) {
+	}
 
 	public boolean beforeDamage(BattleContext battleCtx, Pokemon attacker, Attack attack) {
 		return true; // true = continues the attack

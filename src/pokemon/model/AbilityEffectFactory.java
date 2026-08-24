@@ -18,20 +18,26 @@ import pokemon.abilityInterface.EmptyAbility;
 import pokemon.abilityInterface.FlameBodyAbility;
 import pokemon.abilityInterface.FlashFireAbility;
 import pokemon.abilityInterface.ForecastAbility;
+import pokemon.abilityInterface.HeavyMetalAbility;
 import pokemon.abilityInterface.HydratationAbility;
 import pokemon.abilityInterface.IceBodyAbility;
 import pokemon.abilityInterface.IntimidateAbility;
 import pokemon.abilityInterface.LevitateAbility;
+import pokemon.abilityInterface.LightMetalAbility;
 import pokemon.abilityInterface.LightningRodAbility;
 import pokemon.abilityInterface.MinusAbility;
+import pokemon.abilityInterface.MoodyAbility;
 import pokemon.abilityInterface.MotorDriveAbility;
 import pokemon.abilityInterface.NaturalCureAbility;
 import pokemon.abilityInterface.NormalizeAbility;
+import pokemon.abilityInterface.OvercoatAbility;
 import pokemon.abilityInterface.PlusAbility;
 import pokemon.abilityInterface.PoisonPointAbility;
+import pokemon.abilityInterface.PoisonTouchAbility;
 import pokemon.abilityInterface.PressureAbility;
 import pokemon.abilityInterface.QuickFeetAbility;
 import pokemon.abilityInterface.RainDishAbility;
+import pokemon.abilityInterface.RegeneratorAbility;
 import pokemon.abilityInterface.RoughSkinAbility;
 import pokemon.abilityInterface.SandStreamAbility;
 import pokemon.abilityInterface.ShedSkinAbility;
@@ -58,7 +64,8 @@ public class AbilityEffectFactory {
 	// complete) / 103 (when applying objects)/ 104 (when having more abilities) /
 	// 108 (when all attacks will be programmed) / 112 (when having more attacks) /
 	// 119 (when applying objects) / 121 (when applying objects) / 124 (when
-	// applying objects) / 125 (to complete)
+	// applying objects) / 125 (to complete) / 139 (when having objects) / 140 (no
+	// dual combat)
 	// -----------------------------
 	public static AbilityEffect createEffect(Ability ability, Pokemon owner) {
 		switch (ability.getId()) {
@@ -197,6 +204,24 @@ public class AbilityEffectFactory {
 		// Armadura frágil/Weak armor
 		case 133:
 			return new WeakArmorAbility(owner);
+		// Metal pesado/Heavy metal
+		case 134:
+			return new HeavyMetalAbility(owner);
+		// Metal liviano/Light metal
+		case 135:
+			return new LightMetalAbility(owner);
+		// Veleta/Moody
+		case 141:
+			return new MoodyAbility(owner);
+		// Funda/Overcoat
+		case 142:
+			return new OvercoatAbility(owner);
+		// Punto Tóxico/Poison Touch
+		case 143:
+			return new PoisonTouchAbility(owner);
+		// Regeneración/Regenerator
+		case 144:
+			return new RegeneratorAbility(owner);
 		default:
 			return new EmptyAbility(owner);
 		}

@@ -37,6 +37,8 @@ public class Attack {
 	private boolean isPunchMove;
 	private boolean isSelfDestruction;
 	private boolean isAppliedToAttacker;
+	private boolean isStateAttackAgainstPkFacing; // used for some abilities to reduce precision if goes to Pokemon
+													// facing (only applied on "other" attacks)
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -67,6 +69,7 @@ public class Attack {
 		this.category = AttackCategory.NORMAL;
 		this.isSelfDestruction = false;
 		this.isAppliedToAttacker = false;
+		this.isStateAttackAgainstPkFacing = false;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -96,6 +99,7 @@ public class Attack {
 		this.category = AttackCategory.NORMAL;
 		this.isSelfDestruction = false;
 		this.isAppliedToAttacker = false;
+		this.isStateAttackAgainstPkFacing = false;
 	}
 
 	public Attack(Attack attack) {
@@ -125,6 +129,7 @@ public class Attack {
 		this.category = attack.category;
 		this.isSelfDestruction = attack.isSelfDestruction;
 		this.isAppliedToAttacker = attack.isAppliedToAttacker;
+		this.isStateAttackAgainstPkFacing = attack.isStateAttackAgainstPkFacing;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -335,6 +340,14 @@ public class Attack {
 		this.isAppliedToAttacker = isAppliedToAttacker;
 	}
 
+	public boolean isStateAttackAgainstPkFacing() {
+		return isStateAttackAgainstPkFacing;
+	}
+
+	public void setIsStateAttackAgainstPkFacing(boolean isStateAttackAgainstPkFacing) {
+		this.isStateAttackAgainstPkFacing = isStateAttackAgainstPkFacing;
+	}
+
 	// ==================================== METHODS
 	// ====================================
 
@@ -536,6 +549,27 @@ public class Attack {
 	}
 
 	// -----------------------------
+	// Check if attack is 77_Poison_powder
+	// -----------------------------
+	public boolean isPoisonPowder() {
+		return this.getId() == 77;
+	}
+
+	// -----------------------------
+	// Check if attack is 78_Stun_spore
+	// -----------------------------
+	public boolean isStunSpore() {
+		return this.getId() == 78;
+	}
+
+	// -----------------------------
+	// Check if attack is 79_Sleep_powder
+	// -----------------------------
+	public boolean isSleepPowder() {
+		return this.getId() == 79;
+	}
+
+	// -----------------------------
 	// Check if attack is 87_Thunder
 	// -----------------------------
 	public boolean isThunder() {
@@ -547,5 +581,40 @@ public class Attack {
 	// -----------------------------
 	public boolean isStruggle() {
 		return this.getId() == 165;
+	}
+
+	// -----------------------------
+	// Check if attack is 147_Spore
+	// -----------------------------
+	public boolean isSpore() {
+		return this.getId() == 147;
+	}
+
+	// -----------------------------
+	// Check if attack is 178_Cotton_spore
+	// -----------------------------
+	public boolean isCottonSpore() {
+		return this.getId() == 178;
+	}
+
+	// -----------------------------
+	// Check if attack is 476_Rage_powder
+	// -----------------------------
+	public boolean isRagePowder() {
+		return this.getId() == 476;
+	}
+
+	// -----------------------------
+	// Check if attack is 600_Powder
+	// -----------------------------
+	public boolean isPowder() {
+		return this.getId() == 600;
+	}
+
+	// -----------------------------
+	// Check if attack is 750_Magic_powder
+	// -----------------------------
+	public boolean isMagicPowder() {
+		return this.getId() == 750;
 	}
 }

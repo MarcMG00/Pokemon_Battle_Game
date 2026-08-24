@@ -91,7 +91,7 @@ public class StatusService {
 	// -----------------------------
 	public void handleDrainingStatusEffects(Pokemon attacker, Pokemon defender) {
 		// Attacker may fainted before the possibility to drain
-		if (attacker.isFainted())
+		if (attacker.hasFainted())
 			return;
 
 		// Get PS from drained rival Pokemon
@@ -179,8 +179,6 @@ public class StatusService {
 				return;
 			} else
 				System.out.println(pk.getName() + " fue envenenado");
-			break;
-		case BADLY_POISONED:
 			break;
 		case FROZEN:
 			// 40_Magma_Armor ability
@@ -281,7 +279,7 @@ public class StatusService {
 	// -----------------------------
 	public boolean canAttackFrozenStartTurn(Pokemon pk) {
 		boolean canAttack = true;
-
+		
 		if (pk.hasActiveStatusCondition(StatusConditions.FROZEN))
 			canAttack = false;
 
@@ -314,7 +312,7 @@ public class StatusService {
 					float damage = doConfusedDammageStartTurn(pk);
 					pk.setPs(Math.max(pk.getPs() - damage, 0));
 
-					if (pk.isFainted()) {
+					if (pk.hasFainted()) {
 						pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
 						System.out.println(pk.getName() + " quedó debilitado por la confusión!");
 					}
@@ -372,7 +370,7 @@ public class StatusService {
 
 			System.out.println(pk.getName() + " se resiente de la quemadura XD - PS actuales : " + pk.getPs());
 
-			if (pk.isFainted())
+			if (pk.hasFainted())
 				pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
 		}
 	}
@@ -420,7 +418,7 @@ public class StatusService {
 
 				System.out.println(pk.getName() + " está envenenado - PS actuales : " + pk.getPs());
 
-				if (pk.isFainted())
+				if (pk.hasFainted())
 					pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
 			}
 		}
@@ -624,7 +622,7 @@ public class StatusService {
 			System.out.println(
 					defender.getName() + " sufre daño a causa de la habilidad Mal Sueño de " + attacker.getName());
 
-			if (defender.isFainted())
+			if (defender.hasFainted())
 				defender.setStatusCondition(new State(StatusConditions.DEBILITATED));
 
 			return true;
