@@ -7,6 +7,14 @@ import pokemon.enums.Weather;
 public class WeatherService {
 	private final BattleContext battleCtx;
 
+	private static final String ANSI_RED = "\u001B[31m";
+	private static final String ANSI_GREEN = "\u001B[32m";
+	private static final String ANSI_YELLOW = "\u001B[33m";
+	private static final String ANSI_PURPLE = "\u001B[35m";
+	private static final String ANSI_CYAN = "\u001B[36m";
+	private static final String ANSI_WHITE = "\u001B[37m";
+	private static final String ANSI_RESET = "\u001B[0m";
+
 	public WeatherService(BattleContext battleCtx) {
 		this.battleCtx = battleCtx;
 	}
@@ -75,8 +83,16 @@ public class WeatherService {
 			return;
 
 		if (isImmuneToSandstormByAbility(pokemon)) {
-			System.out.println(pokemon.getName() + " no se ve afectado por la tormenta de arena dada su habilidad "
-					+ pokemon.getAbilitySelected().getName());
+			System.out.println(
+					ANSI_PURPLE + pokemon.getName() + " no se ve afectado por la tormenta de arena dada su habilidad "
+							+ pokemon.getAbilitySelected().getName() + ANSI_RESET);
+			return;
+		}
+
+		if (isImmuneToSandstormByAttack(pokemon)) {
+			System.out.println(ANSI_PURPLE + pokemon.getName()
+					+ " no se ve afectado por la tormenta de arena ya que está bajo el efecto de algún ataque"
+					+ ANSI_RESET);
 			return;
 		}
 
@@ -119,8 +135,16 @@ public class WeatherService {
 			return;
 
 		if (isImmuneToHailByAbility(pokemon)) {
-			System.out.println(pokemon.getName() + " (Id:" + pokemon.getId()
-					+ "), no sufrió daño de Granizo dada su habilidad " + pokemon.getAbilitySelected().getName());
+			System.out.println(ANSI_PURPLE + pokemon.getName() + " (Id:" + pokemon.getId()
+					+ "), no sufrió daño de Granizo dada su habilidad " + pokemon.getAbilitySelected().getName()
+					+ ANSI_RESET);
+			return;
+		}
+
+		if (isImmuneToHailByAttack(pokemon)) {
+			System.out.println(ANSI_PURPLE + pokemon.getName()
+					+ " no se ve afectado por la tormenta de arena ya que está bajo el efecto de algún ataque"
+					+ ANSI_RESET);
 			return;
 		}
 
@@ -164,6 +188,16 @@ public class WeatherService {
 	}
 
 	// -----------------------------
+	// Check sandstorm immunity by attack
+	// -----------------------------
+	private boolean isImmuneToSandstormByAttack(Pokemon pk) {
+		if (isDigActive(pk))
+			return true;
+
+		return false;
+	}
+
+	// -----------------------------
 	// Check hail immunity by type
 	// -----------------------------
 	private boolean isImmuneToHailByType(Pokemon pokemon) {
@@ -175,6 +209,16 @@ public class WeatherService {
 	// -----------------------------
 	private boolean isImmuneToHailByAbility(Pokemon pk) {
 		return pk.hasSnowCloakAbility() || pk.hasMagicGuardAbility();
+	}
+
+	// -----------------------------
+	// Check hail immunity by attack
+	// -----------------------------
+	private boolean isImmuneToHailByAttack(Pokemon pk) {
+		if (isDigActive(pk))
+			return true;
+
+		return false;
 	}
 
 	// -----------------------------
@@ -204,5 +248,14 @@ public class WeatherService {
 				System.out.println(
 						"Faltan " + battleCtx.getNbTurnsMistActive() + " turnos para que la neblina se fuerara XD");
 		}
+	}
+
+	// -----------------------------
+	// Check for weather immunity if 91_Dig is active
+	// -----------------------------
+	private boolean isDigActive(Pokemon pk) {
+		Attack attack = pk.getNextMovement();
+
+		return attack.isDig() && pk.isChargingAttackForNextRound();
 	}
 }

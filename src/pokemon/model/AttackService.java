@@ -36,6 +36,7 @@ import pokemon.attackInterface.WeightDamageEffect;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
+import pokemon.enums.Weather;
 
 public class AttackService {
 	public static final String ANSI_BLACK = "\u001B[30m";
@@ -132,10 +133,12 @@ public class AttackService {
 		AttackEffect chargeAttackDamage = new ChargeAttackEffect(damageService);
 		attackEffects.put(13, chargeAttackDamage); // Viento cortante/Razor wind (tested)
 		attackEffects.put(19, chargeAttackDamage); // Vuelo/Fly (tested)
+		attackEffects.put(91, chargeAttackDamage); // Excavar/Dig (tested)
 
 		// One hit KO
 		attackEffects.put(12, new OneHitKOEffect()); // Guillotina/Guillotine (tested)
 		attackEffects.put(32, new OneHitKOEffect()); // Perforador/Horn drill (tested)
+		attackEffects.put(90, new OneHitKOEffect()); // Fisura/Fissure (tested)
 
 		// Buffs stats
 		attackEffects.put(14, new StatBoostEffect(StatType.ATTACK, 2)); // Danza espada/Swords dance (tested)

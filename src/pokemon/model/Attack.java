@@ -577,6 +577,13 @@ public class Attack {
 	}
 
 	// -----------------------------
+	// Check if attack is 91_Dig
+	// -----------------------------
+	public boolean isDig() {
+		return this.getId() == 91;
+	}
+	
+	// -----------------------------
 	// Check if attack is 165_Struggle
 	// -----------------------------
 	public boolean isStruggle() {
