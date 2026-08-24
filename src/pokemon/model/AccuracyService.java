@@ -36,6 +36,10 @@ public class AccuracyService {
 		boolean canHitInvulnerable = attackDefender == null
 				|| attackAttacker.canHitWhileInvulnerable().contains(attackDefender.getId());
 
+		// Reset allowing to attack if doesn't enter in any case (will be checked with
+		// accuracy calculs)
+		attacker.denyAttack();
+
 		// 1 - Check if an attack is not disabled (attacks disabled cannot be used, even
 		// for charged attacks, they are instantly disabled)
 		if (attackIsDisabled(attacker, attackAttacker))
@@ -57,10 +61,6 @@ public class AccuracyService {
 		// 5 - Check for 99_No_Guard ability (always hits)
 		if (PokemonHaveNoGuardAbility(attacker, defender))
 			return;
-
-		// Reset allowing to attack if doesn't enter in any case (will be checked with
-		// accuracy calculs)
-		attacker.denyAttack();
 
 		float accuracyFactor = calculateAccuracyFactor(ctx, attacker, defender, attackAttacker);
 
@@ -137,7 +137,6 @@ public class AccuracyService {
 			if (disableStatus.getAttackDisabled().getId() == attackUsed.getId()) {
 				System.out
 						.println(attacker.getName() + " intentó usar " + attackUsed.getName() + ", pero está anulado!");
-				attacker.denyAttack();
 				return true;
 			}
 		}
@@ -152,13 +151,13 @@ public class AccuracyService {
 		// 18_Whirlwind / 46_Roar
 		if (atkAttacker.forcesChange()) {
 			if (isDefenderCharging && !canHitInvulnerable) {
-				attacker.denyAttack();
 				System.out.println(attacker.getName() + " usó " + atkAttacker.getName() + ", pero " + defender.getName()
 						+ " evitó el ataque (invulnerable).");
 			} else {
 				// Attacks that force Pokemon change don't have precision, so they can be used
 				// directly
 				attacker.allowAttack();
+				System.out.println(ANSI_PURPLE + "Los ataques de cambio nunca fallan" + ANSI_RESET);
 			}
 			return true;
 		}
@@ -172,6 +171,14 @@ public class AccuracyService {
 			Attack atkAttacker, boolean canHitInvulnerable, boolean isDefenderCharging) {
 		if (atkAttacker.alwaysHits()) {
 			attacker.allowAttack();
+			return true;
+		}
+
+		if (atkAttacker.getPrecision() == 0f) {
+			attacker.allowAttack();
+			System.out.println(ANSI_PURPLE
+					+ "El ataque no tiene precisión, con lo cual se puede aplicar directamente (no es necesario verificar condiciones). "
+					+ attacker.getName() + " usará " + atkAttacker.getName() + ANSI_RESET);
 			return true;
 		}
 
@@ -299,7 +306,7 @@ public class AccuracyService {
 				attacker.setPs(Math.max(attacker.getPs() - recoil, 0));
 
 				System.out.println(attacker.getName()
-						+ " se dañó a si mismo jajajaji. (Patada salto, Patada Salto Alta,  Patada Hacha, Plancha Voltaica)");
+						+ " se dañó a si mismo jajajaji. (Patada salto, Patada Salto Alta, Patada Hacha, Plancha Voltaica)");
 			}
 		}
 	}
@@ -334,9 +341,10 @@ public class AccuracyService {
 	// -----------------------------
 	private boolean PokemonHaveNoGuardAbility(Pokemon attacker, Pokemon defender) {
 		// 99_No_Guard allows to attack every time (whether is the defender or the
-		// attacker that has the ability)
+		// attacker that have the ability)
 		if (attacker.hasNoGuardAbility() || defender.hasNoGuardAbility()) {
-			System.out.println(attacker.getName() + " puede atacar gracias a la habilidad Indefenso en juego");
+			System.out.println(ANSI_PURPLE + attacker.getName()
+					+ " puede atacar gracias a la habilidad Indefenso en juego" + ANSI_RESET);
 			attacker.allowAttack();
 			return true;
 		}
@@ -358,26 +366,45 @@ public class AccuracyService {
 	private void modifyPrecisionByAbility(AttackContext ctx) {
 		// ATTACKER
 		// 14_Compound_Eyes ability rises precision by 30%
-		if (ctx.getAttacker().hasCompoundEyesAbility())
+		if (ctx.getAttacker().hasCompoundEyesAbility()) {
 			ctx.multiplyPrecision(1.3f);
+			System.out
+					.println(ANSI_PURPLE + ctx.getAttacker().getName() + " aumentó su precisión gracias a su habilidad "
+							+ ctx.getAttacker().getAbilitySelected().getName() + ANSI_RESET);
+		}
 
 		// 55_Hustle ability reduces precision by 20%
-		if (ctx.getAttack().getBases().contains("fisico") && ctx.getAttacker().hasHustleAbility())
+		if (ctx.getAttack().getBases().contains("fisico") && ctx.getAttacker().hasHustleAbility()) {
 			ctx.multiplyPrecision(0.8f);
+			System.out
+					.println(ANSI_PURPLE + ctx.getAttacker().getName() + " redujo su precisión a causa de su habilidad "
+							+ ctx.getAttacker().getAbilitySelected().getName() + ANSI_RESET);
+		}
 
 		// DEFENDER
 		// 77_Tangled_Feed duplicates evasion by 2 if confused
 		if (ctx.getDefender().isTangledFeetActive()) {
 			ctx.multiplyPrecision(0.5f);
-			System.out.println(ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
-					+ ctx.getDefender().getAbilitySelected().getName());
+			System.out.println(ANSI_PURPLE + ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
+					+ ctx.getDefender().getAbilitySelected().getName() + ANSI_RESET);
 		}
 
 		// 81_Snow_Cloak sets 20% more of evasion if it's snowing
 		if (ctx.getWeather() == Weather.HAIL && ctx.getDefender().hasSnowCloakAbility()) {
 			ctx.multiplyPrecision(0.8f);
-			System.out.println(ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
-					+ ctx.getDefender().getAbilitySelected().getName());
+			System.out.println(ANSI_PURPLE + ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
+					+ ctx.getDefender().getAbilitySelected().getName() + ANSI_RESET);
+		}
+
+		// 147_Wonder_skin ability reduces precision by 2 if attacks has secondary
+		// effects to defender or support to attacker, etc. (only for attacks that are
+		// state type against defender)
+		if (ctx.getDefender().hasWonderSkinAbility() && ctx.getAttack().getBases().contains("otros")
+				&& ctx.getAttack().getPrecision() > 50f && ctx.getAttack().isStateAttackAgainstPkFacing()) {
+			ctx.multiplyPrecision(0.5f);
+			System.out
+					.println(ANSI_PURPLE + ctx.getAttacker().getName() + " redujo su precisión a causa de la habilidad "
+							+ ctx.getDefender().getAbilitySelected().getName() + " del Pokémon rival" + ANSI_RESET);
 		}
 	}
 }

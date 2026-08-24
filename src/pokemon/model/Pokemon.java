@@ -1603,6 +1603,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if Pokemon has 147_Wonder_skin ability
+	// -----------------------------
+	public boolean hasWonderSkinAbility() {
+		return this.getAbilitySelected().getId() == 147;
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 159_Sand_force ability
 	// -----------------------------
 	public boolean hasSandForceAbility() {

@@ -37,6 +37,8 @@ public class Attack {
 	private boolean isPunchMove;
 	private boolean isSelfDestruction;
 	private boolean isAppliedToAttacker;
+	private boolean isStateAttackAgainstPkFacing; // used for some abilities to reduce precision if goes to Pokemon
+													// facing (only applied on "other" attacks)
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -67,6 +69,7 @@ public class Attack {
 		this.category = AttackCategory.NORMAL;
 		this.isSelfDestruction = false;
 		this.isAppliedToAttacker = false;
+		this.isStateAttackAgainstPkFacing = false;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -96,6 +99,7 @@ public class Attack {
 		this.category = AttackCategory.NORMAL;
 		this.isSelfDestruction = false;
 		this.isAppliedToAttacker = false;
+		this.isStateAttackAgainstPkFacing = false;
 	}
 
 	public Attack(Attack attack) {
@@ -125,6 +129,7 @@ public class Attack {
 		this.category = attack.category;
 		this.isSelfDestruction = attack.isSelfDestruction;
 		this.isAppliedToAttacker = attack.isAppliedToAttacker;
+		this.isStateAttackAgainstPkFacing = attack.isStateAttackAgainstPkFacing;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -333,6 +338,14 @@ public class Attack {
 
 	public void setAppliedToAttacker(boolean isAppliedToAttacker) {
 		this.isAppliedToAttacker = isAppliedToAttacker;
+	}
+
+	public boolean isStateAttackAgainstPkFacing() {
+		return isStateAttackAgainstPkFacing;
+	}
+
+	public void setIsStateAttackAgainstPkFacing(boolean isStateAttackAgainstPkFacing) {
+		this.isStateAttackAgainstPkFacing = isStateAttackAgainstPkFacing;
 	}
 
 	// ==================================== METHODS

@@ -31,12 +31,13 @@ public class WeatherService {
 		Weather weather = battleCtx.getWeather();
 
 		for (Pokemon pk : turnCtx.getPokemons()) {
-			// 33_Swift_Swim
 			if (pk.hasSwiftSwimAbility() && weather == Weather.RAIN)
 				turnCtx.multiplySpeed(pk, 2f);
 
-			// 34_Chlorophyll
 			if (pk.hasChlorophyllAbility() && weather == Weather.SUN)
+				turnCtx.multiplySpeed(pk, 2f);
+
+			if (pk.hasSandRashAbility() && weather == Weather.SANDSTORM)
 				turnCtx.multiplySpeed(pk, 2f);
 		}
 	}
