@@ -20,6 +20,7 @@ public class ShedSkinAbility extends AbilityEffect {
 					|| owner.hasActiveStatusCondition(StatusConditions.BURNED)
 					|| owner.hasActiveStatusCondition(StatusConditions.PARALYZED)
 					|| owner.hasActiveStatusCondition(StatusConditions.POISONED)
+					|| owner.hasActiveStatusCondition(StatusConditions.BADLY_POISONED)
 					|| owner.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 				owner.setStatusCondition(new State());
 				owner.removeEphemeralStatus(StatusConditions.ASLEEP);

@@ -30,7 +30,7 @@ public class FlameBodyAbility extends AbilityEffect {
 			return true;
 
 		// Try to apply burned
-		attackCtx.getStatusService().trySetStatus(attackCtx.getAttacker(), new State(StatusConditions.BURNED), null,
+		attackCtx.getStatusService().trySetStatusCondition(attackCtx.getAttacker(), new State(StatusConditions.BURNED), null,
 				false, attackCtx.getAttack());
 		System.out.println(
 				attackCtx.getAttacker().getName() + " fue quemado por la habilidad Cuerpo llama del Pokémon rival");

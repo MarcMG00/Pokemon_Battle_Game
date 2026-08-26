@@ -328,7 +328,7 @@ public class SwitchPokemonService {
 
 		// Get only Pokemon not debilitated
 		List<Pokemon> pokemonAvailable = player.getPokemon().stream()
-				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+				.filter(pk -> !pk.hasActiveStatusCondition(StatusConditions.DEBILITATED)).toList();
 
 		for (Pokemon candidate : pokemonAvailable) {
 

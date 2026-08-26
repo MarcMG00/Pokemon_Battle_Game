@@ -19,12 +19,12 @@ public class ParalyzeEffect implements AttackEffect {
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		if (defender.getStatusCondition().getStatusCondition() == StatusConditions.PARALYZED) {
+		if (defender.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " ya está paralizado");
 			return result;
 		}
 
-		ctx.getStatusService().trySetStatus(defender, new State(StatusConditions.PARALYZED), ctx.getWeather(),
+		ctx.getStatusService().trySetStatusCondition(defender, new State(StatusConditions.PARALYZED), ctx.getWeather(),
 				ctx.isWeatherSuppressed(), ctx.getAttack());
 
 		return result;

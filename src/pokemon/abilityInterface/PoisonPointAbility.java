@@ -18,7 +18,8 @@ public class PoisonPointAbility extends AbilityEffect {
 		if (!attackCtx.getDefender().hasPoisonPointAbility())
 			return true;
 
-		if (attackCtx.getAttacker().hasActiveStatusCondition(StatusConditions.POISONED))
+		if (attackCtx.getAttacker().hasActiveStatusCondition(StatusConditions.POISONED)
+				|| attackCtx.getAttacker().hasActiveStatusCondition(StatusConditions.BADLY_POISONED))
 			return true;
 
 		// Attack must make contact
@@ -30,7 +31,7 @@ public class PoisonPointAbility extends AbilityEffect {
 			return true;
 
 		// Try to apply poison
-		attackCtx.getStatusService().trySetStatus(attackCtx.getAttacker(), new State(StatusConditions.POISONED), null,
+		attackCtx.getStatusService().trySetStatusCondition(attackCtx.getAttacker(), new State(StatusConditions.POISONED), null,
 				false, attackCtx.getAttack());
 		System.out.println(
 				attackCtx.getAttacker().getName() + " fue envenenado por la habilidad Punto tóxico del Pokémon rival");

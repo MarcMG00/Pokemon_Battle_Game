@@ -7,6 +7,7 @@ import java.util.Scanner;
 import pokemon.attackInterface.AbsorbEffect;
 import pokemon.attackInterface.AttackEffect;
 import pokemon.attackInterface.AttackRestOneTurnEffect;
+import pokemon.attackInterface.BadlyPoisonedEffect;
 import pokemon.attackInterface.ChargeAttackEffect;
 import pokemon.attackInterface.ConditionalPowerEffect;
 import pokemon.attackInterface.ConfusedEffect;
@@ -238,6 +239,9 @@ public class AttackService {
 
 		// Attack and remove constant PS from initial attacker Pokemon
 		attackEffects.put(165, new FixedRecoilDamageEffect(damageService)); // Forcejeo/Struggle (tested)
+
+		// Badly poisoned effect
+		attackEffects.put(92, new BadlyPoisonedEffect()); // Tóxico/Toxic (tested)
 	}
 
 	// -----------------------------
@@ -357,14 +361,14 @@ public class AttackService {
 	// Check if can select next attack
 	// -----------------------------
 	private boolean isForcedAttack(Pokemon pk) {
-		return pk.isChargingAttackForNextRound() || statusService.isTrappedByOwnAttack(pk);
+		return pk.isChargingAttackForNextRound() || pk.isTrappedByOwnAttack();
 	}
 
 	// -----------------------------
 	// Return same attack
 	// -----------------------------
 	private int handleForcedAttack(Pokemon pk) {
-		if (statusService.isTrappedByOwnAttack(pk))
+		if (pk.isTrappedByOwnAttack())
 			System.out.println(
 					pk.getName() + " está furioso y continúa atacando con " + pk.getNextMovement().getName() + "!");
 
@@ -919,7 +923,7 @@ public class AttackService {
 
 			switch (effect.getType()) {
 			case STATUS_CONDITION:
-				statusService.trySetStatus(ctx.getDefender(), new State(effect.getStatus()), ctx.getWeather(),
+				statusService.trySetStatusCondition(ctx.getDefender(), new State(effect.getStatus()), ctx.getWeather(),
 						ctx.isWeatherSuppressed(), ctx.getAttack());
 				break;
 			case EPHEMERAL_STATUS:

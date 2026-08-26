@@ -88,7 +88,7 @@ public class Player {
 	public void printPokemonInfo() {
 		// Get only Pokemon not debilitated
 		List<Pokemon> pokemonAvailable = this.getPokemon().stream()
-				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+				.filter(pk -> !pk.hasActiveStatusCondition(StatusConditions.DEBILITATED)).toList();
 
 		for (Pokemon pk : pokemonAvailable) {
 			System.out.println(pk.getId() + " - " + pk.getName() + " - tipo(s) : ");
@@ -109,7 +109,7 @@ public class Player {
 	public boolean hasAvailableSwitch() {
 		// Get available Pokemon from current player
 		List<Pokemon> options = this.getPokemon().stream().filter(pk -> pk != this.getPkCombatting())
-				.filter(pk -> pk.getStatusCondition().getStatusCondition() != StatusConditions.DEBILITATED).toList();
+				.filter(pk -> !pk.hasActiveStatusCondition(StatusConditions.DEBILITATED)).toList();
 
 		if (options.isEmpty())
 			return false; // If no more Pokemon remaining, attack fails

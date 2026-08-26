@@ -891,8 +891,19 @@ public class Pokemon {
 		return this.getPs() < this.getInitialPs() / 3;
 	}
 
+	// -----------------------------
+	// Check if current PS are at 100%
+	// -----------------------------
 	public boolean hasMaxPS() {
 		return this.getPs() >= this.getInitialPs();
+	}
+
+	// -----------------------------
+	// Check if trapped by own attack
+	// -----------------------------
+	public boolean isTrappedByOwnAttack() {
+		return hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)
+				&& getEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK).getNbTurns() > 0;
 	}
 
 	// -----------------------------
@@ -1572,6 +1583,14 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasToxicBoostAbility() {
 		return this.getAbilitySelected().getId() == 137;
+	}
+
+	// -----------------------------
+	// 137_Toxic_boost rises attack by 50% if attacker is poisoned
+	// -----------------------------
+	public boolean isToxicBoostActive() {
+		return hasToxicBoostAbility() && (hasActiveStatusCondition(StatusConditions.POISONED)
+				|| hasActiveStatusCondition(StatusConditions.BADLY_POISONED));
 	}
 
 	// -----------------------------

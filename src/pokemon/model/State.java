@@ -11,6 +11,7 @@ public class State {
 	private int nbTurns;
 	private int percentToBeDefrosted;
 	private Attack attackDisabled;
+	private int toxicCounter;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -20,6 +21,7 @@ public class State {
 		this.nbTurns = 0;
 		this.percentToBeDefrosted = 10;
 		this.attackDisabled = new Attack();
+		this.toxicCounter = 0;
 	}
 
 	public State(StatusConditions estadoEnum, int numTurnos) {
@@ -27,6 +29,7 @@ public class State {
 		this.nbTurns = numTurnos;
 		this.percentToBeDefrosted = 10;
 		this.attackDisabled = new Attack();
+		this.toxicCounter = 0;
 	}
 
 	public State(StatusConditions estadoEnum) {
@@ -34,6 +37,7 @@ public class State {
 		this.nbTurns = 0;
 		this.percentToBeDefrosted = 10;
 		this.attackDisabled = new Attack();
+		this.toxicCounter = 0;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -69,5 +73,17 @@ public class State {
 
 	public void setAttackDisabled(Attack attackDisabled) {
 		this.attackDisabled = attackDisabled;
+	}
+
+	public int getToxicCounter() {
+		return toxicCounter;
+	}
+
+	public void setToxicCounter(int toxicCounter) {
+		this.toxicCounter = toxicCounter;
+	}
+	
+	public void incrementToxicCounter() {
+	    toxicCounter++;
 	}
 }

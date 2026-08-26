@@ -30,7 +30,7 @@ public class StaticAbility extends AbilityEffect {
 			return true;
 
 		// Try to apply paralysis
-		attackCtx.getStatusService().trySetStatus(attackCtx.getAttacker(), new State(StatusConditions.PARALYZED), null,
+		attackCtx.getStatusService().trySetStatusCondition(attackCtx.getAttacker(), new State(StatusConditions.PARALYZED), null,
 				false, attackCtx.getAttack());
 		System.out.println(attackCtx.getAttacker().getName()
 				+ " fue paralizado por la habilidad electricidad estática del Pokémon rival");

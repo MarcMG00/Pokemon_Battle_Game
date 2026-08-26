@@ -6,7 +6,7 @@ import pokemon.model.AttackResult;
 import pokemon.model.Pokemon;
 import pokemon.model.State;
 
-public class PoisonEffect implements AttackEffect {
+public class BadlyPoisonedEffect implements AttackEffect {
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
@@ -19,14 +19,13 @@ public class PoisonEffect implements AttackEffect {
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		if (defender.hasActiveStatusCondition(StatusConditions.POISONED)
-				|| defender.hasActiveStatusCondition(StatusConditions.BADLY_POISONED)) {
-			System.out.println(defender.getName() + " (Id:" + defender.getId() + ")"
-					+ " ya está envenenado/gravemente envenenado");
+		if (defender.hasActiveStatusCondition(StatusConditions.BADLY_POISONED)) {
+			System.out
+					.println(defender.getName() + " (Id:" + defender.getId() + ")" + " ya está gravemente envenenado");
 			return result;
 		}
 
-		ctx.getStatusService().trySetStatusCondition(defender, new State(StatusConditions.POISONED), ctx.getWeather(),
+		ctx.getStatusService().trySetStatusCondition(defender, new State(StatusConditions.BADLY_POISONED), ctx.getWeather(),
 				ctx.isWeatherSuppressed(), ctx.getAttack());
 
 		return result;
