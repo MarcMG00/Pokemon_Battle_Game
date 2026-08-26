@@ -37,7 +37,6 @@ import pokemon.attackInterface.WeightDamageEffect;
 import pokemon.enums.AttackCategory;
 import pokemon.enums.StatType;
 import pokemon.enums.StatusConditions;
-import pokemon.enums.Weather;
 
 public class AttackService {
 	public static final String ANSI_BLACK = "\u001B[30m";
@@ -116,6 +115,8 @@ public class AttackService {
 		attackEffects.put(85, simpleDamage); // Rayo/Thunderbolt (tested)
 		attackEffects.put(87, simpleDamage); // Trueno/Thunder (tested)
 		attackEffects.put(88, simpleDamage); // Lanzarrocas/Rock Throw (tested)
+		attackEffects.put(93, simpleDamage); // Confusión/Confusion (tested)
+		attackEffects.put(94, simpleDamage); // Psíquico/Psychic (tested)
 
 		// Multi-hit attacks (normal damage)
 		attackEffects.put(3, new MultiHitEffect(helperService, damageService, 1, 5)); // Doble bofetón/Double slap
@@ -141,8 +142,10 @@ public class AttackService {
 		attackEffects.put(32, new OneHitKOEffect()); // Perforador/Horn drill (tested)
 		attackEffects.put(90, new OneHitKOEffect()); // Fisura/Fissure (tested)
 
-		// Buffs stats
+		// Buffs stats (only one state)
 		attackEffects.put(14, new StatBoostEffect(StatType.ATTACK, 2)); // Danza espada/Swords dance (tested)
+		attackEffects.put(96, new StatBoostEffect(StatType.ATTACK, 1)); // Meditación/Meditate (tested)
+		attackEffects.put(97, new StatBoostEffect(StatType.SPEED, 2)); // Agilidad/Agility (tested)
 
 		// Rise power if charging an attack and can hit while invulnerable
 		attackEffects.put(16, new ConditionalPowerEffect(damageService, 2f)); // Tornado/Gust (tested)
@@ -187,6 +190,7 @@ public class AttackService {
 		// Sleep effect
 		attackEffects.put(47, new SleepEffect(helperService, 1, 7)); // Canto/Sing (tested)
 		attackEffects.put(79, new SleepEffect(helperService, 1, 7)); // Somnífero/Sleep powder (tested)
+		attackEffects.put(95, new SleepEffect(helperService, 1, 7)); // Hipnosis/Hypnosis (tested)
 
 		// Confused effect
 		attackEffects.put(48, new ConfusedEffect(helperService, 1, 7)); // Supersónico/Supersonic (tested)
@@ -221,7 +225,7 @@ public class AttackService {
 		// Drenadoras/Leech seed (tested)
 		attackEffects.put(73, new LeechSeedEffect());
 
-		// Multi buffs stats
+		// Buffs stats (multiple states)
 		Map<StatType, Integer> growthStats = new HashMap<>();
 		growthStats.put(StatType.ATTACK, 1);
 		growthStats.put(StatType.SPECIAL_ATTACK, 1);

@@ -1264,6 +1264,15 @@ public class ReaderData {
 					0.10);
 			attack.addSecondaryEffect(secondaryEffect);
 			break;
+		case 93:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STATUS_CONDITION, StatusConditions.CONFUSED,
+					0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
+		case 94:
+			secondaryEffect = new SecondaryEffect(SecondaryEffectType.STAT_DROP, StatType.SPECIAL_DEFENSE, 1, 0.10);
+			attack.addSecondaryEffect(secondaryEffect);
+			break;
 		default:
 			attack.setSecondaryEffectsNull();
 			break;

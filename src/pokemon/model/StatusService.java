@@ -518,10 +518,8 @@ public class StatusService {
 			System.out.println(pk.getName() + " fue intoxicado (gravemente envenenado)");
 			break;
 		case FROZEN:
-			// 40_Magma_Armor ability
-			if (isFrozenImmuneByAbility(pk, weather)) {
+			if (isFrozenImmuneByAbility(pk, weather))
 				return;
-			}
 
 			resetFireBoostIfNeeded(pk, canBeFrozen, isWeatherSuppressed);
 
@@ -550,7 +548,6 @@ public class StatusService {
 	// Try to put ephemeral status on Pokemon facing
 	// -----------------------------
 	public void trySetEphemeralStatus(State state, Pokemon pk, StatusConditions status, Attack attackAttacker) {
-		// 19_Shield_Dust doesn't allow to get secondary effects
 		if (isShieldDustActive(pk, attackAttacker))
 			return;
 
@@ -594,7 +591,6 @@ public class StatusService {
 			return true;
 		}
 
-		// 19_Shield_Dust doesn't allow to get secondary effects
 		if (isShieldDustActive(pk, attackAttacker))
 			return true;
 
@@ -619,7 +615,7 @@ public class StatusService {
 	// Check if Pokemon already has a status condition
 	// -----------------------------
 	private boolean alreadyHasStatusCondition(Pokemon pk, State newState) {
-		// Pokemon can be intoxicated (is one level above Poison)
+		// Pokemon can be intoxicated ("is one level above Poison")
 		if (pk.hasActiveStatusCondition(StatusConditions.POISONED)
 				&& newState.getStatusCondition() == StatusConditions.BADLY_POISONED)
 			return false;
