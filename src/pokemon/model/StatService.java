@@ -5,6 +5,12 @@ import pokemon.enums.StatusConditions;
 import pokemon.enums.Weather;
 
 public class StatService {
+	private final AbilityService abilityService;
+
+	public StatService() {
+		this.abilityService = new AbilityService();
+	}
+
 	// -----------------------------
 	// Get attack stage for normal attack
 	// -----------------------------
@@ -290,5 +296,16 @@ public class StatService {
 	public boolean isIntimidateImmune(Pokemon pk) {
 		return pk.hasObliviousAbility() || pk.hasOwnTempoAbility() || pk.hasClearBodyAbility()
 				|| pk.hasInnerFocusAbility();
+	}
+
+	// -----------------------------
+	// Get attack priority (from attack and abilities)
+	// -----------------------------
+	public int getEffectivePriority(Pokemon pokemon, Attack attack) {
+		int priority = attack.getPriority();
+
+		priority += abilityService.getPriorityModifier(pokemon);
+
+		return priority;
 	}
 }

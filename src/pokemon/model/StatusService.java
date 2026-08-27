@@ -299,9 +299,9 @@ public class StatusService {
 
 				System.out.println(pk.getName() + " está gravemente envenenado - PS actuales : " + pk.getPs());
 			}
-		}
 
-		state.incrementToxicCounter();
+			state.incrementToxicCounter();
+		}
 
 		if (pk.hasFainted())
 			pk.setStatusCondition(new State(StatusConditions.DEBILITATED));
@@ -347,13 +347,13 @@ public class StatusService {
 
 				System.out.println(pk.getName() + " está atado y recibe daño");
 			}
-		}
 
-		trappedStatus.setNbTurns(trappedStatus.getNbTurns() - 1);
+			trappedStatus.setNbTurns(trappedStatus.getNbTurns() - 1);
 
-		if (trappedStatus.getNbTurns() <= 0) {
-			pk.removeEphemeralStatus(StatusConditions.TRAPPED);
-			System.out.println(pk.getName() + " ya no está atrapado!");
+			if (trappedStatus.getNbTurns() <= 0) {
+				pk.removeEphemeralStatus(StatusConditions.TRAPPED);
+				System.out.println(pk.getName() + " ya no está atrapado!");
+			}
 		}
 
 		if (pk.getPs() <= 0)

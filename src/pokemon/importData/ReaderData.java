@@ -703,6 +703,8 @@ public class ReaderData {
 				// Set if attack is state type (don't do damage and have support/secondary
 				// effects, etc. against PK facing)
 				setIsStateAttackAgainstPkFacing(attack);
+				// Set the priority of the attack
+				setAttackPriority(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -1358,6 +1360,71 @@ public class ReaderData {
 			break;
 		default:
 			attack.setPunchMove(false);
+		}
+	}
+
+	// -----------------------------
+	// Set the priority of the attack
+	// -----------------------------
+	private static void setAttackPriority(Attack attack) {
+		// "Puño certero" => priority 7 when applying charging state, but priority -3 to
+		// execute
+		// It lasts "Canto Helado" => I don't have the attack (priority 1)
+		// It lasts "Tiro vital" => I don't have the attack (priority -1)
+		// It lasts "Contador" => I don't have the attack (priority -5)
+		// There is not priority 2 ?
+
+		switch (attack.getId()) {
+		case 285:
+			attack.setPriority(6);
+			break;
+		case 270:
+			attack.setPriority(5);
+			break;
+		case 277:
+		case 289:
+			attack.setPriority(4);
+			break;
+		case 182:
+		case 197:
+		case 203:
+		case 266:
+			attack.setPriority(3);
+			break;
+		case 364:
+			attack.setPriority(2);
+			break;
+		case 98:
+		case 117:
+		case 183:
+		case 245:
+		case 252:
+		case 389:
+		case 410:
+		case 418:
+		case 425:
+		case 453:
+			attack.setPriority(1);
+			break;
+		case 264:
+			attack.setPriority(-3);
+			break;
+		case 279:
+		case 419:
+			attack.setPriority(-4);
+			break;
+		case 243:
+			attack.setPriority(-5);
+			break;
+		case 18:
+		case 46:
+			attack.setPriority(-6);
+			break;
+		case 433:
+			attack.setPriority(-7);
+			break;
+		default:
+			attack.setPriority(0);
 		}
 	}
 

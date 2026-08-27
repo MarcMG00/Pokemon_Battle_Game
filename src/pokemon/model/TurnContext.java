@@ -23,6 +23,14 @@ public class TurnContext {
 		setSpeed(pk, getSpeed(pk) * multiplier);
 	}
 
+	public int getPriority(Pokemon pk) {
+		return getStats(pk).priority;
+	}
+
+	public void setPriority(Pokemon pk, int priority) {
+		getStats(pk).priority = priority;
+	}
+
 	public Set<Pokemon> getPokemons() {
 		return stats.keySet();
 	}

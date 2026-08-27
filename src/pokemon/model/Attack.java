@@ -39,6 +39,7 @@ public class Attack {
 	private boolean isAppliedToAttacker;
 	private boolean isStateAttackAgainstPkFacing; // used for some abilities to reduce precision if goes to Pokemon
 													// facing (only applied on "other" attacks)
+	private int priority; // priority of execution
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -70,6 +71,7 @@ public class Attack {
 		this.isSelfDestruction = false;
 		this.isAppliedToAttacker = false;
 		this.isStateAttackAgainstPkFacing = false;
+		this.priority = 0;
 	}
 
 	public Attack(int id, String name, String type, float power, int pp, float precision, String effect) {
@@ -100,6 +102,7 @@ public class Attack {
 		this.isSelfDestruction = false;
 		this.isAppliedToAttacker = false;
 		this.isStateAttackAgainstPkFacing = false;
+		this.priority = 0;
 	}
 
 	public Attack(Attack attack) {
@@ -130,6 +133,7 @@ public class Attack {
 		this.isSelfDestruction = attack.isSelfDestruction;
 		this.isAppliedToAttacker = attack.isAppliedToAttacker;
 		this.isStateAttackAgainstPkFacing = attack.isStateAttackAgainstPkFacing;
+		this.priority = attack.priority;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -346,6 +350,14 @@ public class Attack {
 
 	public void setIsStateAttackAgainstPkFacing(boolean isStateAttackAgainstPkFacing) {
 		this.isStateAttackAgainstPkFacing = isStateAttackAgainstPkFacing;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
 	// ==================================== METHODS
@@ -582,7 +594,7 @@ public class Attack {
 	public boolean isDig() {
 		return this.getId() == 91;
 	}
-	
+
 	// -----------------------------
 	// Check if attack is 165_Struggle
 	// -----------------------------

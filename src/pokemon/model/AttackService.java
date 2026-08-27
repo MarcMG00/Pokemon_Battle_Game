@@ -59,6 +59,7 @@ public class AttackService {
 	private Map<Integer, AttackEffect> attackEffects = new HashMap<>();
 	private HelperService helperService;
 	private AccuracyService accuracyService;
+	private boolean playerWonSpeedTie = true;
 
 	public AttackService(BattleContext battleCtx) {
 		this.battleCtx = battleCtx;
@@ -117,6 +118,7 @@ public class AttackService {
 		attackEffects.put(88, simpleDamage); // Lanzarrocas/Rock Throw (tested)
 		attackEffects.put(93, simpleDamage); // Confusión/Confusion (tested)
 		attackEffects.put(94, simpleDamage); // Psíquico/Psychic (tested)
+		attackEffects.put(98, simpleDamage); // Ataque rápido/Quick attack (tested)
 
 		// Multi-hit attacks (normal damage)
 		attackEffects.put(3, new MultiHitEffect(helperService, damageService, 1, 5)); // Doble bofetón/Double slap
@@ -271,10 +273,6 @@ public class AttackService {
 		// through the IAPlayer instead
 
 		TurnContext turnCtx = buildTurnContext();
-		// Apply stats effect before turn starts (reduce speed if paralyzed, etc.)
-		applyModifierStatsPokemon(pkPlayer, turnCtx);
-		applyModifierStatsPokemon(battleCtx.getPkIA(), turnCtx);
-		weatherService.applyStatsFromWeather(turnCtx);
 
 		// Informative : Some status conditions can be removed before attacking (for
 		// example Frozen), so check at the beginning of the turn
@@ -290,13 +288,19 @@ public class AttackService {
 		} else
 			handleIANotAbleToAct(battleCtx.getPkIA());
 
+		// Apply stats effect before turn starts (reduce speed if paralyzed, etc.)
+		applyModifierStatsPokemon(pkPlayer, pkPlayer.getNextMovement(), turnCtx);
+		applyModifierStatsPokemon(battleCtx.getPkIA(), battleCtx.getPkIA().getNextMovement(), turnCtx);
+		weatherService.applyStatsFromWeather(turnCtx);
+
 		// Execute the attack sequence (ordering uses current canAttack and speed)
 		handleNormalAttackSequence(sc, pkPlayer, battleCtx.getPkIA(), turnCtx);
 
 		// POST ATTACK EFFECTS
 		// From here, apply effects (from abilities, status conditions, weather, etc.)
 		// within the speed from each Pokemon (even for draining status)
-		boolean playerAttacksFirst = playerAttacksFirst(pkPlayer, battleCtx.getPkIA(), turnCtx);
+		Pokemon firstPokemonAttacker = determineFirstAttacker(pkPlayer, battleCtx.getPkIA(), turnCtx, true);
+		boolean playerAttacksFirst = firstPokemonAttacker == pkPlayer;
 
 		if (playerAttacksFirst) {
 			statusService.handleDrainingStatusEffects(pkPlayer, battleCtx.getPkIA());
@@ -339,11 +343,13 @@ public class AttackService {
 	}
 
 	// -----------------------------
-	// Apply instantly stats modifiers to Pokemon (get speed, etc.) before starting
-	// checks
+	// Apply instantly stats modifiers to Pokemon before starting checks (get speed,
+	// attack priority, etc.)
 	// -----------------------------
-	private void applyModifierStatsPokemon(Pokemon pk, TurnContext turnCtx) {
+	private void applyModifierStatsPokemon(Pokemon pk, Attack attack, TurnContext turnCtx) {
 		turnCtx.setSpeed(pk, statService.getEffectiveSpeed(pk));
+
+		turnCtx.setPriority(pk, attack.getPriority() + abilityService.getPriorityModifier(pk));
 	}
 
 	// -----------------------------
@@ -516,7 +522,8 @@ public class AttackService {
 	// Handle normal attack sequence (both players attack)
 	// -----------------------------
 	private void handleNormalAttackSequence(Scanner sc, Pokemon playerPk, Pokemon iaPk, TurnContext turnCtx) {
-		boolean playerAttacksFirst = playerAttacksFirst(playerPk, iaPk, turnCtx);
+		Pokemon firstPokemonAttacker = determineFirstAttacker(playerPk, iaPk, turnCtx, false);
+		Pokemon secondPokemonAttacker = firstPokemonAttacker == playerPk ? iaPk : playerPk;
 
 		System.out.println(ANSI_RED + "Velocidad normal jugador : " + playerPk.getSpeed() + " / Velocidad efectiva : "
 				+ turnCtx.getSpeed(playerPk) + ANSI_RESET);
@@ -524,31 +531,70 @@ public class AttackService {
 				+ turnCtx.getSpeed(iaPk) + ANSI_RESET);
 
 		// 1. Get order of players
-		Player attacker = playerAttacksFirst ? battleCtx.getPlayer() : battleCtx.getIa();
-		Player defender = playerAttacksFirst ? battleCtx.getIa() : battleCtx.getPlayer();
+		Player firstPlayer = getPlayerOfPokemon(firstPokemonAttacker);
+		Player secondPlayer = getPlayerOfPokemon(secondPokemonAttacker);
 
 		// 2. First player attacks
-		boolean turnShouldEnd = attackAndCheckIfTurnEnds(attacker, defender, sc, turnCtx);
+		boolean turnShouldEnd = attackAndCheckIfTurnEnds(firstPlayer, secondPlayer, sc, turnCtx);
 
 		// 3. Second player attacks if turn can continue
 		if (!turnShouldEnd)
-			attackAndCheckIfTurnEnds(defender, attacker, sc, turnCtx);
+			attackAndCheckIfTurnEnds(secondPlayer, firstPlayer, sc, turnCtx);
 	}
 
 	// -----------------------------
-	// Player attack first
+	// Determine first attacker
 	// -----------------------------
-	private boolean playerAttacksFirst(Pokemon playerPk, Pokemon iaPk, TurnContext ctx) {
-		if (!playerPk.canAttack())
-			return false;
+	private Pokemon determineFirstAttacker(Pokemon playerPk, Pokemon iaPk, TurnContext ctx, boolean alreadyDetermined) {
+		int playerPriority = ctx.getPriority(playerPk);
+		int iaPriority = ctx.getPriority(iaPk);
 
-		int playerPriority = abilityService.getSpeedPriorityModifier(playerPk);
-		int iaPriority = abilityService.getSpeedPriorityModifier(iaPk);
+		if (playerPriority > iaPriority)
+			return playerPk;
 
-		if (playerPriority != iaPriority)
-			return playerPriority > iaPriority;
+		if (playerPriority < iaPriority)
+			return iaPk;
 
-		return ctx.getSpeed(playerPk) >= ctx.getSpeed(iaPk);
+		float playerSpeed = ctx.getSpeed(playerPk);
+		float iaSpeed = ctx.getSpeed(iaPk);
+
+		if (playerSpeed > iaSpeed)
+			return playerPk;
+
+		if (playerSpeed < iaSpeed)
+			return iaPk;
+
+		if (resolveSpeedTie(playerPk, iaPk, alreadyDetermined))
+			return playerPk;
+		else
+			return iaPk;
+	}
+
+	// -----------------------------
+	// Get player of Pokemon attacker
+	// -----------------------------
+	private Player getPlayerOfPokemon(Pokemon pokemon) {
+		return pokemon == battleCtx.getPkPlayer() ? battleCtx.getPlayer() : battleCtx.getIa();
+	}
+
+	// -----------------------------
+	// Resolve speed if Pokemon have same attack priority and same effective speed;
+	// This method is called two times on the same turn, so pass a boolean to avoid
+	// changing again "this.playerWonSpeedTie" => determine order with the following
+	// sequence ABBAABBAAB...
+	// -----------------------------
+	private boolean resolveSpeedTie(Pokemon playerPk, Pokemon iaPk, boolean alreadyDetermined) {
+		boolean playerWon = this.playerWonSpeedTie;
+
+		if (alreadyDetermined)
+			return playerWon;
+
+		System.out.println(ANSI_RED + "El jugador ganó teniendo la misma velocidad/prioridad : "
+				+ this.playerWonSpeedTie + ANSI_RESET);
+
+		this.playerWonSpeedTie = !this.playerWonSpeedTie;
+
+		return playerWon;
 	}
 
 	// -----------------------------
@@ -1003,10 +1049,6 @@ public class AttackService {
 
 		TurnContext turnCtx = buildTurnContext();
 
-		// Modify stats from IA Pokemon
-		applyModifierStatsPokemon(pkIA, turnCtx);
-		weatherService.applyStatsFromWeather(turnCtx);
-
 		// Evaluate all the status conditions / ephemeral statuses (to determine if can
 		// attack)
 		statusService.evaluateStatusStartOfTurn(pkIA);
@@ -1014,6 +1056,11 @@ public class AttackService {
 
 		if (pkIA.canDonAnythingNextRound()) {
 			prepareIAPokemonAttack();
+
+			// Modify stats from IA Pokemon
+			applyModifierStatsPokemon(pkIA, pkIA.getNextMovement(), turnCtx);
+			weatherService.applyStatsFromWeather(turnCtx);
+
 			handleIAAttacksSequence(sc, turnCtx); // only IA attacks
 		} else
 			handleIANotAbleToAct(pkIA);

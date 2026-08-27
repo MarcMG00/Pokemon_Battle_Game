@@ -290,13 +290,15 @@ public class AbilityService {
 	}
 
 	// -----------------------------
-	// Get priority points from speed (allows to know first Pokemon attacking)
+	// Get priority points (allows to know first Pokemon attacking)
 	// -----------------------------
-	public int getSpeedPriorityModifier(Pokemon pk) {
+	public int getPriorityModifier(Pokemon pk) {
+		int modifier = 0;
+
 		// 100_Stall ability => moves last
 		if (pk.hasStallAbility())
-			return -1;
+			modifier -= 1;
 
-		return 0;
+		return modifier;
 	}
 }
