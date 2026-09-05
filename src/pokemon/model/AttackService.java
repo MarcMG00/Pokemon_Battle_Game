@@ -282,7 +282,13 @@ public class AttackService {
 		preparePlayerPokemonAttack(attackId);
 
 		// IA ACTIONS
-		tryIAPokemonSwitchIfPossible();
+		boolean iaHasSwitch = tryIAPokemonSwitchIfPossible();
+
+		if (iaHasSwitch)
+			// Prepare effectiveness of the attack from Player again (because of the switch
+			// from IA)
+			AttackAnalyzer.prepareEfectivenessChosenAttack(pkPlayer, battleCtx.getPkIA(), pkPlayer.getNextMovement());
+
 		if (battleCtx.getPkIA().canDonAnythingNextRound()) {
 			prepareIAPokemonAttack();
 		} else
@@ -474,34 +480,34 @@ public class AttackService {
 	// -----------------------------
 	// IA can decide to change Pokemon only if it's not charging an attack
 	// -----------------------------
-	private void tryIAPokemonSwitchIfPossible() {
+	private boolean tryIAPokemonSwitchIfPossible() {
 		Pokemon iaPk = battleCtx.getPkIA();
 
 		if (!iaPk.canDonAnythingNextRound() || iaPk.isChargingAttackForNextRound())
-			return;
+			return false;
 
 		if (abilityService.isBlockedByMagnetPull(battleCtx, true))
-			return;
+			return false;
 
 		if (abilityService.isBlockedByArenaTrap(battleCtx, true))
-			return;
+			return false;
 
 		if (battleCtx.getPkPlayer().hasShadowTagAbility()) {
 			System.out.println("No puede cambiar de Pokémon a causa de Sombra trampa del Pokémon rival");
-			return;
+			return false;
 		}
 
 		if (iaPk.hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
 			System.out.println("No puede cambiar de Pokémon ya que está atrapado (bajo un efecto o ataque)");
-			return;
+			return false;
 		}
 
 		if (iaPk.hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
 			System.out.println("No puede cambiar de Pokémon ya que está atrapado (bajo su propio ataque)");
-			return;
+			return false;
 		}
 
-		switchPokemonService.tryIAPokemonSwitch();
+		return switchPokemonService.tryIAPokemonSwitch();
 	}
 
 	// -----------------------------
@@ -534,11 +540,14 @@ public class AttackService {
 		Player firstPlayer = getPlayerOfPokemon(firstPokemonAttacker);
 		Player secondPlayer = getPlayerOfPokemon(secondPokemonAttacker);
 
+		boolean turnShouldEnd = false;
+
 		// 2. First player attacks
-		boolean turnShouldEnd = attackAndCheckIfTurnEnds(firstPlayer, secondPlayer, sc, turnCtx);
+		if (!firstPokemonAttacker.justEnteredBattle())
+			turnShouldEnd = attackAndCheckIfTurnEnds(firstPlayer, secondPlayer, sc, turnCtx);
 
 		// 3. Second player attacks if turn can continue
-		if (!turnShouldEnd)
+		if (!turnShouldEnd && !secondPokemonAttacker.justEnteredBattle())
 			attackAndCheckIfTurnEnds(secondPlayer, firstPlayer, sc, turnCtx);
 	}
 
@@ -1039,13 +1048,21 @@ public class AttackService {
 	}
 
 	// -----------------------------
-	// Handle attack from IA when player is changing the Pokemon
+	// Handle attack from IA when player is switching the Pokemon
 	// -----------------------------
 	public boolean handlePlayerSwitchIAAttacks(Scanner sc) {
+		Pokemon pkIA = battleCtx.getPkIA();
+
+		// Prepare the attack before Player switch the Pokemon
+		if (pkIA.canDonAnythingNextRound())
+			prepareIAPokemonAttack();
+
+		Attack attackPkIA = pkIA.getNextMovement();
+
+		// Player can try to switch
+		// Informative : if TRUE, select again an option from BattleService
 		if (isPokemonForbidenToSwitch(sc))
 			return true;
-
-		Pokemon pkIA = battleCtx.getPkIA();
 
 		TurnContext turnCtx = buildTurnContext();
 
@@ -1055,7 +1072,9 @@ public class AttackService {
 		statusService.canAttackEvaluatingAllStatesToAttack(pkIA);
 
 		if (pkIA.canDonAnythingNextRound()) {
-			prepareIAPokemonAttack();
+			// Prepare effectiveness of the attack from IA again (because of the switch from
+			// Player)
+			AttackAnalyzer.prepareEfectivenessChosenAttack(pkIA, battleCtx.getPkPlayer(), attackPkIA);
 
 			// Modify stats from IA Pokemon
 			applyModifierStatsPokemon(pkIA, pkIA.getNextMovement(), turnCtx);

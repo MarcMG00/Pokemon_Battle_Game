@@ -11,6 +11,16 @@ import java.util.stream.Collectors;
 import pokemon.enums.StatusConditions;
 
 public final class AttackAnalyzer {
+	public static final String ANSI_BLACK = "\u001B[30m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	public static final String ANSI_BLUE = "\u001B[34m";
+	public static final String ANSI_PURPLE = "\u001B[35m";
+	public static final String ANSI_CYAN = "\u001B[36m";
+	public static final String ANSI_WHITE = "\u001B[37m";
+	public static final String ANSI_RESET = "\u001B[0m";
+
 	private AttackAnalyzer() {
 	}
 
@@ -304,29 +314,22 @@ public final class AttackAnalyzer {
 	// -----------------------------
 	// Prepare best attack for player
 	// -----------------------------
-	public static void prepareBestAttackPlayer(Player owner, int attackId, Pokemon pokemonRival) {
-		Pokemon defender = owner.getPkFacing();
+	public static void prepareBestAttackPlayer(Player owner, int attackId, Pokemon defender) {
 		Optional<Attack> nextAttack;
+		Pokemon attacker = owner.getPkCombatting();
 
 		if (isAttackStruggle(attackId)) {
-			nextAttack = owner.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == attackId)
-					.findFirst();
+			nextAttack = attacker.getPhysicalAttacks().stream().filter(a -> a.getId() == attackId).findFirst();
 		} else {
-			nextAttack = owner.getPkCombatting().getFourPrincipalAttacks().stream().filter(a -> a.getId() == attackId)
-					.findFirst();
+			nextAttack = attacker.getFourPrincipalAttacks().stream().filter(a -> a.getId() == attackId).findFirst();
 		}
 
 		if (nextAttack.isEmpty())
 			return;
 
 		Attack atk = nextAttack.get();
-		PokemonType attackType = atk.getPkType();
 
-		// 1 - Real effectiveness
-		float effectiveness = getEffectiveness(attackType, pokemonRival);
-
-		prepareAttack(atk, owner.getPkCombatting(), defender, effectiveness);
-
+		prepareEfectivenessChosenAttack(owner.getPkCombatting(), defender, atk);
 		owner.getPkCombatting().setNextMovement(atk);
 	}
 
@@ -444,15 +447,9 @@ public final class AttackAnalyzer {
 			chosenAttack = attacker.getFourPrincipalAttacks().stream().filter(a -> a.getPp() > 0).findFirst().get();
 		}
 
-		// Get again effectiveness => for example for 110_Tinted_Lens ability doubles
-		// low effectiveness damage => but this time from chosen attack
-		float effectiveness = getEffectiveness(chosenAttack.getPkType(), opponent);
 		// Apply effectiveness and real STAB
-		prepareAttack(chosenAttack, attacker, opponent, effectiveness);
+		prepareEfectivenessChosenAttack(attacker, opponent, chosenAttack);
 		attacker.setNextMovement(chosenAttack);
-
-		System.out.println("IA eligió: " + chosenAttack.getName() + " | eff="
-				+ chosenAttack.getEffectivenessAgainstPkFacing() + " | stab=" + chosenAttack.getBonus());
 	}
 
 	// -----------------------------
@@ -473,5 +470,21 @@ public final class AttackAnalyzer {
 	public static void selectStruggle(Player owner) {
 		owner.getPkCombatting().setNextMovement(
 				owner.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == 165).findFirst().get());
+	}
+
+	// -----------------------------
+	// Prepare effectiveness of the attack from defender
+	// -----------------------------
+	public static void prepareEfectivenessChosenAttack(Pokemon attacker, Pokemon defender, Attack attack) {
+		if (attack == null)
+			return;
+
+		float effectiveness = getEffectiveness(attack.getPkType(), defender);
+
+		prepareAttack(attack, attacker, defender, effectiveness);
+
+		System.out.println(ANSI_YELLOW + "Efectividad principal/actualizada - ataque (" + attacker.getName() + ") : "
+				+ attack.getName() + " | eff=" + attack.getEffectivenessAgainstPkFacing() + " | stab="
+				+ attack.getBonus() + ANSI_RESET);
 	}
 }
