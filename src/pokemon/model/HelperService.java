@@ -23,4 +23,27 @@ public class HelperService {
 
 		return nbTurnsHoldingStatus;
 	}
+
+	// -----------------------------
+	// Generates a base Id to differentiate the same Pokemon (in the same/different
+	// team)
+	// -----------------------------
+	public int generatePokemonInstanceId(Player player, Player ia, int baseId) {
+		int count = 0;
+
+		for (Pokemon pk : player.getPokemon()) {
+			if (pk.getBaseId() == baseId)
+				count++;
+		}
+
+		for (Pokemon pk : ia.getPokemon()) {
+			if (pk.getBaseId() == baseId)
+				count++;
+		}
+
+		if (count == 0)
+			return baseId;
+
+		return baseId * 1000 + count;
+	}
 }

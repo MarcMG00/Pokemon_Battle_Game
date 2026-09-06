@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -45,9 +47,10 @@ public class Game {
 	private ReaderData readerData;
 
 	private Player player;
-	private IAPlayer IA;
+	private Player IA;
 
 	private final AbilityService abilityService;
+	private final HelperService helperService;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -62,7 +65,7 @@ public class Game {
 		this.attacks = new ArrayList<>();
 		this.attacksPerPokemon = new HashMap<>();
 		this.player = new Player();
-		this.IA = new IAPlayer();
+		this.IA = new Player();
 		this.pokemonPerType = new HashMap<>();
 		this.typeById = new HashMap<>();
 		this.pokemonById = new HashMap<>();
@@ -71,6 +74,7 @@ public class Game {
 		this.writterData = new WritterData();
 		this.readerData = new ReaderData();
 		this.abilityService = new AbilityService();
+		this.helperService = new HelperService();
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -112,7 +116,7 @@ public class Game {
 		return player;
 	}
 
-	public IAPlayer getIA() {
+	public Player getIA() {
 		return IA;
 	}
 
@@ -410,10 +414,10 @@ public class Game {
 
 		String allPkPlayer = askPlayerPokemonChoice(sc);
 
+		// Player choices
 		addPokemonToPlayer(allPkPlayer);
-
 		// Pokemon machine choices
-		this.getIA().IAPokemonChoice(this.getPlayer().getPokemon(), this.getPokemonPerType(), this.getEffectPerTypes());
+		addIAPokemonChoice();
 
 		initializePokemonAttacksAndAbilities();
 
@@ -478,14 +482,67 @@ public class Game {
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 
 		for (String pkID : pkByPkPlayer) {
-			Optional<Pokemon> pkOpt = this.getPokemon().stream().filter(pk -> pk.getId() == Integer.parseInt(pkID))
-					.findFirst();
+			int pkId = Integer.parseInt(pkID);
 
-			if (pkOpt.isPresent())
-				this.getPlayer().addPokemon(pkOpt.get());
-			else {
+			Optional<Pokemon> pkOpt = this.getPokemon().stream().filter(pk -> pk.getId() == pkId).findFirst();
+
+			if (pkOpt.isPresent()) {
+				// Creates a new instance of Pokemon in memory (otherwise there are problems of
+				// duplications)
+				Pokemon newPk = new Pokemon(pkOpt.get());
+
+				newPk.setId(helperService.generatePokemonInstanceId(this.getPlayer(), this.getIA(), newPk.getBaseId()));
+				newPk.setOwner(this.getPlayer());
+
+				// Add to player team
+				this.getPlayer().addPokemon(newPk);
+			} else {
 				System.out.println("El número marcado no está en la lista : " + pkID);
 				System.out.println("Tendrás que volver a escoger tus Pokémon (reinicia el juego)");
+			}
+		}
+	}
+
+	// -----------------------------
+	// Chooses Pokemon by comparing the player's Pokemon list
+	// -----------------------------
+	public void addIAPokemonChoice() {
+		for (Pokemon pkPlayer : this.getPlayer().getPokemon()) {
+
+			// Gets a random type index depending on how many types the Pokemon has
+			int typeIndex = (pkPlayer.getTypes().size() == 2) ? ThreadLocalRandom.current().nextInt(0, 2) : 0;
+
+			String chosenTypeName = pkPlayer.getTypes().get(typeIndex).getName().toUpperCase();
+
+			// Filters in a new Map all the damages for the chosen type
+			Map<String, HashMap<String, ArrayList<PokemonType>>> filteredEffects = effectPerTypes.entrySet().stream()
+					.filter(e -> e.getKey().equalsIgnoreCase(chosenTypeName))
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+			for (Map.Entry<String, HashMap<String, ArrayList<PokemonType>>> entry : filteredEffects.entrySet()) {
+				// Picks a random "Le rebientan" type (the type that hits hard)
+				ArrayList<PokemonType> rebientaList = entry.getValue().get("Le rebientan");
+				if (rebientaList == null || rebientaList.isEmpty())
+					continue;
+
+				PokemonType pkTRandom = rebientaList.get(ThreadLocalRandom.current().nextInt(rebientaList.size()));
+
+				String randomTypeName = pkTRandom.getName().toUpperCase();
+
+				// Gets all the Pokemon of the random type chosen
+				ArrayList<Pokemon> pokemonsOfType = pokemonPerType.get(randomTypeName);
+				if (pokemonsOfType == null || pokemonsOfType.isEmpty())
+					continue;
+
+				// Chooses a random Pokemon of that type
+				Pokemon pkRandom = pokemonsOfType.get(ThreadLocalRandom.current().nextInt(pokemonsOfType.size()));
+
+				// Ensures the IA does not take the same Pokemon twice
+				while (this.getIA().getPokemon().contains(pkRandom))
+					pkRandom = pokemonsOfType.get(ThreadLocalRandom.current().nextInt(pokemonsOfType.size()));
+
+				// Adds the selected Pokemon to the IA team
+				this.getIA().addPokemon(pkRandom);
 			}
 		}
 	}
@@ -566,8 +623,8 @@ public class Game {
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
-		String allPkPlayer = "003,003,003";
-		String allPkIA = "467,467,467";
+		String allPkPlayer = "25,25,25";
+		String allPkIA = "25,25,25";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -583,18 +640,7 @@ public class Game {
 				// duplications)
 				Pokemon newPk = new Pokemon(pkOpt.get());
 
-				// Increase count for this base ID
-				int count = pkCount.getOrDefault(baseId, 0);
-
-				// If it's not the first one, modify ID
-				if (count > 0) {
-					int newId = baseId * 1000 + count;
-					newPk.setId(newId);
-				}
-
-				// Update repetitions counter
-				pkCount.put(baseId, count + 1);
-
+				newPk.setId(helperService.generatePokemonInstanceId(this.getPlayer(), this.getIA(), newPk.getBaseId()));
 				newPk.setOwner(this.getPlayer());
 
 				// Add to player team
@@ -619,7 +665,7 @@ public class Game {
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 43).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 39).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 46).findFirst().get());
-			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
@@ -629,6 +675,7 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 10).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 84).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 38).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 98).findFirst().get());
 		}
 
 		pkCount = new HashMap<Integer, Integer>();
@@ -645,18 +692,7 @@ public class Game {
 				// duplications)
 				Pokemon newPk = new Pokemon(pkOpt.get());
 
-				// Increase count for this base ID
-				int count = pkCount.getOrDefault(baseId, 0);
-
-				// If it's not the first one, modify ID
-				if (count > 0) {
-					int newId = baseId * 1000 + count;
-					newPk.setId(newId);
-				}
-
-				// Update repetitions counter
-				pkCount.put(baseId, count + 1);
-
+				newPk.setId(helperService.generatePokemonInstanceId(this.getPlayer(), this.getIA(), newPk.getBaseId()));
 				newPk.setOwner(this.getIA());
 
 				// Add to player team
@@ -670,7 +706,7 @@ public class Game {
 		for (Pokemon pk : this.getIA().getPokemon()) {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 57).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 34).findFirst().get());
@@ -685,8 +721,9 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 40).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 91).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 98).findFirst().get());
 //			AttackAnalyzer.addAttacksForEachPokemon(this.getIA());
 
 		}

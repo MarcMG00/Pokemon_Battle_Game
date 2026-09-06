@@ -15,6 +15,7 @@ public class Pokemon {
 	// ====================================
 
 	private int id;
+	private int baseId;
 	private String name;
 	private float initialPs;
 	private float initialAttack;
@@ -75,6 +76,7 @@ public class Pokemon {
 
 	public Pokemon() {
 		this.id = 0;
+		this.baseId = 0;
 		this.name = "";
 		this.ps = 0;
 		this.attack = 0;
@@ -133,6 +135,7 @@ public class Pokemon {
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
 			float specialDefense) {
 		this.id = id;
+		this.baseId = id;
 		this.name = name;
 		this.ps = ps;
 		this.attack = attack;
@@ -192,6 +195,7 @@ public class Pokemon {
 	// duplications for the same objects)
 	public Pokemon(Pokemon pokemon) {
 		this.id = pokemon.id;
+		this.baseId = pokemon.baseId;
 		this.name = pokemon.name;
 		this.ps = pokemon.initialPs;
 		this.attack = pokemon.initialAttack;
@@ -267,6 +271,14 @@ public class Pokemon {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getBaseId() {
+		return baseId;
+	}
+
+	public void setBaseId(int baseId) {
+		this.baseId = baseId;
 	}
 
 	public String getName() {

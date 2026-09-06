@@ -270,7 +270,7 @@ public class AttackService {
 
 		Pokemon pkPlayer = battleCtx.getPkPlayer();
 		// Informative : don't stock IA Pokemon in a var because it may switch, so pass
-		// through the IAPlayer instead
+		// through the IA Player instead
 
 		TurnContext turnCtx = buildTurnContext();
 
