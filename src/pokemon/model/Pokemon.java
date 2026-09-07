@@ -919,6 +919,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if can select next attack
+	// -----------------------------
+	public boolean isForcedAttack() {
+		return this.isChargingAttackForNextRound() || this.isTrappedByOwnAttack();
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 1_Stench ability
 	// -----------------------------
 	public boolean hasStenchAbility() {
@@ -1234,10 +1241,25 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if 62_Guts ability is active => rises attack by 50%
+	// -----------------------------
+	public boolean isGutsAbilityActive() {
+		return this.hasGutsAbility() && (this.hasStatusCondition() || this.hasEphemeralStatus());
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 63_Marvel_scale ability
 	// -----------------------------
 	public boolean hasMarvelScaleAbility() {
 		return this.getAbilitySelected().getId() == 63;
+	}
+
+	// -----------------------------
+	// Check if 63_Marvel_scale ability is active => if has any status condition or
+	// ephemeral status, rises defense
+	// -----------------------------
+	public boolean isMarvelScaleAbilityActive() {
+		return this.hasMarvelScaleAbility() && (this.hasStatusCondition() || this.hasEphemeralStatus());
 	}
 
 	// -----------------------------
@@ -1423,6 +1445,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check if 95_Quick_feet ability is active => increase speed by 50%
+	// -----------------------------
+	public boolean isQuickFeetAbilityActive() {
+		return this.hasQuickFeetAbility() && (this.hasStatusCondition() || this.hasEphemeralStatus());
+	}
+
+	// -----------------------------
 	// Check if Pokemon has 96_Normalize ability
 	// -----------------------------
 	public boolean hasNormalizeAbility() {
@@ -1588,6 +1617,15 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasMultiscaleAbility() {
 		return this.getAbilitySelected().getId() == 136;
+	}
+
+	// -----------------------------
+	// Check if 136_Multiscale ability is active => reduces by 2 the damage if has
+	// all the PS
+	// Informative : doesn't affect to attacks with fixed damage
+	// -----------------------------
+	public boolean isMultiscaleAbilityActive() {
+		return this.hasMultiscaleAbility() && this.hasMaxPS();
 	}
 
 	// -----------------------------

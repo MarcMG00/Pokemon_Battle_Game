@@ -147,8 +147,7 @@ public class DamageService {
 		if (attacker.hasNormalizeAbility())
 			return 1.2f;
 
-		// 125_Sheer_force rises power by 30% if attack has secondary effects
-		if (attacker.hasSheerForceAbility() && attack.hasSecondaryEffect())
+		if (isSheerForceAbilityActive(attacker, attack))
 			// Increase power 30% more
 			return 1.3f;
 
@@ -156,14 +155,27 @@ public class DamageService {
 	}
 
 	// -----------------------------
+	// 125_Sheer_force rises power by 30% if attack has secondary effects
+	// -----------------------------
+	private boolean isSheerForceAbilityActive(Pokemon attacker, Attack attack) {
+		return attacker.hasSheerForceAbility() && attack.hasSecondaryEffect();
+	}
+
+	// -----------------------------
 	// Apply abilities depending on power level of the attack
 	// -----------------------------
 	private float applyPowerDependingPowerAttack(Pokemon attacker, Attack attack) {
-		// 101_Technician ability
-		if (attacker.hasTechnicianAbility() && attack.getPower() <= 60f)
+		if (isTechnicianAbilityActive(attacker, attack))
 			return 1.5f;
 
 		return 1f;
+	}
+
+	// -----------------------------
+	// 101_Technician ability => rises power if is a weak attack
+	// -----------------------------
+	private boolean isTechnicianAbilityActive(Pokemon attacker, Attack attack) {
+		return attacker.hasTechnicianAbility() && attack.getPower() <= 60f;
 	}
 
 	// -----------------------------
@@ -192,11 +204,18 @@ public class DamageService {
 		float damage = 0.01f * attack.getBonus() * attack.getEffectivenessAgainstPkFacing() * weatherModifier
 				* randomVariation * base;
 
-		// 18_Flash_Fire boost ability
-		if (attacker.isFireBoostActive() && attack.isFireType())
+		if (isFlasFireAbilityActive(attacker, attack))
 			damage *= 1.5f;
 
 		return damage;
+	}
+
+	// -----------------------------
+	// 18_Flash_Fire boost ability => rises power attack if has boosted by a fire
+	// attack and attack is fire type
+	// -----------------------------
+	private boolean isFlasFireAbilityActive(Pokemon attacker, Attack attack) {
+		return attacker.isFireBoostActive() && attack.isFireType();
 	}
 
 	// -----------------------------
@@ -217,7 +236,8 @@ public class DamageService {
 
 		System.out.println("Fue un golpe crítico");
 
-		if (attacker.hasSniperAbility()) // 97_Sniper ability does *3 damage
+		// 97_Sniper ability does *3 damage
+		if (attacker.hasSniperAbility())
 			return new CriticalResult(damage * 3f, true);
 
 		return new CriticalResult(damage * 2f, true);
@@ -228,23 +248,39 @@ public class DamageService {
 	// -----------------------------
 	private float applyDefensiveAbilities(Pokemon defender, Pokemon attacker, Attack attack, float damage) {
 		// REDUCE DAMAGE
-		// 47_Thick_Fat ability/ 85_Heatproof reduces damage by 2 (only if attack type
-		// it's fire or ice type)
-		if ((defender.hasThickFatAbility() && (attack.isFireType() || attack.isIceType()))
-				|| (defender.hasHeatProofAbility() && attack.isFireType()))
+		if (isThickFatAbilityActive(defender, attack) || isHeatProofAbilityActive(defender, attack))
 			return damage / 2f;
 
-		// 135_Multiscale reduces by 2 the damage if has all the PS
-		// Informative : doesn't affect to attacks with fixed damage
-		if (defender.hasMultiscaleAbility() && defender.hasMaxPS())
+		if (defender.isMultiscaleAbilityActive())
 			return damage / 2f;
 
 		// INCREASE DAMAGE
-		// 87_Dry_Skin ability with a fire attack, do 25% more damage
-		if (defender.hasDrySkinAbility() && attack.isFireType())
+		if (isDrySkinAbilityActive(defender, attack))
 			return damage * 1.25f;
 
 		return damage;
+	}
+
+	// -----------------------------
+	// 47_Thick_Fat ability reduces damage by 2 (only if attack type it's fire or
+	// ice type)
+	// -----------------------------
+	private boolean isThickFatAbilityActive(Pokemon defender, Attack attack) {
+		return defender.hasThickFatAbility() && (attack.isFireType() || attack.isIceType());
+	}
+
+	// -----------------------------
+	// 85_Heatproof ability reduces damage by 2 (only if attack type it's fire)
+	// -----------------------------
+	private boolean isHeatProofAbilityActive(Pokemon defender, Attack attack) {
+		return defender.hasHeatProofAbility() && attack.isFireType();
+	}
+
+	// -----------------------------
+	// 87_Dry_Skin ability => with a fire attack, do 25% more damage
+	// -----------------------------
+	private boolean isDrySkinAbilityActive(Pokemon defender, Attack attack) {
+		return defender.hasDrySkinAbility() && attack.isFireType();
 	}
 
 	// -----------------------------

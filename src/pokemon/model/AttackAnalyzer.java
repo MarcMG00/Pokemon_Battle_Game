@@ -139,20 +139,16 @@ public final class AttackAnalyzer {
 
 					if (rebientan != null && rebientan.contains(attackType) && !iaLotDamageAttacks.contains(finalAttack)
 							&& !hasNoEffect.contains(attackType)) {
-
 						iaLotDamageAttacks.add(finalAttack);
 
 					} else if (rebientanPoco != null && rebientanPoco.contains(attackType)
 							&& !iaLowAttacks.contains(finalAttack) && !hasNoEffect.contains(attackType)) {
-
 						iaLowAttacks.add(finalAttack);
 
 					} else if (hasNoEffect.contains(attackType)) {
-
 						iaHasNoEffectAttacks.add(finalAttack);
 
 					} else if (!iaNormalDamageAttacks.contains(finalAttack) && !hasNoEffect.contains(attackType)) {
-
 						iaNormalDamageAttacks.add(finalAttack);
 					}
 				}
@@ -318,11 +314,10 @@ public final class AttackAnalyzer {
 		Optional<Attack> nextAttack;
 		Pokemon attacker = owner.getPkCombatting();
 
-		if (isAttackStruggle(attackId)) {
+		if (isStruggleAttack(attackId))
 			nextAttack = attacker.getPhysicalAttacks().stream().filter(a -> a.getId() == attackId).findFirst();
-		} else {
+		else
 			nextAttack = attacker.getFourPrincipalAttacks().stream().filter(a -> a.getId() == attackId).findFirst();
-		}
 
 		if (nextAttack.isEmpty())
 			return;
@@ -333,7 +328,10 @@ public final class AttackAnalyzer {
 		owner.getPkCombatting().setNextMovement(atk);
 	}
 
-	private static boolean isAttackStruggle(int attackId) {
+	// -----------------------------
+	// Check if attack is Struggle (by Id)
+	// -----------------------------
+	private static boolean isStruggleAttack(int attackId) {
 		return attackId == 165;
 	}
 
@@ -469,7 +467,7 @@ public final class AttackAnalyzer {
 	// -----------------------------
 	public static void selectStruggle(Player owner) {
 		owner.getPkCombatting().setNextMovement(
-				owner.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.getId() == 165).findFirst().get());
+				owner.getPkCombatting().getPhysicalAttacks().stream().filter(a -> a.isStruggle()).findFirst().get());
 	}
 
 	// -----------------------------

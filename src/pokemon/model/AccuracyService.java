@@ -59,7 +59,7 @@ public class AccuracyService {
 			return;
 
 		// 5 - Check for 99_No_Guard ability (always hits)
-		if (PokemonHaveNoGuardAbility(attacker, defender))
+		if (checkNoGuardAbility(attacker, defender))
 			return;
 
 		float accuracyFactor = calculateAccuracyFactor(ctx, attacker, defender, attackAttacker);
@@ -174,7 +174,7 @@ public class AccuracyService {
 			return true;
 		}
 
-		if (atkAttacker.getPrecision() == 0f) {
+		if (atkAttacker.hasNoPrecision()) {
 			attacker.allowAttack();
 			System.out.println(ANSI_PURPLE
 					+ "El ataque no tiene precisión, con lo cual se puede aplicar directamente (no es necesario verificar condiciones). "
@@ -186,6 +186,7 @@ public class AccuracyService {
 			attacker.allowAttack();
 			return true;
 		}
+
 		return false;
 	}
 
@@ -194,13 +195,12 @@ public class AccuracyService {
 	// -----------------------------
 	private boolean resolvedChargingAttack(Pokemon attacker, Attack atkAttacker, boolean isAttackerCharging) {
 		if (atkAttacker.getCategory() == AttackCategory.CHARGED && !isAttackerCharging) {
-			System.out.println(ANSI_PURPLE + "Probability - Starting a charged attack" + ANSI_RESET);
-
 			attacker.allowAttack();
 			System.out.println(ANSI_PURPLE + attacker.getName() + " utilizará " + atkAttacker.getName()
 					+ " - comienza a cargar el ataque. (bloc 3)" + ANSI_RESET);
 			return true;
 		}
+
 		return false;
 	}
 
@@ -218,19 +218,21 @@ public class AccuracyService {
 		modifyPrecisionByWeather(ctx);
 		modifyPrecisionByAbility(ctx);
 
-		if (atkAttacker.isOneHitKO())
+		if (atkAttacker.isOneHitKO()) {
 			// don't take into account Pokemon levels (cause all are on the same lvl)
 			accuracyFactor = 1f;
+		}
 		// If attack can flinch Pokemon + (23_Stomp/ 27_Rolling kick/ 29_Headbutt/
-		// 44_Bite) + defender
-		// is minimized
-		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.hasUsedMinimize())
+		// 44_Bite) + defender is minimized
+		else if (atkAttacker.hasActiveSecondaryEffect(SecondaryEffectType.FLINCH) && defender.hasUsedMinimize()) {
 			accuracyFactor = (ctx.getPrecision() / 100f)
 					* (getEvasionOrAccuracy(ctx, attacker, 1, defenderHasUnaware) / 1f);
+		}
 		// Other attacks
-		else
+		else {
 			accuracyFactor = (ctx.getPrecision() / 100f) * (getEvasionOrAccuracy(ctx, attacker, 1, defenderHasUnaware)
 					/ getEvasionOrAccuracy(ctx, defender, 2, attackerHasUnaware));
+		}
 
 		return accuracyFactor;
 	}
@@ -287,9 +289,9 @@ public class AccuracyService {
 
 		int rand = (int) (Math.random() * 100);
 
-		if (rand / 100f <= accuracyFactor)
+		if (rand / 100f <= accuracyFactor) {
 			attacker.allowAttack();
-		else {
+		} else {
 			System.out.println("accuracy : " + rand / 100f + "(random) => " + accuracyFactor + " (true accuracy)");
 			atk.setPp(atk.getPp() - 1);
 			attacker.denyAttack();
@@ -297,18 +299,22 @@ public class AccuracyService {
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName()
 					+ " evitó el ataque jijijija. " + code);
 
-			// Some attacks that can fail, hurt the attacker (Jump kick, etc.)
-			if (atk.canRecieveDamage()) {
-				float attackerInitialPs = attacker.getInitialPs();
-
-				float recoil = attackerInitialPs / 2f;
-
-				attacker.setPs(Math.max(attacker.getPs() - recoil, 0));
-
-				System.out.println(attacker.getName()
-						+ " se dañó a si mismo jajajaji. (Patada salto, Patada Salto Alta, Patada Hacha, Plancha Voltaica)");
-			}
+			if (atk.canRecieveDamage())
+				handleRecoilAttackFailed(attacker);
 		}
+	}
+
+	// -----------------------------
+	// Handle recoil from failed attacks (Jump kick, etc.)
+	// -----------------------------
+	public void handleRecoilAttackFailed(Pokemon attacker) {
+		float attackerInitialPs = attacker.getInitialPs();
+		float recoil = attackerInitialPs / 2f;
+
+		attacker.setPs(Math.max(attacker.getPs() - recoil, 0));
+
+		System.out.println(attacker.getName()
+				+ " se dañó a si mismo jajajaji. (Patada salto, Patada Salto Alta, Patada Hacha, Plancha Voltaica)");
 	}
 
 	// -----------------------------
@@ -323,13 +329,10 @@ public class AccuracyService {
 
 		int rand = (int) (Math.random() * 100);
 
-		if (rand / 100f <= accuracyFactor)
+		if (rand / 100f <= accuracyFactor) {
 			attacker.allowAttack();
-		else {
-			atk.setPp(atk.getPp() - 1);
-			attacker.denyAttack();
-			// Ensure we don't keep charging state
-			attacker.setIsChargingAttackForNextRound(false);
+		} else {
+			handleRemovingChargingState(atk, attacker);
 
 			System.out.println(attacker.getName() + " usó " + atk.getName() + ". " + defender.getName() + " (Id:"
 					+ defender.getId() + ")" + " evitó el ataque jijijija. " + code);
@@ -337,18 +340,13 @@ public class AccuracyService {
 	}
 
 	// -----------------------------
-	// Check if 99_No_Guard ability is in game
+	// Handle removing charging state from attack
 	// -----------------------------
-	private boolean PokemonHaveNoGuardAbility(Pokemon attacker, Pokemon defender) {
-		// 99_No_Guard allows to attack every time (whether is the defender or the
-		// attacker that have the ability)
-		if (attacker.hasNoGuardAbility() || defender.hasNoGuardAbility()) {
-			System.out.println(ANSI_PURPLE + attacker.getName()
-					+ " puede atacar gracias a la habilidad Indefenso en juego" + ANSI_RESET);
-			attacker.allowAttack();
-			return true;
-		}
-		return false;
+	public void handleRemovingChargingState(Attack atk, Pokemon attacker) {
+		atk.setPp(atk.getPp() - 1);
+		attacker.denyAttack();
+		// Ensure we don't keep charging state
+		attacker.setIsChargingAttackForNextRound(false);
 	}
 
 	// -----------------------------
@@ -365,40 +363,82 @@ public class AccuracyService {
 	// -----------------------------
 	private void modifyPrecisionByAbility(AttackContext ctx) {
 		// ATTACKER
-		// 14_Compound_Eyes ability rises precision by 30%
+		handleCompoundEyesAbility(ctx);
+		handleHustleAbility(ctx);
+
+		// DEFENDER
+		handleTangleedFeedAbility(ctx);
+		handleSnowCloakAbility(ctx);
+		handleWonderSkinAbility(ctx);
+	}
+
+	// -----------------------------
+	// Check if 99_No_Guard ability is in game => allows to attack every time
+	// (whether is the defender or the attacker that have the ability)
+	// -----------------------------
+	private boolean checkNoGuardAbility(Pokemon attacker, Pokemon defender) {
+		if (attacker.hasNoGuardAbility() || defender.hasNoGuardAbility()) {
+			System.out.println(ANSI_PURPLE + attacker.getName()
+					+ " puede atacar gracias a la habilidad Indefenso en juego" + ANSI_RESET);
+			attacker.allowAttack();
+			return true;
+		}
+
+		return false;
+	}
+
+	// -----------------------------
+	// 14_Compound_Eyes ability => rises precision by 30%
+	// -----------------------------
+	private void handleCompoundEyesAbility(AttackContext ctx) {
 		if (ctx.getAttacker().hasCompoundEyesAbility()) {
 			ctx.multiplyPrecision(1.3f);
 			System.out
 					.println(ANSI_PURPLE + ctx.getAttacker().getName() + " aumentó su precisión gracias a su habilidad "
 							+ ctx.getAttacker().getAbilitySelected().getName() + ANSI_RESET);
 		}
+	}
 
-		// 55_Hustle ability reduces precision by 20%
+	// -----------------------------
+	// Handle 55_Hustle ability => reduces precision by 20%
+	// -----------------------------
+	private void handleHustleAbility(AttackContext ctx) {
 		if (ctx.getAttack().getBases().contains("fisico") && ctx.getAttacker().hasHustleAbility()) {
 			ctx.multiplyPrecision(0.8f);
 			System.out
 					.println(ANSI_PURPLE + ctx.getAttacker().getName() + " redujo su precisión a causa de su habilidad "
 							+ ctx.getAttacker().getAbilitySelected().getName() + ANSI_RESET);
 		}
+	}
 
-		// DEFENDER
-		// 77_Tangled_Feed duplicates evasion by 2 if confused
+	// -----------------------------
+	// Handle 77_Tangled_Feed => duplicates evasion by 2 if confused
+	// -----------------------------
+	private void handleTangleedFeedAbility(AttackContext ctx) {
 		if (ctx.getDefender().isTangledFeetActive()) {
 			ctx.multiplyPrecision(0.5f);
 			System.out.println(ANSI_PURPLE + ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
 					+ ctx.getDefender().getAbilitySelected().getName() + ANSI_RESET);
 		}
+	}
 
-		// 81_Snow_Cloak sets 20% more of evasion if it's snowing
+	// -----------------------------
+	// Handle 81_Snow_Cloak => sets 20% more of evasion if it's snowing
+	// -----------------------------
+	private void handleSnowCloakAbility(AttackContext ctx) {
 		if (ctx.getWeather() == Weather.HAIL && ctx.getDefender().hasSnowCloakAbility()) {
 			ctx.multiplyPrecision(0.8f);
 			System.out.println(ANSI_PURPLE + ctx.getDefender().getName() + " aumentó su evasión gracias a su habilidad "
 					+ ctx.getDefender().getAbilitySelected().getName() + ANSI_RESET);
 		}
+	}
 
-		// 147_Wonder_skin ability reduces precision by 2 if attacks has secondary
-		// effects to defender or support to attacker, etc. (only for attacks that are
-		// state type against defender)
+	// -----------------------------
+	// Handle 147_Wonder_skin ability => reduces precision by 2 if attacks has
+	// secondary effects to defender or support to attacker, etc. (only for attacks
+	// that are state type against defender)
+	// -----------------------------
+	private void handleWonderSkinAbility(AttackContext ctx) {
 		if (ctx.getDefender().hasWonderSkinAbility() && ctx.getAttack().getBases().contains("otros")
 				&& ctx.getAttack().getPrecision() > 50f && ctx.getAttack().isStateAttackAgainstPkFacing()) {
 			ctx.multiplyPrecision(0.5f);

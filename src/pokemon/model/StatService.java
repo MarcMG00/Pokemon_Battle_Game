@@ -31,8 +31,7 @@ public class StatService {
 					+ attacker.getAbilitySelected().getName());
 		}
 
-		// 62_Guts ability rises attack by 50%
-		if (attacker.hasGutsAbility() && (attacker.hasStatusCondition() || attacker.hasEphemeralStatus())) {
+		if (attacker.isGutsAbilityActive()) {
 			attack *= 1.5f;
 			System.out.println(attacker.getName() + " aumentó su ataque gracias a su habilidad Agallas");
 		}
@@ -43,11 +42,9 @@ public class StatService {
 			System.out.println(attacker.getName() + " aumentó su ataque gracias a su habilidad Don Floral");
 		}
 
-		// 129_Deafeatist ability reduces attack by 50% if PS under 50% of initial PS
 		if (attacker.isDefeatistActive())
 			attack /= 2f;
 
-		// 137_Toxic_boost rises attack by 50% if attacker is poisoned
 		if (attacker.isToxicBoostActive()) {
 			attack *= 1.5f;
 			System.out.println(attacker.getName() + " aumentó su ataque gracias a su habilidad Impetu Tóxico");
@@ -72,12 +69,10 @@ public class StatService {
 		float multiplier;
 		float specialAttack = attacker.getSpecialAttack();
 
-		// 57_Plus ability
 		if (attacker.hasPlusAbility()
 				&& attacker.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasMinusAbility()))
 			specialAttack *= 1.5f;
 
-		// 58_Minus ability
 		if (attacker.hasMinusAbility()
 				&& attacker.getOwner().getPokemon().stream().anyMatch(pok -> pok.hasPlusAbility()))
 			specialAttack *= 1.5f;
@@ -88,8 +83,6 @@ public class StatService {
 			System.out.println(attacker.getName() + " aumentó su ataque especial gracias a su habilidad Poder solar");
 		}
 
-		// 129_Deafeatist ability reduces special attack by 50% if PS under 50% of
-		// initial PS
 		if (attacker.isDefeatistActive())
 			specialAttack /= 2f;
 
@@ -118,9 +111,7 @@ public class StatService {
 		float multiplier;
 		float defense = pk.getDef();
 
-		// 63_Marvel_Scale => if has any status condition or ephemeral status, rises
-		// defense
-		if (pk.hasMarvelScaleAbility() && (!pk.hasStatusCondition() || !pk.hasEphemeralStatus())) {
+		if (pk.isMarvelScaleAbilityActive()) {
 			defense *= 1.5f;
 			System.out.println(pk.getName() + " aumentó su defensa gracias a su habilidad Escama especial");
 		}
@@ -203,8 +194,7 @@ public class StatService {
 				speed *= 0.5f;
 		}
 
-		// 95_Quick_Feet increase speed by 50%
-		if (pk.hasQuickFeetAbility() && (pk.hasStatusCondition() || pk.hasEphemeralStatus()))
+		if (pk.isQuickFeetAbilityActive())
 			speed *= 1.5f;
 
 		if (stage >= 0)

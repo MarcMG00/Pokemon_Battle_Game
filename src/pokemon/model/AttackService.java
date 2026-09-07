@@ -284,14 +284,15 @@ public class AttackService {
 		// IA ACTIONS
 		boolean iaHasSwitch = tryIAPokemonSwitchIfPossible();
 
-		if (iaHasSwitch)
+		if (iaHasSwitch) {
 			// Prepare effectiveness of the attack from Player again (because of the switch
 			// from IA)
 			AttackAnalyzer.prepareEfectivenessChosenAttack(pkPlayer, battleCtx.getPkIA(), pkPlayer.getNextMovement());
+		}
 
-		if (battleCtx.getPkIA().canDonAnythingNextRound()) {
+		if (battleCtx.getPkIA().canDonAnythingNextRound())
 			prepareIAPokemonAttack();
-		} else
+		else
 			handleIANotAbleToAct(battleCtx.getPkIA());
 
 		// Apply stats effect before turn starts (reduce speed if paralyzed, etc.)
@@ -315,6 +316,7 @@ public class AttackService {
 			statusService.handleDrainingStatusEffects(battleCtx.getPkIA(), pkPlayer);
 			statusService.handleDrainingStatusEffects(pkPlayer, battleCtx.getPkIA());
 		}
+
 		// Informative : Begins draining state if needed => doesn't apply the first turn
 		// when the attack is used, so put after draining effect
 		statusService.startDrainingEffectIfNeeded(battleCtx);
@@ -364,7 +366,7 @@ public class AttackService {
 	private int choosePlayerAttack(Scanner sc) {
 		Pokemon pk = battleCtx.getPkPlayer();
 
-		if (isForcedAttack(pk))
+		if (pk.isForcedAttack())
 			return handleForcedAttack(pk);
 
 		if (!pk.hasAnyPPLeft())
@@ -374,14 +376,7 @@ public class AttackService {
 	}
 
 	// -----------------------------
-	// Check if can select next attack
-	// -----------------------------
-	private boolean isForcedAttack(Pokemon pk) {
-		return pk.isChargingAttackForNextRound() || pk.isTrappedByOwnAttack();
-	}
-
-	// -----------------------------
-	// Return same attack
+	// Return same attack (trapped by own attack, etc.)
 	// -----------------------------
 	private int handleForcedAttack(Pokemon pk) {
 		if (pk.isTrappedByOwnAttack())
@@ -395,8 +390,8 @@ public class AttackService {
 	// Select 165_Struggle as attack if no more PP remaining in any attack
 	// -----------------------------
 	private int handleStruggle(Pokemon pk) {
-		System.out.println(pk.getName() + " no tiene más PPs en ningún ataque.");
-		System.out.println(pk.getName() + " tendrá que usar Forcejeo!");
+		System.out.println(
+				pk.getName() + " no tiene más PPs en ningún ataque." + pk.getName() + " tendrá que usar Forcejeo!");
 		return 165;
 	}
 
@@ -430,6 +425,7 @@ public class AttackService {
 				System.out.println("No tienes más PP para este ataque. Escoge otro.");
 				continue;
 			}
+
 			return attackId;
 		}
 	}
@@ -542,6 +538,8 @@ public class AttackService {
 
 		boolean turnShouldEnd = false;
 
+		// Informative : Maybe a Player has switch the Pokemon, so only attacks if
+		// hasn't entered on the current turn
 		// 2. First player attacks
 		if (!firstPokemonAttacker.justEnteredBattle())
 			turnShouldEnd = attackAndCheckIfTurnEnds(firstPlayer, secondPlayer, sc, turnCtx);
@@ -598,9 +596,6 @@ public class AttackService {
 		if (alreadyDetermined)
 			return playerWon;
 
-		System.out.println(ANSI_RED + "El jugador ganó teniendo la misma velocidad/prioridad : "
-				+ this.playerWonSpeedTie + ANSI_RESET);
-
 		this.playerWonSpeedTie = !this.playerWonSpeedTie;
 
 		return playerWon;
@@ -618,7 +613,7 @@ public class AttackService {
 		if (!canAttackerAct(attacker))
 			return false;
 
-		// 3. Execute attack or recovery
+		// 3. Execute attack or recovery phase
 		executeAttackPhase(attacker, turnCtx);
 
 		// After an attack, if defender was charging a charged attack (like Fly) but is
@@ -698,6 +693,7 @@ public class AttackService {
 			System.out.println(pk.getName() + " (" + pk.getId() + ") debe recuperarse a causa de "
 					+ pk.getLastUsedAttack().getName());
 
+		// Reinitialize
 		pk.setCanDonAnythingNextRound(true);
 	}
 
@@ -1135,7 +1131,6 @@ public class AttackService {
 
 			if (!changed)
 				return false;
-
 		} else {
 			System.out.println(battleCtx.getPkPlayer().getName() + " (" + battleCtx.getPkPlayer().getId() + ") "
 					+ (battleCtx.getPkPlayer().hasTruantAbility()
@@ -1145,6 +1140,7 @@ public class AttackService {
 
 			battleCtx.getPkPlayer().setCanDonAnythingNextRound(true);
 		}
+		
 		return true;
 	}
 

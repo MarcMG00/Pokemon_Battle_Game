@@ -8,6 +8,14 @@ import pokemon.abilityInterface.AbilityEffect;
 import pokemon.enums.Weather;
 
 public class AbilityService {
+	private static final String ANSI_RED = "\u001B[31m";
+	private static final String ANSI_GREEN = "\u001B[32m";
+	private static final String ANSI_YELLOW = "\u001B[33m";
+	private static final String ANSI_PURPLE = "\u001B[35m";
+	private static final String ANSI_CYAN = "\u001B[36m";
+	private static final String ANSI_WHITE = "\u001B[37m";
+	private static final String ANSI_RESET = "\u001B[0m";
+
 	// -----------------------------
 	// Selected an ability to each Pokemon from player
 	// -----------------------------
@@ -272,13 +280,7 @@ public class AbilityService {
 	// -----------------------------
 	public void applyAbilityAfterDamageIfNeeded(Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			boolean isCriticalAttack, Weather weather, boolean isWeatherSuppressed) {
-		// 54_Truant ability (can't do anything next round)
-		if (attacker.hasTruantAbility()) {
-			System.out.println(attacker.getName() + " (" + attacker.getId() + ") "
-					+ "no popdrá atacar o cambiarse en el siguiente turno a causa de "
-					+ attacker.getAbilitySelected().getName());
-			attacker.setCanDonAnythingNextRound(false);
-		}
+		handleTruantAbility(attacker);
 
 		// Damage must be done
 		if (dmg <= 0)
@@ -287,6 +289,19 @@ public class AbilityService {
 		Ability defenderAbility = defender.getAbilitySelected();
 		defenderAbility.getEffect().afterAttack(null, attacker, defender, attack, dmg, 0d, isCriticalAttack, weather,
 				isWeatherSuppressed);
+	}
+
+	// -----------------------------
+	// Handle 54_Truant ability effect if needed
+	// -----------------------------
+	public void handleTruantAbility(Pokemon attacker) {
+		// 54_Truant ability => can't do anything next round
+		if (attacker.hasTruantAbility()) {
+			System.out.println(attacker.getName() + " (" + attacker.getId() + ") "
+					+ "no popdrá atacar o cambiarse en el siguiente turno a causa de "
+					+ attacker.getAbilitySelected().getName());
+			attacker.setCanDonAnythingNextRound(false);
+		}
 	}
 
 	// -----------------------------

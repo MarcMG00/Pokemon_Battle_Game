@@ -288,7 +288,7 @@ public class Game {
 	// -----------------------------
 	// Regex to match Pokemon player choices
 	// -----------------------------
-	public String checkRegexToChoosePokemon() {
+	public String regexPokemonChoice() {
 		// Player can choose with format : d,d,d,d,d,d, and numbers are between 1 and
 		// 807
 		String strRegex = "\\b([1-9]";
@@ -416,23 +416,13 @@ public class Game {
 
 		// Player choices
 		addPokemonToPlayer(allPkPlayer);
-		// Pokemon machine choices
-		addIAPokemonChoice();
+		addPokemonToIA();
 
 		initializePokemonAttacksAndAbilities();
 
-		initializeFirstPokemonForBattle();
-
-		printTeams();
-
 		orderAttacksByDamage();
 
-		// IA Prepares best attack against Pokemon player
-		AttackAnalyzer.prepareBestAttackIA(this.getIA(), this.getPkPlayer());
-
-		System.out.println("Next attack from machine :");
-		System.out.println(this.getPkIA().getNextMovement().getName() + " - "
-				+ this.getPkIA().getNextMovement().getPkType().getName());
+		printTeams();
 	}
 
 	// -----------------------------
@@ -459,7 +449,7 @@ public class Game {
 	// Player Pokemon selection
 	// -----------------------------
 	private String askPlayerPokemonChoice(Scanner sc) {
-		String matchFormatChoice = checkRegexToChoosePokemon();
+		String matchFormatChoice = regexPokemonChoice();
 
 		String allPkPlayer = sc.next();
 		sc.useDelimiter(";|\r?\n|\r");
@@ -501,12 +491,15 @@ public class Game {
 				System.out.println("Tendrás que volver a escoger tus Pokémon (reinicia el juego)");
 			}
 		}
+
+		// Sets first Pokemon selected as Pokemon opening the battle
+		this.getPlayer().setPkCombatting(this.getPlayer().getPokemon().get(0));
 	}
 
 	// -----------------------------
 	// Chooses Pokemon by comparing the player's Pokemon list
 	// -----------------------------
-	public void addIAPokemonChoice() {
+	public void addPokemonToIA() {
 		for (Pokemon pkPlayer : this.getPlayer().getPokemon()) {
 
 			// Gets a random type index depending on how many types the Pokemon has
@@ -545,10 +538,13 @@ public class Game {
 				this.getIA().addPokemon(pkRandom);
 			}
 		}
+
+		// Sets first Pokemon selected as Pokemon opening the battle
+		this.getIA().setPkCombatting(this.getPlayer().getPokemon().get(0));
 	}
 
 	// -----------------------------
-	// Put attacks and abilities to all Pokemon on game (player and IA)
+	// Put attacks and abilities to all Pokemon on game (Player and IA)
 	// -----------------------------
 	private void initializePokemonAttacksAndAbilities() {
 		AttackAnalyzer.addAttacksForEachPokemon(this.getPlayer());
@@ -556,17 +552,6 @@ public class Game {
 
 		abilityService.selectAbilityForEachPokemon(this.getPlayer(), this.getAbilities());
 		abilityService.selectAbilityForEachPokemon(this.getIA(), this.getAbilities());
-	}
-
-	// -----------------------------
-	// Set attackers and defenders to each player (for first turn)
-	// -----------------------------
-	private void initializeFirstPokemonForBattle() {
-		this.getPlayer().setPkCombatting(this.getPlayer().getPokemon().get(0));
-		this.getIA().setPkCombatting(this.getIA().getPokemon().get(0));
-
-		this.getPlayer().setPkFacing(this.getPkIA());
-		this.getIA().setPkFacing(this.getPkPlayer());
 	}
 
 	// -----------------------------
@@ -617,14 +602,14 @@ public class Game {
 	}
 
 	// -----------------------------
-	// Tests for attacks (466 Electivire, 398 Staraptor, 6 Charizard, 127 Pinsir,
-	// 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee, 248 Tyranitar,
-	// 382 Kyogre)
+	// Tests for attacks and abilities (466 Electivire, 398 Staraptor, 6 Charizard,
+	// 127 Pinsir, 123 Scyther, 16 Pidgey, 95 Onix, 523 Zebstrika, 106 Hitmonlee,
+	// 248 Tyranitar, 382 Kyogre)
 	// -----------------------------
 	public void doTest() {
 		// Sets the same Pk
 		String allPkPlayer = "25,25,25";
-		String allPkIA = "25,25,25";
+		String allPkIA = "466,466,466";
 
 		String[] pkByPkPlayer = allPkPlayer.split(",");
 		Map<Integer, Integer> pkCount = new HashMap<>();
@@ -661,11 +646,6 @@ public class Game {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 43).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 39).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 46).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 27).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 22).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
@@ -676,6 +656,11 @@ public class Game {
 //			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 84).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 38).findFirst().get());
 			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 98).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 14).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 43).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 39).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 46).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
 		}
 
 		pkCount = new HashMap<Integer, Integer>();
@@ -706,26 +691,24 @@ public class Game {
 		for (Pokemon pk : this.getIA().getPokemon()) {
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 7).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
+			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 9).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 19).findFirst().get());
-//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 57).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 34).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 45).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 5).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 17).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 15).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 29).findFirst().get());
-//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 33).findFirst().get());
 //			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 91).findFirst().get());
+//			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 98).findFirst().get());
+//			pk.addAttacks(pk.getSpecialAttacks().stream().filter(af -> af.getId() == 57).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 45).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 28).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 18).findFirst().get());
+//			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 47).findFirst().get());
 //			pk.addAttacks(pk.getOtherAttacks().stream().filter(af -> af.getId() == 73).findFirst().get());
-			pk.addAttacks(pk.getPhysicalAttacks().stream().filter(af -> af.getId() == 98).findFirst().get());
-//			AttackAnalyzer.addAttacksForEachPokemon(this.getIA());
-
 		}
 
 		// Select an ability for each Pokemon list

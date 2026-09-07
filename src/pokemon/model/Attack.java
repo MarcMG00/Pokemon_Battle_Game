@@ -363,6 +363,9 @@ public class Attack {
 	// ==================================== METHODS
 	// ====================================
 
+	public boolean hasNoPrecision() {
+		return this.getPrecision() == 0f;
+	}
 	// -----------------------------
 	// Set the type of the attack to his Pokemon type instead of a string
 	// -----------------------------
