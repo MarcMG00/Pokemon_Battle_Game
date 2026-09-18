@@ -56,6 +56,7 @@ public class AttackService {
 	private final SwitchPokemonService switchPokemonService;
 	private final StatService statService;
 	private DamageService damageService;
+	private AttackResolutionService attackResolutionService;
 	private Map<Integer, AttackEffect> attackEffects = new HashMap<>();
 	private HelperService helperService;
 	private AccuracyService accuracyService;
@@ -69,6 +70,7 @@ public class AttackService {
 		this.switchPokemonService = new SwitchPokemonService(battleCtx);
 		this.statService = new StatService();
 		this.damageService = new DamageService();
+		this.attackResolutionService = new AttackResolutionService();
 		this.helperService = new HelperService();
 		this.accuracyService = new AccuracyService();
 		initAttackEffects();
@@ -76,7 +78,7 @@ public class AttackService {
 
 	private void initAttackEffects() {
 		// Simple damage attacks
-		AttackEffect simpleDamage = new SimpleDamageEffect(damageService);
+		AttackEffect simpleDamage = new SimpleDamageEffect(attackResolutionService);
 		attackEffects.put(1, simpleDamage); // Destructor/Pound (tested)
 		attackEffects.put(2, simpleDamage); // Golpe kárate/Karate chop (tested)
 		attackEffects.put(5, simpleDamage); // Megapuño/Mega punch (tested)
@@ -119,30 +121,47 @@ public class AttackService {
 		attackEffects.put(93, simpleDamage); // Confusión/Confusion (tested)
 		attackEffects.put(94, simpleDamage); // Psíquico/Psychic (tested)
 		attackEffects.put(98, simpleDamage); // Ataque rápido/Quick attack (tested)
+		attackEffects.put(99, simpleDamage); // Furia/Rage (tested)
 
 		// Multi-hit attacks (normal damage)
-		attackEffects.put(3, new MultiHitEffect(helperService, damageService, 1, 5)); // Doble bofetón/Double slap
-																						// (tested)
-		attackEffects.put(4, new MultiHitEffect(helperService, damageService, 1, 5)); // Puño cometa/Comet punch
-																						// (tested)
-		attackEffects.put(24, new MultiHitEffect(helperService, damageService, 2, 2)); // Doble patada/Double kick
-																						// (tested)
-		attackEffects.put(31, new MultiHitEffect(helperService, damageService, 1, 5)); // Ataque furia/Fury attack
-																						// (tested)
-		attackEffects.put(41, new MultiHitEffect(helperService, damageService, 2, 2)); // Doble ataque/Twineedle
-																						// (tested)
-		attackEffects.put(42, new MultiHitEffect(helperService, damageService, 1, 5)); // Pin misil/Pin missile (tested)
+		attackEffects.put(3, new MultiHitEffect(helperService, attackResolutionService, damageService, 1, 5)); // Doble
+																												// bofetón/Double
+																												// slap
+		// (tested)
+		attackEffects.put(4, new MultiHitEffect(helperService, attackResolutionService, damageService, 1, 5)); // Puño
+																												// cometa/Comet
+																												// punch
+																												// (tested)
+		// (tested)
+		attackEffects.put(24, new MultiHitEffect(helperService, attackResolutionService, damageService, 2, 2)); // Doble
+																												// patada/Double
+																												// kick
+																												// (tested)
+		// (tested)
+		attackEffects.put(31, new MultiHitEffect(helperService, attackResolutionService, damageService, 1, 5)); // Ataque
+																												// furia/Fury
+																												// attack
+																												// (tested)
+		// (tested)
+		attackEffects.put(41, new MultiHitEffect(helperService, attackResolutionService, damageService, 2, 2)); // Doble
+																												// ataque/Twineedle
+																												// (tested)
+		// (tested)
+		attackEffects.put(42, new MultiHitEffect(helperService, attackResolutionService, damageService, 1, 5)); // Pin
+																												// misil/Pin
+																												// missile
+																												// (tested)
 
 		// Charge attacks
-		AttackEffect chargeAttackDamage = new ChargeAttackEffect(damageService);
+		AttackEffect chargeAttackDamage = new ChargeAttackEffect(attackResolutionService);
 		attackEffects.put(13, chargeAttackDamage); // Viento cortante/Razor wind (tested)
 		attackEffects.put(19, chargeAttackDamage); // Vuelo/Fly (tested)
 		attackEffects.put(91, chargeAttackDamage); // Excavar/Dig (tested)
 
 		// One hit KO
-		attackEffects.put(12, new OneHitKOEffect()); // Guillotina/Guillotine (tested)
-		attackEffects.put(32, new OneHitKOEffect()); // Perforador/Horn drill (tested)
-		attackEffects.put(90, new OneHitKOEffect()); // Fisura/Fissure (tested)
+		attackEffects.put(12, new OneHitKOEffect(attackResolutionService)); // Guillotina/Guillotine (tested)
+		attackEffects.put(32, new OneHitKOEffect(attackResolutionService)); // Perforador/Horn drill (tested)
+		attackEffects.put(90, new OneHitKOEffect(attackResolutionService)); // Fisura/Fissure (tested)
 
 		// Buffs stats (only one state)
 		attackEffects.put(14, new StatBoostEffect(StatType.ATTACK, 2)); // Danza espada/Swords dance (tested)
@@ -150,22 +169,22 @@ public class AttackService {
 		attackEffects.put(97, new StatBoostEffect(StatType.SPEED, 2)); // Agilidad/Agility (tested)
 
 		// Rise power if charging an attack and can hit while invulnerable
-		attackEffects.put(16, new ConditionalPowerEffect(damageService, 2f)); // Tornado/Gust (tested)
-		attackEffects.put(57, new ConditionalPowerEffect(damageService, 2f)); // Surf/Surf (tested)
-		attackEffects.put(89, new ConditionalPowerEffect(damageService, 2f)); // Terremoto/Earthquake (tested)
+		attackEffects.put(16, new ConditionalPowerEffect(attackResolutionService, 2f)); // Tornado/Gust (tested)
+		attackEffects.put(57, new ConditionalPowerEffect(attackResolutionService, 2f)); // Surf/Surf (tested)
+		attackEffects.put(89, new ConditionalPowerEffect(attackResolutionService, 2f)); // Terremoto/Earthquake (tested)
 
 		// Forced switch
 		attackEffects.put(18, new ForceSwitchEffect()); // Remolino/Whirlwind (tested)
 		attackEffects.put(46, new ForceSwitchEffect()); // Rugido/Roar (tested)
 
 		// Trapped effect
-		AttackEffect trappedDamage = new TrappedEffect(helperService, damageService);
+		AttackEffect trappedDamage = new TrappedEffect(helperService, attackResolutionService);
 		attackEffects.put(20, trappedDamage); // Atadura/Bind (tested)
 		attackEffects.put(35, trappedDamage); // Constricción/Wrap (tested)
 		attackEffects.put(83, trappedDamage); // Giro fuego/Fire spin (tested)
 
 		// Ignore minimize effect (normal damage)
-		AttackEffect ignoreMinimizeDamage = new IgnoreMinimizeEffect(damageService);
+		AttackEffect ignoreMinimizeDamage = new IgnoreMinimizeEffect(attackResolutionService);
 		attackEffects.put(23, ignoreMinimizeDamage); // Pisotón/Stomp (tested)
 
 		// Reduce stats
@@ -176,18 +195,21 @@ public class AttackService {
 		attackEffects.put(81, new StatReduceEffect(StatType.SPEED, 1)); // Disparo démora/String shot (tested)
 
 		// Recoil damage effect
-		attackEffects.put(36, new RecoilDamageEffect(damageService, 0.25f)); // Derribo/Take down (tested)
-		attackEffects.put(38, new RecoilDamageEffect(damageService, 0.33f)); // Doble filo/Dobule-Edge (tested)
-		attackEffects.put(66, new RecoilDamageEffect(damageService, 0.25f)); // Sumisión/Submission (tested)
+		attackEffects.put(36, new RecoilDamageEffect(attackResolutionService, 0.25f)); // Derribo/Take down (tested)
+		attackEffects.put(38, new RecoilDamageEffect(attackResolutionService, 0.33f)); // Doble filo/Dobule-Edge
+																						// (tested)
+		attackEffects.put(66, new RecoilDamageEffect(attackResolutionService, 0.25f)); // Sumisión/Submission (tested)
 
 		// Recoil damage if attacks fails effect
-		AttackEffect recoilDamageIfFails = new RecoilDamageIfFailsEffect(damageService);
+		AttackEffect recoilDamageIfFails = new RecoilDamageIfFailsEffect(attackResolutionService);
 		attackEffects.put(26, recoilDamageIfFails); // Patada salto/Jump kick (tested)
 
 		// Trapped by own attack effect
-		attackEffects.put(37, new TrappedByOwnAttackEffect(helperService, damageService, 2, 5)); // Saña/Thrash (tested)
-		attackEffects.put(80, new TrappedByOwnAttackEffect(helperService, damageService, 2, 5)); // Danza pétalo/Petal
-																									// dance (tested)
+		attackEffects.put(37, new TrappedByOwnAttackEffect(helperService, attackResolutionService, 2, 5)); // Saña/Thrash
+																											// (tested)
+		attackEffects.put(80, new TrappedByOwnAttackEffect(helperService, attackResolutionService, 2, 5)); // Danza
+																											// pétalo/Petal
+		// dance (tested)
 
 		// Sleep effect
 		attackEffects.put(47, new SleepEffect(helperService, 1, 7)); // Canto/Sing (tested)
@@ -198,9 +220,9 @@ public class AttackService {
 		attackEffects.put(48, new ConfusedEffect(helperService, 1, 7)); // Supersónico/Supersonic (tested)
 
 		// Fixed damage effect
-		attackEffects.put(49, new FixedDamageEffect(20f)); // Bomba sónica/Sonic boom (tested)
-		attackEffects.put(69, new FixedDamageEffect(100f)); // Sísmico/Seismic toss (tested)
-		attackEffects.put(82, new FixedDamageEffect(40f)); // Furia dragón/Dragon rage (tested)
+		attackEffects.put(49, new FixedDamageEffect(20f, attackResolutionService)); // Bomba sónica/Sonic boom (tested)
+		attackEffects.put(69, new FixedDamageEffect(100f, attackResolutionService)); // Sísmico/Seismic toss (tested)
+		attackEffects.put(82, new FixedDamageEffect(40f, attackResolutionService)); // Furia dragón/Dragon rage (tested)
 
 		// Anulación/Disable (tested)
 		attackEffects.put(50, new DisableAttackEffect(helperService, 4, 7));
@@ -209,18 +231,18 @@ public class AttackService {
 		attackEffects.put(54, new MistEffect());
 
 		// Rest one turn after attack (with damage)
-		AttackEffect attackRestOneTourDamage = new AttackRestOneTurnEffect(damageService);
+		AttackEffect attackRestOneTourDamage = new AttackRestOneTurnEffect(attackResolutionService);
 		attackEffects.put(63, attackRestOneTourDamage); // Hiperrayo/Hyper beam (tested)
 
 		// Damage depending on weight
-		AttackEffect weightDamage = new WeightDamageEffect(damageService);
+		AttackEffect weightDamage = new WeightDamageEffect(attackResolutionService);
 		attackEffects.put(67, weightDamage); // Patada baja/Low kick (tested)
 
 		// Contraataque/Counter (tested)
-		attackEffects.put(68, new CounterAttackEffect());
+		attackEffects.put(68, new CounterAttackEffect(attackResolutionService));
 
 		// Do damage and absorb PS effect
-		AttackEffect absorbDamage = new AbsorbEffect(damageService);
+		AttackEffect absorbDamage = new AbsorbEffect(attackResolutionService);
 		attackEffects.put(71, absorbDamage); // Absorber/Absorb (tested)
 		attackEffects.put(72, absorbDamage); // Megaagotar/Mega drain (tested)
 
@@ -234,7 +256,7 @@ public class AttackService {
 		attackEffects.put(74, new MultiStatChange(growthStats)); // Desarrollo/Growth (tested)
 
 		// Rayo solar/Solar beam (tested)
-		attackEffects.put(76, new SolarBeamEffect(damageService));
+		attackEffects.put(76, new SolarBeamEffect(attackResolutionService));
 
 		// Poison effect
 		attackEffects.put(77, new PoisonEffect()); // Polvo veneno/Poison powder (tested)
@@ -244,7 +266,7 @@ public class AttackService {
 		attackEffects.put(86, new ParalyzeEffect()); // Onda trueno/Thunder wave (tested)
 
 		// Attack and remove constant PS from initial attacker Pokemon
-		attackEffects.put(165, new FixedRecoilDamageEffect(damageService)); // Forcejeo/Struggle (tested)
+		attackEffects.put(165, new FixedRecoilDamageEffect(attackResolutionService)); // Forcejeo/Struggle (tested)
 
 		// Badly poisoned effect
 		attackEffects.put(92, new BadlyPoisonedEffect()); // Tóxico/Toxic (tested)
@@ -1140,7 +1162,7 @@ public class AttackService {
 
 			battleCtx.getPkPlayer().setCanDonAnythingNextRound(true);
 		}
-		
+
 		return true;
 	}
 

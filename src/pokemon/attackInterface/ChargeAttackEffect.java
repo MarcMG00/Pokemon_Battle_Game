@@ -1,15 +1,15 @@
 package pokemon.attackInterface;
 
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 import pokemon.model.Pokemon;
 
 public class ChargeAttackEffect implements AttackEffect {
-	protected final DamageService damageService;
+	protected final AttackResolutionService attackResolutionService;
 
-	public ChargeAttackEffect(DamageService damageService) {
-		this.damageService = damageService;
+	public ChargeAttackEffect(AttackResolutionService attackResolutionService) {
+		this.attackResolutionService = attackResolutionService;
 	}
 
 	@Override
@@ -31,16 +31,11 @@ public class ChargeAttackEffect implements AttackEffect {
 		// Apply damage => second turn
 		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
 
-		result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		result = attackResolutionService.resolveHit(ctx);
 
 		// Ensure we don't keep charging state
 		attacker.setIsChargingAttackForNextRound(false);
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
-
-		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

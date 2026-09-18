@@ -2,14 +2,14 @@ package pokemon.attackInterface;
 
 import pokemon.enums.Weather;
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 import pokemon.model.Pokemon;
 
 public class SolarBeamEffect extends ChargeAttackEffect {
 
-	public SolarBeamEffect(DamageService damageService) {
-		super(damageService);
+	public SolarBeamEffect(AttackResolutionService attackResolutionService) {
+		super(attackResolutionService);
 	}
 
 	@Override
@@ -22,16 +22,11 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 			System.out.println(
 					attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
 
-			result = damageService.doDamage(ctx);
-			float dmg = result.getDamage();
+			result = attackResolutionService.resolveHit(ctx);
 
 			// Ensure we don't keep charging state if we were prevented from attacking
 			attacker.setIsChargingAttackForNextRound(false);
 			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
-
-			ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
-
-			ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 			return result;
 		}
@@ -53,16 +48,11 @@ public class SolarBeamEffect extends ChargeAttackEffect {
 				|| ctx.getWeather() == Weather.SANDSTORM))
 			ctx.setPower(ctx.getAttack().getPower() / 2);
 
-		result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		result = attackResolutionService.resolveHit(ctx);
 
 		// Ensure we don't keep charging state
 		attacker.setIsChargingAttackForNextRound(false);
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
-
-		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

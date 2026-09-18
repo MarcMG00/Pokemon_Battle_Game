@@ -73,8 +73,8 @@ public class Player {
 	// Prints the attacks of current Pokemon
 	// -----------------------------
 	public void printAttacksFromPokemonCombating() {
-		List<Attack> attacksAvailable = this.getPkCombatting().getFourPrincipalAttacks().stream()
-				.filter(a -> a.getPp() > 0).toList();
+		List<Attack> attacksAvailable = this.getPkCombatting().getFourPrincipalAttacks().stream().filter(a -> a.hasPp())
+				.toList();
 
 		for (Attack currentAttack : attacksAvailable) {
 			System.out.println(currentAttack.getId() + " - " + currentAttack.getName() + " - " + currentAttack.getType()

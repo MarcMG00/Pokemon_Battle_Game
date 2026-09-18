@@ -2,20 +2,20 @@ package pokemon.attackInterface;
 
 import pokemon.enums.StatusConditions;
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 import pokemon.model.HelperService;
 import pokemon.model.State;
 
 public class TrappedByOwnAttackEffect implements AttackEffect {
-	private final DamageService damageService;
+	private final AttackResolutionService attackResolutionService;
 	private final HelperService helperService;
 	private final int minTurns;
 	private final int maxTurns;
 
-	public TrappedByOwnAttackEffect(HelperService helperService, DamageService damageService, int minTurns,
-			int maxTurns) {
-		this.damageService = damageService;
+	public TrappedByOwnAttackEffect(HelperService helperService, AttackResolutionService attackResolutionService,
+			int minTurns, int maxTurns) {
+		this.attackResolutionService = attackResolutionService;
 		this.helperService = helperService;
 		this.minTurns = minTurns;
 		this.maxTurns = maxTurns;
@@ -26,8 +26,7 @@ public class TrappedByOwnAttackEffect implements AttackEffect {
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
-		AttackResult result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		AttackResult result = attackResolutionService.resolveHit(ctx);
 
 		if (!ctx.getAttacker().hasActiveEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK)) {
 			int turns = helperService.randomInt(minTurns, maxTurns);
@@ -41,10 +40,6 @@ public class TrappedByOwnAttackEffect implements AttackEffect {
 			// Only removes PP when choosing the attack
 			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 		}
-
-		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

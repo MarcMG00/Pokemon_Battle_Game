@@ -182,6 +182,10 @@ public class Attack {
 	public int getPp() {
 		return pp;
 	}
+	
+	public boolean hasPp() {
+		return pp > 0;
+	}
 
 	public void setPp(int pp) {
 		this.pp = pp;
@@ -366,6 +370,7 @@ public class Attack {
 	public boolean hasNoPrecision() {
 		return this.getPrecision() == 0f;
 	}
+
 	// -----------------------------
 	// Set the type of the attack to his Pokemon type instead of a string
 	// -----------------------------
@@ -596,6 +601,13 @@ public class Attack {
 	// -----------------------------
 	public boolean isDig() {
 		return this.getId() == 91;
+	}
+
+	// -----------------------------
+	// Check if attack is 99_Rage
+	// -----------------------------
+	public boolean isRage() {
+		return this.getId() == 99;
 	}
 
 	// -----------------------------

@@ -70,6 +70,7 @@ public class Pokemon {
 	private boolean isLevitating;
 	private Sex sex;
 	private boolean isAttackBoostedFromDownloadAbility;
+	private boolean isUsingRageAttack;
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -130,6 +131,7 @@ public class Pokemon {
 		this.isAttackBoostedFromDownloadAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
+		isUsingRageAttack = false;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -260,6 +262,7 @@ public class Pokemon {
 		this.isAttackBoostedFromDownloadAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
+		isUsingRageAttack = false;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -638,6 +641,14 @@ public class Pokemon {
 		this.isAttackBoostedFromDownloadAbility = isAttackBoostedFromDownloadAbility;
 	}
 
+	public boolean isUsingRageAttack() {
+		return isUsingRageAttack;
+	}
+
+	public void setUsingRageAttack(boolean isUsingRageAttack) {
+		this.isUsingRageAttack = isUsingRageAttack;
+	}
+
 	// ==================================== METHODS
 	// ====================================
 
@@ -886,14 +897,14 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasPP(int attackId) {
 		Attack atk = this.getNextMovementById(attackId);
-		return atk != null && atk.getPp() > 0;
+		return atk != null && atk.hasPp();
 	}
 
 	// -----------------------------
 	// Check if any attack from Pokemon has PP remaining
 	// -----------------------------
 	public boolean hasAnyPPLeft() {
-		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
+		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.hasPp());
 	}
 
 	// -----------------------------
@@ -923,6 +934,18 @@ public class Pokemon {
 	// -----------------------------
 	public boolean isForcedAttack() {
 		return this.isChargingAttackForNextRound() || this.isTrappedByOwnAttack();
+	}
+
+	// -----------------------------
+	// Handle 99_Rage attack
+	// -----------------------------
+	public void handleRageAttack(boolean reduceStat) {
+		// Rise/Decrease 1 level on attack for defender
+		this.setStageValueStats(StatType.ATTACK, 1, reduceStat);
+		// Reinitialize state of Rage
+		this.setUsingRageAttack(false);
+
+		System.out.println("El ataque de " + (reduceStat ? this.getName() + " bajó" : this.getName() + " aumentó"));
 	}
 
 	// -----------------------------

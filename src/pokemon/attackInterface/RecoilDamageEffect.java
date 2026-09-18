@@ -1,16 +1,16 @@
 package pokemon.attackInterface;
 
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 import pokemon.model.Pokemon;
 
 public class RecoilDamageEffect implements AttackEffect {
-	private final DamageService damageService;
+	private final AttackResolutionService attackResolutionService;
 	private final float recoilPercent;
 
-	public RecoilDamageEffect(DamageService damageService, float recoilPercent) {
-		this.damageService = damageService;
+	public RecoilDamageEffect(AttackResolutionService attackResolutionService, float recoilPercent) {
+		this.attackResolutionService = attackResolutionService;
 		this.recoilPercent = recoilPercent;
 	}
 
@@ -24,14 +24,9 @@ public class RecoilDamageEffect implements AttackEffect {
 		if (ctx.getAttacker().hasRecklessAbility())
 			ctx.setPower(ctx.getPower() * 1.2f);
 
-		AttackResult result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		AttackResult result = attackResolutionService.resolveHit(ctx);
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
-
-		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		// 69_Rock_Head ability is not affected by recoil
 		if (attacker.hasRockHeadAbility()) {
@@ -41,8 +36,7 @@ public class RecoilDamageEffect implements AttackEffect {
 			return result;
 		}
 
-		float recoil = dmg * recoilPercent;
-
+		float recoil = result.getDamage() * recoilPercent;
 		attacker.setPs(Math.max(attacker.getPs() - recoil, 0));
 
 		System.out.println(

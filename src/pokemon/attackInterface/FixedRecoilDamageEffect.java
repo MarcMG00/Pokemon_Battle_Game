@@ -1,14 +1,14 @@
 package pokemon.attackInterface;
 
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 
 public class FixedRecoilDamageEffect implements AttackEffect {
-	private final DamageService damageService;
+	private final AttackResolutionService attackResolutionService;
 
-	public FixedRecoilDamageEffect(DamageService damageService) {
-		this.damageService = damageService;
+	public FixedRecoilDamageEffect(AttackResolutionService attackResolutionService) {
+		this.attackResolutionService = attackResolutionService;
 	}
 
 	@Override
@@ -16,15 +16,11 @@ public class FixedRecoilDamageEffect implements AttackEffect {
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
-		AttackResult result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		AttackResult result = attackResolutionService.resolveHit(ctx);
 
-		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 		// Pokemon combating receives 25% of damage from his initial PS
 		ctx.getAttacker()
 				.setPs(Math.max(ctx.getAttacker().getInitialPs() - (ctx.getAttacker().getInitialPs() * 0.25f), 0));
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

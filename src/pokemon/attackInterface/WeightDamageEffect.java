@@ -2,15 +2,15 @@ package pokemon.attackInterface;
 
 import pokemon.model.Attack;
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 import pokemon.model.Pokemon;
 
 public class WeightDamageEffect implements AttackEffect {
-	private final DamageService damageService;
+	private final AttackResolutionService attackResolutionService;
 
-	public WeightDamageEffect(DamageService damageService) {
-		this.damageService = damageService;
+	public WeightDamageEffect(AttackResolutionService attackResolutionService) {
+		this.attackResolutionService = attackResolutionService;
 	}
 
 	@Override
@@ -34,13 +34,9 @@ public class WeightDamageEffect implements AttackEffect {
 		else
 			ctx.setPower(120);
 
-		AttackResult result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		AttackResult result = attackResolutionService.resolveHit(ctx);
 
 		attack.setPp(attack.getPp() - 1);
-		defender.setPs(Math.max(defender.getPs() - dmg, 0));
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

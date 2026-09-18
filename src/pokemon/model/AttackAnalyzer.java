@@ -268,7 +268,7 @@ public final class AttackAnalyzer {
 		float bestScore = -1f;
 
 		for (Attack atk : attacker.getFourPrincipalAttacks()) {
-			if (atk.getPp() <= 0)
+			if (!atk.hasPp())
 				continue;
 
 			float effectiveness = getEffectiveness(atk.getPkType(), defender);
@@ -364,7 +364,7 @@ public final class AttackAnalyzer {
 		Pokemon attacker = owner.getPkCombatting();
 
 		// If no PPs remaining in any attack => use 165_Struggle
-		boolean hasPP = attacker.getFourPrincipalAttacks().stream().anyMatch(a -> a.getPp() > 0);
+		boolean hasPP = attacker.getFourPrincipalAttacks().stream().anyMatch(a -> a.hasPp());
 
 		if (!hasPP) {
 			selectStruggle(owner);
@@ -381,7 +381,7 @@ public final class AttackAnalyzer {
 
 		// Check all possible attacks
 		for (Attack atk : attacker.getFourPrincipalAttacks()) {
-			if (atk.getPp() <= 0)
+			if (!atk.hasPp())
 				continue;
 
 			if (isAttackDisabled(attacker, atk))
@@ -442,7 +442,7 @@ public final class AttackAnalyzer {
 
 		} else {
 			// Last case : any attack with PP
-			chosenAttack = attacker.getFourPrincipalAttacks().stream().filter(a -> a.getPp() > 0).findFirst().get();
+			chosenAttack = attacker.getFourPrincipalAttacks().stream().filter(a -> a.hasPp()).findFirst().get();
 		}
 
 		// Apply effectiveness and real STAB

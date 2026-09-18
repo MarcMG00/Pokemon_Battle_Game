@@ -1,14 +1,14 @@
 package pokemon.attackInterface;
 
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 
 public class IgnoreMinimizeEffect implements AttackEffect {
-	private final DamageService damageService;
+	private final AttackResolutionService attackResolutionService;
 
-	public IgnoreMinimizeEffect(DamageService damageService) {
-		this.damageService = damageService;
+	public IgnoreMinimizeEffect(AttackResolutionService attackResolutionService) {
+		this.attackResolutionService = attackResolutionService;
 	}
 
 	@Override
@@ -20,13 +20,9 @@ public class IgnoreMinimizeEffect implements AttackEffect {
 		if (ctx.getDefender().hasUsedMinimize())
 			ctx.setPower(ctx.getAttack().getPower() * 2);
 
-		AttackResult result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		AttackResult result = attackResolutionService.resolveHit(ctx);
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
-		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

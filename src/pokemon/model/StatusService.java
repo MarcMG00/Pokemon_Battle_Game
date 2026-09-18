@@ -155,6 +155,7 @@ public class StatusService {
 				}
 			}
 		}
+		
 		return canAttackConfused;
 	}
 
@@ -200,6 +201,7 @@ public class StatusService {
 				}
 			}
 		}
+		
 		return canAttack;
 	}
 
@@ -518,7 +520,7 @@ public class StatusService {
 			System.out.println(pk.getName() + " fue intoxicado (gravemente envenenado)");
 			break;
 		case FROZEN:
-			if (isFrozenImmuneByAbility(pk, weather))
+			if (isFrozenImmune(pk, weather))
 				return;
 
 			resetFireBoostIfNeeded(pk, canBeFrozen, isWeatherSuppressed);
@@ -653,7 +655,7 @@ public class StatusService {
 	// -----------------------------
 	// Check if Pokemon can be frozen
 	// -----------------------------
-	private boolean isFrozenImmuneByAbility(Pokemon pk, Weather weather) {
+	private boolean isFrozenImmune(Pokemon pk, Weather weather) {
 		if (pk.hasMagmaArmorAbility()) {
 			System.out.println(pk.getName() + " no puede ser congelado dada su habilidad Escudo magma");
 			return true;

@@ -2,17 +2,17 @@ package pokemon.attackInterface;
 
 import pokemon.enums.StatusConditions;
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 import pokemon.model.HelperService;
 import pokemon.model.State;
 
 public class TrappedEffect implements AttackEffect {
-	private final DamageService damageService;
+	private final AttackResolutionService attackResolutionService;
 	private final HelperService helperService;
 
-	public TrappedEffect(HelperService helperService, DamageService damageService) {
-		this.damageService = damageService;
+	public TrappedEffect(HelperService helperService, AttackResolutionService attackResolutionService) {
+		this.attackResolutionService = attackResolutionService;
 		this.helperService = helperService;
 	}
 
@@ -21,11 +21,9 @@ public class TrappedEffect implements AttackEffect {
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
-		AttackResult result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		AttackResult result = attackResolutionService.resolveHit(ctx);
 
-		// Check if the Pokemon facing doesn't have the status Trapped (is a status that
-		// can be accumulated with other ephemeral status)
+		// Check if the Pokemon facing doesn't have the status Trapped
 		if (!ctx.getDefender().hasActiveEphemeralStatus(StatusConditions.TRAPPED)) {
 			System.out.println(ctx.getDefender().getName() + " quedó atrapado");
 
@@ -34,10 +32,7 @@ public class TrappedEffect implements AttackEffect {
 			ctx.getDefender().addEphemeralStatus(StatusConditions.TRAPPED, trapped);
 		}
 
-		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

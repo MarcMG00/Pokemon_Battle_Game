@@ -2,9 +2,16 @@ package pokemon.attackInterface;
 
 import pokemon.model.Ability;
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
+import pokemon.model.Pokemon;
 
 public class OneHitKOEffect implements AttackEffect {
+	private final AttackResolutionService attackResolutionService;
+
+	public OneHitKOEffect(AttackResolutionService attackResolutionService) {
+		this.attackResolutionService = attackResolutionService;
+	}
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
@@ -15,30 +22,30 @@ public class OneHitKOEffect implements AttackEffect {
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
 
-		Ability abilityDefender = ctx.getDefender().getAbilitySelected();
+		Pokemon defender = ctx.getDefender();
+		Ability abilityDefender = defender.getAbilitySelected();
 
 		float dmg = 0f;
 
 		// One-Hit KO => Pokemon facing dies instantly (depending on conditions)
 		if (ctx.getDefender().hasSturdyAbility() && !abilityDefender.alreadyUsedOnEnter()
 				&& ctx.getDefender().hasMaxPS()) {
-			ctx.getDefender().setPs(1f);
-			abilityDefender.setAlreadyUsedOnEnter(true);
-			dmg = ctx.getDefender().getPs() - 1f;
+			dmg = defender.getPs() - 1f;
 
+			abilityDefender.setAlreadyUsedOnEnter(true);
 			System.out.println(ctx.getDefender().getName() + " (Id:" + ctx.getDefender().getId()
 					+ "), se quedó a un PS gracias a la habilidad Robustez");
 		} else {
-			ctx.getDefender().setPs(0f);
-			dmg = ctx.getDefender().getPs();
+			dmg = defender.getPs();
 
 			System.out.println(ctx.getDefender().getName() + " (Id:" + ctx.getDefender().getId()
 					+ "), se debilitó de un golpe con el ataque fulminante");
 		}
 
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
-
 		result.addDamage(dmg);
+
+		attackResolutionService.resolveDamage(ctx, result);
+
 		return result;
 	}
 }

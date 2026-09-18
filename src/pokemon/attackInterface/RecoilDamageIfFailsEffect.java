@@ -1,19 +1,21 @@
 package pokemon.attackInterface;
 
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 
 public class RecoilDamageIfFailsEffect implements AttackEffect {
+	private final AttackResolutionService attackResolutionService;
 
-	private final DamageService damageService;
-
-	public RecoilDamageIfFailsEffect(DamageService damageService) {
-		this.damageService = damageService;
+	public RecoilDamageIfFailsEffect(AttackResolutionService attackResolutionService) {
+		this.attackResolutionService = attackResolutionService;
 	}
 
 	@Override
 	public AttackResult execute(AttackContext ctx) {
+		// Informative : don't handle here recoil attack to attacker if fails (it is
+		// handled on AccuracyService)
+
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
@@ -21,13 +23,9 @@ public class RecoilDamageIfFailsEffect implements AttackEffect {
 		if (ctx.getAttacker().hasRecklessAbility())
 			ctx.setPower(ctx.getPower() * 1.2f);
 
-		AttackResult result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		AttackResult result = attackResolutionService.resolveHit(ctx);
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
-		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}

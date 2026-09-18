@@ -1,15 +1,15 @@
 package pokemon.attackInterface;
 
 import pokemon.model.AttackContext;
+import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
-import pokemon.model.DamageService;
 
 public class ConditionalPowerEffect implements AttackEffect {
-	private final DamageService damageService;
+	private final AttackResolutionService attackResolutionService;
 	private final float multiplier;
 
-	public ConditionalPowerEffect(DamageService damageService, float multiplier) {
-		this.damageService = damageService;
+	public ConditionalPowerEffect(AttackResolutionService attackResolutionService, float multiplier) {
+		this.attackResolutionService = attackResolutionService;
 		this.multiplier = multiplier;
 	}
 
@@ -24,13 +24,9 @@ public class ConditionalPowerEffect implements AttackEffect {
 				&& ctx.getAttack().canHitWhileInvulnerable().contains(ctx.getDefender().getNextMovement().getId()))
 			ctx.setPower(ctx.getPower() * multiplier);
 
-		AttackResult result = damageService.doDamage(ctx);
-		float dmg = result.getDamage();
+		AttackResult result = attackResolutionService.resolveHit(ctx);
 
 		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
-		ctx.getDefender().setPs(Math.max(ctx.getDefender().getPs() - dmg, 0));
-
-		ctx.getDefender().getAbilitySelected().getEffect().onHit(ctx, result, 0d);
 
 		return result;
 	}
