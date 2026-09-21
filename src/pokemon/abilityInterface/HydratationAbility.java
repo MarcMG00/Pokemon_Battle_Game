@@ -15,14 +15,15 @@ public class HydratationAbility extends AbilityEffect {
 		if (battleCtx.getWeather() != Weather.RAIN)
 			return;
 
-		// Remove status condition and ephemeral status from Pokemon leaving
-		if (owner.hasStatusCondition() || owner.hasEphemeralStatus()) {
-			owner.setStatusCondition(new State());
-			owner.getEphemeralStatuses().clear();
+		if (!owner.hasStatusCondition() && !owner.hasEphemeralStatus())
+			return;
 
-			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")"
-					+ " se curó de todos sus problemas de estado gracias a su habilidad Cura lluvia");
-		}
+		// Remove status condition and ephemeral status from Pokemon entering
+		owner.setStatusCondition(new State());
+		owner.getEphemeralStatuses().clear();
+
+		System.out.println(owner.getName() + " (Id:" + owner.getId() + ")"
+				+ " se curó de todos sus problemas de estado gracias a su habilidad Cura lluvia");
 	}
 
 	@Override
@@ -30,13 +31,14 @@ public class HydratationAbility extends AbilityEffect {
 		if (battleCtx.getWeather() != Weather.RAIN)
 			return;
 
-		// Remove status condition and ephemeral status from Pokemon leaving
-		if (owner.hasStatusCondition() || owner.hasEphemeralStatus()) {
-			owner.setStatusCondition(new State());
-			owner.getEphemeralStatuses().clear();
+		if (!owner.hasStatusCondition() && !owner.hasEphemeralStatus())
+			return;
 
-			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")"
-					+ " se curó de todos sus problemas de estado gracias a su habilidad Cura lluvia");
-		}
+		// Remove status condition and ephemeral status from Pokemon
+		owner.setStatusCondition(new State());
+		owner.getEphemeralStatuses().clear();
+
+		System.out.println(owner.getName() + " (Id:" + owner.getId() + ")"
+				+ " se curó de todos sus problemas de estado gracias a su habilidad Cura lluvia");
 	}
 }

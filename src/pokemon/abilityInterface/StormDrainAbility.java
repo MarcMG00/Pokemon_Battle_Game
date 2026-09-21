@@ -1,5 +1,6 @@
 package pokemon.abilityInterface;
 
+import pokemon.enums.StatType;
 import pokemon.model.Attack;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
@@ -23,7 +24,7 @@ public class StormDrainAbility extends AbilityEffect {
 			System.out.println("El ataque especial de " + owner.getName() + " (Id:" + owner.getId() + ")"
 					+ " no puede subir más!");
 		else {
-			owner.setSpecialAttackStage(Math.min(owner.getSpecialAttackStage() + 1, 6));
+			owner.setStageValueStats(StatType.SPECIAL_ATTACK, 1, false);
 			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")" + " aumentó su Ataque especial!");
 		}
 

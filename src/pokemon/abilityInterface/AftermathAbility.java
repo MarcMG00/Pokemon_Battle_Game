@@ -1,8 +1,7 @@
 package pokemon.abilityInterface;
 
-import pokemon.enums.Weather;
-import pokemon.model.Attack;
-import pokemon.model.BattleContext;
+import pokemon.model.AttackContext;
+import pokemon.model.AttackResult;
 import pokemon.model.Pokemon;
 
 public class AftermathAbility extends AbilityEffect {
@@ -11,19 +10,30 @@ public class AftermathAbility extends AbilityEffect {
 	}
 
 	@Override
-	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
-			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
+	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
+		// Defender needs to be debilitated by the attack
+		if (!owner.hasFainted())
+			return true;
 
-		// Defender needs to be debilitated + attacker hasn't to have 006_Damp ability +
-		// defender needs to receive a physical attack
-		if (!defender.hasFainted() || !defender.hasReceivedDamage() || attacker.hasDampAbility()
-				|| !attack.makesContact())
-			return;
+		// Attack has dealt damage
+		if (!attackResult.hasDealtDamage())
+			return true;
 
-		// Remove 25% of max PS from defender
-		float removePS = attacker.getInitialPs() * 0.25f;
-		attacker.setPs(Math.max(attacker.getPs() - removePS, 0));
+		// defender needs to receive an attack that makes contact
+		if (!attackCtx.getAttack().makesContact())
+			return true;
 
-		System.out.println(attacker.getName() + " sufrió daño dada la habilidad Detonación de " + defender.getName());
+		// attacker hasn't to have 006_Damp ability
+		if (attackCtx.getAttacker().hasDampAbility())
+			return true;
+
+		// Remove 25% from his max PS
+		float removePS = attackCtx.getAttacker().getInitialPs() * 0.25f;
+		attackCtx.getAttacker().setPs(Math.max(attackCtx.getAttacker().getPs() - removePS, 0));
+
+		System.out.println(
+				attackCtx.getAttacker().getName() + " sufrió daño dada la habilidad Detonación de " + owner.getName());
+
+		return false;
 	}
 }

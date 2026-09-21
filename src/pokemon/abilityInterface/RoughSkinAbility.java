@@ -11,19 +11,21 @@ public class RoughSkinAbility extends AbilityEffect {
 
 	@Override
 	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
-		if (attackCtx.getDefender().hasRoughSkinAbility())
-			return true;
-
 		// 98_Magic_Guard annuls secondary damage effects
 		if (attackCtx.getAttacker().hasMagicGuardAbility())
 			return true;
 
 		// Attack must make contact
-		if (!attackCtx.getAttack().makesContact() || attackResult.getDamage() <= 0f)
+		if (!attackCtx.getAttack().makesContact())
+			return true;
+
+		// Attack must make damage
+		if (!attackResult.hasDealtDamage())
 			return true;
 
 		// Return damage to attacker
 		float attackerInitialPs = attackCtx.getAttacker().getInitialPs();
+
 		// Removes 6,25% of initial PS
 		float damage = attackerInitialPs * (1f - 0.625f);
 		attackCtx.getAttacker().setPs(Math.max(attackCtx.getAttacker().getPs() - damage, 0));

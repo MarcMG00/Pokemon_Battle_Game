@@ -1,5 +1,6 @@
 package pokemon.abilityInterface;
 
+import pokemon.enums.StatType;
 import pokemon.enums.Weather;
 import pokemon.model.Attack;
 import pokemon.model.BattleContext;
@@ -9,7 +10,7 @@ public class SteadfastAbility extends AbilityEffect {
 	public SteadfastAbility(Pokemon owner) {
 		super(owner);
 	}
-	
+
 	@Override
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
@@ -22,7 +23,7 @@ public class SteadfastAbility extends AbilityEffect {
 			return;
 		}
 
-		defender.setSpeedStage(Math.min(defender.getSpeedStage() + 1, 6));
+		defender.setStageValueStats(StatType.SPEED, 1, false);
 		System.out.println(defender.getName() + " aumentó su velocidad gracias a su habilidad Impasible");
 	}
 }

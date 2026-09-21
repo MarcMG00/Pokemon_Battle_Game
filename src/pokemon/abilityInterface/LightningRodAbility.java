@@ -23,14 +23,14 @@ public class LightningRodAbility extends AbilityEffect {
 		if (owner.getTypes().stream().anyMatch(t -> t.isGroundType()))
 			return false;
 
-		// Rises the special attack one point
-		if (owner.getSpecialAttackStage() >= 6)
+		if (owner.getSpecialAttackStage() >= 6) {
 			System.out.println("El ataque especial de " + owner.getName() + " (Id:" + owner.getId() + ")"
 					+ " no puede subir más!");
-		else {
-			owner.setSpecialAttackStage(Math.min(owner.getSpecialAttackStage() + 1, 6));
-			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")" + " aumentó su Ataque especial!");
+			return false;
 		}
+
+		owner.setSpecialAttackStage(Math.min(owner.getSpecialAttackStage() + 1, 6));
+		System.out.println(owner.getName() + " (Id:" + owner.getId() + ")" + " aumentó su Ataque especial!");
 
 		// Cancel damage and effects of the attack
 		return false;

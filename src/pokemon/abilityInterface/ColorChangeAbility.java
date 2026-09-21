@@ -36,9 +36,9 @@ public class ColorChangeAbility extends AbilityEffect {
 		// Change type
 		ArrayList<PokemonType> types = new ArrayList<>();
 		types.add(moveType);
-		defender.setTypes(types);
+		owner.setTypes(types);
 
-		System.out.println(defender.getName() + " cambió su tipo a " + moveType.getName() + " gracias a Cambio Color!");
+		System.out.println(owner.getName() + " cambió su tipo a " + moveType.getName() + " gracias a Cambio Color!");
 	}
 
 	@Override

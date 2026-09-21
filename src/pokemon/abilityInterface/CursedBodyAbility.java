@@ -11,15 +11,11 @@ public class CursedBodyAbility extends AbilityEffect {
 	public CursedBodyAbility(Pokemon owner) {
 		super(owner);
 	}
-	
+
 	private static final double PROBABILITY = 0.30d;
 
 	public void afterAttack(BattleContext battleCtx, Pokemon attacker, Pokemon defender, Attack attack, float dmg,
 			double percentageFlinch, boolean isACriticAttack, Weather weather, boolean isWeatherSuppressed) {
-		// Defender must have the current ability
-		if (!defender.hasCursedBodyAbility())
-			return;
-
 		// Defender must have received damage
 		if (dmg <= 0f)
 			return;
@@ -28,10 +24,14 @@ public class CursedBodyAbility extends AbilityEffect {
 		if (attacker.hasAromaVeilAbility())
 			return;
 
+		// Defender doesn't have to be substitute
+		if (owner.hasSubstitute())
+			return;
+
 		Attack lastAttack = attacker.getLastUsedAttack();
 		// If rival hasn't used yet an attack => fails
 		if (lastAttack == null || lastAttack.getId() == 0) {
-			System.out.println(defender.getName() + " no pudo anular ningún ataque (habilidad Cuerpo maldito)");
+			System.out.println(owner.getName() + " no pudo anular ningún ataque (habilidad Cuerpo maldito)");
 			return;
 		}
 

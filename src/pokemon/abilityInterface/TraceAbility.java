@@ -39,6 +39,7 @@ public class TraceAbility extends AbilityEffect {
 						+ defender.getAbilitySelected().getName());
 			}
 		}
+
 		owner.getAbilitySelected().getEffect().onSwitchIn(battleCtx, defender);
 	}
 

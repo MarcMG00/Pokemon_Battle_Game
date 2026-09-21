@@ -30,21 +30,26 @@ public class ForecastAbility extends AbilityEffect {
 		// Change Pokemon types depending on Weather
 		switch (actualWeather) {
 		case RAIN:
-			newType.add(types.stream().filter(t -> t.getId() == 2).findFirst().get());
+			newType.add(types.stream().filter(t -> t.isWaterType()).findFirst().get());
 			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Agua gracias a su habilidad Predicción");
 			break;
 		case SUN:
-			newType.add(types.stream().filter(t -> t.getId() == 7).findFirst().get());
+			newType.add(types.stream().filter(t -> t.isFireType()).findFirst().get());
 			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Fuego gracias a su habilidad Predicción");
 			break;
 		case HAIL:
-			newType.add(types.stream().filter(t -> t.getId() == 9).findFirst().get());
+			newType.add(types.stream().filter(t -> t.isIceType()).findFirst().get());
 			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Hielo gracias a su habilidad Predicción");
 			break;
 		default:
+			// Return to initial types
+			if (!owner.getTypes().stream().filter(t -> t.isNormalType()).findAny().isPresent()) {
+				owner.setTypes(owner.getInitialTypes());
+				System.out.println(owner.getName() + " cambió a tipo Normal gracias a su habilidad Predicción");
+			}
 			break;
 		}
 	}
@@ -73,21 +78,25 @@ public class ForecastAbility extends AbilityEffect {
 		// Change Pokemon types depending on Weather
 		switch (actualWeather) {
 		case RAIN:
-			newType.add(types.stream().filter(t -> t.getId() == 2).findFirst().get());
+			newType.add(types.stream().filter(t -> t.isWaterType()).findFirst().get());
 			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Agua gracias a su habilidad Predicción");
 			break;
 		case SUN:
-			newType.add(types.stream().filter(t -> t.getId() == 7).findFirst().get());
+			newType.add(types.stream().filter(t -> t.isFireType()).findFirst().get());
 			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Fuego gracias a su habilidad Predicción");
 			break;
 		case HAIL:
-			newType.add(types.stream().filter(t -> t.getId() == 9).findFirst().get());
+			newType.add(types.stream().filter(t -> t.isIceType()).findFirst().get());
 			owner.setTypes(newType);
 			System.out.println(owner.getName() + " cambió a tipo Hielo gracias a su habilidad Predicción");
 			break;
 		default:
+			if (!owner.getTypes().stream().filter(t -> t.isNormalType()).findAny().isPresent()) {
+				owner.setTypes(owner.getInitialTypes());
+				System.out.println(owner.getName() + " cambió a tipo Normal gracias a su habilidad Predicción");
+			}
 			break;
 		}
 	}

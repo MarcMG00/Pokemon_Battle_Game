@@ -11,18 +11,12 @@ public class IntimidateAbility extends AbilityEffect {
 		this.statService = new StatService();
 	}
 
-	private int stages;
 	private final StatService statService;
 
 	@Override
 	public void onSwitchIn(BattleContext battleCtx, Pokemon defender) {
-		boolean isReduceStatStage = true;
 
 		System.out.println(owner.getName() + " intimidó a " + defender.getName());
-
-		// 126_Contrary ability reverse the increase or reduce stat stage
-		if (defender.hasContraryAbility())
-			isReduceStatStage = false;
 
 		// Check immunity (Oblivious, Own tempo, etc.)
 		if (statService.isIntimidateImmune(defender)) {
@@ -42,14 +36,12 @@ public class IntimidateAbility extends AbilityEffect {
 			return;
 		}
 
-		stages *= statService.applyModifiersNbStage(defender, isReduceStatStage);
-		defender.setStageValueStats(StatType.ATTACK, stages, isReduceStatStage);
+		defender.setStageValueStats(StatType.ATTACK, 1, true);
 
-		System.out.println(
-				"El ataque de " + (isReduceStatStage ? defender.getName() + " bajó" : defender.getName() + " aumentó"));
+		System.out.println("El ataque de " + defender.getName() + " bajó");
 
 		// 128_Defiant ability increases by 2 the attack for each stat reduced
-		if (isReduceStatStage && defender.hasDefiantAbility()) {
+		if (defender.hasDefiantAbility()) {
 			if (defender.getStage(StatType.ATTACK) < 6) {
 				defender.setStageValueStats(StatType.ATTACK, 2, false);
 				System.out.println(defender.getName() + " aumentó mucho su ataque gracias a su habilidad Competitivo");

@@ -11,7 +11,7 @@ public class CuteCharmAbility extends AbilityEffect {
 		super(owner);
 	}
 	
-	private static final double INFATUEATED_CHANCE = 0.30;
+	private static final double INFATUEATED_CHANCE = 0.30d;
 
 	@Override
 	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {

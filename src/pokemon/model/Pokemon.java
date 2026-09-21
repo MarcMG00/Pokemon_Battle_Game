@@ -633,6 +633,8 @@ public class Pokemon {
 		return sex;
 	}
 
+	// Used only for 88_Download ability => if true, attack was raised. Otherwise is
+	// special attack
 	public boolean isAttackBoostedFromDownloadAbility() {
 		return isAttackBoostedFromDownloadAbility;
 	}
@@ -1189,7 +1191,7 @@ public class Pokemon {
 	// -----------------------------
 	// Check if Pokemon has 49_Flame_body ability
 	// -----------------------------
-	public boolean hasFlameBodtyAbility() {
+	public boolean hasFlameBodyAbility() {
 		return this.getAbilitySelected().getId() == 49;
 	}
 

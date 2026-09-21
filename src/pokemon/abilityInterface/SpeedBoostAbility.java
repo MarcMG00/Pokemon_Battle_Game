@@ -1,5 +1,6 @@
 package pokemon.abilityInterface;
 
+import pokemon.enums.StatType;
 import pokemon.model.BattleContext;
 import pokemon.model.Pokemon;
 
@@ -14,7 +15,7 @@ public class SpeedBoostAbility extends AbilityEffect {
 			System.out.println(
 					"La velocidad de " + owner.getName() + " (Id:" + owner.getId() + ")" + " no puede subir más!");
 		else {
-			owner.setSpeedStage(Math.min(owner.getSpeedStage() + 1, 6));
+			owner.setStageValueStats(StatType.SPEED, 1, false);
 			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")" + " aumentó su Velocidad!");
 		}
 	}

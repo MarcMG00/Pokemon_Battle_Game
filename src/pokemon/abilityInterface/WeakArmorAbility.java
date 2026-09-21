@@ -12,26 +12,22 @@ public class WeakArmorAbility extends AbilityEffect {
 
 	@Override
 	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
-		// Defender must have the current ability
-		if (!attackCtx.getDefender().hasWeakArmorAbility())
-			return true;
-
 		// Attack must be physical and defender must have received damage
-		if (!attackCtx.getAttack().makesContact() || attackResult.getDamage() <= 0f)
+		if (!attackCtx.getAttack().makesContact() || attackResult.hasDealtDamage())
 			return true;
 
 		// Defense decreases by 1 (if needed)
-		if (attackCtx.getDefender().getDefenseStage() > 1) {
-			attackCtx.getDefender().setStageValueStats(StatType.DEFENSE, 1, true);
-			System.out.println(StatType.DEFENSE.name() + " de " + attackCtx.getDefender().getName() + " (Id:"
-					+ attackCtx.getDefender().getId() + ")" + " bajó!");
+		if (owner.getDefenseStage() > -6) {
+			owner.setStageValueStats(StatType.DEFENSE, 1, true);
+			System.out.println(StatType.DEFENSE.name() + " de " + owner.getName() + " (Id:" + owner.getId() + ")"
+					+ " bajó! a causa de Armadura frágil");
 		}
 
 		// Speed increases by 1 (if needed)
-		if (attackCtx.getDefender().getSpeedStage() < 6) {
-			attackCtx.getDefender().setStageValueStats(StatType.SPEED, 1, false);
-			System.out.println(StatType.SPEED.name() + " de " + attackCtx.getDefender().getName() + " (Id:"
-					+ attackCtx.getDefender().getId() + ")" + " subió!");
+		if (owner.getSpeedStage() < 6) {
+			owner.setStageValueStats(StatType.SPEED, 1, false);
+			System.out.println(StatType.SPEED.name() + " de " + owner.getName() + " (Id:" + owner.getId() + ")"
+					+ " subió! a causa de Armadura frágil");
 		}
 
 		return false;

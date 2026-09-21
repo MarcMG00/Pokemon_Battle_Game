@@ -16,13 +16,12 @@ public class RainDishAbility extends AbilityEffect {
 
 		if (owner.hasMaxPS())
 			return;
-		else {
-			// Rises current PS by 6.25%
-			float incrementPs = owner.getInitialPs() * 0.0625f;
 
-			owner.setPs(Math.min(owner.getPs() + incrementPs, owner.getInitialPs()));
-			System.out.println(owner.getName() + " (Id:" + owner.getId() + ")"
-					+ " recuperó algo de PS gracias a su habilidad Cura lluvia");
-		}
+		// Rises current PS by 6.25%
+		float incrementPs = owner.getInitialPs() * 0.0625f;
+
+		owner.setPs(Math.min(owner.getPs() + incrementPs, owner.getInitialPs()));
+		System.out.println(owner.getName() + " (Id:" + owner.getId() + ")"
+				+ " recuperó algo de PS gracias a su habilidad Cura lluvia");
 	}
 }

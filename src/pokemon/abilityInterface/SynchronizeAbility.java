@@ -24,21 +24,21 @@ public class SynchronizeAbility extends AbilityEffect {
 			return;
 
 		// Poisoned status
-		if (defender.hasActiveStatusCondition(StatusConditions.POISONED)) {
+		if (owner.hasActiveStatusCondition(StatusConditions.POISONED)) {
 			System.out.println(attacker.getName() + " fue envenenado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.POISONED));
 			return;
 		}
 
 		// Burned status
-		if (defender.hasActiveStatusCondition(StatusConditions.BURNED)) {
+		if (owner.hasActiveStatusCondition(StatusConditions.BURNED)) {
 			System.out.println(attacker.getName() + " fue quemado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.BURNED));
 			return;
 		}
 
 		// Paralyzed status
-		if (defender.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
+		if (owner.hasActiveStatusCondition(StatusConditions.PARALYZED)) {
 			System.out.println(attacker.getName() + " fue paralizado por la habilidad Sincronía del Pokémon rival");
 			attacker.setStatusCondition(new State(StatusConditions.PARALYZED));
 			return;

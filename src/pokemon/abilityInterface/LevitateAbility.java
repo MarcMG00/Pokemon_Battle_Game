@@ -17,6 +17,7 @@ public class LevitateAbility extends AbilityEffect {
 
 		System.out.println(
 				owner.getName() + " no puede ser atacado por movimientos de tipo tierra dada su habilidad Levitación");
+		
 		return false;
 	}
 }

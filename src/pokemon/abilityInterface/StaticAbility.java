@@ -10,19 +10,20 @@ public class StaticAbility extends AbilityEffect {
 	public StaticAbility(Pokemon owner) {
 		super(owner);
 	}
-	
+
 	private static final double PARALYSIS_CHANCE = 0.30;
 
 	@Override
 	public boolean onHit(AttackContext attackCtx, AttackResult attackResult, double percentageFlinch) {
-		if (attackCtx.getDefender().hasStaticAbility())
-			return true;
-
 		if (attackCtx.getAttacker().hasActiveStatusCondition(StatusConditions.PARALYZED))
 			return true;
 
 		// Attack must make contact
-		if (!attackCtx.getAttack().makesContact() || attackResult.getDamage() <= 0f)
+		if (!attackCtx.getAttack().makesContact())
+			return true;
+
+		// Attack must make damage
+		if (!attackResult.hasDealtDamage())
 			return true;
 
 		// Probability
@@ -30,8 +31,8 @@ public class StaticAbility extends AbilityEffect {
 			return true;
 
 		// Try to apply paralysis
-		attackCtx.getStatusService().trySetStatusCondition(attackCtx.getAttacker(), new State(StatusConditions.PARALYZED), null,
-				false, attackCtx.getAttack());
+		attackCtx.getStatusService().trySetStatusCondition(attackCtx.getAttacker(),
+				new State(StatusConditions.PARALYZED), null, false, attackCtx.getAttack());
 		System.out.println(attackCtx.getAttacker().getName()
 				+ " fue paralizado por la habilidad electricidad estática del Pokémon rival");
 
