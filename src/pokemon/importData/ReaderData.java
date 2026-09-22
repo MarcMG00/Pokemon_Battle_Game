@@ -705,6 +705,8 @@ public class ReaderData {
 				setIsStateAttackAgainstPkFacing(attack);
 				// Set the priority of the attack
 				setAttackPriority(attack);
+				// Set if attack has no effect in battle
+				setAttackHasNoEffectInBattle(attack);
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
@@ -1425,6 +1427,19 @@ public class ReaderData {
 			break;
 		default:
 			attack.setPriority(0);
+		}
+	}
+
+	// -----------------------------
+	// Set if attack has no effect in battle
+	// -----------------------------
+	private static void setAttackHasNoEffectInBattle(Attack attack) {
+		switch (attack.getId()) {
+		case 100:
+			attack.setNoEffectInBattle(true);
+			break;
+		default:
+			attack.setNoEffectInBattle(false);
 		}
 	}
 

@@ -448,6 +448,11 @@ public class AttackService {
 				continue;
 			}
 
+			if (player.getPkCombatting().attackHasNoEffectInBattle(attackId)) {
+				System.out.println("El ataque no tiene ningún efecto en batalla");
+				continue;
+			}
+
 			return attackId;
 		}
 	}

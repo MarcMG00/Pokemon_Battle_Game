@@ -903,6 +903,13 @@ public class Pokemon {
 	}
 
 	// -----------------------------
+	// Check attack chosen can do something in battle
+	// -----------------------------
+	public boolean attackHasNoEffectInBattle(int attackId) {
+		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.getId() == attackId && a.hasNoEffectInBattle());
+	}
+
+	// -----------------------------
 	// Check if any attack from Pokemon has PP remaining
 	// -----------------------------
 	public boolean hasAnyPPLeft() {
