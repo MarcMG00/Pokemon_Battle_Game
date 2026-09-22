@@ -223,6 +223,13 @@ public class AttackService {
 		attackEffects.put(49, new FixedDamageEffect(20f, attackResolutionService)); // Bomba sónica/Sonic boom (tested)
 		attackEffects.put(69, new FixedDamageEffect(100f, attackResolutionService)); // Sísmico/Seismic toss (tested)
 		attackEffects.put(82, new FixedDamageEffect(40f, attackResolutionService)); // Furia dragón/Dragon rage (tested)
+		attackEffects.put(101, new FixedDamageEffect(100f, attackResolutionService)); // Tinieblas/Night Shade (tested)
+																						// => normally it works
+																						// differently, but since it
+																						// does the same amount of
+																						// damage as the rival has the
+																						// number of levels, every
+																						// Pokemon is on level 100
 
 		// Anulación/Disable (tested)
 		attackEffects.put(50, new DisableAttackEffect(helperService, 4, 7));
