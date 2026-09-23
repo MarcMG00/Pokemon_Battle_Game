@@ -35,6 +35,7 @@ public class SwitchPokemonService {
 		leaver.setLastUsedAttack(new Attack());
 		leaver.getAbilitySelected().setAlreadyUsedOnEnter(false);
 		leaver.setJustEnteredBattle(false); // just in case
+		leaver.clearMimic(); // just in case for 102_Mimic attack
 	}
 
 	// -----------------------------

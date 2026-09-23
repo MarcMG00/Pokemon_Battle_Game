@@ -38,7 +38,7 @@ public class TrappedByOwnAttackEffect implements AttackEffect {
 			ctx.getDefender().addEphemeralStatus(StatusConditions.TRAPPEDBYOWNATTACK, trappedByOwnAttack);
 
 			// Only removes PP when choosing the attack
-			ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+			ctx.consumePP();
 		}
 
 		return result;

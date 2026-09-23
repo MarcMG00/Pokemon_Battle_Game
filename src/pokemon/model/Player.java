@@ -14,6 +14,7 @@ public class Player {
 	private Pokemon pkCombatting;
 	private Pokemon pkFacing;
 	private boolean forceSwitchPokemon;
+	private static final HelperService helperService = new HelperService();
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -73,13 +74,11 @@ public class Player {
 	// Prints the attacks of current Pokemon
 	// -----------------------------
 	public void printAttacksFromPokemonCombating() {
-		List<Attack> attacksAvailable = this.getPkCombatting().getFourPrincipalAttacks().stream().filter(a -> a.hasPp())
-				.toList();
+		Pokemon pokemon = this.getPkCombatting();
 
-		for (Attack currentAttack : attacksAvailable) {
-			System.out.println(currentAttack.getId() + " - " + currentAttack.getName() + " - " + currentAttack.getType()
-					+ " -  PP : " + currentAttack.getPp());
-		}
+		pokemon.getFourPrincipalAttacks().stream().filter(attack -> helperService.hasUsablePP(pokemon, attack))
+				.map(pokemon::getEffectiveAttackForCalculation).forEach(attack -> System.out.println(attack.getId()
+						+ " - " + attack.getName() + " - " + attack.getType() + " - PP : " + attack.getPp()));
 	}
 
 	// -----------------------------

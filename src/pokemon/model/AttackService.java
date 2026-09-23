@@ -18,6 +18,7 @@ import pokemon.attackInterface.FixedRecoilDamageEffect;
 import pokemon.attackInterface.ForceSwitchEffect;
 import pokemon.attackInterface.IgnoreMinimizeEffect;
 import pokemon.attackInterface.LeechSeedEffect;
+import pokemon.attackInterface.MimicEffect;
 import pokemon.attackInterface.MistEffect;
 import pokemon.attackInterface.MultiHitEffect;
 import pokemon.attackInterface.MultiStatChange;
@@ -209,7 +210,8 @@ public class AttackService {
 																											// (tested)
 		attackEffects.put(80, new TrappedByOwnAttackEffect(helperService, attackResolutionService, 2, 5)); // Danza
 																											// pétalo/Petal
-		// dance (tested)
+																											// dance
+																											// (tested)
 
 		// Sleep effect
 		attackEffects.put(47, new SleepEffect(helperService, 1, 7)); // Canto/Sing (tested)
@@ -277,6 +279,9 @@ public class AttackService {
 
 		// Badly poisoned effect
 		attackEffects.put(92, new BadlyPoisonedEffect()); // Tóxico/Toxic (tested)
+
+		// Mimic
+		attackEffects.put(102, new MimicEffect(this)); // Mimético/Mimic (tested)
 	}
 
 	// -----------------------------
@@ -420,7 +425,7 @@ public class AttackService {
 	// -----------------------------
 	private int handleStruggle(Pokemon pk) {
 		System.out.println(
-				pk.getName() + " no tiene más PPs en ningún ataque." + pk.getName() + " tendrá que usar Forcejeo!");
+				pk.getName() + " no tiene más PPs en ningún ataque. " + pk.getName() + " tendrá que usar Forcejeo!");
 		return 165;
 	}
 
@@ -877,12 +882,18 @@ public class AttackService {
 	private void executeAttackEffect(AttackContext ctx) {
 		Ability abilityDefender = ctx.getDefender().getAbilitySelected();
 
+		// Informative : Put here last used attack because used for example for
+		// 102_Mimic attack (needs to know lasta attack used even if doesn't affect do
+		// rival or has failed, etc.)
+		if (shouldRegisterAsLastUsedAttack(ctx.getAttacker(), ctx.getAttack()))
+			ctx.getAttacker().setLastUsedAttack(ctx.getAttack());
+
 		// Some abilities allow to not to do damage (ex : Volt absorb)
 		if (abilityDefender != null) {
 			boolean continueAttack = abilityDefender.getEffect().beforeDamage(null, ctx.getAttacker(), ctx.getAttack());
 
 			if (!continueAttack) {
-				ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+				ctx.consumePP();
 				return; // cancel attack
 			}
 		}
@@ -901,12 +912,26 @@ public class AttackService {
 			// Gets the attack effect and apply damage
 			AttackResult result = effect.execute(ctx);
 
-			ctx.getAttacker().setLastUsedAttack(ctx.getAttack());
-
 			handlePostAttackRetaliation(ctx, result);
 
 			applyMistIfNeeded(ctx.getAttacker());
 		}
+	}
+
+	// -----------------------------
+	// Check if an attack charged was applied (used for 102_Mimic or just to know th
+	// last attack that it was really used)
+	// -----------------------------
+	private boolean shouldRegisterAsLastUsedAttack(Pokemon attacker, Attack attack) {
+		// Needs to apply an attack charged
+		if (attack.getCategory() == AttackCategory.CHARGED && !attacker.isChargingAttackForNextRound())
+			return false;
+
+		// Attacker is not supposed to be Asleep
+		if (attacker.hasActiveEphemeralStatus(StatusConditions.ASLEEP))
+			return false;
+
+		return true;
 	}
 
 	// -----------------------------
@@ -1233,5 +1258,24 @@ public class AttackService {
 		// some status effects, etc.)
 		switchPokemonService.switchPokemonAfterEndTurnIfNeeded(battleCtx.getPlayer(), sc);
 		switchPokemonService.switchPokemonAfterEndTurnIfNeeded(battleCtx.getIa(), sc);
+	}
+
+	// -----------------------------
+	// Create a new attack instance (used for example for 102_Mimic)
+	// -----------------------------
+	public Attack createAttackInstance(int attackId) {
+		Attack baseAttack = getAttackById(attackId);
+
+		Attack copy = new Attack(baseAttack);
+		copy.setPp(5);
+
+		return copy;
+	}
+
+	// -----------------------------
+	// Get attack by Id from list initialized on BattleCtx
+	// -----------------------------
+	public Attack getAttackById(int attackId) {
+		return this.battleCtx.getAttacks().stream().filter(t -> t.getId() == attackId).findFirst().get();
 	}
 }

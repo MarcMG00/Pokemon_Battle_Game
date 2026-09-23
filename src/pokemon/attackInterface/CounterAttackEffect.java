@@ -29,7 +29,7 @@ public class CounterAttackEffect implements AttackEffect {
 		float dmg = attacker.getDamageReceived() * 2f;
 		result.addDamage(dmg);
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		attackResolutionService.resolveDamage(ctx, result);
 

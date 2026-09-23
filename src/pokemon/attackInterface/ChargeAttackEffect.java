@@ -35,7 +35,7 @@ public class ChargeAttackEffect implements AttackEffect {
 
 		// Ensure we don't keep charging state
 		attacker.setIsChargingAttackForNextRound(false);
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		return result;
 	}

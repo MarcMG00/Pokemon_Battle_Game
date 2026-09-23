@@ -18,7 +18,7 @@ public class AttackRestOneTurnEffect implements AttackEffect {
 
 		AttackResult result = attackResolutionService.resolveHit(ctx);
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		// Pokemon combating cannot do anything next round
 		ctx.getAttacker().setCanDonAnythingNextRound(false);

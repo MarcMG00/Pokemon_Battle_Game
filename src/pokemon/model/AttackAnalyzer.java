@@ -21,6 +21,8 @@ public final class AttackAnalyzer {
 	public static final String ANSI_WHITE = "\u001B[37m";
 	public static final String ANSI_RESET = "\u001B[0m";
 
+	private static final HelperService helperService = new HelperService();
+
 	private AttackAnalyzer() {
 	}
 
@@ -268,7 +270,7 @@ public final class AttackAnalyzer {
 		float bestScore = -1f;
 
 		for (Attack atk : attacker.getFourPrincipalAttacks()) {
-			if (!atk.hasPp())
+			if (!helperService.hasUsablePP(attacker, atk))
 				continue;
 
 			float effectiveness = getEffectiveness(atk.getPkType(), defender);
@@ -316,6 +318,8 @@ public final class AttackAnalyzer {
 
 		if (isStruggleAttack(attackId))
 			nextAttack = attacker.getPhysicalAttacks().stream().filter(a -> a.getId() == attackId).findFirst();
+		else if (attacker.isMimicking() && attacker.hasAttack(attackId))
+			nextAttack = Optional.ofNullable(attacker.getCopiedAttack());
 		else
 			nextAttack = attacker.getFourPrincipalAttacks().stream().filter(a -> a.getId() == attackId).findFirst();
 
@@ -338,8 +342,9 @@ public final class AttackAnalyzer {
 	// -----------------------------
 	// Prepare best attack
 	// -----------------------------
-	private static void prepareAttack(Attack atk, Pokemon attacker, Pokemon defender, float effectiveness) {
-		PokemonType attackType = atk.getPkType();
+	private static void prepareAttack(Attack selectedAttack, Attack effectiveAttack, Pokemon attacker, Pokemon defender,
+			float effectiveness) {
+		PokemonType attackType = effectiveAttack.getPkType();
 
 		// 110_Tinted_Lens ability (attacker) => low effectiveness is treated as neutral
 		if (attacker.hasTintedLensAbility() && effectiveness > 0f && effectiveness < 1f)
@@ -350,11 +355,11 @@ public final class AttackAnalyzer {
 		if ((defender.hasFilterAbility() || defender.hasSolidRockAbility()) && effectiveness > 1f)
 			effectiveness *= 0.75f;
 
-		atk.setEffectivenessAgainstPkFacing(effectiveness);
+		selectedAttack.setEffectivenessAgainstPkFacing(effectiveness);
 
-		// 2 - Stab
+		// 2 - Stab based on the real attack type
 		float bonus = attacker.getTypes().contains(attackType) ? 1.5f : 1f;
-		atk.setBonus(bonus);
+		selectedAttack.setBonus(bonus);
 	}
 
 	// -----------------------------
@@ -364,7 +369,8 @@ public final class AttackAnalyzer {
 		Pokemon attacker = owner.getPkCombatting();
 
 		// If no PPs remaining in any attack => use 165_Struggle
-		boolean hasPP = attacker.getFourPrincipalAttacks().stream().anyMatch(a -> a.hasPp());
+		boolean hasPP = attacker.getFourPrincipalAttacks().stream()
+				.anyMatch(a -> helperService.hasUsablePP(attacker, a));
 
 		if (!hasPP) {
 			selectStruggle(owner);
@@ -381,13 +387,18 @@ public final class AttackAnalyzer {
 
 		// Check all possible attacks
 		for (Attack atk : attacker.getFourPrincipalAttacks()) {
-			if (!atk.hasPp())
+			if (!helperService.hasUsablePP(attacker, atk))
 				continue;
 
 			if (isAttackDisabled(attacker, atk))
 				continue;
 
-			PokemonType attackType = atk.getPkType();
+			Attack effectiveAttack = helperService.getEffectiveAttackForCalculation(attacker, atk);
+
+			if (effectiveAttack == null)
+				continue;
+
+			PokemonType attackType = effectiveAttack.getPkType();
 
 			float effectiveness = getEffectiveness(attackType, opponent);
 			float effectivenessForScore = effectiveness;
@@ -405,7 +416,7 @@ public final class AttackAnalyzer {
 
 			float stab = attacker.getTypes().contains(attackType) ? 1.5f : 1f;
 
-			float power = atk.getPower() > 0 ? atk.getPower() : 1f;
+			float power = effectiveAttack.getPower() > 0 ? effectiveAttack.getPower() : 1f;
 
 			float score = effectivenessForScore * stab * power;
 
@@ -442,7 +453,8 @@ public final class AttackAnalyzer {
 
 		} else {
 			// Last case : any attack with PP
-			chosenAttack = attacker.getFourPrincipalAttacks().stream().filter(a -> a.hasPp()).findFirst().get();
+			chosenAttack = attacker.getFourPrincipalAttacks().stream()
+					.filter(a -> helperService.hasUsablePP(attacker, a)).findFirst().get();
 		}
 
 		// Apply effectiveness and real STAB
@@ -473,16 +485,22 @@ public final class AttackAnalyzer {
 	// -----------------------------
 	// Prepare effectiveness of the attack from defender
 	// -----------------------------
-	public static void prepareEfectivenessChosenAttack(Pokemon attacker, Pokemon defender, Attack attack) {
-		if (attack == null)
+	public static void prepareEfectivenessChosenAttack(Pokemon attacker, Pokemon defender, Attack selectedAttack) {
+		if (selectedAttack == null)
 			return;
 
-		float effectiveness = getEffectiveness(attack.getPkType(), defender);
+		Attack effectiveAttack = helperService.getEffectiveAttackForCalculation(attacker, selectedAttack);
 
-		prepareAttack(attack, attacker, defender, effectiveness);
+		if (effectiveAttack == null)
+			return;
+
+		float effectiveness = getEffectiveness(effectiveAttack.getPkType(), defender);
+
+		prepareAttack(selectedAttack, effectiveAttack, attacker, defender, effectiveness);
 
 		System.out.println(ANSI_YELLOW + "Efectividad principal/actualizada - ataque (" + attacker.getName() + ") : "
-				+ attack.getName() + " | eff=" + attack.getEffectivenessAgainstPkFacing() + " | stab="
-				+ attack.getBonus() + ANSI_RESET);
+				+ selectedAttack.getName() + " | ataque efectivo=" + effectiveAttack.getName() + " | eff="
+				+ selectedAttack.getEffectivenessAgainstPkFacing() + " | stab=" + selectedAttack.getBonus()
+				+ ANSI_RESET);
 	}
 }

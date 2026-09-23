@@ -7,7 +7,8 @@ public class AttackContext {
 	private final Pokemon defender;
 	private final Player attackingPlayer;
 	private final Player defendingPlayer;
-	private final Attack attack;
+	private Attack attack; // attack used
+	private Attack ppSource; // attack that really consumes the PP (102_Mimic...)
 	private float power;
 	private float precision;
 	private Weather weather;
@@ -19,12 +20,11 @@ public class AttackContext {
 
 	public AttackContext(Player attackingPlayer, Player defendingPlayer, Weather weather, boolean isWeatherSuppressed,
 			boolean isMistActive) {
-
 		this.attacker = attackingPlayer.getPkCombatting();
-		this.defender = attackingPlayer.getPkFacing();
+		this.defender = defendingPlayer.getPkCombatting();
 		this.attackingPlayer = attackingPlayer;
 		this.defendingPlayer = defendingPlayer;
-		this.attack = attackingPlayer.getPkCombatting().getNextMovement();
+		setEffectiveAttack(attackingPlayer.getPkCombatting());
 		this.weather = weather;
 		this.isWeatherSuppressed = isWeatherSuppressed;
 		this.isMistActive = isMistActive;
@@ -78,6 +78,27 @@ public class AttackContext {
 		return attack;
 	}
 
+	public void setAttack(Attack attack) {
+		this.attack = attack;
+	}
+
+	public void setEffectiveAttack(Pokemon attacker) {
+		Attack selectedAttack = attacker.getNextMovement();
+
+		Attack effectiveAttack = attacker.isMimicking() ? attacker.getCopiedAttack() : selectedAttack;
+
+		this.setAttack(effectiveAttack);
+		this.setPpSource(selectedAttack);
+	}
+
+	public Attack getPpSource() {
+		return ppSource;
+	}
+
+	public void setPpSource(Attack ppSource) {
+		this.ppSource = ppSource;
+	}
+
 	public Weather getWeather() {
 		return weather;
 	}
@@ -100,5 +121,10 @@ public class AttackContext {
 
 	public void multiplyPrecision(float value) {
 		this.precision *= value;
+	}
+
+	public void consumePP() {
+		if (ppSource != null && ppSource.getPp() > 0)
+			ppSource.setPp(ppSource.getPp() - 1);
 	}
 }

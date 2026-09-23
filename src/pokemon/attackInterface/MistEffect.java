@@ -14,7 +14,7 @@ public class MistEffect implements AttackEffect {
 		if (ctx.isMistActive())
 			System.out.println("No tuvo ningún efecto ya que está en uso");
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		return result;
 	}

@@ -20,7 +20,7 @@ public class OneHitKOEffect implements AttackEffect {
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		Pokemon defender = ctx.getDefender();
 		Ability abilityDefender = defender.getAbilitySelected();

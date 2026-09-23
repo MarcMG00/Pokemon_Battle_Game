@@ -49,7 +49,7 @@ public class MultiStatChange implements AttackEffect {
 					: ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su " + stat);
 		}
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		return result;
 	}

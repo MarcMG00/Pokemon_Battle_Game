@@ -1,6 +1,5 @@
 package pokemon.attackInterface;
 
-import pokemon.model.Attack;
 import pokemon.model.AttackContext;
 import pokemon.model.AttackResolutionService;
 import pokemon.model.AttackResult;
@@ -16,7 +15,6 @@ public class WeightDamageEffect implements AttackEffect {
 	@Override
 	public AttackResult execute(AttackContext ctx) {
 		Pokemon defender = ctx.getDefender();
-		Attack attack = ctx.getAttack();
 		System.out
 				.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó Patada baja");
 
@@ -36,7 +34,7 @@ public class WeightDamageEffect implements AttackEffect {
 
 		AttackResult result = attackResolutionService.resolveHit(ctx);
 
-		attack.setPp(attack.getPp() - 1);
+		ctx.consumePP();
 
 		return result;
 	}

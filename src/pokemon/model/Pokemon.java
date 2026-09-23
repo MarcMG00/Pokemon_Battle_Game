@@ -3,6 +3,7 @@ package pokemon.model;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import pokemon.enums.Sex;
@@ -71,6 +72,7 @@ public class Pokemon {
 	private Sex sex;
 	private boolean isAttackBoostedFromDownloadAbility;
 	private boolean isUsingRageAttack;
+	private Attack copiedAttack; // used for 102_Mimic
 
 	// ==================================== CONSTRUCTORS
 	// ====================================
@@ -131,7 +133,8 @@ public class Pokemon {
 		this.isAttackBoostedFromDownloadAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
-		isUsingRageAttack = false;
+		this.isUsingRageAttack = false;
+		this.copiedAttack = null;
 	}
 
 	public Pokemon(int id, String name, float ps, float attack, float def, float speed, float specialAttack,
@@ -191,6 +194,7 @@ public class Pokemon {
 		this.isAttackBoostedFromDownloadAbility = false;
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
+		this.copiedAttack = null;
 	}
 
 	// Constructor to set same Pokemon in a different memory space (otherwise, some
@@ -263,6 +267,7 @@ public class Pokemon {
 		this.statusCondition = new State();
 		this.ephemeralStatuses = new EnumMap<>(StatusConditions.class);
 		isUsingRageAttack = false;
+		this.copiedAttack = null;
 	}
 
 	// ==================================== GETTERS/SETTERS
@@ -694,6 +699,26 @@ public class Pokemon {
 		this.fourPrincipalAttacks.add(attack);
 	}
 
+	// (102_mimic) Check if Pokemon is mimickin an attack
+	public boolean isMimicking() {
+		return copiedAttack != null;
+	}
+
+	// (102_mimic) Get copied attack attack
+	public Attack getCopiedAttack() {
+		return copiedAttack;
+	}
+
+	// (102_mimic) Set copied attack
+	public void setCopiedAttack(Attack copiedAttack) {
+		this.copiedAttack = copiedAttack;
+	}
+
+	// (102_mimic) Remove copied attack when switching
+	public void clearMimic() {
+		this.copiedAttack = null;
+	}
+
 	// -----------------------------
 	// Check if has normal status conditions
 	// -----------------------------
@@ -891,6 +916,13 @@ public class Pokemon {
 	// Check if Pokemon has the attack chosen
 	// -----------------------------
 	public boolean hasAttack(int attackId) {
+		Optional<Attack> mimicAttack = this.getFourPrincipalAttacks().stream().filter(Attack::isMimic).findFirst();
+
+		// Check for same Id copied from Mimic
+		if (mimicAttack.isPresent())
+			return getEffectiveAttackForCalculation(mimicAttack.get()).getId() == attackId;
+
+		// Check from normal attack Id
 		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.getId() == attackId);
 	}
 
@@ -898,8 +930,38 @@ public class Pokemon {
 	// Check attack chosen has PP remaining
 	// -----------------------------
 	public boolean hasPP(int attackId) {
-		Attack atk = this.getNextMovementById(attackId);
-		return atk != null && atk.hasPp();
+		Optional<Attack> mimicAttack = this.getFourPrincipalAttacks().stream().filter(Attack::isMimic).findFirst();
+		
+		Attack atk = mimicAttack.isPresent() ? mimicAttack.get() : this.getNextMovementById(attackId);
+		
+		return atk != null && hasUsablePP(atk);
+	}
+
+	// -----------------------------
+	// Check if effective attack has PP (for example for 102_Mimic)
+	// -----------------------------
+	public boolean hasUsablePP(Attack selectedAttack) {
+		if (selectedAttack == null)
+			return false;
+
+		Attack effectiveAttack = getEffectiveAttackForCalculation(selectedAttack);
+
+		return effectiveAttack != null && effectiveAttack.hasPp();
+	}
+
+	// -----------------------------
+	// Get types from effective attack (for example 102_Mimic) => so don't get the
+	// types from the initial attack, instead take the types from attack copied
+	// -----------------------------
+	public Attack getEffectiveAttackForCalculation(Attack selectedAttack) {
+		if (selectedAttack == null)
+			return null;
+
+		if (selectedAttack.isMimic() && this.isMimicking()) {
+			return this.getCopiedAttack();
+		}
+
+		return selectedAttack;
 	}
 
 	// -----------------------------
@@ -913,7 +975,7 @@ public class Pokemon {
 	// Check if any attack from Pokemon has PP remaining
 	// -----------------------------
 	public boolean hasAnyPPLeft() {
-		return this.getFourPrincipalAttacks().stream().anyMatch(a -> a.hasPp());
+		return this.getFourPrincipalAttacks().stream().anyMatch(a -> hasUsablePP(a));
 	}
 
 	// -----------------------------

@@ -27,7 +27,7 @@ public class SleepEffect implements AttackEffect {
 
 		System.out.println(attacker.getName() + " (Id:" + attacker.getId() + ")" + " usó " + ctx.getAttack().getName());
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		if (defender.hasActiveEphemeralStatus(StatusConditions.ASLEEP)) {
 			System.out.println(defender.getName() + " (Id:" + defender.getId() + ")" + " ya está dormido");

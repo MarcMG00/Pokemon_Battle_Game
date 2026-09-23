@@ -647,7 +647,7 @@ public class ReaderData {
 	// -----------------------------
 	// Reads attacksList.csv file and adds to attacks list
 	// -----------------------------
-	public void readAttacks(ArrayList<PokemonType> types) {
+	public void readAttacks(ArrayList<PokemonType> types, ArrayList<Attack> attacksFromGame) {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 
@@ -710,6 +710,7 @@ public class ReaderData {
 
 				// Adds the attack to the general var
 				this.getAttacks().add(attack);
+				attacksFromGame.add(attack);
 				this.getAttackById().put(attack.getId(), attack);
 			}
 		} catch (IOException e) {

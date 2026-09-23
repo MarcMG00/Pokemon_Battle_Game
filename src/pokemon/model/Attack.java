@@ -186,7 +186,7 @@ public class Attack {
 	public int getPp() {
 		return pp;
 	}
-	
+
 	public boolean hasPp() {
 		return pp > 0;
 	}
@@ -367,14 +367,14 @@ public class Attack {
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
-	
+
 	public boolean hasNoEffectInBattle() {
 		return noEffectInBattle;
 	}
 
 	public void setNoEffectInBattle(boolean noEffectInBattle) {
 		this.noEffectInBattle = noEffectInBattle;
-	}	
+	}
 
 	// ==================================== METHODS
 	// ====================================
@@ -620,6 +620,13 @@ public class Attack {
 	// -----------------------------
 	public boolean isRage() {
 		return this.getId() == 99;
+	}
+
+	// -----------------------------
+	// Check if attack is 102_mimic
+	// -----------------------------
+	public boolean isMimic() {
+		return this.getId() == 102;
 	}
 
 	// -----------------------------

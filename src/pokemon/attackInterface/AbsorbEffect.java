@@ -21,7 +21,7 @@ public class AbsorbEffect implements AttackEffect {
 
 		AttackResult result = attackResolutionService.resolveHit(ctx);
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		applyDrain(ctx, result);
 

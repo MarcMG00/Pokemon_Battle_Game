@@ -39,7 +39,7 @@ public class StatBoostEffect implements AttackEffect {
 				: ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " aumentó su "
 						+ stat.name());
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		return result;
 	}

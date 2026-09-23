@@ -26,7 +26,7 @@ public class RecoilDamageEffect implements AttackEffect {
 
 		AttackResult result = attackResolutionService.resolveHit(ctx);
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		// 69_Rock_Head ability is not affected by recoil
 		if (attacker.hasRockHeadAbility()) {

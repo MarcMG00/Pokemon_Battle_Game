@@ -29,7 +29,7 @@ public class StatReduceEffect implements AttackEffect {
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		// Mist
 		if (ctx.isMistActive()) {

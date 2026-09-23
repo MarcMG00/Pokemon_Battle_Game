@@ -13,7 +13,7 @@ public class LeechSeedEffect implements AttackEffect {
 
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó Drenadoras");
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		// Doesn't affect to grass type
 		if (ctx.getDefender().getTypes().stream().filter(t -> t.isGrassType()).findAny().isPresent()) {

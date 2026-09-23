@@ -27,10 +27,9 @@ public class DisableAttackEffect implements AttackEffect {
 		System.out.println(ctx.getAttacker().getName() + " (Id:" + ctx.getAttacker().getId() + ")" + " usó "
 				+ ctx.getAttack().getName());
 
-		Attack disable = ctx.getAttacker().getNextMovement();
 		Attack lastAttack = defender.getLastUsedAttack();
 
-		disable.setPp(disable.getPp() - 1);
+		ctx.consumePP();
 
 		// If rival hasn't used yet an attack => fails
 		if (lastAttack == null || lastAttack.getId() == 0) {

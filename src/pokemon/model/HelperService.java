@@ -46,4 +46,31 @@ public class HelperService {
 
 		return baseId * 1000 + count;
 	}
+
+	// -----------------------------
+	// Get types from effective attack (for example 102_Mimic) => so don't get the
+	// types from the initial attack, instead take the types from attack copied
+	// -----------------------------
+	public Attack getEffectiveAttackForCalculation(Pokemon attacker, Attack selectedAttack) {
+		if (selectedAttack == null)
+			return null;
+
+		if (selectedAttack.isMimic() && attacker.isMimicking()) {
+			return attacker.getCopiedAttack();
+		}
+
+		return selectedAttack;
+	}
+
+	// -----------------------------
+	// Check if effective attack has PP (for example for 102_Mimic)
+	// -----------------------------
+	public boolean hasUsablePP(Pokemon attacker, Attack selectedAttack) {
+		if (selectedAttack == null)
+			return false;
+
+		Attack effectiveAttack = getEffectiveAttackForCalculation(attacker, selectedAttack);
+
+		return effectiveAttack != null && effectiveAttack.hasPp();
+	}
 }

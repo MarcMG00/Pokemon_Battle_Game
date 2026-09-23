@@ -32,7 +32,7 @@ public class TrappedEffect implements AttackEffect {
 			ctx.getDefender().addEphemeralStatus(StatusConditions.TRAPPED, trapped);
 		}
 
-		ctx.getAttack().setPp(ctx.getAttack().getPp() - 1);
+		ctx.consumePP();
 
 		return result;
 	}
