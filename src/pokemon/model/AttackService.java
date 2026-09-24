@@ -168,6 +168,7 @@ public class AttackService {
 		attackEffects.put(14, new StatBoostEffect(StatType.ATTACK, 2)); // Danza espada/Swords dance (tested)
 		attackEffects.put(96, new StatBoostEffect(StatType.ATTACK, 1)); // Meditación/Meditate (tested)
 		attackEffects.put(97, new StatBoostEffect(StatType.SPEED, 2)); // Agilidad/Agility (tested)
+		attackEffects.put(104, new StatBoostEffect(StatType.EVASION, 1)); // Doble equipo/Double team (tested)
 
 		// Rise power if charging an attack and can hit while invulnerable
 		attackEffects.put(16, new ConditionalPowerEffect(attackResolutionService, 2f)); // Tornado/Gust (tested)
@@ -194,6 +195,7 @@ public class AttackService {
 		attackEffects.put(43, new StatReduceEffect(StatType.DEFENSE, 1)); // Malicioso/Leer (tested)
 		attackEffects.put(45, new StatReduceEffect(StatType.ATTACK, 1)); // Gruñido/Growl (tested)
 		attackEffects.put(81, new StatReduceEffect(StatType.SPEED, 1)); // Disparo démora/String shot (tested)
+		attackEffects.put(103, new StatReduceEffect(StatType.DEFENSE, 2)); // Chirrido/Screech (tested)
 
 		// Recoil damage effect
 		attackEffects.put(36, new RecoilDamageEffect(attackResolutionService, 0.25f)); // Derribo/Take down (tested)
