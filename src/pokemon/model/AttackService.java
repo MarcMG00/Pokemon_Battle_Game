@@ -58,9 +58,9 @@ public class AttackService {
 	private final StatService statService;
 	private DamageService damageService;
 	private AttackResolutionService attackResolutionService;
-	private Map<Integer, AttackEffect> attackEffects = new HashMap<>();
 	private HelperService helperService;
 	private AccuracyService accuracyService;
+	private Map<Integer, AttackEffect> attackEffects = new HashMap<>();
 	private boolean playerWonSpeedTie = true;
 
 	public AttackService(BattleContext battleCtx) {
@@ -244,7 +244,7 @@ public class AttackService {
 		attackEffects.put(63, attackRestOneTourDamage); // Hiperrayo/Hyper beam (tested)
 
 		// Damage depending on weight
-		AttackEffect weightDamage = new WeightDamageEffect(attackResolutionService);
+		AttackEffect weightDamage = new WeightDamageEffect(attackResolutionService, statService);
 		attackEffects.put(67, weightDamage); // Patada baja/Low kick (tested)
 
 		// Contraataque/Counter (tested)

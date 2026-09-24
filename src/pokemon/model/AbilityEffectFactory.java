@@ -18,12 +18,10 @@ import pokemon.abilityInterface.EmptyAbility;
 import pokemon.abilityInterface.FlameBodyAbility;
 import pokemon.abilityInterface.FlashFireAbility;
 import pokemon.abilityInterface.ForecastAbility;
-import pokemon.abilityInterface.HeavyMetalAbility;
 import pokemon.abilityInterface.HydratationAbility;
 import pokemon.abilityInterface.IceBodyAbility;
 import pokemon.abilityInterface.IntimidateAbility;
 import pokemon.abilityInterface.LevitateAbility;
-import pokemon.abilityInterface.LightMetalAbility;
 import pokemon.abilityInterface.LightningRodAbility;
 import pokemon.abilityInterface.MinusAbility;
 import pokemon.abilityInterface.MoodyAbility;
@@ -204,12 +202,6 @@ public class AbilityEffectFactory {
 		// Armadura frágil/Weak armor
 		case 133:
 			return new WeakArmorAbility(owner);
-		// Metal pesado/Heavy metal
-		case 134:
-			return new HeavyMetalAbility(owner);
-		// Metal liviano/Light metal
-		case 135:
-			return new LightMetalAbility(owner);
 		// Veleta/Moody
 		case 141:
 			return new MoodyAbility(owner);

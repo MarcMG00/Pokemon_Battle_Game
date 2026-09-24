@@ -298,4 +298,17 @@ public class StatService {
 
 		return priority;
 	}
+
+	// -----------------------------
+	// Get effective weight
+	// -----------------------------
+	public int getEffectiveWeight(Pokemon pk) {
+		if (pk.hasHeavyMetalAbility())
+			return pk.getWeight() * 2;
+
+		if (pk.hasLightMetalAbility())
+			return pk.getWeight() / 2;
+
+		return pk.getWeight();
+	}
 }

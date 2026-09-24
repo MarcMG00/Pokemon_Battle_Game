@@ -549,10 +549,6 @@ public class Pokemon {
 		return weight;
 	}
 
-	public void setWeight(int weight) {
-		this.weight = weight;
-	}
-
 	public boolean hasReceivedDamage() {
 		return hasReceivedDamage;
 	}
@@ -931,9 +927,9 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasPP(int attackId) {
 		Optional<Attack> mimicAttack = this.getFourPrincipalAttacks().stream().filter(Attack::isMimic).findFirst();
-		
+
 		Attack atk = mimicAttack.isPresent() ? mimicAttack.get() : this.getNextMovementById(attackId);
-		
+
 		return atk != null && hasUsablePP(atk);
 	}
 
@@ -1704,6 +1700,20 @@ public class Pokemon {
 	// -----------------------------
 	public boolean hasWeakArmorAbility() {
 		return this.getAbilitySelected().getId() == 133;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 134_Heavy_metal ability
+	// -----------------------------
+	public boolean hasHeavyMetalAbility() {
+		return this.getAbilitySelected().getId() == 134;
+	}
+
+	// -----------------------------
+	// Check if Pokemon has 135_Light_metal ability
+	// -----------------------------
+	public boolean hasLightMetalAbility() {
+		return this.getAbilitySelected().getId() == 135;
 	}
 
 	// -----------------------------
